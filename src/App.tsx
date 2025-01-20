@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import reactLogo from "src/assets/react.svg";
 import viteLogo from "/vite.svg";
-import styles from "src/App.module.css"
+import styles from "src/App.module.css";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -14,7 +14,11 @@ function App() {
           <img src={viteLogo} className={styles.logo} alt="Vite logo" />
         </a>
         <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className={`${styles.logo} ${styles.react}`} alt="React logo" />
+          <img
+            src={reactLogo}
+            className={`${styles.logo} ${styles.react}`}
+            alt="React logo"
+          />
         </a>
       </div>
       <h1>Vite + React</h1>
