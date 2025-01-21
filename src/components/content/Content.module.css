@@ -1,0 +1,18 @@
+.container {
+  top: var(--menubar-height);
+  position: absolute;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+}
+
+.panel {
+  margin: 16px 57px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  border-bottom: 1px solid var(--separator-color);
+}

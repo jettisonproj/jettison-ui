@@ -1,0 +1,35 @@
+.container {
+  min-height: var(--menubar-height);
+  position: fixed;
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+}
+
+.logo {
+  display: inline;
+  position: relative;
+  height: var(--menubar-height);
+  left: 36px;
+  transform: scaleX(1);
+  fill: var(--title-color);
+}
+
+.logoName {
+  position: absolute;
+  top: 28px;
+  left: 146px;
+  color: var(--title-color);
+  font-size: 14px;
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  transform: scaleX(2);
+}
+
+.headerIcon {
+  margin: 20px 20px 0 0;
+  list-style: none;
+  font-size: 14px;
+  float: right;
+  cursor: pointer;
+}
