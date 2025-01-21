@@ -37,6 +37,13 @@ export default tseslint.config(
       ],
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "ExportDefaultDeclaration",
+          message: "Please use named exports instead.",
+        },
+      ],
     },
   },
   eslintConfigPrettier,
