@@ -1,5 +1,6 @@
 const routes = {
-  flows: "flows",
+  flows: "/flows",
+  home: "/",
 };
 
 export { routes };
