@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+import { routes } from "src/routes.ts";
 import { recentFlows, stats } from "src/data/data.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
@@ -36,7 +37,7 @@ function Overview() {
         <p>
           <label className={styles.overviewLabel}>Steps</label> {stats.steps}
         </p>
-        <Link to="flows">
+        <Link to={routes.flows}>
           See All Namespaces <i className="fa fa-lg fa-angle-right" />
         </Link>
       </div>
@@ -51,7 +52,7 @@ function RecentFlows() {
       <ul className={styles.recentFlowsContainer}>
         {recentFlows.map((recentFlow) => (
           <li key={recentFlow}>
-            <Link to={`flows/${recentFlow}`}>{recentFlow}</Link>
+            <Link to={`${routes.flows}/${recentFlow}`}>{recentFlow}</Link>
           </li>
         ))}
       </ul>
