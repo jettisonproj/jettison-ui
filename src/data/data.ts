@@ -28,4 +28,8 @@ const namespaces = [
   "wavesmusicplayer",
 ];
 
-export { namespaces, recentFlows, stats };
+const flowsByNamespace: Record<string, string[] | undefined> = {
+  "rollouts-demo": ["github-pr", "github-push"],
+};
+
+export { flowsByNamespace, namespaces, recentFlows, stats };
