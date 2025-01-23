@@ -49,7 +49,7 @@ function RecentFlows() {
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Flows</h2>
-      <ul className={styles.recentFlowsContainer}>
+      <ul>
         {recentFlows.map((recentFlow) => (
           <li key={recentFlow}>
             <Link to={`${routes.flows}/${recentFlow}`}>{recentFlow}</Link>
