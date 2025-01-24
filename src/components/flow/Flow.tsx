@@ -21,7 +21,6 @@ function Flow() {
       <Header />
       <Content>
         <FlowNavHeader namespace={namespace} name={name} />
-        <h2>{name}</h2>
         <FlowItem namespace={namespace} name={name} flow={flow} />
       </Content>
     </>

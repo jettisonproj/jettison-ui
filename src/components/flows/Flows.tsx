@@ -20,7 +20,6 @@ function Flows() {
       <Content>
         <>
           <FlowsNavHeader namespace={namespace} />
-          <h2>{namespace}</h2>
           <FlowsList namespace={namespace} flows={flows} />
         </>
       </Content>
