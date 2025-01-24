@@ -1,4 +1,4 @@
-import type { Flow } from "src/data/types.ts"
+import type { Flow } from "src/data/types.ts";
 
 const stats = {
   namespaces: 5,

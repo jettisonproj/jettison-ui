@@ -4,12 +4,14 @@ import { routes } from "src/routes.ts";
 import { namespaces } from "src/data/data.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
+import { NamespacesNavHeader } from "src/components/header/NavHeader.tsx";
 
 function Namespaces() {
   return (
     <>
       <Header />
-      <Content title="Namespaces">
+      <Content>
+        <NamespacesNavHeader />
         <ul>
           {namespaces.map((namespace) => (
             <li key={namespace}>

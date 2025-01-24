@@ -4,6 +4,7 @@ import { routes } from "src/routes.ts";
 import jettisonLogo from "/jettison.svg";
 import styles from "src/components/header/Header.module.css";
 
+/* Header is the fixed header at the top */
 function Header() {
   return (
     <header className={styles.container}>
@@ -12,7 +13,7 @@ function Header() {
         <span className={styles.logoName}>JETTISON</span>
       </Link>
       <i className={`fa fa-lg fa-globe ${styles.headerIcon}`} />
-      <i className={`fa fa-lg fa-user  ${styles.headerIcon}`} />
+      <i className={`fa fa-lg fa-user ${styles.headerIcon}`} />
     </header>
   );
 }

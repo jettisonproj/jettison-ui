@@ -1,0 +1,12 @@
+.navHeader {
+  border-bottom: 1px solid var(--separator-color);
+  padding-bottom: 25px;
+}
+
+.component {
+  color: var(--title-color);
+}
+
+.componentSeparator {
+  margin: 0 18px;
+}

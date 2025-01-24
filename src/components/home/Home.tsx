@@ -4,13 +4,15 @@ import { routes } from "src/routes.ts";
 import { recentFlows, stats } from "src/data/data.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
+import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
 
 function Home() {
   return (
     <>
       <Header />
-      <Content title="Home">
+      <Content>
+        <HomeNavHeader />
         <Overview />
         <RecentFlows />
       </Content>

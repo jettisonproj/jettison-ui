@@ -4,6 +4,7 @@ import { flowByNamespaceName } from "src/data/data.ts";
 import type { Flow } from "src/data/types.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
+import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 
 function Flow() {
   const { namespace, name } = useParams();
@@ -18,7 +19,8 @@ function Flow() {
   return (
     <>
       <Header />
-      <Content title="Flow">
+      <Content>
+        <FlowNavHeader namespace={namespace} name={name} />
         <h2>{name}</h2>
         <FlowItem namespace={namespace} name={name} flow={flow} />
       </Content>
