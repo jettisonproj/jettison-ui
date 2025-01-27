@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
@@ -29,12 +30,12 @@ function NavHeader({ components }: NavHeaderProps) {
     <h2 className={styles.navHeader}>
       {/* The prefix components contain links */}
       {components.slice(0, -1).map(({ link, name }) => (
-        <>
+        <Fragment key={link}>
           <Link to={link} className={styles.component}>
             {name}
           </Link>
           <span className={styles.componentSeparator}>⧸</span>
-        </>
+        </Fragment>
       ))}
 
       {/* The last component has no link */}
