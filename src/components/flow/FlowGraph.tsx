@@ -3,38 +3,25 @@ import type { GraphEdge, Node } from "@dagrejs/dagre";
 
 import styles from "src/components/flow/FlowGraph.module.css";
 
-interface FlowLabel {
+/* Describes the node input used for generating a graph */
+interface FlowNode {
   label: string;
   width: number;
   height: number;
 }
-const inputNodes: FlowLabel[] = [
-  { label: "Kevin Spacey", width: 144, height: 100 },
-  { label: "Saul Williams", width: 160, height: 100 },
-  { label: "Brad Pitt", width: 108, height: 100 },
-  { label: "Harrison Ford", width: 168, height: 100 },
-  { label: "Luke Wilson", width: 144, height: 100 },
-  { label: "Kevin Bacon", width: 121, height: 100 },
-];
 
+/* Describes the edge input used for generating a graph */
 interface FlowEdge {
   v: string;
   w: string;
   label: string;
 }
-const inputEdges: FlowEdge[] = [
-  { label: "e0", v: "Kevin Spacey", w: "Saul Williams" },
-  { label: "e1", v: "Saul Williams", w: "Kevin Bacon" },
-  { label: "e2", v: "Brad Pitt", w: "Kevin Bacon" },
-  { label: "e3", v: "Harrison Ford", w: "Luke Wilson" },
-  { label: "e4", v: "Luke Wilson", w: "Kevin Bacon" },
-];
 
 /**
  * Return a new Dagre Graph with layout details
  * for the specfied nodes and edges
  */
-function getDagreGraph(nodes: FlowLabel[], edges: FlowEdge[]) {
+function getDagreGraph(nodes: FlowNode[], edges: FlowEdge[]) {
   // Create a new directed graph
   const dagreGraph = new dagre.graphlib.Graph();
 
@@ -60,9 +47,13 @@ function getDagreGraph(nodes: FlowLabel[], edges: FlowEdge[]) {
   return dagreGraph;
 }
 
-function FlowGraph() {
+interface FlowGraphProps {
+  flowNodes: FlowNode[];
+  flowEdges: FlowEdge[];
+}
+function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
   // Create a new dagre graph with layout details (e.g positions, width)
-  const dagreGraph = getDagreGraph(inputNodes, inputEdges);
+  const dagreGraph = getDagreGraph(flowNodes, flowEdges);
 
   // Get the graph, node, and edge layout components
   const graphLabels = dagreGraph.graph();
@@ -158,3 +149,4 @@ function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps) {
 }
 
 export { FlowGraph };
+export type { FlowEdge, FlowNode };
