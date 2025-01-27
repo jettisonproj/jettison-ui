@@ -7,6 +7,7 @@ import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { FlowGraph } from "src/components/flow/FlowGraph.tsx";
 import type { FlowNode, FlowEdge } from "src/components/flow/FlowGraph.tsx";
+import styles from "src/components/flow/Flow.module.css";
 
 function Flow() {
   const { namespace, name } = useParams();
@@ -71,6 +72,11 @@ function getFlowNodes(flow: Flow): FlowNode[] {
     label: trigger.triggerName ?? trigger.triggerSource,
     width: 144,
     height: 100,
+    children: (
+      <div className={styles.nodeContent}>
+        <i className="fa fa-user-o"></i> User
+      </div>
+    ),
   };
 
   const { steps } = flow.spec;
@@ -78,11 +84,17 @@ function getFlowNodes(flow: Flow): FlowNode[] {
     label: step.stepName ?? step.stepSource,
     width: 168,
     height: 100,
+    children: (
+      <div className={styles.nodeContent}>
+        <i className="fa fa-user-o"></i> User
+      </div>
+    ),
   }));
 
   return [triggerNode].concat(stepNodes);
 }
 
+// todo improve flow defaults
 function getFlowEdges(flow: Flow): FlowEdge[] {
   const { triggers, steps } = flow.spec;
   if (triggers.length !== 1) {

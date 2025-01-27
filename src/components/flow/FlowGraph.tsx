@@ -1,5 +1,6 @@
 import dagre from "@dagrejs/dagre";
 import type { GraphEdge, Node } from "@dagrejs/dagre";
+import { ReactNode } from "react";
 
 import styles from "src/components/flow/FlowGraph.module.css";
 
@@ -8,6 +9,7 @@ interface FlowNode {
   label: string;
   width: number;
   height: number;
+  children: ReactNode;
 }
 
 /* Describes the edge input used for generating a graph */
@@ -23,7 +25,7 @@ interface FlowEdge {
  */
 function getDagreGraph(nodes: FlowNode[], edges: FlowEdge[]) {
   // Create a new directed graph
-  const dagreGraph = new dagre.graphlib.Graph();
+  const dagreGraph = new dagre.graphlib.Graph<FlowNode>();
 
   // Set an empty object for the graph label
   dagreGraph.setGraph({ rankdir: "LR" });
@@ -104,10 +106,10 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
 }
 
 interface FlowGraphNodeProps {
-  nodeLabel: Node;
+  nodeLabel: Node<FlowNode>;
 }
 function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
-  const { label, width, height, x, y } = nodeLabel;
+  const { label, width, height, x, y, children } = nodeLabel;
   // Since (x, y) is at the center of the node, calculate the left x (lx)
   // and top y (ty) for use with rect
   const lx = x - width / 2;
@@ -127,6 +129,9 @@ function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
       <text x={x} y={y} className={styles.nodeLabel}>
         {label}
       </text>
+      <foreignObject width={width} height={height} x={lx} y={ty}>
+        {children}
+      </foreignObject>
     </>
   );
 }
