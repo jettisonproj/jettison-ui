@@ -4,6 +4,11 @@
 
   --menubar-height: 65px;
   --separator-color: #eee;
+
+  --panel-color: #f6f8fa;
+
+  --graph-node-border-color: #e4e4e4;
+  --graph-edge-color: #78849e;
 }
 
 html {

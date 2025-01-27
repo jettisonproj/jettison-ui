@@ -1,0 +1,37 @@
+.panel {
+  background-color: var(--panel-color);
+  border: 1px var(--panel-color) solid;
+  border-radius: 15px;
+  padding: 20px 30px;
+}
+
+.graphContainer {
+  display: inline-block;
+}
+
+.node {
+  fill: #fff;
+  stroke: var(--graph-node-border-color);
+  stroke-width: 1;
+}
+
+.nodeLabel {
+  fill: var(--text-color);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  alignment-baseline: middle;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--graph-edge-color);
+  stroke-width: 1;
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+@keyframes dashdraw {
+  0% {
+    stroke-dashoffset: 10;
+  }
+}

@@ -5,6 +5,7 @@ import type { Flow } from "src/data/types.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
+import { FlowGraph } from "src/components/flow/FlowGraph.tsx";
 
 function Flow() {
   const { namespace, name } = useParams();
@@ -47,7 +48,7 @@ function FlowItem({ namespace, name, flow }: FlowItemProps) {
   }
   return (
     <>
-      <p>flow graph here</p>
+      <FlowGraph />
       <p>flow history here</p>
     </>
   );
