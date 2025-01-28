@@ -76,7 +76,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
     label: trigger.triggerName ?? trigger.triggerSource,
     width: 144,
     height: 100,
-    children: <FlowGraphTrigger />,
+    children: <FlowGraphTrigger trigger={trigger} />,
   };
 
   const { steps } = flow.spec;

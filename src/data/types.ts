@@ -68,4 +68,4 @@ interface GitHubPushTrigger extends BaseTrigger {
 
 type Trigger = GitHubPullRequestTrigger | GitHubPushTrigger;
 
-export type { Flow };
+export type { Flow, Trigger, Step };

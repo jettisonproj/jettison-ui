@@ -1,8 +1,29 @@
+.flexCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .nodeContent {
+  composes: flexCenter;
+
   width: 100%;
   height: 100%;
   padding: 11px 15px;
-  color: #737373;
-  font-size: 12px;
-  font-weight: bold;
+}
+
+.triggerLink {
+  composes: flexCenter;
+
+  color: var(--text-color);
+}
+
+.triggerIcon {
+  padding: 5px;
+  font-size: 27px;
+}
+
+.triggerBaseRef {
+  font-weight: bolder;
 }
