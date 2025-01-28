@@ -32,21 +32,7 @@ interface ArgoCDStep extends BaseStep {
   baseRef?: string;
 }
 
-interface DebugMessageStep extends BaseStep {
-  stepSource: "debugMessage";
-  message: string;
-}
-
-interface ManualApprovalStep extends BaseStep {
-  stepSource: "manualApproval";
-}
-
-type Step =
-  | DockerBuildTestStep
-  | DockerBuildTestPublishStep
-  | ArgoCDStep
-  | DebugMessageStep
-  | ManualApprovalStep;
+type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
 
 interface BaseTrigger {
   triggerName?: string;

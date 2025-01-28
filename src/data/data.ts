@@ -73,11 +73,6 @@ const gitHubPushFlow: Flow = {
       },
       {
         dependsOn: ["deploy-to-staging"],
-        stepName: "approve-to-prod",
-        stepSource: "manualApproval",
-      },
-      {
-        dependsOn: ["approve-to-prod"],
         repoPath: "prod",
         repoUrl: "https://github.com/osoriano/rollouts-demo-argo-configs.git",
         stepName: "deploy-to-prod",
