@@ -12,8 +12,8 @@ function Header() {
         <img src={jettisonLogo} className={styles.logo} alt="Jettison logo" />
         <span className={styles.logoName}>JETTISON</span>
       </Link>
-      <i className={`fa fa-lg fa-globe ${styles.headerIcon}`} />
-      <i className={`fa fa-lg fa-user ${styles.headerIcon}`} />
+      <i className={`nf nf-fa-globe ${styles.headerIcon}`} />
+      <i className={`nf nf-fa-user ${styles.headerIcon}`} />
     </header>
   );
 }

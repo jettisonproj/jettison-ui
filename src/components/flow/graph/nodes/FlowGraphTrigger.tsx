@@ -21,7 +21,7 @@ function FlowGraphTrigger({ trigger }: FlowGraphTriggerProps) {
         rel="noreferrer"
         className={styles.triggerLink}
       >
-        <i className={`fa fa-lg fa-github ${styles.triggerIcon}`}></i>
+        <i className={`nf nf-fa-github ${styles.triggerIcon}`}></i>
         <div>{displayRepoName}</div>
         <div className={styles.triggerBaseRef}>{displayBaseRef}</div>
       </a>

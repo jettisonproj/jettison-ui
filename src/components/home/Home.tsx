@@ -40,7 +40,7 @@ function Overview() {
           <label className={styles.overviewLabel}>Steps</label> {stats.steps}
         </p>
         <Link to={routes.flows}>
-          See All Namespaces <i className="fa fa-lg fa-angle-right" />
+          See All Namespaces <i className="nf nf-fa-angle-right" />
         </Link>
       </div>
     </>
