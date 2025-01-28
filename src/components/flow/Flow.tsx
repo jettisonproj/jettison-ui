@@ -5,9 +5,13 @@ import type { Flow } from "src/data/types.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
-import { FlowGraph } from "src/components/flow/FlowGraph.tsx";
-import type { FlowNode, FlowEdge } from "src/components/flow/FlowGraph.tsx";
-import styles from "src/components/flow/Flow.module.css";
+import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
+import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
+import type {
+  FlowNode,
+  FlowEdge,
+} from "src/components/flow/graph/FlowGraph.tsx";
 
 function Flow() {
   const { namespace, name } = useParams();
@@ -72,7 +76,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
     label: trigger.triggerName ?? trigger.triggerSource,
     width: 144,
     height: 100,
-    children: <FlowNodeContent />,
+    children: <FlowGraphTrigger />,
   };
 
   const { steps } = flow.spec;
@@ -80,7 +84,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
     label: step.stepName ?? step.stepSource,
     width: 168,
     height: 100,
-    children: <FlowNodeContent />,
+    children: <FlowGraphStep />,
   }));
 
   return [triggerNode].concat(stepNodes);
@@ -114,24 +118,6 @@ function getFlowEdges(flow: Flow): FlowEdge[] {
   );
 
   return triggerEdges.concat(nodeEdges);
-}
-
-/**
- * Returns the html content for the FlowNode.
- * This gets rendered inside of an svg
- */
-function FlowNodeContent() {
-  return (
-    <div
-      // @ts-expect-error Since this is the root html element inside the svg, xmlns
-      // should be set. However, this is not supported in ts currently
-      // See https://stackoverflow.com/questions/39504988/react-svg-html-inside-foreignobject-not-rendered
-      xmlns="http://www.w3.org/1999/xhtml"
-      className={styles.nodeContent}
-    >
-      <i className="fa fa-user-o"></i> User
-    </div>
-  );
 }
 
 export { Flow };
