@@ -109,7 +109,7 @@ interface FlowGraphNodeProps {
   nodeLabel: Node<FlowNode>;
 }
 function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
-  const { label, width, height, x, y, children } = nodeLabel;
+  const { width, height, x, y, children } = nodeLabel;
   // Since (x, y) is at the center of the node, calculate the left x (lx)
   // and top y (ty) for use with rect
   const lx = x - width / 2;
@@ -126,9 +126,6 @@ function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
         ry={borderRadius}
         className={styles.node}
       />
-      <text x={x} y={y} className={styles.nodeLabel}>
-        {label}
-      </text>
       <foreignObject width={width} height={height} x={lx} y={ty}>
         {children}
       </foreignObject>

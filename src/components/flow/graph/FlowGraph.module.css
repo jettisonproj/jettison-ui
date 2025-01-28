@@ -15,13 +15,6 @@
   stroke-width: 1;
 }
 
-.nodeLabel {
-  fill: var(--text-color);
-  text-anchor: middle;
-  dominant-baseline: middle;
-  alignment-baseline: middle;
-}
-
 .edge {
   fill: none;
   stroke: var(--graph-edge-color);
