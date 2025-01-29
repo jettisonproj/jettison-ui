@@ -4,7 +4,7 @@ import {
   getRepoTreeLink,
   getDisplayRepoName,
   getDisplayRepoPath,
-} from "src/components/flow/graph/nodes/graphnodeutil.ts";
+} from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import type { ArgoCDStep } from "src/data/types.ts";
 
 interface FlowGraphArgoCDStepProps {

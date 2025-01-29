@@ -3,7 +3,7 @@ import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
   getRepoTreeLink,
   getDisplayRepoName,
-} from "src/components/flow/graph/nodes/graphnodeutil.ts";
+} from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,

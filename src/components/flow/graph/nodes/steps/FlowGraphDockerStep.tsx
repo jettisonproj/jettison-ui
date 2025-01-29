@@ -1,6 +1,6 @@
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
-import { getRepoTreeLink } from "src/components/flow/graph/nodes/graphnodeutil.ts";
+import { getRepoTreeLink } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { flowDefaults } from "src/data/data.ts";
 import type {
   DockerBuildTestStep,
