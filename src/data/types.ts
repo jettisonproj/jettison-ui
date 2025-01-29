@@ -7,26 +7,32 @@ interface FlowSpec {
   triggers: Trigger[];
 }
 
+enum StepType {
+  DockerBuildTest = "dockerBuildTest",
+  DockerBuildTestPublish = "dockerBuildTestPublish",
+  ArgoCD = "argoCD",
+}
+
 interface BaseStep {
   stepName?: string;
-  stepSource: string;
+  stepSource: StepType;
   dependsOn?: string[];
 }
 
 interface DockerBuildTestStep extends BaseStep {
-  stepSource: "dockerBuildTest";
+  stepSource: StepType.DockerBuildTest;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface DockerBuildTestPublishStep extends BaseStep {
-  stepSource: "dockerBuildTestPublish";
+  stepSource: StepType.DockerBuildTestPublish;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface ArgoCDStep extends BaseStep {
-  stepSource: "argoCD";
+  stepSource: StepType.ArgoCD;
   repoUrl: string;
   repoPath: string;
   baseRef?: string;
@@ -34,24 +40,40 @@ interface ArgoCDStep extends BaseStep {
 
 type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
 
+enum TriggerType {
+  GitHubPullRequest = "githubPullRequest",
+  GitHubPush = "githubPush",
+}
+
 interface BaseTrigger {
   triggerName?: string;
-  triggerSource: string;
+  triggerSource: TriggerType;
 }
 
 interface GitHubPullRequestTrigger extends BaseTrigger {
-  triggerSource: "githubPullRequest";
+  triggerSource: TriggerType.GitHubPullRequest;
   repoUrl: string;
   baseRef?: string;
   pullRequestEvents?: string[];
 }
 
 interface GitHubPushTrigger extends BaseTrigger {
-  triggerSource: "githubPush";
+  triggerSource: TriggerType.GitHubPush;
   repoUrl: string;
   baseRef?: string | undefined;
 }
 
 type Trigger = GitHubPullRequestTrigger | GitHubPushTrigger;
 
-export type { Flow, Trigger, Step };
+export type {
+  Flow,
+  Trigger,
+  GitHubPullRequestTrigger,
+  GitHubPushTrigger,
+  Step,
+  DockerBuildTestStep,
+  DockerBuildTestPublishStep,
+  ArgoCDStep,
+};
+
+export { TriggerType, StepType };

@@ -1,4 +1,5 @@
-import type { Flow } from "src/data/types.ts";
+import type { Flow, Step, Trigger } from "src/data/types.ts";
+import { StepType, TriggerType } from "src/data/types.ts";
 
 const stats = {
   namespaces: 5,
@@ -38,13 +39,13 @@ const gitHubPrFlow: Flow = {
   spec: {
     steps: [
       {
-        stepSource: "dockerBuildTest",
+        stepSource: StepType.DockerBuildTest,
       },
     ],
     triggers: [
       {
         repoUrl: "https://github.com/osoriano/rollouts-demo.git",
-        triggerSource: "githubPullRequest",
+        triggerSource: TriggerType.GitHubPullRequest,
       },
     ],
   },
@@ -55,35 +56,35 @@ const gitHubPushFlow: Flow = {
     steps: [
       {
         stepName: "docker-build-test-publish",
-        stepSource: "dockerBuildTestPublish",
+        stepSource: StepType.DockerBuildTestPublish,
       },
       {
         dependsOn: ["docker-build-test-publish"],
         repoPath: "dev",
         repoUrl: "https://github.com/osoriano/rollouts-demo-argo-configs.git",
         stepName: "deploy-to-dev",
-        stepSource: "argoCD",
+        stepSource: StepType.ArgoCD,
       },
       {
         dependsOn: ["docker-build-test-publish"],
         repoPath: "staging",
         repoUrl: "https://github.com/osoriano/rollouts-demo-argo-configs.git",
         stepName: "deploy-to-staging",
-        stepSource: "argoCD",
+        stepSource: StepType.ArgoCD,
       },
       {
         dependsOn: ["deploy-to-staging"],
         repoPath: "prod",
         repoUrl: "https://github.com/osoriano/rollouts-demo-argo-configs.git",
         stepName: "deploy-to-prod",
-        stepSource: "argoCD",
+        stepSource: StepType.ArgoCD,
       },
     ],
     triggers: [
       {
         repoUrl: "https://github.com/osoriano/rollouts-demo.git",
         triggerName: "github-push",
-        triggerSource: "githubPush",
+        triggerSource: TriggerType.GitHubPush,
       },
     ],
   },
@@ -99,10 +100,28 @@ const flowByNamespaceName: Record<
   },
 };
 
+// todo need to get defaults from backend, or bake default into types
+const flowDefaults = {
+  baseRef: "main",
+  dockerfilePath: "Dockerfile",
+};
+// todo need to get defaults from backend, or bake default into types
+function flowDefaultStepName(step: Step) {
+  return step.stepName ?? step.stepSource;
+}
+
+// todo need to get defaults from backend, or bake default into types
+function flowDefaultTriggerName(trigger: Trigger) {
+  return trigger.triggerName ?? trigger.triggerSource;
+}
+
 export {
   flowsByNamespace,
   flowByNamespaceName,
   namespaces,
   recentFlows,
   stats,
+  flowDefaults,
+  flowDefaultStepName,
+  flowDefaultTriggerName,
 };

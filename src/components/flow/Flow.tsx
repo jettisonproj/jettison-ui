@@ -1,6 +1,10 @@
 import { useParams } from "react-router";
 
-import { flowByNamespaceName } from "src/data/data.ts";
+import {
+  flowByNamespaceName,
+  flowDefaultStepName,
+  flowDefaultTriggerName,
+} from "src/data/data.ts";
 import type { Flow } from "src/data/types.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
@@ -73,7 +77,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
   }
   const trigger = triggers[0];
   const triggerNode = {
-    label: trigger.triggerName ?? trigger.triggerSource,
+    label: flowDefaultTriggerName(trigger),
     width: 144,
     height: 100,
     children: <FlowGraphTrigger trigger={trigger} />,
@@ -81,16 +85,15 @@ function getFlowNodes(flow: Flow): FlowNode[] {
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) => ({
-    label: step.stepName ?? step.stepSource,
+    label: flowDefaultStepName(step),
     width: 168,
     height: 100,
-    children: <FlowGraphStep />,
+    children: <FlowGraphStep step={step} trigger={trigger} />,
   }));
 
   return [triggerNode].concat(stepNodes);
 }
 
-// todo improve flow defaults
 function getFlowEdges(flow: Flow): FlowEdge[] {
   const { triggers, steps } = flow.spec;
   if (triggers.length !== 1) {
@@ -105,15 +108,15 @@ function getFlowEdges(flow: Flow): FlowEdge[] {
     .filter((step) => !step.dependsOn || step.dependsOn.length === 0)
     .map((step) => ({
       label: `e${++edgeIndex}`,
-      v: trigger.triggerName ?? trigger.triggerSource,
-      w: step.stepName ?? step.stepSource,
+      v: flowDefaultTriggerName(trigger),
+      w: flowDefaultStepName(step),
     }));
 
   const nodeEdges = steps.flatMap((step) =>
     (step.dependsOn ?? []).map((dep) => ({
       label: `e${++edgeIndex}`,
       v: dep,
-      w: step.stepName ?? step.stepSource,
+      w: flowDefaultStepName(step),
     })),
   );
 
