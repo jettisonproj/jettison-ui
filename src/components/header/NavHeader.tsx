@@ -22,8 +22,7 @@ function NavHeader({ components }: NavHeaderProps) {
   const lastComponent = components.at(-1);
   if (lastComponent == null) {
     // This should be unreachable due to the length check above
-    // todo more concrete types, with components set
-    throw new Error("Unexpected components in NavHeader");
+    throw new NavHeaderError("unexpected NavHeaderProps components");
   }
 
   return (
@@ -91,6 +90,13 @@ function FlowNavHeader({ namespace, name }: FlowNavHeaderProps) {
     flowNavComponent(namespace, name),
   ];
   return <NavHeader components={components} />;
+}
+
+class NavHeaderError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { HomeNavHeader, NamespacesNavHeader, FlowsNavHeader, FlowNavHeader };

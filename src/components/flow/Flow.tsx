@@ -19,9 +19,10 @@ import type {
 
 function Flow() {
   const { namespace, name } = useParams();
-  if (namespace == null || name == null) {
-    // todo throw more specific error type?
-    throw new Error("invalid namespace or name in flow page");
+  if (!namespace || !name) {
+    throw new FlowError(
+      `path parameters cannot be empty: namespace=${namespace} name=${name}`,
+    );
   }
 
   const flowByName = flowByNamespaceName[namespace] ?? {};
@@ -70,10 +71,7 @@ function FlowItem({ namespace, name, flow }: FlowItemProps) {
 function getFlowNodes(flow: Flow): FlowNode[] {
   const { triggers } = flow.spec;
   if (triggers.length !== 1) {
-    // todo improve err
-    throw new Error(
-      "error generating FlowGraph: Flow is expected to have 1 trigger",
-    );
+    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
   }
   const trigger = triggers[0];
   const triggerNode = {
@@ -97,10 +95,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
 function getFlowEdges(flow: Flow): FlowEdge[] {
   const { triggers, steps } = flow.spec;
   if (triggers.length !== 1) {
-    // todo improve err
-    throw new Error(
-      "error generating FlowGraph: Flow is expected to have 1 trigger",
-    );
+    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
   }
   const trigger = triggers[0];
   let edgeIndex = 0;
@@ -121,6 +116,13 @@ function getFlowEdges(flow: Flow): FlowEdge[] {
   );
 
   return triggerEdges.concat(nodeEdges);
+}
+
+class FlowError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { Flow };

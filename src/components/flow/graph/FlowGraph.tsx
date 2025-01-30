@@ -68,8 +68,9 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
 
   const { width, height } = graphLabels;
   if (width == null || height == null) {
-    // todo improve err handling
-    throw new Error("error getting dagre graph width or height");
+    throw new FlowGraphError(
+      `invalid dagre graph: width=${width} or height=${height}`,
+    );
   }
 
   /* Since the graph may overflow slightly (e.g. from using stroke-width),
@@ -148,6 +149,13 @@ function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps) {
       className={styles.edge}
     />
   );
+}
+
+class FlowGraphError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { FlowGraph };

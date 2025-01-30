@@ -8,9 +8,10 @@ import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
 
 function Flows() {
   const { namespace } = useParams();
-  if (namespace == null) {
-    // todo throw more specific error type?
-    throw new Error("invalid namespace in flows page");
+  if (!namespace) {
+    throw new FlowsError(
+      `namespace path parameter cannot be empty: namespace=${namespace}`,
+    );
   }
   const flows = flowsByNamespace[namespace] ?? [];
 
@@ -50,6 +51,13 @@ function FlowsList({ namespace, flows }: FlowsListProps) {
       ))}
     </ul>
   );
+}
+
+class FlowsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { Flows };
