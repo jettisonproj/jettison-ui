@@ -26,7 +26,9 @@ function FlowGraphDockerStep({ step, trigger }: FlowGraphDockerStepProps) {
         rel="noreferrer"
         className={styles.nodeLink}
       >
-        <i className={`nf nf-fa-docker ${styles.nodeIcon}`}></i>
+        <i
+          className={`nf nf-fa-docker ${styles.nodeIcon} ${styles.dockerIcon}`}
+        ></i>
         <div className={styles.nodeTextLine}>Dockerfile</div>
         <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
       </a>

@@ -36,3 +36,11 @@
 
   font-weight: bolder;
 }
+
+.dockerIcon {
+  color: #1d63ed;
+}
+
+.argoIcon {
+  color: #ef7b4d;
+}

@@ -22,7 +22,9 @@ function FlowGraphArgoCDStep({ step }: FlowGraphArgoCDStepProps) {
         rel="noreferrer"
         className={styles.nodeLink}
       >
-        <i className={`nf nf-dev-argocd ${styles.nodeIcon}`}></i>
+        <i
+          className={`nf nf-dev-argocd ${styles.nodeIcon} ${styles.argoIcon}`}
+        ></i>
         <div className={styles.nodeTextLine}>{displayRepoName}</div>
         <div className={styles.nodeTextLineBolder}>{displayRepoPath}</div>
       </a>
