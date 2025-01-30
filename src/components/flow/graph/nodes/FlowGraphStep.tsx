@@ -1,5 +1,5 @@
-import type { Step, Trigger } from "src/data/types.ts";
-import { StepType } from "src/data/types.ts";
+import type { Step, Trigger } from "src/data/types/flowTypes.ts";
+import { StepType } from "src/data/types/flowTypes.ts";
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
 

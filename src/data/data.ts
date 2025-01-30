@@ -1,5 +1,5 @@
-import type { Flow, Step, Trigger } from "src/data/types.ts";
-import { StepType, TriggerType } from "src/data/types.ts";
+import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
+import { StepType, TriggerType } from "src/data/types/flowTypes.ts";
 
 const stats = {
   namespaces: 5,

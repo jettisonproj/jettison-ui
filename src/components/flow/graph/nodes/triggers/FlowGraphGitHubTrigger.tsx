@@ -7,8 +7,8 @@ import {
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
-} from "src/data/types.ts";
-import { TriggerType } from "src/data/types.ts";
+} from "src/data/types/flowTypes.ts";
+import { TriggerType } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphGitHubTriggerProps {
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;

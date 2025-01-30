@@ -6,8 +6,8 @@ import type {
   DockerBuildTestStep,
   DockerBuildTestPublishStep,
   Trigger,
-} from "src/data/types.ts";
-import { StepType } from "src/data/types.ts";
+} from "src/data/types/flowTypes.ts";
+import { StepType } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphDockerStepProps {
   step: DockerBuildTestStep | DockerBuildTestPublishStep;

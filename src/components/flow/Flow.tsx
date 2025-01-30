@@ -5,11 +5,12 @@ import {
   flowDefaultStepName,
   flowDefaultTriggerName,
 } from "src/data/data.ts";
-import type { Flow } from "src/data/types.ts";
+import type { Flow } from "src/data/types/flowTypes.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
 import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
 import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
 import type {
@@ -62,6 +63,7 @@ function FlowItem({ namespace, name, flow }: FlowItemProps) {
   return (
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
+      <FlowHistory />
       <pre>{JSON.stringify(flow, null, 2)}</pre>
       <p>flow history here</p>
     </>

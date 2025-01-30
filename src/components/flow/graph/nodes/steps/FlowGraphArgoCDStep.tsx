@@ -5,7 +5,7 @@ import {
   getDisplayRepoName,
   getDisplayRepoPath,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
-import type { ArgoCDStep } from "src/data/types.ts";
+import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphArgoCDStepProps {
   step: ArgoCDStep;
