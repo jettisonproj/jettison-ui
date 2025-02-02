@@ -1,4 +1,5 @@
 import { flowDefaults } from "src/data/data.ts";
+import { trimGitSuffix } from "src/components/flow/flowUtil.ts";
 
 function getDisplayRepoName(repoUrl: string) {
   const { pathname } = new URL(repoUrl);
@@ -35,13 +36,6 @@ function getRepoTreeLink(repoUrl: string, baseRef: string | undefined) {
   repoUrl = trimGitSuffix(repoUrl);
   baseRef = baseRef ?? flowDefaults.baseRef;
   return `${repoUrl}/tree/${baseRef}`;
-}
-
-function trimGitSuffix(s: string) {
-  if (s.endsWith(".git")) {
-    return s.slice(0, -4);
-  }
-  return s;
 }
 
 export { getRepoTreeLink, getDisplayRepoName, getDisplayRepoPath };

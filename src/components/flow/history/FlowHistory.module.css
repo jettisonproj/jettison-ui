@@ -1,0 +1,27 @@
+.successIcon {
+  color: var(--success-color);
+  font-size: 16px;
+}
+
+.linkIcon {
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.historyCommit {
+  font-family: monospace;
+  color: var(--text-color);
+}
+
+.historyCommit:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.timestamp {
+  cursor: pointer;
+}
+
+.timestamp:hover {
+  text-decoration: underline;
+}

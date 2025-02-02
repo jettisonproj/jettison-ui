@@ -4,8 +4,10 @@ import {
   flowByNamespaceName,
   flowDefaultStepName,
   flowDefaultTriggerName,
+  workflowsByNamespaceName,
 } from "src/data/data.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
@@ -28,13 +30,20 @@ function Flow() {
 
   const flowByName = flowByNamespaceName[namespace] ?? {};
   const flow = flowByName[name];
+  const workflowsByName = workflowsByNamespaceName[namespace] ?? {};
+  const workflows = workflowsByName[name] ?? [];
 
   return (
     <>
       <Header />
       <Content>
         <FlowNavHeader namespace={namespace} name={name} />
-        <FlowItem namespace={namespace} name={name} flow={flow} />
+        <FlowItem
+          namespace={namespace}
+          name={name}
+          flow={flow}
+          workflows={workflows}
+        />
       </Content>
     </>
   );
@@ -44,9 +53,10 @@ interface FlowItemProps {
   namespace: string;
   name: string;
   flow: Flow | undefined;
+  workflows: Workflow[];
 }
 
-function FlowItem({ namespace, name, flow }: FlowItemProps) {
+function FlowItem({ namespace, name, flow, workflows }: FlowItemProps) {
   if (flow == null) {
     return (
       <p>
@@ -63,9 +73,8 @@ function FlowItem({ namespace, name, flow }: FlowItemProps) {
   return (
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
-      <FlowHistory />
+      <FlowHistory workflows={workflows} namespace={namespace} />
       <pre>{JSON.stringify(flow, null, 2)}</pre>
-      <p>flow history here</p>
     </>
   );
 }
