@@ -6,7 +6,7 @@ import {
   flowDefaultTriggerName,
   workflowsByNamespaceName,
 } from "src/data/data.ts";
-import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
@@ -80,11 +80,7 @@ function FlowItem({ namespace, name, flow, workflows }: FlowItemProps) {
 }
 
 function getFlowNodes(flow: Flow): FlowNode[] {
-  const { triggers } = flow.spec;
-  if (triggers.length !== 1) {
-    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
-  }
-  const trigger = triggers[0];
+  const trigger = getFlowTrigger(flow);
   const triggerNode = {
     label: flowDefaultTriggerName(trigger),
     width: 144,
@@ -104,11 +100,8 @@ function getFlowNodes(flow: Flow): FlowNode[] {
 }
 
 function getFlowEdges(flow: Flow): FlowEdge[] {
-  const { triggers, steps } = flow.spec;
-  if (triggers.length !== 1) {
-    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
-  }
-  const trigger = triggers[0];
+  const trigger = getFlowTrigger(flow);
+  const { steps } = flow.spec;
   let edgeIndex = 0;
   const triggerEdges = steps
     .filter((step) => !step.dependsOn || step.dependsOn.length === 0)
@@ -127,6 +120,19 @@ function getFlowEdges(flow: Flow): FlowEdge[] {
   );
 
   return triggerEdges.concat(nodeEdges);
+}
+
+/* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
+function getFlowTrigger(flow: Flow): Trigger {
+  const { triggers } = flow.spec;
+  if (triggers.length !== 1) {
+    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
+  }
+  const trigger = triggers[0];
+  if (!trigger) {
+    throw new FlowError(`expected Flow trigger but got: ${trigger}`);
+  }
+  return trigger;
 }
 
 class FlowError extends Error {

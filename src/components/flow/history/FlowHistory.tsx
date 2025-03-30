@@ -84,7 +84,7 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
 function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
   // Create map of parameter name to value
   const { parameters } = workflow.spec.arguments;
-  const parameterMap: Record<string, string | undefined> = {};
+  const parameterMap: Record<string, string> = {};
   parameters.forEach((parameter) => {
     parameterMap[parameter.name] = parameter.value;
   });

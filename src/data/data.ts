@@ -32,7 +32,7 @@ const namespaces = [
   "wavesmusicplayer",
 ];
 
-const flowsByNamespace: Record<string, string[] | undefined> = {
+const flowsByNamespace: Record<string, string[]> = {
   "rollouts-demo": ["github-pr", "github-push"],
 };
 
@@ -91,10 +91,7 @@ const gitHubPushFlow: Flow = {
   },
 };
 
-const flowByNamespaceName: Record<
-  string,
-  Record<string, Flow | undefined> | undefined
-> = {
+const flowByNamespaceName: Record<string, Record<string, Flow>> = {
   "rollouts-demo": {
     "github-pr": gitHubPrFlow,
     "github-push": gitHubPushFlow,
@@ -168,10 +165,7 @@ const gitHubPrHistoryItem: Workflow = {
   },
 };
 
-const workflowsByNamespaceName: Record<
-  string,
-  Record<string, Workflow[] | undefined> | undefined
-> = {
+const workflowsByNamespaceName: Record<string, Record<string, Workflow[]>> = {
   "rollouts-demo": {
     "github-push": [gitHubPushHistoryItem],
     "github-pr": [gitHubPrHistoryItem],

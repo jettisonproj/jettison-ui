@@ -140,6 +140,9 @@ interface FlowGraphEdgeProps {
 function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps) {
   const { points } = edgeLabel;
   const [startPoint, centerPoint, endPoint] = points;
+  if (startPoint == null || centerPoint == null || endPoint == null) {
+    throw new FlowGraphError("invalid dagre edgeLabel: point was null");
+  }
   const { x: sx, y: sy } = startPoint;
   const { x: cx, y: cy } = centerPoint;
   const { x: ex, y: ey } = endPoint;
