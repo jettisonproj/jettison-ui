@@ -7,32 +7,32 @@ interface FlowSpec {
   triggers: Trigger[];
 }
 
-enum StepType {
-  DockerBuildTest = "dockerBuildTest",
-  DockerBuildTestPublish = "dockerBuildTestPublish",
-  ArgoCD = "argoCD",
+enum StepSource {
+  DockerBuildTest = "DockerBuildTest",
+  DockerBuildTestPublish = "DockerBuildTestPublish",
+  ArgoCD = "ArgoCD",
 }
 
 interface BaseStep {
   stepName?: string;
-  stepSource: StepType;
+  stepSource: StepSource;
   dependsOn?: string[];
 }
 
 interface DockerBuildTestStep extends BaseStep {
-  stepSource: StepType.DockerBuildTest;
+  stepSource: StepSource.DockerBuildTest;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface DockerBuildTestPublishStep extends BaseStep {
-  stepSource: StepType.DockerBuildTestPublish;
+  stepSource: StepSource.DockerBuildTestPublish;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface ArgoCDStep extends BaseStep {
-  stepSource: StepType.ArgoCD;
+  stepSource: StepSource.ArgoCD;
   repoUrl: string;
   repoPath: string;
   baseRef?: string;
@@ -40,25 +40,25 @@ interface ArgoCDStep extends BaseStep {
 
 type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
 
-enum TriggerType {
-  GitHubPullRequest = "githubPullRequest",
-  GitHubPush = "githubPush",
+enum TriggerSource {
+  GitHubPullRequest = "GitHubPullRequest",
+  GitHubPush = "GitHubPush",
 }
 
 interface BaseTrigger {
   triggerName?: string;
-  triggerSource: TriggerType;
+  triggerSource: TriggerSource;
 }
 
 interface GitHubPullRequestTrigger extends BaseTrigger {
-  triggerSource: TriggerType.GitHubPullRequest;
+  triggerSource: TriggerSource.GitHubPullRequest;
   repoUrl: string;
   baseRef?: string;
   pullRequestEvents?: string[];
 }
 
 interface GitHubPushTrigger extends BaseTrigger {
-  triggerSource: TriggerType.GitHubPush;
+  triggerSource: TriggerSource.GitHubPush;
   repoUrl: string;
   baseRef?: string | undefined;
 }
@@ -76,4 +76,4 @@ export type {
   ArgoCDStep,
 };
 
-export { TriggerType, StepType };
+export { TriggerSource, StepSource };

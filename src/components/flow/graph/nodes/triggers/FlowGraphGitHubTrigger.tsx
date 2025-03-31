@@ -8,7 +8,7 @@ import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
-import { TriggerType } from "src/data/types/flowTypes.ts";
+import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphGitHubTriggerProps {
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;
@@ -37,9 +37,9 @@ function getDisplayEvent(
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger,
 ) {
   switch (trigger.triggerSource) {
-    case TriggerType.GitHubPush:
+    case TriggerSource.GitHubPush:
       return "push";
-    case TriggerType.GitHubPullRequest:
+    case TriggerSource.GitHubPullRequest:
       return "PR";
     default:
       trigger satisfies never;

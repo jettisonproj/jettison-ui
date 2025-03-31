@@ -7,7 +7,7 @@ import type {
   DockerBuildTestPublishStep,
   Trigger,
 } from "src/data/types/flowTypes.ts";
-import { StepType } from "src/data/types/flowTypes.ts";
+import { StepSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphDockerStepProps {
   step: DockerBuildTestStep | DockerBuildTestPublishStep;
@@ -45,9 +45,9 @@ function getDisplayEvent(
   step: DockerBuildTestStep | DockerBuildTestPublishStep,
 ) {
   switch (step.stepSource) {
-    case StepType.DockerBuildTest:
+    case StepSource.DockerBuildTest:
       return "build";
-    case StepType.DockerBuildTestPublish:
+    case StepSource.DockerBuildTestPublish:
       return "publish";
     default:
       step satisfies never;

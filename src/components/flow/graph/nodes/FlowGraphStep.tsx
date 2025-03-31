@@ -1,5 +1,5 @@
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
-import { StepType } from "src/data/types/flowTypes.ts";
+import { StepSource } from "src/data/types/flowTypes.ts";
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
 
@@ -9,10 +9,10 @@ interface FlowGraphStepProps {
 }
 function FlowGraphStep({ step, trigger }: FlowGraphStepProps) {
   switch (step.stepSource) {
-    case StepType.DockerBuildTest:
-    case StepType.DockerBuildTestPublish:
+    case StepSource.DockerBuildTest:
+    case StepSource.DockerBuildTestPublish:
       return <FlowGraphDockerStep step={step} trigger={trigger} />;
-    case StepType.ArgoCD:
+    case StepSource.ArgoCD:
       return <FlowGraphArgoCDStep step={step} />;
     default:
       step satisfies never;
