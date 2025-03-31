@@ -39,16 +39,13 @@ class ResourceEventHandler {
     return this.#flowEvents.length > 0;
   }
 
-  getUpdatedNamespaces(
-    namespaces: Record<string, Namespace> | null,
-  ): Record<string, Namespace> {
-    const newNamespaces = { ...namespaces };
+  getUpdatedNamespaces(namespaces: Set<string> | null): Set<string> {
+    const newNamespaces = new Set(namespaces);
     for (const namespaceEvent of this.#namespaceEvents) {
       if (this.#isDeleteEvent(namespaceEvent)) {
-        // eslint-disable-next-line
-        delete newNamespaces[namespaceEvent.metadata.name];
+        newNamespaces.delete(namespaceEvent.metadata.name);
       } else {
-        newNamespaces[namespaceEvent.metadata.name] = namespaceEvent;
+        newNamespaces.add(namespaceEvent.metadata.name);
       }
     }
 
@@ -56,39 +53,39 @@ class ResourceEventHandler {
   }
 
   getUpdatedFlows(
-    flows: Record<string, Record<string, Flow>> | null,
-  ): Record<string, Record<string, Flow>> {
-    const newFlows = { ...flows };
+    flows: Map<string, Map<string, Flow>> | null,
+  ): Map<string, Map<string, Flow>> {
+    const newFlows = new Map(flows);
 
     for (const flowEvent of this.#flowEvents) {
       const { namespace, name } = flowEvent.metadata;
+      const namespaceFlows = newFlows.get(namespace);
 
       if (this.#isDeleteEvent(flowEvent)) {
-        const namespaceFlows = newFlows[namespace];
         if (namespaceFlows == null) {
           // The namespace does not exist. Skip deletion
           continue;
         }
 
-        const namespaceFlow = namespaceFlows[name];
-        if (!namespaceFlow) {
+        const namespaceFlow = namespaceFlows.get(name);
+        if (namespaceFlow == null) {
           // The flow does not exist. Skip deletion
           continue;
         }
 
-        // eslint-disable-next-line
-        const { [name]: _, ...newNamespaceFlows } = namespaceFlows;
-
-        if (Object.keys(newNamespaceFlows).length === 0) {
-          // eslint-disable-next-line
-          delete newFlows[namespace];
+        if (namespaceFlows.size === 1) {
+          // The namespace can be removed since it is the last entry
+          newFlows.delete(namespace);
         } else {
-          newFlows[namespace] = newNamespaceFlows;
+          const newNamespaceFlows = new Map(namespaceFlows);
+          newNamespaceFlows.delete(name);
+
+          newFlows.set(namespace, newNamespaceFlows);
         }
       } else {
-        const newNamespaceFlows = { ...newFlows[namespace] };
-        newFlows[namespace] = newNamespaceFlows;
-        newNamespaceFlows[name] = flowEvent;
+        const newNamespaceFlows = new Map(namespaceFlows);
+        newNamespaceFlows.set(name, flowEvent);
+        newFlows.set(namespace, newNamespaceFlows);
       }
     }
 

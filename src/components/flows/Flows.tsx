@@ -37,7 +37,7 @@ function FlowsList({ namespace }: FlowsListProps) {
     return <i className="nf nf-fa-spinner" />;
   }
 
-  const namespaceFlows = flows[namespace];
+  const namespaceFlows = flows.get(namespace);
 
   if (namespaceFlows == null) {
     return (
@@ -49,7 +49,7 @@ function FlowsList({ namespace }: FlowsListProps) {
   }
   return (
     <ul>
-      {Object.keys(namespaceFlows)
+      {Array.from(namespaceFlows.keys())
         .sort()
         .map((flow) => (
           <li key={`${namespace}/${flow}`}>

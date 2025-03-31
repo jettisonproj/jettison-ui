@@ -28,7 +28,7 @@ function NamespacesList() {
 
   return (
     <ul>
-      {Object.keys(namespaces)
+      {Array.from(namespaces)
         .sort()
         .map((namespace) => (
           <li key={namespace}>

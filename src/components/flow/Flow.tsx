@@ -54,7 +54,7 @@ function FlowItem({ namespace, name, workflows }: FlowItemProps) {
   if (flows == null) {
     return <i className="nf nf-fa-spinner" />;
   }
-  const flow = flows[namespace]?.[name];
+  const flow = flows.get(namespace)?.get(name);
   if (flow == null) {
     return (
       <p>

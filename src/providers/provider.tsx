@@ -3,7 +3,6 @@ import type { ReactNode, Dispatch, SetStateAction } from "react";
 
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 import { localState } from "src/localState.ts";
-import type { Namespace } from "src/data/types/namespace.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
@@ -13,23 +12,19 @@ const DisplayIsoTimestampsContext = createContext(
 const SetDisplayIsoTimestampsContext = createContext((() => {
   // Use no-op as the default, which is not expected to actually be called
 }) as Dispatch<SetStateAction<boolean>>);
-const NamespacesContext = createContext(
-  null as Record<string, Namespace> | null,
-);
+const NamespacesContext = createContext(null as Set<string> | null);
 
 const FlowsContext = createContext(
-  null as Record<string, Record<string, Flow>> | null,
+  null as Map<string, Map<string, Flow>> | null,
 );
 
 interface ProviderProps {
   children: ReactNode;
 }
 function Provider({ children }: ProviderProps) {
-  const [namespaces, setNamespaces] = useState(
-    null as Record<string, Namespace> | null,
-  );
+  const [namespaces, setNamespaces] = useState(null as Set<string> | null);
   const [flows, setFlows] = useState(
-    null as Record<string, Record<string, Flow>> | null,
+    null as Map<string, Map<string, Flow>> | null,
   );
 
   const [displayIsoTimestamps, setDisplayIsoTimestamps] = useState(
