@@ -8,7 +8,7 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
-} from "src/provider.tsx";
+} from "src/providers/provider.tsx";
 
 const COMMIT_DISPLAY_LEN = 7;
 

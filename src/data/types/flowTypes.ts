@@ -1,4 +1,10 @@
-interface Flow {
+import type {
+  ResourceKind,
+  NamespacedResource,
+} from "src/data/types/baseResourceTypes.ts";
+
+interface Flow extends NamespacedResource {
+  kind: ResourceKind.Flow;
   spec: FlowSpec;
 }
 

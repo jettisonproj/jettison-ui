@@ -1,7 +1,8 @@
+import { useContext } from "react";
 import { Link, useParams } from "react-router";
 
 import { routes } from "src/routes.ts";
-import { flowsByNamespace } from "src/data/data.ts";
+import { FlowsContext } from "src/providers/provider.tsx";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
@@ -13,15 +14,13 @@ function Flows() {
       `namespace path parameter cannot be empty: namespace=${namespace}`,
     );
   }
-  const flows = flowsByNamespace[namespace] ?? [];
-
   return (
     <>
       <Header />
       <Content>
         <>
           <FlowsNavHeader namespace={namespace} />
-          <FlowsList namespace={namespace} flows={flows} />
+          <FlowsList namespace={namespace} />
         </>
       </Content>
     </>
@@ -30,11 +29,17 @@ function Flows() {
 
 interface FlowsListProps {
   namespace: string;
-  flows: string[];
 }
 
-function FlowsList({ namespace, flows }: FlowsListProps) {
-  if (flows.length === 0) {
+function FlowsList({ namespace }: FlowsListProps) {
+  const flows = useContext(FlowsContext);
+  if (flows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+
+  const namespaceFlows = flows[namespace];
+
+  if (namespaceFlows == null) {
     return (
       <p>
         There are no flows in namespace <strong>{namespace}</strong>. Would you
@@ -44,11 +49,13 @@ function FlowsList({ namespace, flows }: FlowsListProps) {
   }
   return (
     <ul>
-      {flows.map((flow) => (
-        <li key={flow}>
-          <Link to={`${routes.flows}/${namespace}/${flow}`}>{flow}</Link>
-        </li>
-      ))}
+      {Object.keys(namespaceFlows)
+        .sort()
+        .map((flow) => (
+          <li key={`${namespace}/${flow}`}>
+            <Link to={`${routes.flows}/${namespace}/${flow}`}>{flow}</Link>
+          </li>
+        ))}
     </ul>
   );
 }
