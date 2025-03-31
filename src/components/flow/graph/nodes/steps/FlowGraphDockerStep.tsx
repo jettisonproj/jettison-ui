@@ -51,6 +51,8 @@ function getDisplayEvent(
       return "publish";
     default:
       step satisfies never;
+      console.log("unknown step");
+      console.log(step);
   }
 }
 

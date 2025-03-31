@@ -12,6 +12,8 @@ function FlowGraphTrigger({ trigger }: FlowGraphTriggerProps) {
       return <FlowGraphGitHubTrigger trigger={trigger} />;
     default:
       trigger satisfies never;
+      console.log("unknown trigger");
+      console.log(trigger);
   }
 }
 export { FlowGraphTrigger };

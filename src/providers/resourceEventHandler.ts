@@ -24,7 +24,7 @@ class ResourceEventHandler {
           continue;
         default:
           resourceEvent satisfies never;
-          console.log("unknown event resource");
+          console.log("unknown resource event");
           console.log(resourceEvent);
           continue;
       }

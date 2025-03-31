@@ -43,6 +43,8 @@ function getDisplayEvent(
       return "PR";
     default:
       trigger satisfies never;
+      console.log("unknown trigger");
+      console.log(trigger);
   }
 }
 

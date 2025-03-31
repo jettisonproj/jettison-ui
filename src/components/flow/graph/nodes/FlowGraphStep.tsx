@@ -16,6 +16,8 @@ function FlowGraphStep({ step, trigger }: FlowGraphStepProps) {
       return <FlowGraphArgoCDStep step={step} />;
     default:
       step satisfies never;
+      console.log("unknown step");
+      console.log(step);
   }
 }
 
