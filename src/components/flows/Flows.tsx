@@ -18,10 +18,8 @@ function Flows() {
     <>
       <Header />
       <Content>
-        <>
-          <FlowsNavHeader namespace={namespace} />
-          <FlowsList namespace={namespace} />
-        </>
+        <FlowsNavHeader namespace={namespace} />
+        <FlowsList namespace={namespace} />
       </Content>
     </>
   );

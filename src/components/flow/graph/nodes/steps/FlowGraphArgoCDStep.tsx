@@ -1,40 +1,38 @@
+import { Link } from "react-router";
+
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  getRepoTreeLink,
   getDisplayRepoName,
   getDisplayRepoPath,
+  getStepDetailsLink,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphArgoCDStepProps {
+  namespace: string;
+  flowName: string;
   step: ArgoCDStep;
 }
-function FlowGraphArgoCDStep({ step }: FlowGraphArgoCDStepProps) {
+function FlowGraphArgoCDStep({
+  namespace,
+  flowName,
+  step,
+}: FlowGraphArgoCDStepProps) {
   const displayRepoName = getDisplayRepoName(step.repoUrl);
   const displayRepoPath = getDisplayRepoPath(step.repoPath, step.repoPath);
-  const repoLink = getRepoLink(step);
+  const stepDetailsLink = getStepDetailsLink(namespace, flowName, step);
   return (
     <FlowGraphNode>
-      <a
-        href={repoLink}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.nodeLink}
-      >
+      <Link to={stepDetailsLink} className={styles.nodeLink}>
         <i
           className={`nf nf-dev-argocd ${styles.nodeIcon} ${styles.argoIcon}`}
         ></i>
         <div className={styles.nodeTextLine}>{displayRepoName}</div>
         <div className={styles.nodeTextLineBolder}>{displayRepoPath}</div>
-      </a>
+      </Link>
     </FlowGraphNode>
   );
-}
-
-function getRepoLink(step: ArgoCDStep) {
-  const repoTreeLink = getRepoTreeLink(step.repoUrl, step.baseRef);
-  return `${repoTreeLink}/${step.repoPath}`;
 }
 
 export { FlowGraphArgoCDStep };

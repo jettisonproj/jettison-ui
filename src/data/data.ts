@@ -15,6 +15,7 @@ const flowDefaults = {
   baseRef: "main",
   dockerfilePath: "Dockerfile",
 };
+
 // todo need to get defaults from backend, or bake default into types
 function flowDefaultStepName(step: Step) {
   return step.stepName ?? step.stepSource;

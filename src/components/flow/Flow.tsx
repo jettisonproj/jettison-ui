@@ -1,21 +1,24 @@
 import { useContext } from "react";
 import { useParams } from "react-router";
 
+import { FlowError, getFlowTrigger } from "src/components/flow/flowUtil.ts";
 import {
   flowDefaultStepName,
   flowDefaultTriggerName,
   workflowsByNamespaceName,
 } from "src/data/data.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
-import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
+import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import {
+  getFlowStepNode,
+  getFlowTriggerNode,
+} from "src/components/flow/flowComponentsUtil.tsx";
 import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
-import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
-import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
 import type {
   FlowNode,
   FlowEdge,
@@ -79,20 +82,13 @@ function FlowItem({ namespace, name, workflows }: FlowItemProps) {
 
 function getFlowNodes(flow: Flow): FlowNode[] {
   const trigger = getFlowTrigger(flow);
-  const triggerNode = {
-    label: flowDefaultTriggerName(trigger),
-    width: 144,
-    height: 100,
-    children: <FlowGraphTrigger trigger={trigger} />,
-  };
+  const { namespace, name: flowName } = flow.metadata;
+  const triggerNode = getFlowTriggerNode(namespace, flowName, trigger);
 
   const { steps } = flow.spec;
-  const stepNodes = steps.map((step) => ({
-    label: flowDefaultStepName(step),
-    width: 168,
-    height: 100,
-    children: <FlowGraphStep step={step} trigger={trigger} />,
-  }));
+  const stepNodes = steps.map((step) =>
+    getFlowStepNode(namespace, flowName, step),
+  );
 
   return [triggerNode].concat(stepNodes);
 }
@@ -118,26 +114,6 @@ function getFlowEdges(flow: Flow): FlowEdge[] {
   );
 
   return triggerEdges.concat(nodeEdges);
-}
-
-/* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
-function getFlowTrigger(flow: Flow): Trigger {
-  const { triggers } = flow.spec;
-  if (triggers.length !== 1) {
-    throw new FlowError(`expected 1 Flow trigger but got: ${triggers.length}`);
-  }
-  const trigger = triggers[0];
-  if (!trigger) {
-    throw new FlowError(`expected Flow trigger but got: ${trigger}`);
-  }
-  return trigger;
-}
-
-class FlowError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { Flow };

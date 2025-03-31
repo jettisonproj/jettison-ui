@@ -92,6 +92,37 @@ function FlowNavHeader({ namespace, name }: FlowNavHeaderProps) {
   return <NavHeader components={components} />;
 }
 
+/* NodeDetails Nav Header */
+function nodeDetailsNavComponent(
+  namespace: string,
+  flowName: string,
+  nodeName: string,
+) {
+  return {
+    name: nodeName,
+    link: `${routes.flows}/${namespace}/${flowName}/${nodeName}`,
+  };
+}
+interface NodeDetailsNavHeaderProps {
+  namespace: string;
+  flowName: string;
+  nodeName: string;
+}
+function NodeDetailsNavHeader({
+  namespace,
+  flowName,
+  nodeName,
+}: NodeDetailsNavHeaderProps) {
+  const components = [
+    homeNavComponent,
+    namespacesNavComponent,
+    flowsNavComponent(namespace),
+    flowNavComponent(namespace, flowName),
+    nodeDetailsNavComponent(namespace, flowName, nodeName),
+  ];
+  return <NavHeader components={components} />;
+}
+
 class NavHeaderError extends Error {
   constructor(message: string) {
     super(message);
@@ -99,4 +130,10 @@ class NavHeaderError extends Error {
   }
 }
 
-export { HomeNavHeader, NamespacesNavHeader, FlowsNavHeader, FlowNavHeader };
+export {
+  HomeNavHeader,
+  NamespacesNavHeader,
+  FlowsNavHeader,
+  FlowNavHeader,
+  NodeDetailsNavHeader,
+};

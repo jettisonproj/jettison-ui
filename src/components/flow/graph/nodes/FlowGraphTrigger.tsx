@@ -3,13 +3,25 @@ import { FlowGraphGitHubTrigger } from "src/components/flow/graph/nodes/triggers
 import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphTriggerProps {
+  namespace: string;
+  flowName: string;
   trigger: Trigger;
 }
-function FlowGraphTrigger({ trigger }: FlowGraphTriggerProps) {
+function FlowGraphTrigger({
+  namespace,
+  flowName,
+  trigger,
+}: FlowGraphTriggerProps) {
   switch (trigger.triggerSource) {
     case TriggerSource.GitHubPullRequest:
     case TriggerSource.GitHubPush:
-      return <FlowGraphGitHubTrigger trigger={trigger} />;
+      return (
+        <FlowGraphGitHubTrigger
+          namespace={namespace}
+          flowName={flowName}
+          trigger={trigger}
+        />
+      );
     default:
       trigger satisfies never;
       console.log("unknown trigger");

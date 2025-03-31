@@ -1,4 +1,6 @@
-import { flowDefaults } from "src/data/data.ts";
+import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
+import { routes } from "src/routes.ts";
+import type { Step, Trigger } from "src/data/types/flowTypes.ts";
 import { trimGitSuffix } from "src/components/flow/flowUtil.ts";
 
 function getDisplayRepoName(repoUrl: string) {
@@ -29,13 +31,31 @@ function getDisplayRepoPath(pathname: string, defaultValue: string) {
   return trimGitSuffix(lastPathnamePart);
 }
 
-/**
- * Get the link url to the root of the repo and baseRef
- */
-function getRepoTreeLink(repoUrl: string, baseRef: string | undefined) {
-  repoUrl = trimGitSuffix(repoUrl);
-  baseRef = baseRef ?? flowDefaults.baseRef;
-  return `${repoUrl}/tree/${baseRef}`;
+function getTriggerDetailsLink(
+  namespace: string,
+  flowName: string,
+  trigger: Trigger,
+) {
+  const triggerName = flowDefaultTriggerName(trigger);
+  return getNodeDetailsLink(namespace, flowName, triggerName);
 }
 
-export { getRepoTreeLink, getDisplayRepoName, getDisplayRepoPath };
+function getStepDetailsLink(namespace: string, flowName: string, step: Step) {
+  const stepName = flowDefaultStepName(step);
+  return getNodeDetailsLink(namespace, flowName, stepName);
+}
+
+function getNodeDetailsLink(
+  namespace: string,
+  flowName: string,
+  nodeName: string,
+) {
+  return `${routes.flows}/${namespace}/${flowName}/${nodeName}`;
+}
+
+export {
+  getDisplayRepoName,
+  getDisplayRepoPath,
+  getTriggerDetailsLink,
+  getStepDetailsLink,
+};
