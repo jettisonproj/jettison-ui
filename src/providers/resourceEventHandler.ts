@@ -56,6 +56,7 @@ class ResourceEventHandler {
     flows: Map<string, Map<string, Flow>> | null,
   ): Map<string, Map<string, Flow>> {
     const newFlows = new Map(flows);
+    const recreatedNamespaces = new Set();
 
     for (const flowEvent of this.#flowEvents) {
       const { namespace, name } = flowEvent.metadata;
@@ -77,15 +78,30 @@ class ResourceEventHandler {
           // The namespace can be removed since it is the last entry
           newFlows.delete(namespace);
         } else {
-          const newNamespaceFlows = new Map(namespaceFlows);
-          newNamespaceFlows.delete(name);
+          // Get the updated namespace map. Ensures it is recreated if needed
+          let newNamespaceFlows;
+          if (recreatedNamespaces.has(namespace)) {
+            newNamespaceFlows = namespaceFlows;
+          } else {
+            newNamespaceFlows = new Map(namespaceFlows);
+            newFlows.set(namespace, newNamespaceFlows);
+            recreatedNamespaces.add(namespace);
+          }
 
-          newFlows.set(namespace, newNamespaceFlows);
+          newNamespaceFlows.delete(name);
         }
       } else {
-        const newNamespaceFlows = new Map(namespaceFlows);
+        // Get the updated namespace map. Ensures it is recreated if needed
+        let newNamespaceFlows;
+        if (namespaceFlows != null && recreatedNamespaces.has(namespace)) {
+          newNamespaceFlows = namespaceFlows;
+        } else {
+          newNamespaceFlows = new Map(namespaceFlows);
+          newFlows.set(namespace, newNamespaceFlows);
+          recreatedNamespaces.add(namespace);
+        }
+
         newNamespaceFlows.set(name, flowEvent);
-        newFlows.set(namespace, newNamespaceFlows);
       }
     }
 
