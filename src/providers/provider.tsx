@@ -4,6 +4,8 @@ import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 import { localState } from "src/localState.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Application } from "src/data/types/applicationTypes.ts";
+import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
 const DisplayIsoTimestampsContext = createContext(
@@ -18,6 +20,14 @@ const FlowsContext = createContext(
   null as Map<string, Map<string, Flow>> | null,
 );
 
+const ApplicationsContext = createContext(
+  null as Map<string, Map<string, Application>> | null,
+);
+
+const RolloutsContext = createContext(
+  null as Map<string, Map<string, Rollout>> | null,
+);
+
 interface ProviderProps {
   children: ReactNode;
 }
@@ -25,6 +35,13 @@ function Provider({ children }: ProviderProps) {
   const [namespaces, setNamespaces] = useState(null as Set<string> | null);
   const [flows, setFlows] = useState(
     null as Map<string, Map<string, Flow>> | null,
+  );
+  const [applications, setApplications] = useState(
+    null as Map<string, Map<string, Application>> | null,
+  );
+
+  const [rollouts, setRollouts] = useState(
+    null as Map<string, Map<string, Rollout>> | null,
   );
 
   const [displayIsoTimestamps, setDisplayIsoTimestamps] = useState(
@@ -66,6 +83,18 @@ function Provider({ children }: ProviderProps) {
         if (resourceEventHandler.hasFlowEvents()) {
           setFlows((flows) => resourceEventHandler.getUpdatedFlows(flows));
         }
+
+        if (resourceEventHandler.hasApplicationEvents()) {
+          setApplications((applications) =>
+            resourceEventHandler.getUpdatedApplications(applications),
+          );
+        }
+
+        if (resourceEventHandler.hasRolloutEvents()) {
+          setRollouts((rollouts) =>
+            resourceEventHandler.getUpdatedRollouts(rollouts),
+          );
+        }
       } catch (err) {
         if (!(err instanceof Error)) {
           console.log("unknown error while processing message");
@@ -101,7 +130,11 @@ function Provider({ children }: ProviderProps) {
       <SetDisplayIsoTimestampsContext.Provider value={setDisplayIsoTimestamps}>
         <NamespacesContext.Provider value={namespaces}>
           <FlowsContext.Provider value={flows}>
-            {children}
+            <ApplicationsContext.Provider value={applications}>
+              <RolloutsContext.Provider value={rollouts}>
+                {children}
+              </RolloutsContext.Provider>
+            </ApplicationsContext.Provider>
           </FlowsContext.Provider>
         </NamespacesContext.Provider>
       </SetDisplayIsoTimestampsContext.Provider>
@@ -115,4 +148,6 @@ export {
   SetDisplayIsoTimestampsContext,
   NamespacesContext,
   FlowsContext,
+  ApplicationsContext,
+  RolloutsContext,
 };
