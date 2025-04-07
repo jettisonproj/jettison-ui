@@ -16,7 +16,7 @@ function FlowGraphNode({ children }: FlowGraphNodeProps) {
       // should be set. However, this is not supported in ts currently
       // See https://stackoverflow.com/questions/39504988/react-svg-html-inside-foreignobject-not-rendered
       xmlns="http://www.w3.org/1999/xhtml"
-      className={styles.nodeContent}
+      className={styles.nodeRoot}
     >
       {children}
     </div>

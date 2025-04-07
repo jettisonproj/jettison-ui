@@ -7,13 +7,22 @@
   height: 100%;
 }
 
-.nodeContent {
+.nodeRoot {
   composes: flexCenter;
 
+  /* Start a stacking context in order to render links inside of links
+   * Otherwise, HTML linters warn about nested links */
+  position: relative;
   padding: 11px 15px;
 }
 
 .nodeLink {
+  /* Create an overlay link for the node */
+  position: absolute;
+  inset: 0;
+}
+
+.nodeContent {
   composes: flexCenter;
 
   color: var(--text-color);
@@ -64,6 +73,8 @@
 }
 
 .commitLink {
+  /* Use relative position, so that it works with the overlay link */
+  position: relative;
   color: #59636e;
 }
 

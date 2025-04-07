@@ -31,11 +31,12 @@ function FlowGraphGitHubTrigger({
   );
   return (
     <FlowGraphNode>
-      <Link to={triggerDetailsLink} className={styles.nodeLink}>
+      <Link to={triggerDetailsLink} className={styles.nodeLink} />
+      <div className={styles.nodeContent}>
         <i className={`nf nf-fa-github ${styles.nodeIcon}`}></i>
         <div className={styles.nodeTextLine}>{displayRepoName}</div>
         <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
-      </Link>
+      </div>
     </FlowGraphNode>
   );
 }

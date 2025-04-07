@@ -40,14 +40,15 @@ function FlowGraphArgoCDStep({
 
   return (
     <FlowGraphNode>
-      <Link to={stepDetailsLink} className={styles.nodeLink}>
+      <Link to={stepDetailsLink} className={styles.nodeLink} />
+      <div className={styles.nodeContent}>
         <i
           className={`nf nf-dev-argocd ${styles.nodeIcon} ${styles.argoIcon}`}
         ></i>
         <div className={styles.nodeTextLine}>{displayRepoName}</div>
         <div className={styles.nodeTextLineBolder}>{displayRepoPath}</div>
         <FlowGraphArgoCDStepStatus step={step} trigger={trigger} />
-      </Link>
+      </div>
     </FlowGraphNode>
   );
 }

@@ -24,13 +24,14 @@ function FlowGraphDockerStep({
 
   return (
     <FlowGraphNode>
-      <Link to={stepDetailsLink} className={styles.nodeLink}>
+      <Link to={stepDetailsLink} className={styles.nodeLink} />
+      <div className={styles.nodeContent}>
         <i
           className={`nf nf-fa-docker ${styles.nodeIcon} ${styles.dockerIcon}`}
         ></i>
         <div className={styles.nodeTextLine}>Dockerfile</div>
         <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
-      </Link>
+      </div>
     </FlowGraphNode>
   );
 }
