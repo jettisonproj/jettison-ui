@@ -1,4 +1,4 @@
-import { getRepoTreeLink } from "src/components/nodedetails/nodelinks/nodeLinksUtil.ts";
+import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,

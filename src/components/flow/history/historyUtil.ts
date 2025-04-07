@@ -1,13 +1,3 @@
-import { trimGitSuffix } from "src/components/flow/flowUtil.ts";
-
-/**
- * Get the link url to the commit in the repo
- */
-function getRepoCommitLink(repoUrl: string, commit: string) {
-  repoUrl = trimGitSuffix(repoUrl);
-  return `${repoUrl}/commit/${commit}`;
-}
-
 /**
  * Ideally, this could be replaced by the Temporal api when it's available.
  * Handles data between 1 second and 1 week.
@@ -41,4 +31,4 @@ function getHumanDuration(totalMs: number): string {
   return `${totalDays}d ${hours}h`;
 }
 
-export { getRepoCommitLink, getHumanDuration };
+export { getHumanDuration };

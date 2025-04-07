@@ -1,12 +1,5 @@
 import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
 
-function trimGitSuffix(s: string) {
-  if (s.endsWith(".git")) {
-    return s.slice(0, -4);
-  }
-  return s;
-}
-
 /* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
 function getFlowTrigger(flow: Flow): Trigger {
   const { triggers } = flow.spec;
@@ -27,4 +20,4 @@ class FlowError extends Error {
   }
 }
 
-export { FlowError, getFlowTrigger, trimGitSuffix };
+export { FlowError, getFlowTrigger };

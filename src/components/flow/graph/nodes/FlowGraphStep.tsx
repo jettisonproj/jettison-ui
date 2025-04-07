@@ -1,4 +1,4 @@
-import type { Step } from "src/data/types/flowTypes.ts";
+import type { Step, Trigger } from "src/data/types/flowTypes.ts";
 import { StepSource } from "src/data/types/flowTypes.ts";
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
@@ -7,8 +7,14 @@ interface FlowGraphStepProps {
   namespace: string;
   flowName: string;
   step: Step;
+  trigger: Trigger;
 }
-function FlowGraphStep({ namespace, flowName, step }: FlowGraphStepProps) {
+function FlowGraphStep({
+  namespace,
+  flowName,
+  step,
+  trigger,
+}: FlowGraphStepProps) {
   switch (step.stepSource) {
     case StepSource.DockerBuildTest:
     case StepSource.DockerBuildTestPublish:
@@ -25,6 +31,7 @@ function FlowGraphStep({ namespace, flowName, step }: FlowGraphStepProps) {
           namespace={namespace}
           flowName={flowName}
           step={step}
+          trigger={trigger}
         />
       );
     default:

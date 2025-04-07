@@ -20,7 +20,7 @@
 }
 
 .nodeIcon {
-  padding: 5px;
+  padding-bottom: 5px;
   font-size: 27px;
 }
 
@@ -37,10 +37,37 @@
   font-weight: bolder;
 }
 
+.nodeTextLineCode {
+  composes: nodeTextLine;
+
+  font-size: 12px;
+  font-family: monospace;
+}
+
 .dockerIcon {
   color: #1d63ed;
 }
 
 .argoIcon {
   color: #ef7b4d;
+}
+
+.successIcon {
+  color: var(--success-color);
+  margin-right: 5px;
+}
+
+.dangerIcon {
+  color: var(--danger-color);
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.commitLink {
+  color: #59636e;
+}
+
+.commitLink:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
 }

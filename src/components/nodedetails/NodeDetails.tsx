@@ -85,8 +85,8 @@ function NodeDetailsItem({
     (step) => flowDefaultStepName(step) === nodeName,
   );
   if (step) {
-    const stepNode = getFlowStepNode(namespace, flowName, step);
     const trigger = getFlowTrigger(flow);
+    const stepNode = getFlowStepNode(namespace, flowName, step, trigger);
     return (
       <>
         <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />

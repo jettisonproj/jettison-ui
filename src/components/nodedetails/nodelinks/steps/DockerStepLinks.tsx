@@ -1,5 +1,5 @@
 import type { Trigger } from "src/data/types/flowTypes.ts";
-import { getRepoTreeLink } from "src/components/nodedetails/nodelinks/nodeLinksUtil.ts";
+import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import { flowDefaults } from "src/data/data.ts";
 import type {
   DockerBuildTestStep,

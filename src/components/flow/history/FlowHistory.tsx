@@ -1,16 +1,12 @@
 import { useContext } from "react";
 import styles from "src/components/flow/history/FlowHistory.module.css";
-import {
-  getRepoCommitLink,
-  getHumanDuration,
-} from "src/components/flow/history/historyUtil.ts";
+import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
 } from "src/providers/provider.tsx";
-
-const COMMIT_DISPLAY_LEN = 7;
+import { getDisplayCommit, getRepoCommitLink } from "src/utils/gitUtil.ts";
 
 interface FlowHistoryProps {
   workflows: Workflow[];
@@ -98,7 +94,7 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
     throw new FlowHistoryError("did not find repoUrl in workflow parameters");
   }
 
-  const displayCommit = commit.slice(0, COMMIT_DISPLAY_LEN);
+  const displayCommit = getDisplayCommit(commit);
   const commitLink = getRepoCommitLink(repoUrl, commit);
   return (
     <a

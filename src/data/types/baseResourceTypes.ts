@@ -13,6 +13,7 @@ interface BaseResource {
 interface Metadata {
   name: string;
   annotations?: Record<string, string>;
+  labels?: Record<string, string>;
 }
 
 interface NamespacedMetadata extends Metadata {

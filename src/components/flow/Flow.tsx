@@ -87,7 +87,7 @@ function getFlowNodes(flow: Flow): FlowNode[] {
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) =>
-    getFlowStepNode(namespace, flowName, step),
+    getFlowStepNode(namespace, flowName, step, trigger),
   );
 
   return [triggerNode].concat(stepNodes);

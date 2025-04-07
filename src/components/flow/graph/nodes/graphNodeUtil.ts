@@ -1,7 +1,7 @@
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { routes } from "src/routes.ts";
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
-import { trimGitSuffix } from "src/components/flow/flowUtil.ts";
+import { trimGitSuffix } from "src/utils/gitUtil.ts";
 
 function getDisplayRepoName(repoUrl: string) {
   const { pathname } = new URL(repoUrl);
