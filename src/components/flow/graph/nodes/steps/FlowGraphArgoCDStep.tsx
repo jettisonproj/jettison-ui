@@ -5,7 +5,7 @@ import {
   ApplicationsContext,
   RolloutsContext,
 } from "src/providers/provider.tsx";
-import { getRepoCommitLink } from "src/utils/gitUtil.ts";
+import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
@@ -33,10 +33,11 @@ function FlowGraphArgoCDStep({
   step,
   trigger,
 }: FlowGraphArgoCDStepProps) {
-  const { repoUrl, repoPath } = step;
+  const { repoUrl, repoPath, baseRef } = step;
   const displayRepoName = getDisplayRepoName(repoUrl);
   const displayRepoPath = getDisplayRepoPath(repoPath, repoPath);
   const stepDetailsLink = getStepDetailsLink(namespace, flowName, step);
+  const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
 
   return (
     <FlowGraphNode>
@@ -45,7 +46,14 @@ function FlowGraphArgoCDStep({
         <i
           className={`nf nf-dev-argocd ${styles.nodeIcon} ${styles.argoIcon}`}
         ></i>
-        <div className={styles.nodeTextLine}>{displayRepoName}</div>
+        <a
+          className={styles.nodeTextLink}
+          href={repoLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {displayRepoName}
+        </a>
         <div className={styles.nodeTextLineBolder}>{displayRepoPath}</div>
         <FlowGraphArgoCDStepStatus step={step} trigger={trigger} />
       </div>

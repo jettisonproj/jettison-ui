@@ -40,6 +40,19 @@
   text-overflow: ellipsis;
 }
 
+.nodeTextLink {
+  composes: nodeTextLine;
+
+  /* Use relative position, so that it works with the overlay link */
+  position: relative;
+  color: var(--text-color);
+}
+
+.nodeTextLink:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
 .nodeTextLineBolder {
   composes: nodeTextLine;
 

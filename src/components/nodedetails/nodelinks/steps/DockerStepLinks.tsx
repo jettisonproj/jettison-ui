@@ -1,5 +1,5 @@
 import type { Trigger } from "src/data/types/flowTypes.ts";
-import { getRepoTreeLink } from "src/utils/gitUtil.ts";
+import { getRepoPathLink } from "src/utils/gitUtil.ts";
 import { flowDefaults } from "src/data/data.ts";
 import type {
   DockerBuildTestStep,
@@ -12,7 +12,11 @@ interface DockerStepLinksProps {
 }
 function DockerStepLinks({ step, trigger }: DockerStepLinksProps) {
   const dockerfilePath = step.dockerfilePath ?? flowDefaults.dockerfilePath;
-  const repoLink = getRepoLink(dockerfilePath, trigger);
+  const repoLink = getRepoPathLink(
+    trigger.repoUrl,
+    trigger.baseRef,
+    dockerfilePath,
+  );
   return (
     <ul>
       <li>
@@ -22,11 +26,6 @@ function DockerStepLinks({ step, trigger }: DockerStepLinksProps) {
       </li>
     </ul>
   );
-}
-
-function getRepoLink(dockerfilePath: string, trigger: Trigger) {
-  const repoTreeLink = getRepoTreeLink(trigger.repoUrl, trigger.baseRef);
-  return `${repoTreeLink}/${dockerfilePath}`;
 }
 
 export { DockerStepLinks };

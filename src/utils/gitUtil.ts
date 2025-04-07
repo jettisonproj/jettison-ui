@@ -31,6 +31,18 @@ function getRepoTreeLink(repoUrl: string, baseRef: string | undefined) {
 }
 
 /**
+ * Get the link url to the path using the repo and baseRef
+ */
+function getRepoPathLink(
+  repoUrl: string,
+  baseRef: string | undefined,
+  path: string,
+) {
+  const repoTreeLink = getRepoTreeLink(repoUrl, baseRef);
+  return `${repoTreeLink}/${path}`;
+}
+
+/**
  * Get the link url to the commit in the repo
  */
 function getRepoCommitLink(repoUrl: string, commit: string) {
@@ -43,5 +55,6 @@ export {
   trimGitSuffix,
   getDisplayCommit,
   getRepoTreeLink,
+  getRepoPathLink,
   getRepoCommitLink,
 };

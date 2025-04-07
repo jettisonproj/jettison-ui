@@ -1,6 +1,9 @@
 import { Link } from "react-router";
 
+import type { Trigger } from "src/data/types/flowTypes.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import { flowDefaults } from "src/data/data.ts";
+import { getRepoPathLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import type {
   DockerBuildTestStep,
@@ -13,15 +16,23 @@ interface FlowGraphDockerStepProps {
   namespace: string;
   flowName: string;
   step: DockerBuildTestStep | DockerBuildTestPublishStep;
+  trigger: Trigger;
 }
 function FlowGraphDockerStep({
   namespace,
   flowName,
   step,
+  trigger,
 }: FlowGraphDockerStepProps) {
   const displayEvent = getDisplayEvent(step);
   const stepDetailsLink = getStepDetailsLink(namespace, flowName, step);
 
+  const dockerfilePath = step.dockerfilePath ?? flowDefaults.dockerfilePath;
+  const repoLink = getRepoPathLink(
+    trigger.repoUrl,
+    trigger.baseRef,
+    dockerfilePath,
+  );
   return (
     <FlowGraphNode>
       <Link to={stepDetailsLink} className={styles.nodeLink} />
@@ -29,7 +40,14 @@ function FlowGraphDockerStep({
         <i
           className={`nf nf-fa-docker ${styles.nodeIcon} ${styles.dockerIcon}`}
         ></i>
-        <div className={styles.nodeTextLine}>Dockerfile</div>
+        <a
+          className={styles.nodeTextLink}
+          href={repoLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Dockerfile
+        </a>
         <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
       </div>
     </FlowGraphNode>

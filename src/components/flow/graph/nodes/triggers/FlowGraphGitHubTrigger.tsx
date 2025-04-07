@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
   getDisplayRepoName,
@@ -29,12 +30,20 @@ function FlowGraphGitHubTrigger({
     flowName,
     trigger,
   );
+  const repoLink = getRepoTreeLink(trigger.repoUrl, trigger.baseRef);
   return (
     <FlowGraphNode>
       <Link to={triggerDetailsLink} className={styles.nodeLink} />
       <div className={styles.nodeContent}>
         <i className={`nf nf-fa-github ${styles.nodeIcon}`}></i>
-        <div className={styles.nodeTextLine}>{displayRepoName}</div>
+        <a
+          className={styles.nodeTextLink}
+          href={repoLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {displayRepoName}
+        </a>
         <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
       </div>
     </FlowGraphNode>

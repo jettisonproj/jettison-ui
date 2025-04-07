@@ -23,6 +23,7 @@ function FlowGraphStep({
           namespace={namespace}
           flowName={flowName}
           step={step}
+          trigger={trigger}
         />
       );
     case StepSource.ArgoCD:
