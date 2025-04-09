@@ -2,6 +2,7 @@ import { useContext } from "react";
 
 import { ApplicationsContext } from "src/providers/provider.tsx";
 import { getRepoPathLink, getRepoCommitLink } from "src/utils/gitUtil.ts";
+import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 
@@ -19,6 +20,7 @@ function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
   const application = applications?.get(repoUrl)?.get(repoPath);
   const applicationLink = getApplicationLink(application);
   const commitLink = getCommitLink(repoUrl, application);
+  const rolloutLink = getRolloutLink(applicationLink, application);
 
   return (
     <ul>
@@ -41,6 +43,13 @@ function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
           </a>
         </li>
       )}
+      {rolloutLink && (
+        <li>
+          <a href={rolloutLink} target="_blank" rel="noreferrer">
+            Argo Rollouts UI
+          </a>
+        </li>
+      )}
     </ul>
   );
 }
@@ -58,6 +67,45 @@ function getCommitLink(repoUrl: string, application?: Application) {
     return null;
   }
   return getRepoCommitLink(repoUrl, application.status.sync.revision);
+}
+
+function getRolloutLink(
+  applicationLink: string | null,
+  application?: Application,
+) {
+  if (applicationLink == null || application == null) {
+    return null;
+  }
+  const rolloutResources = [];
+  for (const resource of application.status.resources) {
+    if (resource.kind === ResourceKind.Rollout.valueOf()) {
+      rolloutResources.push(resource);
+    }
+  }
+  if (rolloutResources.length !== 1) {
+    const { namespace, name } = application.metadata;
+    throw new ArgoCDStepLinksError(
+      "Expected a single rollout in application " +
+        `namespace=${namespace} name=${name}`,
+    );
+  }
+  const rolloutResource = rolloutResources[0];
+  if (rolloutResource == null) {
+    const { namespace, name } = application.metadata;
+    throw new ArgoCDStepLinksError(
+      "Expected a single rollout in application " +
+        `namespace=${namespace} name=${name}`,
+    );
+  }
+  const { namespace, name } = rolloutResource;
+  return `${applicationLink}?node=argoproj.io%2FRollout%2F${namespace}%2F${name}%2F0&resource=&tab=extension-0`;
+}
+
+class ArgoCDStepLinksError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { ArgoCDStepLinks };
