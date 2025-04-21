@@ -1,11 +1,14 @@
+import { useContext } from "react";
 import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
-import { recentFlows, stats } from "src/data/data.ts";
+import { recentFlows } from "src/data/data.ts";
 import { Content } from "src/components/content/Content.tsx";
+import type { Flow } from "src/data/types/flowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
+import { FlowsContext, NamespacesContext } from "src/providers/provider.tsx";
 
 function Home() {
   return (
@@ -21,23 +24,27 @@ function Home() {
 }
 
 function Overview() {
+  const namespaces = useContext(NamespacesContext);
+  const flows = useContext(FlowsContext);
   return (
     <>
       <h2>Overview</h2>
       <div className={styles.overviewContainer}>
         <p>
           <label className={styles.overviewLabel}>Namespaces</label>{" "}
-          {stats.namespaces}
+          <NumNamespaces namespaces={namespaces} />
         </p>
         <p>
-          <label className={styles.overviewLabel}>Flows</label> {stats.flows}
+          <label className={styles.overviewLabel}>Flows</label>{" "}
+          <NumFlows flows={flows} />
         </p>
         <p>
           <label className={styles.overviewLabel}>Triggers</label>{" "}
-          {stats.triggers}
+          <NumTriggers flows={flows} />
         </p>
         <p>
-          <label className={styles.overviewLabel}>Steps</label> {stats.steps}
+          <label className={styles.overviewLabel}>Steps</label>{" "}
+          <NumSteps flows={flows} />
         </p>
         <Link to={routes.flows}>
           See All Namespaces <i className="nf nf-fa-angle-right" />
@@ -60,6 +67,56 @@ function RecentFlows() {
       </ul>
     </>
   );
+}
+
+interface NamespacesProp {
+  namespaces: Set<string> | null;
+}
+function NumNamespaces({ namespaces }: NamespacesProp) {
+  if (namespaces == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  return namespaces.size;
+}
+
+interface FlowsProp {
+  flows: Map<string, Map<string, Flow>> | null;
+}
+function NumFlows({ flows }: FlowsProp) {
+  if (flows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numFlows = 0;
+  for (const namespaceFlows of flows.values()) {
+    numFlows += namespaceFlows.size;
+  }
+  return numFlows;
+}
+
+function NumTriggers({ flows }: FlowsProp) {
+  if (flows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numTriggers = 0;
+  for (const namespaceFlows of flows.values()) {
+    for (const flow of namespaceFlows.values()) {
+      numTriggers += flow.spec.triggers.length;
+    }
+  }
+  return numTriggers;
+}
+
+function NumSteps({ flows }: FlowsProp) {
+  if (flows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numSteps = 0;
+  for (const namespaceFlows of flows.values()) {
+    for (const flow of namespaceFlows.values()) {
+      numSteps += flow.spec.steps.length;
+    }
+  }
+  return numSteps;
 }
 
 export { Home };
