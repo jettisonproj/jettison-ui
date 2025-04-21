@@ -70,7 +70,6 @@ function FlowItem({ namespace, name }: FlowItemProps) {
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
       <FlowHistory namespace={namespace} flowName={name} />
-      <pre>{JSON.stringify(flow, null, 2)}</pre>
     </>
   );
 }
