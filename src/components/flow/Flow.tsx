@@ -2,14 +2,9 @@ import { useContext } from "react";
 import { useParams } from "react-router";
 
 import { FlowError, getFlowTrigger } from "src/components/flow/flowUtil.ts";
-import {
-  flowDefaultStepName,
-  flowDefaultTriggerName,
-  workflowsByNamespaceName,
-} from "src/data/data.ts";
+import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
 import type { Flow } from "src/data/types/flowTypes.ts";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getFlowStepNode,
   getFlowTriggerNode,
@@ -32,15 +27,12 @@ function Flow() {
     );
   }
 
-  const workflowsByName = workflowsByNamespaceName[namespace] ?? {};
-  const workflows = workflowsByName[name] ?? [];
-
   return (
     <>
       <Header />
       <Content>
         <FlowNavHeader namespace={namespace} name={name} />
-        <FlowItem namespace={namespace} name={name} workflows={workflows} />
+        <FlowItem namespace={namespace} name={name} />
       </Content>
     </>
   );
@@ -49,10 +41,9 @@ function Flow() {
 interface FlowItemProps {
   namespace: string;
   name: string;
-  workflows: Workflow[];
 }
 
-function FlowItem({ namespace, name, workflows }: FlowItemProps) {
+function FlowItem({ namespace, name }: FlowItemProps) {
   const flows = useContext(FlowsContext);
   if (flows == null) {
     return <i className="nf nf-fa-spinner" />;
@@ -71,10 +62,11 @@ function FlowItem({ namespace, name, workflows }: FlowItemProps) {
   }
   const flowNodes = getFlowNodes(flow);
   const flowEdges = getFlowEdges(flow);
+
   return (
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
-      <FlowHistory workflows={workflows} namespace={namespace} />
+      <FlowHistory namespace={namespace} flowName={name} />
       <pre>{JSON.stringify(flow, null, 2)}</pre>
     </>
   );

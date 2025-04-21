@@ -1,7 +1,9 @@
 import { useContext } from "react";
+
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { WorkflowsContext } from "src/providers/provider.tsx";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
@@ -9,17 +11,21 @@ import {
 import { getDisplayCommit, getRepoCommitLink } from "src/utils/gitUtil.ts";
 
 interface FlowHistoryProps {
-  workflows: Workflow[];
   namespace: string;
+  flowName: string;
 }
-function FlowHistory({ workflows, namespace }: FlowHistoryProps) {
-  if (workflows.length === 0) {
+function FlowHistory({ namespace, flowName }: FlowHistoryProps) {
+  const allWorkflows = useContext(WorkflowsContext);
+  if (allWorkflows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  const workflows = allWorkflows.get(namespace)?.get(flowName);
+  if (workflows == null) {
     return <p>No flow history found</p>;
   }
-  workflows = workflows.concat(workflows);
-  workflows = workflows.concat(workflows);
-  workflows = workflows.concat(workflows);
-  workflows = workflows.concat(workflows);
+  // todo sort and cache?
+  const sortedWorkflows = Array.from(workflows.values());
+
   return (
     <table>
       <thead>
@@ -34,7 +40,7 @@ function FlowHistory({ workflows, namespace }: FlowHistoryProps) {
         </tr>
       </thead>
       <tbody>
-        {workflows.map((workflow, i) => (
+        {sortedWorkflows.map((workflow, i) => (
           <tr key={i}>
             <td>
               <FlowHistoryStatus workflow={workflow} />
@@ -72,6 +78,8 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
     // todo handle more cases
     case "Succeeded":
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
+    case "Failed":
+      return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
     default:
       return <i className="nf nf-fa-question_circle" />;
   }

@@ -6,6 +6,7 @@ import { localState } from "src/localState.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
 const DisplayIsoTimestampsContext = createContext(
@@ -28,6 +29,10 @@ const RolloutsContext = createContext(
   null as Map<string, Map<string, Rollout>> | null,
 );
 
+const WorkflowsContext = createContext(
+  null as Map<string, Map<string, Map<string, Workflow>>> | null,
+);
+
 interface ProviderProps {
   children: ReactNode;
 }
@@ -42,6 +47,10 @@ function Provider({ children }: ProviderProps) {
 
   const [rollouts, setRollouts] = useState(
     null as Map<string, Map<string, Rollout>> | null,
+  );
+
+  const [workflows, setWorkflows] = useState(
+    null as Map<string, Map<string, Map<string, Workflow>>> | null,
   );
 
   const [displayIsoTimestamps, setDisplayIsoTimestamps] = useState(
@@ -95,6 +104,12 @@ function Provider({ children }: ProviderProps) {
             resourceEventHandler.getUpdatedRollouts(rollouts),
           );
         }
+
+        if (resourceEventHandler.hasWorkflowEvents()) {
+          setWorkflows((workflows) =>
+            resourceEventHandler.getUpdatedWorkflows(workflows),
+          );
+        }
       } catch (err) {
         if (!(err instanceof Error)) {
           console.log("unknown error while processing message");
@@ -132,7 +147,9 @@ function Provider({ children }: ProviderProps) {
           <FlowsContext.Provider value={flows}>
             <ApplicationsContext.Provider value={applications}>
               <RolloutsContext.Provider value={rollouts}>
-                {children}
+                <WorkflowsContext.Provider value={workflows}>
+                  {children}
+                </WorkflowsContext.Provider>
               </RolloutsContext.Provider>
             </ApplicationsContext.Provider>
           </FlowsContext.Provider>
@@ -150,4 +167,5 @@ export {
   FlowsContext,
   ApplicationsContext,
   RolloutsContext,
+  WorkflowsContext,
 };

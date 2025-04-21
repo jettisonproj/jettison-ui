@@ -1,11 +1,12 @@
-interface Workflow {
-  metadata: WorkflowMetadata;
+import type {
+  ResourceKind,
+  NamespacedResource,
+} from "src/data/types/baseResourceTypes.ts";
+
+interface Workflow extends NamespacedResource {
+  kind: ResourceKind.Workflow;
   spec: WorkflowSpec;
   status: WorkflowStatus;
-}
-
-interface WorkflowMetadata {
-  name: string;
 }
 
 interface WorkflowSpec {

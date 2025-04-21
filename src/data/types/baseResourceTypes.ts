@@ -3,6 +3,7 @@ enum ResourceKind {
   Namespace = "Namespace",
   Application = "Application",
   Rollout = "Rollout",
+  Workflow = "Workflow",
 }
 
 interface BaseResource {

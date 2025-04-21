@@ -2,24 +2,28 @@ import type { Namespace } from "src/data/types/namespace.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import { appendGitSuffix } from "src/utils/gitUtil.ts";
 
 const DELETE_EVENT_ANNOTATION =
   "workflows.jettisonproj.io/v1alpha1/watcher-event-type";
+const SENSOR_NAME_LABEL = "events.argoproj.io/sensor";
 
 class ResourceEventHandler {
   #namespaceEvents: Namespace[];
   #flowEvents: Flow[];
   #applicationEvents: Application[];
   #rolloutEvents: Rollout[];
+  #workflowEvents: Workflow[];
 
   constructor(resourceList: ResourceList) {
     this.#namespaceEvents = [];
     this.#flowEvents = [];
     this.#applicationEvents = [];
     this.#rolloutEvents = [];
+    this.#workflowEvents = [];
 
     for (const resourceEvent of resourceList.items) {
       switch (resourceEvent.kind) {
@@ -34,6 +38,9 @@ class ResourceEventHandler {
           continue;
         case ResourceKind.Rollout:
           this.#rolloutEvents.push(resourceEvent);
+          continue;
+        case ResourceKind.Workflow:
+          this.#workflowEvents.push(resourceEvent);
           continue;
         default:
           resourceEvent satisfies never;
@@ -58,6 +65,10 @@ class ResourceEventHandler {
 
   hasRolloutEvents(): boolean {
     return this.#rolloutEvents.length > 0;
+  }
+
+  hasWorkflowEvents(): boolean {
+    return this.#workflowEvents.length > 0;
   }
 
   /* Get the updated Set<string> of namespaces */
@@ -255,9 +266,70 @@ class ResourceEventHandler {
     return newRollouts;
   }
 
+  /**
+   * Get the updated Map of workflows.
+   * Where Map is a mapping from namespace to flowName to workflowName to Workflow
+   */
+  getUpdatedWorkflows(
+    workflows: Map<string, Map<string, Map<string, Workflow>>> | null,
+  ): Map<string, Map<string, Map<string, Workflow>>> {
+    const newWorkflows = new Map(workflows);
+    const recreatedNamespaces = new Set();
+    const recreatedFlowNames = new Set();
+
+    for (const workflowEvent of this.#workflowEvents) {
+      const { namespace, name: workflowName } = workflowEvent.metadata;
+      const flowName = this.#getFlowName(workflowEvent);
+      if (flowName == null) {
+        console.log("unable to get flow name for workflow. Skipping...");
+        console.log(workflowEvent);
+        continue;
+      }
+      const namespaceWorkflows = newWorkflows.get(namespace);
+
+      if (this.#isDeleteEvent(workflowEvent)) {
+        // Workflows are not typically deleted. The implementation
+        // is likely not needed
+        console.log("unhandled workflow delete event");
+        console.log(workflowEvent);
+      } else {
+        // Get the updated namespace map. Ensures it is recreated if needed
+        let newNamespaceWorkflows;
+        if (namespaceWorkflows != null && recreatedNamespaces.has(namespace)) {
+          newNamespaceWorkflows = namespaceWorkflows;
+        } else {
+          newNamespaceWorkflows = new Map(namespaceWorkflows);
+          newWorkflows.set(namespace, newNamespaceWorkflows);
+          recreatedNamespaces.add(namespace);
+        }
+
+        const flowWorkflows = newNamespaceWorkflows.get(flowName);
+
+        // Get the updated flowNames map. Ensures it is recreated if needed
+        let newFlowWorkflows;
+        if (flowWorkflows != null && recreatedFlowNames.has(flowName)) {
+          newFlowWorkflows = flowWorkflows;
+        } else {
+          newFlowWorkflows = new Map(flowWorkflows);
+          newNamespaceWorkflows.set(flowName, newFlowWorkflows);
+          recreatedFlowNames.add(flowName);
+        }
+
+        newFlowWorkflows.set(workflowName, workflowEvent);
+      }
+    }
+
+    return newWorkflows;
+  }
+
   #isDeleteEvent(resourceEvent: Resource): boolean {
     const { annotations } = resourceEvent.metadata;
     return annotations?.[DELETE_EVENT_ANNOTATION] === "delete";
+  }
+
+  #getFlowName(workflow: Workflow): string | undefined {
+    const { labels } = workflow.metadata;
+    return labels?.[SENSOR_NAME_LABEL];
   }
 }
 
