@@ -1,7 +1,5 @@
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
 
-const recentFlows = ["rollouts-demo/github-push", "rollouts-demo/github-pr"];
-
 // todo need to get defaults from backend, or bake default into types
 const flowDefaults = {
   baseRef: "main",
@@ -18,9 +16,4 @@ function flowDefaultTriggerName(trigger: Trigger) {
   return trigger.triggerName ?? trigger.triggerSource;
 }
 
-export {
-  recentFlows,
-  flowDefaults,
-  flowDefaultStepName,
-  flowDefaultTriggerName,
-};
+export { flowDefaults, flowDefaultStepName, flowDefaultTriggerName };

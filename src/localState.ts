@@ -1,9 +1,13 @@
 const CONFIG_KEY = "jettison";
 
 const defaultDisplayIsoTimestamps = false;
+const defaultRecentFlows: string[] = [];
 
 interface LocalStateObject {
   displayIsoTimestamps?: boolean;
+
+  // List of strings in the form `${namespace}/${name}`
+  recentFlows?: string[];
 }
 
 /**
@@ -28,6 +32,25 @@ class LocalState {
 
   setDisplayIsoTimestamps(displayIsoTimestamps: boolean) {
     this.#localState.displayIsoTimestamps = displayIsoTimestamps;
+    this.#saveToLocalStorage();
+  }
+
+  getRecentFlows() {
+    return this.#localState.recentFlows ?? defaultRecentFlows;
+  }
+
+  addRecentFlow(namespace: string, name: string) {
+    const namespaceNamePath = `${namespace}/${name}`;
+    const recentFlows = this.getRecentFlows();
+    if (recentFlows.length > 0 && recentFlows[0] == namespaceNamePath) {
+      return;
+    }
+
+    // Use an ordered Set to get a new list, with the namespaceNamePath
+    // as the first item
+    const orderedRecentFlows = new Set([namespaceNamePath, ...recentFlows]);
+
+    this.#localState.recentFlows = [...orderedRecentFlows];
     this.#saveToLocalStorage();
   }
 

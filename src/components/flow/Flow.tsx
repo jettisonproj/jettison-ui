@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useParams } from "react-router";
 
+import { localState } from "src/localState.ts";
 import { FlowError, getFlowTrigger } from "src/components/flow/flowUtil.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
@@ -26,6 +27,8 @@ function Flow() {
       `path parameters cannot be empty: namespace=${namespace} name=${name}`,
     );
   }
+
+  localState.addRecentFlow(namespace, name);
 
   return (
     <>

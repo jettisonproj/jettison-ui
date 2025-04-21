@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
-import { recentFlows } from "src/data/data.ts";
+import { localState } from "src/localState.ts";
 import { Content } from "src/components/content/Content.tsx";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
@@ -55,6 +55,17 @@ function Overview() {
 }
 
 function RecentFlows() {
+  const recentFlows = localState.getRecentFlows();
+  if (recentFlows.length === 0) {
+    return (
+      <>
+        <h2 className={styles.sectionTitle}>Recent Flows</h2>
+        <ul>
+          <li>No recent flows found</li>
+        </ul>
+      </>
+    );
+  }
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Flows</h2>
