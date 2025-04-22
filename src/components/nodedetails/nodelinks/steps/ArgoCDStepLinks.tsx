@@ -21,6 +21,7 @@ function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
   const applicationLink = getApplicationLink(application);
   const commitLink = getCommitLink(repoUrl, application);
   const rolloutLink = getRolloutLink(applicationLink, application);
+  const kubernetesResourceLink = getKubernetesResourceLink(application);
 
   return (
     <ul>
@@ -47,6 +48,14 @@ function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
         <li>
           <a href={rolloutLink} target="_blank" rel="noreferrer">
             Argo Rollouts UI
+          </a>
+        </li>
+      )}
+      {kubernetesResourceLink && (
+        <li>
+          <a href={kubernetesResourceLink} target="_blank" rel="noreferrer">
+            Kubernetes Resource Definition{" "}
+            <i className="nf nf-fa-file_text_o" />
           </a>
         </li>
       )}
@@ -99,6 +108,14 @@ function getRolloutLink(
   }
   const { namespace, name } = rolloutResource;
   return `${applicationLink}?node=argoproj.io%2FRollout%2F${namespace}%2F${name}%2F0&resource=&tab=extension-0`;
+}
+
+function getKubernetesResourceLink(application?: Application) {
+  if (application == null) {
+    return null;
+  }
+  const { namespace, name } = application.metadata;
+  return `http://osoriano.com:2846/api/v1/namespaces/${namespace}/applications/${name}`;
 }
 
 class ArgoCDStepLinksError extends Error {

@@ -13,6 +13,10 @@
   font-size: 16px;
 }
 
+.linkIcon:not(:first-child) {
+  margin-left: 5px;
+}
+
 .historyCommit {
   font-family: monospace;
   color: var(--text-color);

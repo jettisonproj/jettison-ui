@@ -158,13 +158,24 @@ interface FlowHistoryActionsProps {
 }
 function FlowHistoryActions({ workflow, namespace }: FlowHistoryActionsProps) {
   return (
-    <a
-      href={`https://argo.osoriano.com/workflows/${namespace}/${workflow.metadata.name}`}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <i className={`nf nf-fa-external_link ${styles.linkIcon}`} />
-    </a>
+    <>
+      <a
+        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.linkIcon}
+      >
+        <i className="nf nf-fa-file_text_o" />
+      </a>
+      <a
+        href={`https://argo.osoriano.com/workflows/${namespace}/${workflow.metadata.name}`}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.linkIcon}
+      >
+        <i className="nf nf-fa-external_link" />
+      </a>
+    </>
   );
 }
 

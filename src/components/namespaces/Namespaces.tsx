@@ -32,7 +32,14 @@ function NamespacesList() {
         .sort()
         .map((namespace) => (
           <li key={namespace}>
-            <Link to={`${routes.flows}/${namespace}`}>{namespace}</Link>
+            <Link to={`${routes.flows}/${namespace}`}>{namespace}</Link>{" "}
+            <a
+              href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="nf nf-fa-file_text_o" />
+            </a>
           </li>
         ))}
     </ul>

@@ -51,7 +51,14 @@ function FlowsList({ namespace }: FlowsListProps) {
         .sort()
         .map((flow) => (
           <li key={`${namespace}/${flow}`}>
-            <Link to={`${routes.flows}/${namespace}/${flow}`}>{flow}</Link>
+            <Link to={`${routes.flows}/${namespace}/${flow}`}>{flow}</Link>{" "}
+            <a
+              href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${flow}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="nf nf-fa-file_text_o" />
+            </a>
           </li>
         ))}
     </ul>
