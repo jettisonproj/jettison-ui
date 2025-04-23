@@ -24,7 +24,7 @@ interface WorkflowSpecParameter {
 
 interface WorkflowStatus {
   startedAt: string;
-  finishedAt: string;
+  finishedAt?: string;
   phase: string;
   progress: string;
 }

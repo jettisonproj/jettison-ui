@@ -52,7 +52,13 @@ function FlowHistory({ namespace, flowName }: FlowHistoryProps) {
               <Timestamp date={new Date(workflow.status.startedAt)} />
             </td>
             <td>
-              <Timestamp date={new Date(workflow.status.finishedAt)} />
+              <Timestamp
+                date={
+                  workflow.status.finishedAt == null
+                    ? undefined
+                    : new Date(workflow.status.finishedAt)
+                }
+              />
             </td>
             <td>
               <FlowHistoryDuration workflow={workflow} />
@@ -80,6 +86,8 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
     case "Failed":
       return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
+    case "Running":
+      return <i className="nf nf-fa-spinner" />;
     default:
       return <i className="nf nf-fa-question_circle" />;
   }
@@ -124,11 +132,15 @@ function getDisplayTimestamp(d: Date, displayIsoTimestamps: boolean) {
 }
 
 interface TimestampProps {
-  date: Date;
+  date?: Date;
 }
 function Timestamp({ date }: TimestampProps) {
   const displayIsoTimestamps = useContext(DisplayIsoTimestampsContext);
   const setDisplayIsoTimestamps = useContext(SetDisplayIsoTimestampsContext);
+
+  if (date == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
   const displayTimestamp = getDisplayTimestamp(date, displayIsoTimestamps);
   return (
     <div
@@ -144,6 +156,10 @@ function Timestamp({ date }: TimestampProps) {
 
 function FlowHistoryDuration({ workflow }: FlowHistoryCellProps) {
   const { startedAt, finishedAt } = workflow.status;
+  if (finishedAt == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+
   const durationMs = Date.parse(finishedAt) - Date.parse(startedAt);
   return getHumanDuration(durationMs);
 }
