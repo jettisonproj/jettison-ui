@@ -39,4 +39,4 @@ interface ApplicationStatusHealth {
   status: string;
 }
 
-export type { Application };
+export type { Application, ApplicationStatusResource };
