@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
@@ -23,8 +23,31 @@ function FlowHistory({ namespace, flowName }: FlowHistoryProps) {
   if (workflows == null) {
     return <p>No flow history found</p>;
   }
-  // todo sort and cache?
-  const sortedWorkflows = Array.from(workflows.values());
+
+  return (
+    <SortedFlowHistory
+      namespace={namespace}
+      flowName={flowName}
+      workflows={workflows}
+    />
+  );
+}
+
+interface SortedFlowHistoryProps extends FlowHistoryProps {
+  workflows: Map<string, Workflow>;
+}
+function SortedFlowHistory({
+  namespace,
+  flowName,
+  workflows,
+}: SortedFlowHistoryProps) {
+  const sortedWorkflows = useMemo(
+    () =>
+      Array.from(workflows.values()).sort((a, b) =>
+        b.status.startedAt.localeCompare(a.status.startedAt),
+      ),
+    [workflows],
+  );
 
   return (
     <table>
