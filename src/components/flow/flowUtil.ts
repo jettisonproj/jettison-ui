@@ -14,9 +14,7 @@ function getFlowTrigger(flow: Flow): Trigger {
   return trigger;
 }
 
-function getFlowTriggerDisplayEvent(
-  trigger: Trigger,
-) {
+function getFlowTriggerDisplayEvent(trigger: Trigger) {
   switch (trigger.triggerSource) {
     case TriggerSource.GitHubPush:
       return "push";
