@@ -1,8 +1,4 @@
 import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
-import type {
-  GitHubPullRequestTrigger,
-  GitHubPushTrigger,
-} from "src/data/types/flowTypes.ts";
 import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 /* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
@@ -19,7 +15,7 @@ function getFlowTrigger(flow: Flow): Trigger {
 }
 
 function getFlowTriggerDisplayEvent(
-  trigger: GitHubPullRequestTrigger | GitHubPushTrigger,
+  trigger: Trigger,
 ) {
   switch (trigger.triggerSource) {
     case TriggerSource.GitHubPush:
