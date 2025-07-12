@@ -2,10 +2,14 @@ import { useContext } from "react";
 import { useParams } from "react-router";
 
 import { localState } from "src/localState.ts";
-import { FlowError, getFlowTrigger } from "src/components/flow/flowUtil.ts";
+import {
+  FlowError,
+  getFlowTrigger,
+  getFlowTriggerDisplayEvent,
+} from "src/components/flow/flowUtil.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
-import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
 import {
   getFlowStepNode,
   getFlowTriggerNode,
@@ -63,19 +67,20 @@ function FlowItem({ namespace, name }: FlowItemProps) {
       </p>
     );
   }
-  const flowNodes = getFlowNodes(flow);
+  const trigger = getFlowTrigger(flow);
+  const flowNodes = getFlowNodes(flow, trigger);
   const flowEdges = getFlowEdges(flow);
+  const isPrFlow = "PR" === getFlowTriggerDisplayEvent(trigger);
 
   return (
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
-      <FlowHistory namespace={namespace} flowName={name} />
+      <FlowHistory isPrFlow={isPrFlow} namespace={namespace} flowName={name} />
     </>
   );
 }
 
-function getFlowNodes(flow: Flow): FlowNode[] {
-  const trigger = getFlowTrigger(flow);
+function getFlowNodes(flow: Flow, trigger: Trigger): FlowNode[] {
   const { namespace, name: flowName } = flow.metadata;
   const triggerNode = getFlowTriggerNode(namespace, flowName, trigger);
 

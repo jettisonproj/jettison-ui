@@ -50,6 +50,14 @@ function getRepoCommitLink(repoUrl: string, commit: string) {
   return `${repoUrl}/commit/${commit}`;
 }
 
+/**
+ * Get the link url to the PR in the repo
+ */
+function getRepoPrLink(repoUrl: string, prNumber: string) {
+  repoUrl = trimGitSuffix(repoUrl);
+  return `${repoUrl}/pull/${prNumber}`;
+}
+
 export {
   appendGitSuffix,
   trimGitSuffix,
@@ -57,4 +65,5 @@ export {
   getRepoTreeLink,
   getRepoPathLink,
   getRepoCommitLink,
+  getRepoPrLink,
 };

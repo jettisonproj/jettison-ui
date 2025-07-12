@@ -8,13 +8,18 @@ import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
 } from "src/providers/provider.tsx";
-import { getDisplayCommit, getRepoCommitLink } from "src/utils/gitUtil.ts";
+import {
+  getDisplayCommit,
+  getRepoCommitLink,
+  getRepoPrLink,
+} from "src/utils/gitUtil.ts";
 
 interface FlowHistoryProps {
+  isPrFlow: boolean;
   namespace: string;
   flowName: string;
 }
-function FlowHistory({ namespace, flowName }: FlowHistoryProps) {
+function FlowHistory({ isPrFlow, namespace, flowName }: FlowHistoryProps) {
   const allWorkflows = useContext(WorkflowsContext);
   if (allWorkflows == null) {
     return <i className="nf nf-fa-spinner" />;
@@ -26,6 +31,7 @@ function FlowHistory({ namespace, flowName }: FlowHistoryProps) {
 
   return (
     <SortedFlowHistory
+      isPrFlow={isPrFlow}
       namespace={namespace}
       flowName={flowName}
       workflows={workflows}
@@ -37,6 +43,7 @@ interface SortedFlowHistoryProps extends FlowHistoryProps {
   workflows: Map<string, Workflow>;
 }
 function SortedFlowHistory({
+  isPrFlow,
   namespace,
   flowName,
   workflows,
@@ -54,6 +61,7 @@ function SortedFlowHistory({
       <thead>
         <tr>
           <th></th>
+          {isPrFlow && <th>PR</th>}
           <th>Commit</th>
           <th>Started</th>
           <th>Finished</th>
@@ -68,6 +76,11 @@ function SortedFlowHistory({
             <td>
               <FlowHistoryStatus workflow={workflow} />
             </td>
+            {isPrFlow && (
+              <td>
+                <FlowHistoryPR flowName={flowName} workflow={workflow} />
+              </td>
+            )}
             <td>
               <FlowHistoryCommit workflow={workflow} />
             </td>
@@ -114,6 +127,42 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
     default:
       return <i className="nf nf-fa-question_circle" />;
   }
+}
+
+interface FlowHistoryPrProps extends FlowHistoryCellProps {
+  flowName: string;
+}
+function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
+  // todo refactor
+  // Create map of parameter name to value
+  const { parameters } = workflow.spec.arguments;
+  const parameterMap: Record<string, string> = {};
+  parameters.forEach((parameter) => {
+    parameterMap[parameter.name] = parameter.value;
+  });
+
+  const repoUrl = parameterMap.repo;
+  if (!repoUrl) {
+    throw new FlowHistoryError("did not find repoUrl in workflow parameters");
+  }
+
+  const workflowName = workflow.metadata.name;
+
+  // The workflow name is in the form `${flowName}-${prNumber}-${shortSha}`
+  let prNumber = workflowName.slice(flowName.length + 1);
+  prNumber = prNumber.slice(0, prNumber.indexOf("-"));
+
+  const prLink = getRepoPrLink(repoUrl, prNumber);
+  return (
+    <a
+      className={styles.historyCommit}
+      href={prLink}
+      target="_blank"
+      rel="noreferrer"
+    >
+      #{prNumber}
+    </a>
+  );
 }
 
 function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {

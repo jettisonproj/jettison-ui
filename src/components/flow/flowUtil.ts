@@ -1,4 +1,9 @@
 import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
+import type {
+  GitHubPullRequestTrigger,
+  GitHubPushTrigger,
+} from "src/data/types/flowTypes.ts";
+import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 /* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
 function getFlowTrigger(flow: Flow): Trigger {
@@ -13,6 +18,21 @@ function getFlowTrigger(flow: Flow): Trigger {
   return trigger;
 }
 
+function getFlowTriggerDisplayEvent(
+  trigger: GitHubPullRequestTrigger | GitHubPushTrigger,
+) {
+  switch (trigger.triggerSource) {
+    case TriggerSource.GitHubPush:
+      return "push";
+    case TriggerSource.GitHubPullRequest:
+      return "PR";
+    default:
+      trigger satisfies never;
+      console.log("unknown trigger");
+      console.log(trigger);
+  }
+}
+
 class FlowError extends Error {
   constructor(message: string) {
     super(message);
@@ -20,4 +40,4 @@ class FlowError extends Error {
   }
 }
 
-export { FlowError, getFlowTrigger };
+export { FlowError, getFlowTrigger, getFlowTriggerDisplayEvent };

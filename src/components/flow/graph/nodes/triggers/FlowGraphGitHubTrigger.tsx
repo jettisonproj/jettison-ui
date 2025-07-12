@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+import { getFlowTriggerDisplayEvent } from "src/components/flow/flowUtil.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
@@ -11,7 +12,6 @@ import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
-import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphGitHubTriggerProps {
   namespace: string;
@@ -23,7 +23,7 @@ function FlowGraphGitHubTrigger({
   flowName,
   trigger,
 }: FlowGraphGitHubTriggerProps) {
-  const displayEvent = getDisplayEvent(trigger);
+  const displayEvent = getFlowTriggerDisplayEvent(trigger);
   const displayRepoName = getDisplayRepoName(trigger.repoUrl);
   const triggerDetailsLink = getTriggerDetailsLink(
     namespace,
@@ -48,21 +48,6 @@ function FlowGraphGitHubTrigger({
       </div>
     </FlowGraphNode>
   );
-}
-
-function getDisplayEvent(
-  trigger: GitHubPullRequestTrigger | GitHubPushTrigger,
-) {
-  switch (trigger.triggerSource) {
-    case TriggerSource.GitHubPush:
-      return "push";
-    case TriggerSource.GitHubPullRequest:
-      return "PR";
-    default:
-      trigger satisfies never;
-      console.log("unknown trigger");
-      console.log(trigger);
-  }
 }
 
 export { FlowGraphGitHubTrigger };
