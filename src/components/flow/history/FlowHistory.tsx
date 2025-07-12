@@ -94,6 +94,13 @@ function FlowHistoryRow({
   flowName,
   workflow,
 }: FlowHistoryRowProps) {
+  // Create map of parameter name to value
+  const { parameters } = workflow.spec.arguments;
+  const parameterMap: Record<string, string> = {};
+  parameters.forEach((parameter) => {
+    parameterMap[parameter.name] = parameter.value;
+  });
+
   return (
     <tr>
       <td>
@@ -101,11 +108,15 @@ function FlowHistoryRow({
       </td>
       {isPrFlow && (
         <td>
-          <FlowHistoryPR flowName={flowName} workflow={workflow} />
+          <FlowHistoryPR
+            flowName={flowName}
+            workflow={workflow}
+            parameterMap={parameterMap}
+          />
         </td>
       )}
       <td>
-        <FlowHistoryCommit workflow={workflow} />
+        <FlowHistoryCommit parameterMap={parameterMap} />
       </td>
       <td>
         <Timestamp date={new Date(workflow.status.startedAt)} />
@@ -151,16 +162,13 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
 
 interface FlowHistoryPrProps extends FlowHistoryCellProps {
   flowName: string;
+  parameterMap: Record<string, string>;
 }
-function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
-  // todo refactor
-  // Create map of parameter name to value
-  const { parameters } = workflow.spec.arguments;
-  const parameterMap: Record<string, string> = {};
-  parameters.forEach((parameter) => {
-    parameterMap[parameter.name] = parameter.value;
-  });
-
+function FlowHistoryPR({
+  workflow,
+  flowName,
+  parameterMap,
+}: FlowHistoryPrProps) {
   const repoUrl = parameterMap.repo;
   if (!repoUrl) {
     throw new FlowHistoryError("did not find repoUrl in workflow parameters");
@@ -185,14 +193,10 @@ function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
   );
 }
 
-function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
-  // Create map of parameter name to value
-  const { parameters } = workflow.spec.arguments;
-  const parameterMap: Record<string, string> = {};
-  parameters.forEach((parameter) => {
-    parameterMap[parameter.name] = parameter.value;
-  });
-
+interface FlowHistoryCommitProps {
+  parameterMap: Record<string, string>;
+}
+function FlowHistoryCommit({ parameterMap }: FlowHistoryCommitProps) {
   const commit = parameterMap.revision;
   if (!commit) {
     throw new FlowHistoryError("did not find commit in workflow parameters");
