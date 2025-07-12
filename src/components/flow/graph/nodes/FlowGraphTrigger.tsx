@@ -6,11 +6,13 @@ interface FlowGraphTriggerProps {
   namespace: string;
   flowName: string;
   trigger: Trigger;
+  isPrFlow: boolean;
 }
 function FlowGraphTrigger({
   namespace,
   flowName,
   trigger,
+  isPrFlow,
 }: FlowGraphTriggerProps) {
   switch (trigger.triggerSource) {
     case TriggerSource.GitHubPullRequest:
@@ -20,6 +22,7 @@ function FlowGraphTrigger({
           namespace={namespace}
           flowName={flowName}
           trigger={trigger}
+          isPrFlow={isPrFlow}
         />
       );
     default:

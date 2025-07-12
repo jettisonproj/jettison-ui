@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 
-import { getFlowTriggerDisplayEvent } from "src/components/flow/flowUtil.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
@@ -17,13 +16,15 @@ interface FlowGraphGitHubTriggerProps {
   namespace: string;
   flowName: string;
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;
+  isPrFlow: boolean;
 }
 function FlowGraphGitHubTrigger({
   namespace,
   flowName,
   trigger,
+  isPrFlow,
 }: FlowGraphGitHubTriggerProps) {
-  const displayEvent = getFlowTriggerDisplayEvent(trigger);
+  const displayEvent = isPrFlow ? "PR" : "push";
   const displayRepoName = getDisplayRepoName(trigger.repoUrl);
   const triggerDetailsLink = getTriggerDetailsLink(
     namespace,

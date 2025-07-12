@@ -14,16 +14,17 @@ function getFlowTrigger(flow: Flow): Trigger {
   return trigger;
 }
 
-function getFlowTriggerDisplayEvent(trigger: Trigger) {
+function isPullRequestTrigger(trigger: Trigger) {
   switch (trigger.triggerSource) {
     case TriggerSource.GitHubPush:
-      return "push";
+      return false;
     case TriggerSource.GitHubPullRequest:
-      return "PR";
+      return true;
     default:
       trigger satisfies never;
       console.log("unknown trigger");
       console.log(trigger);
+      return false;
   }
 }
 
@@ -34,4 +35,4 @@ class FlowError extends Error {
   }
 }
 
-export { FlowError, getFlowTrigger, getFlowTriggerDisplayEvent };
+export { FlowError, getFlowTrigger, isPullRequestTrigger };

@@ -5,7 +5,7 @@ import { localState } from "src/localState.ts";
 import {
   FlowError,
   getFlowTrigger,
-  getFlowTriggerDisplayEvent,
+  isPullRequestTrigger,
 } from "src/components/flow/flowUtil.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
@@ -68,9 +68,9 @@ function FlowItem({ namespace, name }: FlowItemProps) {
     );
   }
   const trigger = getFlowTrigger(flow);
-  const flowNodes = getFlowNodes(flow, trigger);
-  const flowEdges = getFlowEdges(flow);
-  const isPrFlow = "PR" === getFlowTriggerDisplayEvent(trigger);
+  const isPrFlow = isPullRequestTrigger(trigger);
+  const flowNodes = getFlowNodes(flow, trigger, isPrFlow);
+  const flowEdges = getFlowEdges(flow, trigger);
 
   return (
     <>
@@ -80,9 +80,18 @@ function FlowItem({ namespace, name }: FlowItemProps) {
   );
 }
 
-function getFlowNodes(flow: Flow, trigger: Trigger): FlowNode[] {
+function getFlowNodes(
+  flow: Flow,
+  trigger: Trigger,
+  isPrFlow: boolean,
+): FlowNode[] {
   const { namespace, name: flowName } = flow.metadata;
-  const triggerNode = getFlowTriggerNode(namespace, flowName, trigger);
+  const triggerNode = getFlowTriggerNode(
+    namespace,
+    flowName,
+    trigger,
+    isPrFlow,
+  );
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) =>
@@ -92,8 +101,7 @@ function getFlowNodes(flow: Flow, trigger: Trigger): FlowNode[] {
   return [triggerNode].concat(stepNodes);
 }
 
-function getFlowEdges(flow: Flow): FlowEdge[] {
-  const trigger = getFlowTrigger(flow);
+function getFlowEdges(flow: Flow, trigger: Trigger): FlowEdge[] {
   const { steps } = flow.spec;
   let edgeIndex = 0;
   const triggerEdges = steps

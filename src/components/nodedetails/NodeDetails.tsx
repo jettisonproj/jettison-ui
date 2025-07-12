@@ -13,6 +13,7 @@ import {
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { Content } from "src/components/content/Content.tsx";
+import { isPullRequestTrigger } from "src/components/flow/flowUtil.ts";
 import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 
 function NodeDetails() {
@@ -73,7 +74,13 @@ function NodeDetailsItem({
     (trigger) => flowDefaultTriggerName(trigger) === nodeName,
   );
   if (trigger) {
-    const triggerNode = getFlowTriggerNode(namespace, flowName, trigger);
+    const isPrFlow = isPullRequestTrigger(trigger);
+    const triggerNode = getFlowTriggerNode(
+      namespace,
+      flowName,
+      trigger,
+      isPrFlow,
+    );
     return (
       <>
         <FlowGraph flowNodes={[triggerNode]} flowEdges={[]} />

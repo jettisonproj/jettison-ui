@@ -8,6 +8,7 @@ function getFlowTriggerNode(
   namespace: string,
   flowName: string,
   trigger: Trigger,
+  isPrFlow: boolean,
 ) {
   return {
     label: flowDefaultTriggerName(trigger),
@@ -18,6 +19,7 @@ function getFlowTriggerNode(
         namespace={namespace}
         flowName={flowName}
         trigger={trigger}
+        isPrFlow={isPrFlow}
       />
     ),
   };
