@@ -71,44 +71,64 @@ function SortedFlowHistory({
         </tr>
       </thead>
       <tbody>
-        {sortedWorkflows.map((workflow, i) => (
-          <tr key={i}>
-            <td>
-              <FlowHistoryStatus workflow={workflow} />
-            </td>
-            {isPrFlow && (
-              <td>
-                <FlowHistoryPR flowName={flowName} workflow={workflow} />
-              </td>
-            )}
-            <td>
-              <FlowHistoryCommit workflow={workflow} />
-            </td>
-            <td>
-              <Timestamp date={new Date(workflow.status.startedAt)} />
-            </td>
-            <td>
-              <Timestamp
-                date={
-                  workflow.status.finishedAt == null
-                    ? undefined
-                    : new Date(workflow.status.finishedAt)
-                }
-              />
-            </td>
-            <td>
-              <FlowHistoryDuration workflow={workflow} />
-            </td>
-            <td>
-              <FlowHistoryProgress workflow={workflow} />
-            </td>
-            <td>
-              <FlowHistoryActions workflow={workflow} namespace={namespace} />
-            </td>
-          </tr>
+        {sortedWorkflows.map((workflow) => (
+          <FlowHistoryRow
+            key={workflow.metadata.name}
+            isPrFlow={isPrFlow}
+            namespace={namespace}
+            flowName={flowName}
+            workflow={workflow}
+          />
         ))}
       </tbody>
     </table>
+  );
+}
+
+interface FlowHistoryRowProps extends FlowHistoryProps {
+  workflow: Workflow;
+}
+function FlowHistoryRow({
+  isPrFlow,
+  namespace,
+  flowName,
+  workflow,
+}: FlowHistoryRowProps) {
+  return (
+    <tr>
+      <td>
+        <FlowHistoryStatus workflow={workflow} />
+      </td>
+      {isPrFlow && (
+        <td>
+          <FlowHistoryPR flowName={flowName} workflow={workflow} />
+        </td>
+      )}
+      <td>
+        <FlowHistoryCommit workflow={workflow} />
+      </td>
+      <td>
+        <Timestamp date={new Date(workflow.status.startedAt)} />
+      </td>
+      <td>
+        <Timestamp
+          date={
+            workflow.status.finishedAt == null
+              ? undefined
+              : new Date(workflow.status.finishedAt)
+          }
+        />
+      </td>
+      <td>
+        <FlowHistoryDuration workflow={workflow} />
+      </td>
+      <td>
+        <FlowHistoryProgress workflow={workflow} />
+      </td>
+      <td>
+        <FlowHistoryActions workflow={workflow} namespace={namespace} />
+      </td>
+    </tr>
   );
 }
 
