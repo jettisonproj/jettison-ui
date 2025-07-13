@@ -11,11 +11,28 @@
 
 .overviewContainer {
   min-width: var(--content-width);
-  padding-left: 40px;
+  font-size: 17px;
+  columns: 2;
+  list-style: none;
+  line-height: 2;
+}
+
+.overviewItem {
+  max-width: 150px;
 }
 
 .overviewLabel {
   font-weight: bolder;
+}
+
+.overviewValue {
+  float: right;
+}
+
+.namespacesLink {
+  min-width: var(--content-width);
+  padding-left: 40px;
+  font-size: 17px;
 }
 
 .recentFlow {

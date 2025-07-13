@@ -38,39 +38,53 @@ function Overview() {
   return (
     <>
       <h2 className={styles.firstSectionTitle}>Overview</h2>
-      <div className={styles.overviewContainer}>
-        <p>
+      <ul className={styles.overviewContainer}>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Namespaces</label>{" "}
-          <NumNamespaces namespaces={namespaces} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumNamespaces namespaces={namespaces} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Flows</label>{" "}
-          <NumFlows flows={flows} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumFlows flows={flows} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Triggers</label>{" "}
-          <NumTriggers flows={flows} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumTriggers flows={flows} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Steps</label>{" "}
-          <NumSteps flows={flows} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumSteps flows={flows} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Applications</label>{" "}
-          <NumApplications applications={applications} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumApplications applications={applications} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Rollouts</label>{" "}
-          <NumRollouts rollouts={rollouts} />
-        </p>
-        <p>
+          <div className={styles.overviewValue}>
+            <NumRollouts rollouts={rollouts} />
+          </div>
+        </li>
+        <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Workflows</label>{" "}
-          <NumWorkflows workflows={workflows} />
-        </p>
-        <Link to={routes.flows}>
-          See All Namespaces <i className="nf nf-fa-angle_right" />
-        </Link>
-      </div>
+          <div className={styles.overviewValue}>
+            <NumWorkflows workflows={workflows} />
+          </div>
+        </li>
+      </ul>
+      <Link className={styles.namespacesLink} to={routes.flows}>
+        See All Namespaces <i className="nf nf-fa-angle_right" />
+      </Link>
     </>
   );
 }
