@@ -80,7 +80,7 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
   const totalHeight = height + 2 * padding;
 
   return (
-    <div className={`${styles.graphContainer} ${styles.panel}`}>
+    <div className={styles.graphContainer}>
       <svg
         width={totalWidth}
         height={totalHeight}

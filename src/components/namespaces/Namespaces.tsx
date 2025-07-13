@@ -2,19 +2,17 @@ import { useContext } from "react";
 import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
-import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { NamespacesNavHeader } from "src/components/header/NavHeader.tsx";
 import { NamespacesContext } from "src/providers/provider.tsx";
+import styles from "src/components/namespaces/Namespaces.module.css";
 
 function Namespaces() {
   return (
     <>
       <Header />
-      <Content>
-        <NamespacesNavHeader />
-        <NamespacesList />
-      </Content>
+      <NamespacesNavHeader />
+      <NamespacesList />
     </>
   );
 }
@@ -27,7 +25,7 @@ function NamespacesList() {
   }
 
   return (
-    <ul>
+    <ul className={styles.namespacesContainer}>
       {Array.from(namespaces)
         .sort()
         .map((namespace) => (

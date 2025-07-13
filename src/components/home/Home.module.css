@@ -1,13 +1,23 @@
+.firstSectionTitle {
+  min-width: var(--content-width);
+}
+
 .sectionTitle {
+  min-width: var(--content-width);
   border-top: 1px solid var(--separator-color);
   padding-top: 18px;
   margin-top: 36px;
 }
 
 .overviewContainer {
+  min-width: var(--content-width);
   padding-left: 40px;
 }
 
 .overviewLabel {
   font-weight: bolder;
+}
+
+.recentFlowsContainer {
+  min-width: var(--content-width);
 }

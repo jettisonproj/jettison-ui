@@ -3,7 +3,6 @@ import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
 import { localState } from "src/localState.ts";
-import { Content } from "src/components/content/Content.tsx";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
@@ -14,11 +13,9 @@ function Home() {
   return (
     <>
       <Header />
-      <Content>
-        <HomeNavHeader />
-        <Overview />
-        <RecentFlows />
-      </Content>
+      <HomeNavHeader />
+      <Overview />
+      <RecentFlows />
     </>
   );
 }
@@ -28,7 +25,7 @@ function Overview() {
   const flows = useContext(FlowsContext);
   return (
     <>
-      <h2>Overview</h2>
+      <h2 className={styles.firstSectionTitle}>Overview</h2>
       <div className={styles.overviewContainer}>
         <p>
           <label className={styles.overviewLabel}>Namespaces</label>{" "}
@@ -60,7 +57,7 @@ function RecentFlows() {
     return (
       <>
         <h2 className={styles.sectionTitle}>Recent Flows</h2>
-        <ul>
+        <ul className={styles.recentFlowsContainer}>
           <li>No recent flows found</li>
         </ul>
       </>
@@ -69,7 +66,7 @@ function RecentFlows() {
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Flows</h2>
-      <ul>
+      <ul className={styles.recentFlowsContainer}>
         {recentFlows.map((recentFlow) => (
           <li key={recentFlow}>
             <Link to={`${routes.flows}/${recentFlow}`}>{recentFlow}</Link>

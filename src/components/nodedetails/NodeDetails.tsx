@@ -12,7 +12,6 @@ import {
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { Header } from "src/components/header/Header.tsx";
-import { Content } from "src/components/content/Content.tsx";
 import { isPullRequestTrigger } from "src/components/flow/flowUtil.ts";
 import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 
@@ -27,18 +26,16 @@ function NodeDetails() {
   return (
     <>
       <Header />
-      <Content>
-        <NodeDetailsNavHeader
-          namespace={namespace}
-          flowName={flowName}
-          nodeName={nodeName}
-        />
-        <NodeDetailsItem
-          namespace={namespace}
-          flowName={flowName}
-          nodeName={nodeName}
-        />
-      </Content>
+      <NodeDetailsNavHeader
+        namespace={namespace}
+        flowName={flowName}
+        nodeName={nodeName}
+      />
+      <NodeDetailsItem
+        namespace={namespace}
+        flowName={flowName}
+        nodeName={nodeName}
+      />
     </>
   );
 }

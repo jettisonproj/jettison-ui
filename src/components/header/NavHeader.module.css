@@ -1,4 +1,5 @@
 .navHeader {
+  min-width: var(--content-width);
   border-bottom: 1px solid var(--separator-color);
   padding-bottom: 25px;
 }

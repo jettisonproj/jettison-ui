@@ -3,6 +3,7 @@
   --text-color: #333;
 
   --header-height: 65px;
+  --content-width: 880px;
   --panel-color: #f6f8fa;
   --separator-color: #eee;
 
@@ -40,6 +41,14 @@ body {
   margin: 0;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  padding-bottom: 18px;
+}
+
 a {
   text-decoration: none;
 }
@@ -58,9 +67,8 @@ h6 {
 table {
   background-color: transparent;
   border-collapse: collapse;
-  margin-top: 20px;
-  width: 880px;
-  margin-bottom: 20px;
+  min-width: var(--content-width);
+  margin: 20px 0;
 }
 
 td,

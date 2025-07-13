@@ -14,7 +14,6 @@ import {
   getFlowStepNode,
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
-import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
@@ -37,10 +36,8 @@ function Flow() {
   return (
     <>
       <Header />
-      <Content>
-        <FlowNavHeader namespace={namespace} name={name} />
-        <FlowItem namespace={namespace} name={name} />
-      </Content>
+      <FlowNavHeader namespace={namespace} name={name} />
+      <FlowItem namespace={namespace} name={name} />
     </>
   );
 }

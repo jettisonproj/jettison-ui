@@ -3,9 +3,9 @@ import { Link, useParams } from "react-router";
 
 import { routes } from "src/routes.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
-import { Content } from "src/components/content/Content.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
+import styles from "src/components/flows/Flows.module.css";
 
 function Flows() {
   const { namespace } = useParams();
@@ -17,10 +17,8 @@ function Flows() {
   return (
     <>
       <Header />
-      <Content>
-        <FlowsNavHeader namespace={namespace} />
-        <FlowsList namespace={namespace} />
-      </Content>
+      <FlowsNavHeader namespace={namespace} />
+      <FlowsList namespace={namespace} />
     </>
   );
 }
@@ -46,7 +44,7 @@ function FlowsList({ namespace }: FlowsListProps) {
     );
   }
   return (
-    <ul>
+    <ul className={styles.flowsContainer}>
       {Array.from(namespaceFlows.keys())
         .sort()
         .map((flow) => (
