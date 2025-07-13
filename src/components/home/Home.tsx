@@ -44,7 +44,7 @@ function Overview() {
           <NumSteps flows={flows} />
         </p>
         <Link to={routes.flows}>
-          See All Namespaces <i className="nf nf-fa-angle-right" />
+          See All Namespaces <i className="nf nf-fa-angle_right" />
         </Link>
       </div>
     </>
