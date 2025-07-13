@@ -45,6 +45,10 @@
   font-size: 21px;
 }
 
+.recentFlow:last-child {
+  margin-bottom: 20px;
+}
+
 .recentFlow:hover {
   background-color: var(--secondary-hover);
 }
