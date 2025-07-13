@@ -43,23 +43,33 @@ function FlowsList({ namespace }: FlowsListProps) {
       </p>
     );
   }
+  return Array.from(namespaceFlows.keys())
+    .sort()
+    .map((flow) => (
+      <FlowRow key={`${namespace}/${flow}`} namespace={namespace} flow={flow} />
+    ));
+}
+
+interface FlowRowProps extends FlowsListProps {
+  flow: string;
+}
+function FlowRow({ namespace, flow }: FlowRowProps) {
   return (
-    <ul className={styles.flowsContainer}>
-      {Array.from(namespaceFlows.keys())
-        .sort()
-        .map((flow) => (
-          <li key={`${namespace}/${flow}`}>
-            <Link to={`${routes.flows}/${namespace}/${flow}`}>{flow}</Link>{" "}
-            <a
-              href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${flow}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="nf nf-fa-file_text_o" />
-            </a>
-          </li>
-        ))}
-    </ul>
+    <div className={styles.flowRow}>
+      <Link
+        to={`${routes.flows}/${namespace}/${flow}`}
+        className={styles.flowRowLink}
+      ></Link>
+      {flow}
+      <a
+        className={styles.manifestLink}
+        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${flow}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="nf nf-fa-file_text_o" />
+      </a>
+    </div>
   );
 }
 
