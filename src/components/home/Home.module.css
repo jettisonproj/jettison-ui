@@ -45,6 +45,10 @@
   font-size: 21px;
 }
 
+.recentFlowFirst {
+  margin-top: 5px;
+}
+
 .recentFlow:last-child {
   margin-bottom: 20px;
 }

@@ -26,15 +26,25 @@ function NamespacesList() {
 
   return Array.from(namespaces)
     .sort()
-    .map((namespace) => <Namespace key={namespace} namespace={namespace} />);
+    .map((namespace, index) => (
+      <Namespace key={namespace} isFirst={index === 0} namespace={namespace} />
+    ));
 }
 
 interface NamespaceProps {
   namespace: string;
+  isFirst: boolean;
 }
-function Namespace({ namespace }: NamespaceProps) {
+function Namespace({ namespace, isFirst }: NamespaceProps) {
+  let namespaceClassName = styles.namespace;
+  if (namespaceClassName == null) {
+    throw new NamespacesError("Failed to find namespace style");
+  }
+  if (isFirst) {
+    namespaceClassName += ` ${styles.namespaceFirst}`;
+  }
   return (
-    <div className={styles.namespace}>
+    <div className={namespaceClassName}>
       <Link
         to={`${routes.flows}/${namespace}`}
         className={styles.namespaceLink}
@@ -50,6 +60,13 @@ function Namespace({ namespace }: NamespaceProps) {
       </a>
     </div>
   );
+}
+
+class NamespacesError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { Namespaces };

@@ -8,6 +8,10 @@
   font-size: 21px;
 }
 
+.flowRowFirst {
+  margin-top: 8px;
+}
+
 .flowRow:last-child {
   margin-bottom: 20px;
 }

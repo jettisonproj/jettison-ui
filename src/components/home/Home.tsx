@@ -102,8 +102,12 @@ function RecentFlows() {
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Flows</h2>
-      {recentFlows.map((recentFlow) => (
-        <RecentFlow key={recentFlow} recentFlow={recentFlow} />
+      {recentFlows.map((recentFlow, index) => (
+        <RecentFlow
+          key={recentFlow}
+          isFirst={index === 0}
+          recentFlow={recentFlow}
+        />
       ))}
     </>
   );
@@ -111,21 +115,28 @@ function RecentFlows() {
 
 interface RecentFlowProps {
   recentFlow: string;
+  isFirst: boolean;
 }
-function RecentFlow({ recentFlow }: RecentFlowProps) {
+function RecentFlow({ recentFlow, isFirst }: RecentFlowProps) {
   const recentFlowParts = recentFlow.split("/");
   if (recentFlowParts.length !== 2) {
     throw new HomeError(`unexpected recent flow: ${recentFlow}`);
   }
   const [namespace, name] = recentFlowParts;
+  let recentFlowClassName = styles.recentFlow;
+  if (recentFlowClassName == null) {
+    throw new HomeError("failed to find recentFlow style");
+  }
+  if (isFirst) {
+    recentFlowClassName += ` ${styles.recentFlowFirst}`;
+  }
   return (
-    <div className={styles.recentFlow}>
+    <div className={recentFlowClassName}>
       <Link
         to={`${routes.flows}/${recentFlow}`}
         className={styles.recentFlowLink}
       ></Link>
       {recentFlow}
-
       <a
         className={styles.manifestLink}
         href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${name}`}

@@ -45,17 +45,30 @@ function FlowsList({ namespace }: FlowsListProps) {
   }
   return Array.from(namespaceFlows.keys())
     .sort()
-    .map((flow) => (
-      <FlowRow key={`${namespace}/${flow}`} namespace={namespace} flow={flow} />
+    .map((flow, index) => (
+      <FlowRow
+        key={`${namespace}/${flow}`}
+        isFirst={index === 0}
+        namespace={namespace}
+        flow={flow}
+      />
     ));
 }
 
 interface FlowRowProps extends FlowsListProps {
   flow: string;
+  isFirst: boolean;
 }
-function FlowRow({ namespace, flow }: FlowRowProps) {
+function FlowRow({ namespace, flow, isFirst }: FlowRowProps) {
+  let flowRowClassName = styles.flowRow;
+  if (flowRowClassName == null) {
+    throw new FlowsError("Failed to find flowRow style");
+  }
+  if (isFirst) {
+    flowRowClassName += ` ${styles.flowRowFirst}`;
+  }
   return (
-    <div className={styles.flowRow}>
+    <div className={flowRowClassName}>
       <Link
         to={`${routes.flows}/${namespace}/${flow}`}
         className={styles.flowRowLink}

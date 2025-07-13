@@ -12,6 +12,10 @@
   margin-bottom: 20px;
 }
 
+.namespaceFirst {
+  margin-top: 8px;
+}
+
 .namespace:hover {
   background-color: var(--secondary-hover);
 }
