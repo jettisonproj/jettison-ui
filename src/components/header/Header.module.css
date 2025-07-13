@@ -1,6 +1,5 @@
 .container {
-  min-height: var(--menubar-height);
-  position: fixed;
+  min-height: var(--header-height);
   width: 100%;
   font-family: "Open Sans", sans-serif;
 }
@@ -8,7 +7,7 @@
 .logo {
   display: inline;
   position: relative;
-  height: var(--menubar-height);
+  height: var(--header-height);
   left: 36px;
   transform: scaleX(1);
   fill: var(--title-color);

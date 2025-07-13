@@ -1,12 +1,4 @@
-.container {
-  top: var(--menubar-height);
-  position: absolute;
-  right: 0px;
-  left: 0px;
-  bottom: 0px;
-}
-
-.panel {
+.content {
   margin: 16px 57px;
   border: 1px solid transparent;
   border-radius: 4px;

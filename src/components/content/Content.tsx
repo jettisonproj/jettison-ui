@@ -7,9 +7,7 @@ interface ContentProps {
 
 function Content({ children }: ContentProps) {
   return (
-    <div className={styles.container}>
-      <div className={styles.panel}>{children}</div>
-    </div>
+    <div className={styles.content}>{children}</div>
   );
 }
 
