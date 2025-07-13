@@ -81,23 +81,46 @@ function RecentFlows() {
     return (
       <>
         <h2 className={styles.sectionTitle}>Recent Flows</h2>
-        <ul className={styles.recentFlowsContainer}>
-          <li>No recent flows found</li>
-        </ul>
+        <p>No recent flows found</p>
       </>
     );
   }
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Flows</h2>
-      <ul className={styles.recentFlowsContainer}>
-        {recentFlows.map((recentFlow) => (
-          <li key={recentFlow}>
-            <Link to={`${routes.flows}/${recentFlow}`}>{recentFlow}</Link>
-          </li>
-        ))}
-      </ul>
+      {recentFlows.map((recentFlow) => (
+        <RecentFlow key={recentFlow} recentFlow={recentFlow} />
+      ))}
     </>
+  );
+}
+
+interface RecentFlowProps {
+  recentFlow: string;
+}
+function RecentFlow({ recentFlow }: RecentFlowProps) {
+  const recentFlowParts = recentFlow.split("/");
+  if (recentFlowParts.length !== 2) {
+    throw new HomeError(`unexpected recent flow: ${recentFlow}`);
+  }
+  const [namespace, name] = recentFlowParts;
+  return (
+    <div className={styles.recentFlow}>
+      <Link
+        to={`${routes.flows}/${recentFlow}`}
+        className={styles.recentFlowLink}
+      ></Link>
+      {recentFlow}
+
+      <a
+        className={styles.manifestLink}
+        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${name}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="nf nf-fa-file_text_o" />
+      </a>
+    </div>
   );
 }
 
@@ -193,6 +216,13 @@ function NumWorkflows({ workflows }: WorkflowsProp) {
     }
   }
   return numWorkflows;
+}
+
+class HomeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { Home };
