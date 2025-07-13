@@ -14,6 +14,9 @@
 
   --success-color: #19b698;
   --primary-color: #1997c6;
+  --primary-shadow: 0 0 10px #0c88dc, 0 0 20px #0f60f7;
+  --secondary-color: rgb(240, 240, 240);
+  --secondary-hover: rgb(230, 230, 230);
   --danger-color: #df3e3e;
 }
 

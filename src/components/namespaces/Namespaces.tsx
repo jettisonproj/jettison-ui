@@ -24,23 +24,31 @@ function NamespacesList() {
     return <i className="nf nf-fa-spinner" />;
   }
 
+  return Array.from(namespaces)
+    .sort()
+    .map((namespace) => <Namespace key={namespace} namespace={namespace} />);
+}
+
+interface NamespaceProps {
+  namespace: string;
+}
+function Namespace({ namespace }: NamespaceProps) {
   return (
-    <ul className={styles.namespacesContainer}>
-      {Array.from(namespaces)
-        .sort()
-        .map((namespace) => (
-          <li key={namespace}>
-            <Link to={`${routes.flows}/${namespace}`}>{namespace}</Link>{" "}
-            <a
-              href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="nf nf-fa-file_text_o" />
-            </a>
-          </li>
-        ))}
-    </ul>
+    <div className={styles.namespace}>
+      <Link
+        to={`${routes.flows}/${namespace}`}
+        className={styles.namespaceLink}
+      ></Link>
+      {namespace}
+      <a
+        className={styles.manifestLink}
+        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="nf nf-fa-file_text_o" />
+      </a>
+    </div>
   );
 }
 

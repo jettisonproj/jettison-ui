@@ -1,3 +1,28 @@
-.namespacesContainer {
+.namespace {
   min-width: var(--content-width);
+  position: relative;
+  background-color: var(--secondary-color);
+  border-radius: 15px;
+  margin-top: 25px;
+  padding: 25px 30px;
+  font-size: 21px;
+}
+
+.namespace:hover {
+  background-color: var(--secondary-hover);
+}
+
+.namespaceLink {
+  position: absolute;
+  inset: 0;
+}
+
+.manifestLink {
+  position: relative;
+  float: right;
+  color: var(--primary-color);
+}
+
+.manifestLink:hover {
+  text-shadow: var(--primary-shadow);
 }

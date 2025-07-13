@@ -17,6 +17,10 @@
   margin-left: 5px;
 }
 
+.linkIcon:hover {
+  text-shadow: var(--primary-shadow);
+}
+
 .historyCommit {
   font-family: monospace;
   color: var(--text-color);
