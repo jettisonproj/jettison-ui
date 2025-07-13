@@ -4,10 +4,19 @@ import { Link } from "react-router";
 import { routes } from "src/routes.ts";
 import { localState } from "src/localState.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Application } from "src/data/types/applicationTypes.ts";
+import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
-import { FlowsContext, NamespacesContext } from "src/providers/provider.tsx";
+import {
+  FlowsContext,
+  NamespacesContext,
+  ApplicationsContext,
+  RolloutsContext,
+  WorkflowsContext,
+} from "src/providers/provider.tsx";
 
 function Home() {
   return (
@@ -23,6 +32,9 @@ function Home() {
 function Overview() {
   const namespaces = useContext(NamespacesContext);
   const flows = useContext(FlowsContext);
+  const applications = useContext(ApplicationsContext);
+  const rollouts = useContext(RolloutsContext);
+  const workflows = useContext(WorkflowsContext);
   return (
     <>
       <h2 className={styles.firstSectionTitle}>Overview</h2>
@@ -42,6 +54,18 @@ function Overview() {
         <p>
           <label className={styles.overviewLabel}>Steps</label>{" "}
           <NumSteps flows={flows} />
+        </p>
+        <p>
+          <label className={styles.overviewLabel}>Applications</label>{" "}
+          <NumApplications applications={applications} />
+        </p>
+        <p>
+          <label className={styles.overviewLabel}>Rollouts</label>{" "}
+          <NumRollouts rollouts={rollouts} />
+        </p>
+        <p>
+          <label className={styles.overviewLabel}>Workflows</label>{" "}
+          <NumWorkflows workflows={workflows} />
         </p>
         <Link to={routes.flows}>
           See All Namespaces <i className="nf nf-fa-angle_right" />
@@ -125,6 +149,50 @@ function NumSteps({ flows }: FlowsProp) {
     }
   }
   return numSteps;
+}
+
+interface ApplicationsProp {
+  applications: Map<string, Map<string, Application>> | null;
+}
+function NumApplications({ applications }: ApplicationsProp) {
+  if (applications == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numApplications = 0;
+  for (const namespaceApplications of applications.values()) {
+    numApplications += namespaceApplications.size;
+  }
+  return numApplications;
+}
+
+interface RolloutsProp {
+  rollouts: Map<string, Map<string, Rollout>> | null;
+}
+function NumRollouts({ rollouts }: RolloutsProp) {
+  if (rollouts == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numRollouts = 0;
+  for (const namespaceRollouts of rollouts.values()) {
+    numRollouts += namespaceRollouts.size;
+  }
+  return numRollouts;
+}
+
+interface WorkflowsProp {
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
+}
+function NumWorkflows({ workflows }: WorkflowsProp) {
+  if (workflows == null) {
+    return <i className="nf nf-fa-spinner" />;
+  }
+  let numWorkflows = 0;
+  for (const namespaceWorkflows of workflows.values()) {
+    for (const flowWorkflows of namespaceWorkflows.values()) {
+      numWorkflows += flowWorkflows.size;
+    }
+  }
+  return numWorkflows;
 }
 
 export { Home };
