@@ -151,6 +151,8 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
     // todo handle more cases
     case "Succeeded":
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
+    case "Error":
+      return <i className={`nf nf-md-cancel ${styles.dangerIcon}`} />;
     case "Failed":
       return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
     case "Running":
