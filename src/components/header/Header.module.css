@@ -8,7 +8,8 @@
   display: inline;
   position: relative;
   height: var(--header-height);
-  left: 36px;
+  left: 31px;
+  margin-top: 3px;
   transform: scaleX(1);
   fill: var(--title-color);
 }
