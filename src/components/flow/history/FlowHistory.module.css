@@ -21,6 +21,52 @@
   text-shadow: var(--primary-shadow);
 }
 
+.historyTable {
+  background-color: transparent;
+  border-collapse: collapse;
+  min-width: var(--content-width);
+  margin: 20px 0;
+  line-height: 2;
+}
+
+.historyRow:hover {
+  background-color: var(--table-color-hover);
+}
+
+.historyCell {
+  border-top: 1px solid var(--separator-color);
+  padding: 8px;
+}
+
+.historyCell:first-child {
+  padding-left: 30px;
+}
+
+.historyCell:last-child {
+  padding-right: 30px;
+}
+
+.historyCellHeader {
+  composes: historyCell;
+
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  color: var(--title-color);
+
+  border-bottom: 2px solid var(--separator-color);
+  text-align: left;
+  border-top: 0;
+  background-color: var(--panel-color);
+}
+
+.historyCellHeader:first-child {
+  border-top-left-radius: 30px;
+}
+
+.historyCellHeader:last-child {
+  border-top-right-radius: 30px;
+}
+
 .historyCommit {
   font-family: monospace;
   color: var(--text-color);

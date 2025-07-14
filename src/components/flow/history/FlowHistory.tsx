@@ -57,17 +57,17 @@ function SortedFlowHistory({
   );
 
   return (
-    <table>
+    <table className={styles.historyTable}>
       <thead>
         <tr>
-          <th></th>
-          {isPrFlow && <th>PR</th>}
-          <th>Commit</th>
-          <th>Started</th>
-          <th>Finished</th>
-          <th>Duration</th>
-          <th>Progress</th>
-          <th></th>
+          <th className={styles.historyCellHeader}></th>
+          {isPrFlow && <th className={styles.historyCellHeader}>PR</th>}
+          <th className={styles.historyCellHeader}>Commit</th>
+          <th className={styles.historyCellHeader}>Started</th>
+          <th className={styles.historyCellHeader}>Finished</th>
+          <th className={styles.historyCellHeader}>Duration</th>
+          <th className={styles.historyCellHeader}>Progress</th>
+          <th className={styles.historyCellHeader}></th>
         </tr>
       </thead>
       <tbody>
@@ -102,12 +102,12 @@ function FlowHistoryRow({
   });
 
   return (
-    <tr>
-      <td>
+    <tr className={styles.historyRow}>
+      <td className={styles.historyCell}>
         <FlowHistoryStatus workflow={workflow} />
       </td>
       {isPrFlow && (
-        <td>
+        <td className={styles.historyCell}>
           <FlowHistoryPR
             flowName={flowName}
             workflow={workflow}
@@ -115,13 +115,13 @@ function FlowHistoryRow({
           />
         </td>
       )}
-      <td>
+      <td className={styles.historyCell}>
         <FlowHistoryCommit parameterMap={parameterMap} />
       </td>
-      <td>
+      <td className={styles.historyCell}>
         <Timestamp date={new Date(workflow.status.startedAt)} />
       </td>
-      <td>
+      <td className={styles.historyCell}>
         <Timestamp
           date={
             workflow.status.finishedAt == null
@@ -130,13 +130,13 @@ function FlowHistoryRow({
           }
         />
       </td>
-      <td>
+      <td className={styles.historyCell}>
         <FlowHistoryDuration workflow={workflow} />
       </td>
-      <td>
+      <td className={styles.historyCell}>
         <FlowHistoryProgress workflow={workflow} />
       </td>
-      <td>
+      <td className={styles.historyCell}>
         <FlowHistoryActions workflow={workflow} namespace={namespace} />
       </td>
     </tr>
