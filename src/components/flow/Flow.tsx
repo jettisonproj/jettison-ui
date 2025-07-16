@@ -31,8 +31,6 @@ function Flow() {
     );
   }
 
-  localState.addRecentFlow(namespace, name);
-
   return (
     <>
       <Header />
@@ -64,6 +62,7 @@ function FlowItem({ namespace, name }: FlowItemProps) {
       </p>
     );
   }
+  localState.addRecentFlow(namespace, name);
   const trigger = getFlowTrigger(flow);
   const isPrFlow = isPullRequestTrigger(trigger);
   const flowNodes = getFlowNodes(flow, trigger, isPrFlow);
