@@ -70,20 +70,19 @@ function FlowItem({ namespace, name }: FlowItemProps) {
   return (
     <FlowWorkflowsItem
       namespace={namespace}
-      name={name}
       flow={flow}
       workflows={workflows}
     />
   );
 }
 
-interface FlowWorkflowsItemProps extends FlowItemProps {
+interface FlowWorkflowsItemProps {
+  namespace: string;
   flow: Flow;
   workflows: Map<string, Workflow> | undefined;
 }
 function FlowWorkflowsItem({
   namespace,
-  name,
   flow,
   workflows,
 }: FlowWorkflowsItemProps) {
@@ -98,7 +97,7 @@ function FlowWorkflowsItem({
 
   const trigger = getFlowTrigger(flow);
   const isPrFlow = isPullRequestTrigger(trigger);
-  const flowNodes = getFlowNodes(flow, trigger, isPrFlow);
+  const flowNodes = getFlowNodes(flow, trigger, isPrFlow, sortedWorkflows);
   const flowEdges = getFlowEdges(flow, trigger);
 
   return (
@@ -107,7 +106,6 @@ function FlowWorkflowsItem({
       <FlowHistory
         isPrFlow={isPrFlow}
         namespace={namespace}
-        flowName={name}
         workflows={sortedWorkflows}
       />
     </>
@@ -118,6 +116,7 @@ function getFlowNodes(
   flow: Flow,
   trigger: Trigger,
   isPrFlow: boolean,
+  workflows: Workflow[],
 ): FlowNode[] {
   const { namespace, name: flowName } = flow.metadata;
   const triggerNode = getFlowTriggerNode(
@@ -125,11 +124,12 @@ function getFlowNodes(
     flowName,
     trigger,
     isPrFlow,
+    workflows,
   );
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) =>
-    getFlowStepNode(namespace, flowName, step, trigger),
+    getFlowStepNode(namespace, flowName, step, isPrFlow, workflows),
   );
 
   return [triggerNode].concat(stepNodes);

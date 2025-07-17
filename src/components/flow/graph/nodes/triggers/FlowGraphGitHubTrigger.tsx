@@ -1,53 +1,69 @@
-import { Link } from "react-router";
-
-import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
-import { getRepoTreeLink } from "src/utils/gitUtil.ts";
+import {
+  FlowGraphNode,
+  FlowGraphCommit,
+  FlowGraphTimestamp,
+  FlowGraphLoading,
+} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  getDisplayRepoName,
   getTriggerDetailsLink,
+  getLastWorkflowNodeForTrigger,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowGraphGitHubTriggerProps {
   namespace: string;
   flowName: string;
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;
   isPrFlow: boolean;
+  workflows: Workflow[];
 }
 function FlowGraphGitHubTrigger({
   namespace,
   flowName,
   trigger,
   isPrFlow,
+  workflows,
 }: FlowGraphGitHubTriggerProps) {
-  const displayEvent = isPrFlow ? "PR" : "push";
-  const displayRepoName = getDisplayRepoName(trigger.repoUrl);
+  const displayEvent = isPrFlow ? "PR" : "PUSH";
   const triggerDetailsLink = getTriggerDetailsLink(
     namespace,
     flowName,
     trigger,
   );
-  const repoLink = getRepoTreeLink(trigger.repoUrl, trigger.baseRef);
   return (
-    <FlowGraphNode>
-      <Link to={triggerDetailsLink} className={styles.nodeLink} />
-      <div className={styles.nodeContent}>
-        <i className={`nf nf-fa-github ${styles.nodeIcon}`}></i>
-        <a
-          className={styles.nodeTextLink}
-          href={repoLink}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {displayRepoName}
-        </a>
-        <div className={styles.nodeTextLineBolder}>{displayEvent}</div>
-      </div>
+    <FlowGraphNode
+      headerLink={triggerDetailsLink}
+      titleIcon={`nf nf-fa-github ${styles.githubIcon}`}
+      titleText={displayEvent}
+    >
+      <FlowGraphGitHubNode isPrFlow={isPrFlow} workflows={workflows} />
     </FlowGraphNode>
+  );
+}
+
+interface FlowGraphGitHubNodeProps {
+  isPrFlow: boolean;
+  workflows: Workflow[];
+}
+function FlowGraphGitHubNode({
+  isPrFlow,
+  workflows,
+}: FlowGraphGitHubNodeProps) {
+  const workflowNode = getLastWorkflowNodeForTrigger(workflows);
+  if (workflowNode == null) {
+    return <FlowGraphLoading />;
+  }
+  const { workflow, node } = workflowNode;
+  return (
+    <>
+      <FlowGraphCommit isPrFlow={isPrFlow} workflow={workflow} />
+      <FlowGraphTimestamp node={node} />
+    </>
   );
 }
 

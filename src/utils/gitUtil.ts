@@ -1,6 +1,7 @@
 import { flowDefaults } from "src/data/data.ts";
 
 const COMMIT_DISPLAY_LEN = 7;
+const BRANCH_PREFIX = "refs/heads/";
 const GIT_SUFFIX = ".git";
 
 function appendGitSuffix(s: string) {
@@ -15,6 +16,13 @@ function trimGitSuffix(s: string) {
     return s.slice(0, -1 * GIT_SUFFIX.length);
   }
   return s;
+}
+
+function trimBranchPrefix(branch: string) {
+  if (branch.startsWith(BRANCH_PREFIX)) {
+    return branch.slice(BRANCH_PREFIX.length);
+  }
+  return branch;
 }
 
 function getDisplayCommit(commit: string) {
@@ -42,6 +50,14 @@ function getRepoPathLink(
   return `${repoTreeLink}/${path}`;
 }
 
+/*
+ * Get the link to the path using the repo and commit
+ */
+function getRepoCommitPathLink(repoUrl: string, commit: string, path: string) {
+  repoUrl = trimGitSuffix(repoUrl);
+  return `${repoUrl}/blob/${commit}/${path}`;
+}
+
 /**
  * Get the link url to the commit in the repo
  */
@@ -61,9 +77,11 @@ function getRepoPrLink(repoUrl: string, prNumber: string) {
 export {
   appendGitSuffix,
   trimGitSuffix,
+  trimBranchPrefix,
   getDisplayCommit,
   getRepoTreeLink,
   getRepoPathLink,
   getRepoCommitLink,
+  getRepoCommitPathLink,
   getRepoPrLink,
 };

@@ -3,6 +3,11 @@ import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
+  getWorkflowRepo,
+  getWorkflowRevision,
+  getWorkflowRevisionNumber,
+} from "src/components/flow/workflowNodeUtil.ts";
+import {
   getDisplayCommit,
   getRepoCommitLink,
   getRepoPrLink,
@@ -11,15 +16,9 @@ import {
 interface FlowHistoryProps {
   isPrFlow: boolean;
   namespace: string;
-  flowName: string;
   workflows: Workflow[];
 }
-function FlowHistory({
-  isPrFlow,
-  namespace,
-  flowName,
-  workflows,
-}: FlowHistoryProps) {
+function FlowHistory({ isPrFlow, namespace, workflows }: FlowHistoryProps) {
   if (workflows.length === 0) {
     return <p>No flow history found</p>;
   }
@@ -44,7 +43,6 @@ function FlowHistory({
             key={workflow.metadata.name}
             isPrFlow={isPrFlow}
             namespace={namespace}
-            flowName={flowName}
             workflow={workflow}
           />
         ))}
@@ -56,13 +54,11 @@ function FlowHistory({
 interface FlowHistoryRowProps {
   isPrFlow: boolean;
   namespace: string;
-  flowName: string;
   workflow: Workflow;
 }
 function FlowHistoryRow({
   isPrFlow,
   namespace,
-  flowName,
   workflow,
 }: FlowHistoryRowProps) {
   return (
@@ -72,7 +68,7 @@ function FlowHistoryRow({
       </td>
       {isPrFlow && (
         <td className={styles.historyCell}>
-          <FlowHistoryPR flowName={flowName} workflow={workflow} />
+          <FlowHistoryPR workflow={workflow} />
         </td>
       )}
       <td className={styles.historyCell}>
@@ -109,6 +105,7 @@ interface FlowHistoryCellProps {
 function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
   switch (workflow.status.phase) {
     // todo handle more cases
+    // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#WorkflowPhase
     case "Succeeded":
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
     case "Error":
@@ -122,20 +119,10 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
   }
 }
 
-interface FlowHistoryPrProps extends FlowHistoryCellProps {
-  flowName: string;
-}
-function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
-  const repoUrl = workflow.memo.parameterMap.repo;
-  if (!repoUrl) {
-    throw new FlowHistoryError("did not find repoUrl in workflow parameters");
-  }
-
-  const workflowName = workflow.metadata.name;
-
-  // The workflow name is in the form `${flowName}-${prNumber}-${shortSha}`
-  let prNumber = workflowName.slice(flowName.length + 1);
-  prNumber = prNumber.slice(0, prNumber.indexOf("-"));
+function FlowHistoryPR({ workflow }: FlowHistoryCellProps) {
+  const { parameterMap } = workflow.memo;
+  const repoUrl = getWorkflowRepo(parameterMap);
+  const prNumber = getWorkflowRevisionNumber(parameterMap);
 
   const prLink = getRepoPrLink(repoUrl, prNumber);
   return (
@@ -152,15 +139,8 @@ function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
 
 function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
   const { parameterMap } = workflow.memo;
-  const commit = parameterMap.revision;
-  if (!commit) {
-    throw new FlowHistoryError("did not find commit in workflow parameters");
-  }
-  const repoUrl = parameterMap.repo;
-  if (!repoUrl) {
-    throw new FlowHistoryError("did not find repoUrl in workflow parameters");
-  }
-
+  const commit = getWorkflowRevision(parameterMap);
+  const repoUrl = getWorkflowRepo(parameterMap);
   const displayCommit = getDisplayCommit(commit);
   const commitLink = getRepoCommitLink(repoUrl, commit);
   return (
@@ -214,13 +194,6 @@ function FlowHistoryActions({ workflow, namespace }: FlowHistoryActionsProps) {
       </a>
     </>
   );
-}
-
-class FlowHistoryError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { FlowHistory };

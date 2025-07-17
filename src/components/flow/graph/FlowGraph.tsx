@@ -115,7 +115,7 @@ function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
   // and top y (ty) for use with rect
   const lx = x - width / 2;
   const ty = y - height / 2;
-  const borderRadius = 30;
+  const borderRadius = 5;
   return (
     <>
       <rect

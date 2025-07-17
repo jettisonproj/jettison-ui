@@ -11,14 +11,14 @@
   left: 31px;
   margin-top: 3px;
   transform: scaleX(1);
-  fill: var(--title-color);
+  fill: var(--text-color);
 }
 
 .logoName {
   position: absolute;
   top: 28px;
   left: 146px;
-  color: var(--title-color);
+  color: var(--text-color);
   font-size: 14px;
   font-family: "Helvetica", "Arial", sans-serif;
   font-weight: 800;
