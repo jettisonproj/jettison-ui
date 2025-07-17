@@ -25,10 +25,13 @@ interface WorkflowSpecParameter {
   value: string;
 }
 
+// These values are not sent by the server, but instead
+// computed / derived on the client
 interface WorkflowMemo {
   parameterMap: Record<string, string>;
   startedAt: Date;
   finishedAt?: Date;
+  nodes: Record<string, WorkflowMemoStatusNode>;
 }
 
 interface WorkflowStatus {
@@ -36,6 +39,27 @@ interface WorkflowStatus {
   finishedAt?: string;
   phase: string;
   progress: string;
+  nodes: Record<string, WorkflowStatusNode>;
 }
 
-export type { Workflow };
+interface WorkflowStatusNode {
+  displayName: string;
+  phase: string;
+  startedAt: string;
+  finishedAt?: string;
+  inputs?: WorkflowStatusNodeInputs;
+}
+
+interface WorkflowStatusNodeInputs {
+  parameters: WorkflowSpecParameter[];
+}
+
+interface WorkflowMemoStatusNode {
+  displayName: string;
+  phase: string;
+  startedAt: Date;
+  finishedAt?: Date;
+  parameterMap: Record<string, string>;
+}
+
+export type { Workflow, WorkflowMemoStatusNode };

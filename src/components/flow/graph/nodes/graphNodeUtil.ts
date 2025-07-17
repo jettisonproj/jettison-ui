@@ -1,12 +1,13 @@
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { routes } from "src/routes.ts";
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
+import type {
+  Workflow,
+  WorkflowMemoStatusNode,
+} from "src/data/types/workflowTypes.ts";
 import { trimGitSuffix } from "src/utils/gitUtil.ts";
 
-function getDisplayRepoName(repoUrl: string) {
-  const { pathname } = new URL(repoUrl);
-  return getDisplayRepoPath(pathname, repoUrl);
-}
+const TRIGGER_NODE_NAME = "github-check-start";
 
 /**
  * Return the last path component as a shorthand for
@@ -53,9 +54,41 @@ function getNodeDetailsLink(
   return `${routes.flows}/${namespace}/${flowName}/${nodeName}`;
 }
 
+function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {
+  const stepName = flowDefaultStepName(step);
+  return getLastWorkflowNode(stepName, workflows);
+}
+
+function getLastWorkflowNodeForTrigger(workflows: Workflow[]) {
+  return getLastWorkflowNode(TRIGGER_NODE_NAME, workflows);
+}
+
+interface WorkflowNode {
+  workflow: Workflow;
+  node: WorkflowMemoStatusNode;
+}
+function getLastWorkflowNode(
+  nodeName: string,
+  workflows: Workflow[],
+): WorkflowNode | null {
+  if (workflows.length === 0) {
+    return null;
+  }
+  for (const workflow of workflows) {
+    const node = workflow.memo.nodes[nodeName];
+    if (node != null) {
+      return { workflow, node };
+    }
+  }
+  return null;
+}
+
 export {
-  getDisplayRepoName,
   getDisplayRepoPath,
   getTriggerDetailsLink,
   getStepDetailsLink,
+  getLastWorkflowNodeForStep,
+  getLastWorkflowNodeForTrigger,
 };
+
+export type { WorkflowNode };

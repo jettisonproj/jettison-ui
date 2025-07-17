@@ -1,9 +1,12 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useParams } from "react-router";
 
+import { localState } from "src/localState.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { getFlowTrigger } from "src/components/flow/flowUtil.ts";
-import { FlowsContext } from "src/providers/provider.tsx";
+import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
 import { TriggerLinks } from "src/components/nodedetails/nodelinks/TriggerLinks.tsx";
 import { StepLinks } from "src/components/nodedetails/nodelinks/StepLinks.tsx";
 import {
@@ -51,7 +54,8 @@ function NodeDetailsItem({
   nodeName,
 }: NodeDetailsItemProps) {
   const flows = useContext(FlowsContext);
-  if (flows == null) {
+  const allWorkflows = useContext(WorkflowsContext);
+  if (flows == null || allWorkflows == null) {
     return <i className="nf nf-fa-spinner" />;
   }
   const flow = flows.get(namespace)?.get(flowName);
@@ -66,7 +70,39 @@ function NodeDetailsItem({
       </p>
     );
   }
+  localState.addRecentFlow(namespace, flowName);
 
+  const workflows = allWorkflows.get(namespace)?.get(flowName);
+  return (
+    <NodeWorkflowDetails
+      namespace={namespace}
+      flowName={flowName}
+      nodeName={nodeName}
+      flow={flow}
+      workflows={workflows}
+    />
+  );
+}
+
+interface NodeWorkflowDetailsProps extends NodeDetailsItemProps {
+  flow: Flow;
+  workflows: Map<string, Workflow> | undefined;
+}
+function NodeWorkflowDetails({
+  namespace,
+  flowName,
+  nodeName,
+  flow,
+  workflows,
+}: NodeWorkflowDetailsProps) {
+  const sortedWorkflows = useMemo(() => {
+    if (workflows == null) {
+      return [];
+    }
+    return Array.from(workflows.values()).sort(
+      (a, b) => b.memo.startedAt.getTime() - a.memo.startedAt.getTime(),
+    );
+  }, [workflows]);
   const trigger = flow.spec.triggers.find(
     (trigger) => flowDefaultTriggerName(trigger) === nodeName,
   );
@@ -77,6 +113,7 @@ function NodeDetailsItem({
       flowName,
       trigger,
       isPrFlow,
+      sortedWorkflows,
     );
     return (
       <>
@@ -90,7 +127,14 @@ function NodeDetailsItem({
   );
   if (step) {
     const trigger = getFlowTrigger(flow);
-    const stepNode = getFlowStepNode(namespace, flowName, step, trigger);
+    const isPrFlow = isPullRequestTrigger(trigger);
+    const stepNode = getFlowStepNode(
+      namespace,
+      flowName,
+      step,
+      isPrFlow,
+      sortedWorkflows,
+    );
     return (
       <>
         <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />

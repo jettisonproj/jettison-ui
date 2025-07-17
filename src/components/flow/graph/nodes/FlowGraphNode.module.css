@@ -1,82 +1,195 @@
-.flexCenter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.nodeRoot {
-  composes: flexCenter;
-
-  /* Start a stacking context in order to render links inside of links
-   * Otherwise, HTML linters warn about nested links */
-  position: relative;
-  padding: 11px 15px;
-}
-
-.nodeLink {
-  /* Create an overlay link for the node */
-  position: absolute;
-  inset: 0;
-}
-
-.nodeContent {
-  composes: flexCenter;
-
-  color: var(--text-color);
-}
-
-.nodeIcon {
-  padding-bottom: 5px;
-  font-size: 27px;
-}
-
-.nodeTextLine {
-  max-width: 100%;
+.nodeText {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.nodeTextLink {
-  composes: nodeTextLine;
+.nodeRow {
+  composes: nodeText;
 
-  /* Use relative position, so that it works with the overlay link */
-  position: relative;
-  color: var(--text-color);
+  max-width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.nodeTextLink:hover {
+.nodeRowHeader {
+  composes: nodeRow;
+
+  text-transform: uppercase;
+  color: var(--graph-title-color);
+  background-color: var(--graph-node-bg-color);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 16px;
+  padding: 8px 0;
+  margin-bottom: 10px;
+}
+
+.nodeTitle {
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.nodeRowLink {
+  composes: nodeRow;
+
+  color: var(--graph-link-color);
+  font-weight: bolder;
+}
+
+.nodeRowLink:hover {
   text-decoration: underline;
   color: var(--primary-color);
 }
 
-.nodeTextLineBolder {
-  composes: nodeTextLine;
+.nodeRowText {
+  composes: nodeRow;
 
-  font-weight: bolder;
+  color: var(--graph-text-color);
 }
 
-.nodeTextLineCode {
-  composes: nodeTextLine;
+.nodeRowSmall {
+  composes: nodeRow;
+
+  color: var(--graph-text-color);
+  margin-top: 1px;
+}
+
+.githubIcon {
+  color: #1c5edf;
+  font-size: 21px;
+  margin-right: 7px;
+}
+
+.dockerIcon {
+  color: #1d63ed;
+  font-size: 21px;
+  margin-right: 7px;
+}
+
+.k8sIcon {
+  color: #316ce6;
+  font-size: 21px;
+  margin-right: 7px;
+}
+
+.commitIcon {
+  font-size: 16px;
+  margin-right: 3px;
+  padding-bottom: 3px;
+}
+
+.prIcon {
+  font-size: 13px;
+  margin-right: 3px;
+  padding-bottom: 4px;
+}
+
+.prNumberText {
+  composes: nodeText;
+
+  margin-left: 3px;
+}
+
+.codeText {
+  composes: nodeText;
 
   font-size: 12px;
   font-family: monospace;
 }
 
-.dockerIcon {
-  color: #1d63ed;
-}
-
-.argoIcon {
-  color: #ef7b4d;
-}
-
-.successIcon {
-  color: var(--success-color);
+.shaIcon {
   margin-right: 5px;
+}
+
+.userIcon {
+  font-size: 12px;
+  margin: 0 5px;
+}
+
+.branchIcon {
+  font-size: 12px;
+  margin: 0 5px;
+}
+
+.timeIcon {
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.loadingIcon {
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.nodeSmallText {
+  composes: nodeText;
+
+  font-weight: bolder;
+  font-size: 12px;
+}
+
+.nodeTimeText {
+  composes: nodeSmallText;
+
+  cursor: pointer;
+}
+
+.nodeTimeText:hover {
+  text-decoration: underline;
+}
+
+.dockerfileIcon {
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.infraIcon {
+  font-size: 11px;
+  margin-right: 5px;
+}
+
+.nodeBadge {
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 8px 1px;
+  display: flex;
+  min-width: 50px;
+  justify-content: center;
+  flex-direction: row;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+  margin-top: 5px;
+}
+
+.notFoundBadge {
+  composes: nodeBadge;
+
+  background-color: rgb(115, 115, 115);
+}
+
+.failingBadge {
+  composes: nodeBadge;
+
+  background-color: var(--danger-color);
+}
+
+.driftBadge {
+  composes: nodeBadge;
+
+  margin-left: 8px;
+  background-color: #ff8c27;
+}
+
+.liveBadge {
+  composes: nodeBadge;
+
+  background-color: rgb(24, 190, 148);
 }
 
 .dangerIcon {
@@ -85,9 +198,13 @@
   font-size: 16px;
 }
 
+.nodeDangerIcon {
+  color: var(--danger-color);
+  margin-left: 5px;
+  font-size: 12px;
+}
+
 .commitLink {
-  /* Use relative position, so that it works with the overlay link */
-  position: relative;
   color: #59636e;
 }
 

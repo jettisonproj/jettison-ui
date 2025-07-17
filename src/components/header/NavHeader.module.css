@@ -5,7 +5,7 @@
 }
 
 .component {
-  color: var(--title-color);
+  color: var(--text-color);
 }
 
 .componentSeparator {

@@ -1,5 +1,4 @@
 :root {
-  --title-color: #333;
   --text-color: #333;
 
   --header-height: 65px;
@@ -9,14 +8,18 @@
 
   --table-color-hover: #f7f7f7;
 
+  --graph-node-bg-color: #e4ebff;
   --graph-node-border-color: #e4e4e4;
   --graph-edge-color: #78849e;
+  --graph-title-color: #0040bf;
+  --graph-link-color: #3952b1;
+  --graph-text-color: #3d5977;
 
-  --success-color: #19b698;
-  --primary-color: #1997c6;
+  --primary-color: #4180e7;
   --primary-shadow: 0 0 10px #0c88dc, 0 0 20px #0f60f7;
   --secondary-color: rgb(240, 240, 240);
   --secondary-hover: rgb(230, 230, 230);
+  --success-color: #19b698;
   --danger-color: #df3e3e;
 }
 
@@ -37,7 +40,6 @@ html {
 body {
   color: var(--text-color);
   font-weight: 100;
-  background-color: var(--body-color);
   font-size: 14px;
   /* More space between lines */
   line-height: 1.42857143;
@@ -64,5 +66,5 @@ h5,
 h6 {
   font-family: "Open Sans", sans-serif;
   font-weight: lighter;
-  color: var(--title-color);
+  color: var(--text-color);
 }
