@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useParams } from "react-router";
 
 import { localState } from "src/localState.ts";
@@ -8,7 +8,8 @@ import {
   isPullRequestTrigger,
 } from "src/components/flow/flowUtil.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
-import { FlowsContext } from "src/providers/provider.tsx";
+import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
 import {
   getFlowStepNode,
@@ -47,7 +48,8 @@ interface FlowItemProps {
 
 function FlowItem({ namespace, name }: FlowItemProps) {
   const flows = useContext(FlowsContext);
-  if (flows == null) {
+  const allWorkflows = useContext(WorkflowsContext);
+  if (flows == null || allWorkflows == null) {
     return <i className="nf nf-fa-spinner" />;
   }
   const flow = flows.get(namespace)?.get(name);
@@ -63,6 +65,37 @@ function FlowItem({ namespace, name }: FlowItemProps) {
     );
   }
   localState.addRecentFlow(namespace, name);
+
+  const workflows = allWorkflows.get(namespace)?.get(name);
+  return (
+    <FlowWorkflowsItem
+      namespace={namespace}
+      name={name}
+      flow={flow}
+      workflows={workflows}
+    />
+  );
+}
+
+interface FlowWorkflowsItemProps extends FlowItemProps {
+  flow: Flow;
+  workflows: Map<string, Workflow> | undefined;
+}
+function FlowWorkflowsItem({
+  namespace,
+  name,
+  flow,
+  workflows,
+}: FlowWorkflowsItemProps) {
+  const sortedWorkflows = useMemo(() => {
+    if (workflows == null) {
+      return [];
+    }
+    return Array.from(workflows.values()).sort((a, b) =>
+      b.status.startedAt.localeCompare(a.status.startedAt),
+    );
+  }, [workflows]);
+
   const trigger = getFlowTrigger(flow);
   const isPrFlow = isPullRequestTrigger(trigger);
   const flowNodes = getFlowNodes(flow, trigger, isPrFlow);
@@ -71,7 +104,12 @@ function FlowItem({ namespace, name }: FlowItemProps) {
   return (
     <>
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
-      <FlowHistory isPrFlow={isPrFlow} namespace={namespace} flowName={name} />
+      <FlowHistory
+        isPrFlow={isPrFlow}
+        namespace={namespace}
+        flowName={name}
+        workflows={sortedWorkflows}
+      />
     </>
   );
 }

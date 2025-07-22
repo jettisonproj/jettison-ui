@@ -1,9 +1,8 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { WorkflowsContext } from "src/providers/provider.tsx";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
@@ -18,43 +17,17 @@ interface FlowHistoryProps {
   isPrFlow: boolean;
   namespace: string;
   flowName: string;
+  workflows: Workflow[];
 }
-function FlowHistory({ isPrFlow, namespace, flowName }: FlowHistoryProps) {
-  const allWorkflows = useContext(WorkflowsContext);
-  if (allWorkflows == null) {
-    return <i className="nf nf-fa-spinner" />;
-  }
-  const workflows = allWorkflows.get(namespace)?.get(flowName);
-  if (workflows == null) {
-    return <p>No flow history found</p>;
-  }
-
-  return (
-    <SortedFlowHistory
-      isPrFlow={isPrFlow}
-      namespace={namespace}
-      flowName={flowName}
-      workflows={workflows}
-    />
-  );
-}
-
-interface SortedFlowHistoryProps extends FlowHistoryProps {
-  workflows: Map<string, Workflow>;
-}
-function SortedFlowHistory({
+function FlowHistory({
   isPrFlow,
   namespace,
   flowName,
   workflows,
-}: SortedFlowHistoryProps) {
-  const sortedWorkflows = useMemo(
-    () =>
-      Array.from(workflows.values()).sort((a, b) =>
-        b.status.startedAt.localeCompare(a.status.startedAt),
-      ),
-    [workflows],
-  );
+}: FlowHistoryProps) {
+  if (workflows.length === 0) {
+    return <p>No flow history found</p>;
+  }
 
   return (
     <table className={styles.historyTable}>
@@ -71,7 +44,7 @@ function SortedFlowHistory({
         </tr>
       </thead>
       <tbody>
-        {sortedWorkflows.map((workflow) => (
+        {workflows.map((workflow) => (
           <FlowHistoryRow
             key={workflow.metadata.name}
             isPrFlow={isPrFlow}
@@ -85,7 +58,10 @@ function SortedFlowHistory({
   );
 }
 
-interface FlowHistoryRowProps extends FlowHistoryProps {
+interface FlowHistoryRowProps {
+  isPrFlow: boolean;
+  namespace: string;
+  flowName: string;
   workflow: Workflow;
 }
 function FlowHistoryRow({
