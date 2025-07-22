@@ -94,13 +94,6 @@ function FlowHistoryRow({
   flowName,
   workflow,
 }: FlowHistoryRowProps) {
-  // Create map of parameter name to value
-  const { parameters } = workflow.spec.arguments;
-  const parameterMap: Record<string, string> = {};
-  parameters.forEach((parameter) => {
-    parameterMap[parameter.name] = parameter.value;
-  });
-
   return (
     <tr className={styles.historyRow}>
       <td className={styles.historyCell}>
@@ -108,15 +101,11 @@ function FlowHistoryRow({
       </td>
       {isPrFlow && (
         <td className={styles.historyCell}>
-          <FlowHistoryPR
-            flowName={flowName}
-            workflow={workflow}
-            parameterMap={parameterMap}
-          />
+          <FlowHistoryPR flowName={flowName} workflow={workflow} />
         </td>
       )}
       <td className={styles.historyCell}>
-        <FlowHistoryCommit parameterMap={parameterMap} />
+        <FlowHistoryCommit workflow={workflow} />
       </td>
       <td className={styles.historyCell}>
         <Timestamp date={new Date(workflow.status.startedAt)} />
@@ -164,14 +153,9 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
 
 interface FlowHistoryPrProps extends FlowHistoryCellProps {
   flowName: string;
-  parameterMap: Record<string, string>;
 }
-function FlowHistoryPR({
-  workflow,
-  flowName,
-  parameterMap,
-}: FlowHistoryPrProps) {
-  const repoUrl = parameterMap.repo;
+function FlowHistoryPR({ workflow, flowName }: FlowHistoryPrProps) {
+  const repoUrl = workflow.memo.parameterMap.repo;
   if (!repoUrl) {
     throw new FlowHistoryError("did not find repoUrl in workflow parameters");
   }
@@ -195,10 +179,8 @@ function FlowHistoryPR({
   );
 }
 
-interface FlowHistoryCommitProps {
-  parameterMap: Record<string, string>;
-}
-function FlowHistoryCommit({ parameterMap }: FlowHistoryCommitProps) {
+function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
+  const { parameterMap } = workflow.memo;
   const commit = parameterMap.revision;
   if (!commit) {
     throw new FlowHistoryError("did not find commit in workflow parameters");

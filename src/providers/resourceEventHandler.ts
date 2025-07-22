@@ -6,6 +6,7 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import { appendGitSuffix } from "src/utils/gitUtil.ts";
+import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
 
 const DELETE_EVENT_ANNOTATION =
   "workflows.jettisonproj.io/v1alpha1/watcher-event-type";
@@ -315,6 +316,7 @@ class ResourceEventHandler {
           recreatedFlowNames.add(flowName);
         }
 
+        memoizeWorkflow(workflowEvent);
         newFlowWorkflows.set(workflowName, workflowEvent);
       }
     }

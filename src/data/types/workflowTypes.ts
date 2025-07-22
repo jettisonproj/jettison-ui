@@ -7,6 +7,9 @@ interface Workflow extends NamespacedResource {
   kind: ResourceKind.Workflow;
   spec: WorkflowSpec;
   status: WorkflowStatus;
+  // The memo field is not actually sent by the server
+  // It contains memoized data computed in the client
+  memo: WorkflowMemo;
 }
 
 interface WorkflowSpec {
@@ -20,6 +23,10 @@ interface WorkflowSpecArguments {
 interface WorkflowSpecParameter {
   name: string;
   value: string;
+}
+
+interface WorkflowMemo {
+  parameterMap: Record<string, string>;
 }
 
 interface WorkflowStatus {
