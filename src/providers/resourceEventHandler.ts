@@ -275,8 +275,8 @@ class ResourceEventHandler {
     workflows: Map<string, Map<string, Map<string, Workflow>>> | null,
   ): Map<string, Map<string, Map<string, Workflow>>> {
     const newWorkflows = new Map(workflows);
-    const recreatedNamespaces = new Set();
-    const recreatedFlowNames = new Set();
+    // Map from namespaces to set of flow names to track updates
+    const recreatedNamespaceFlows = new Map();
 
     for (const workflowEvent of this.#workflowEvents) {
       const { namespace, name: workflowName } = workflowEvent.metadata;
@@ -296,12 +296,20 @@ class ResourceEventHandler {
       } else {
         // Get the updated namespace map. Ensures it is recreated if needed
         let newNamespaceWorkflows;
-        if (namespaceWorkflows != null && recreatedNamespaces.has(namespace)) {
+        let recreatedFlowNames;
+        if (
+          namespaceWorkflows != null &&
+          recreatedNamespaceFlows.has(namespace)
+        ) {
           newNamespaceWorkflows = namespaceWorkflows;
+          recreatedFlowNames = recreatedNamespaceFlows.get(
+            namespace,
+          ) as Set<string>;
         } else {
           newNamespaceWorkflows = new Map(namespaceWorkflows);
           newWorkflows.set(namespace, newNamespaceWorkflows);
-          recreatedNamespaces.add(namespace);
+          recreatedFlowNames = new Set();
+          recreatedNamespaceFlows.set(namespace, recreatedFlowNames);
         }
 
         const flowWorkflows = newNamespaceWorkflows.get(flowName);
