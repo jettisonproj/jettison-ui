@@ -84,16 +84,10 @@ function FlowHistoryRow({
         <FlowHistoryCommit workflow={workflow} />
       </td>
       <td className={styles.historyCell}>
-        <Timestamp date={new Date(workflow.status.startedAt)} />
+        <Timestamp date={workflow.memo.startedAt} />
       </td>
       <td className={styles.historyCell}>
-        <Timestamp
-          date={
-            workflow.status.finishedAt == null
-              ? undefined
-              : new Date(workflow.status.finishedAt)
-          }
-        />
+        <Timestamp date={workflow.memo.finishedAt} />
       </td>
       <td className={styles.historyCell}>
         <FlowHistoryDuration workflow={workflow} />
@@ -211,12 +205,12 @@ function Timestamp({ date }: TimestampProps) {
 }
 
 function FlowHistoryDuration({ workflow }: FlowHistoryCellProps) {
-  const { startedAt, finishedAt } = workflow.status;
+  const { startedAt, finishedAt } = workflow.memo;
   if (finishedAt == null) {
     return <i className="nf nf-fa-spinner" />;
   }
 
-  const durationMs = Date.parse(finishedAt) - Date.parse(startedAt);
+  const durationMs = finishedAt.getTime() - startedAt.getTime();
   return getHumanDuration(durationMs);
 }
 

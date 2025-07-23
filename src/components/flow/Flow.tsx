@@ -91,8 +91,8 @@ function FlowWorkflowsItem({
     if (workflows == null) {
       return [];
     }
-    return Array.from(workflows.values()).sort((a, b) =>
-      b.status.startedAt.localeCompare(a.status.startedAt),
+    return Array.from(workflows.values()).sort(
+      (a, b) => b.memo.startedAt.getTime() - a.memo.startedAt.getTime(),
     );
   }, [workflows]);
 

@@ -27,6 +27,8 @@ interface WorkflowSpecParameter {
 
 interface WorkflowMemo {
   parameterMap: Record<string, string>;
+  startedAt: Date;
+  finishedAt?: Date;
 }
 
 interface WorkflowStatus {

@@ -7,7 +7,16 @@ function memoizeWorkflow(workflow: Workflow) {
     parameterMap[parameter.name] = parameter.value;
   });
 
-  workflow.memo = { parameterMap };
+  const startedAt = new Date(workflow.status.startedAt);
+  workflow.memo = {
+    parameterMap,
+    startedAt,
+  };
+
+  const finishedAt = workflow.status.finishedAt;
+  if (finishedAt != null) {
+    workflow.memo.finishedAt = new Date(finishedAt);
+  }
 }
 
 export { memoizeWorkflow };
