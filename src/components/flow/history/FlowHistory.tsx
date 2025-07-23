@@ -1,12 +1,7 @@
-import { useContext } from "react";
-
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
+import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import {
-  DisplayIsoTimestampsContext,
-  SetDisplayIsoTimestampsContext,
-} from "src/providers/provider.tsx";
 import {
   getDisplayCommit,
   getRepoCommitLink,
@@ -84,10 +79,16 @@ function FlowHistoryRow({
         <FlowHistoryCommit workflow={workflow} />
       </td>
       <td className={styles.historyCell}>
-        <Timestamp date={workflow.memo.startedAt} />
+        <Timestamp
+          date={workflow.memo.startedAt}
+          className={styles.timestamp}
+        />
       </td>
       <td className={styles.historyCell}>
-        <Timestamp date={workflow.memo.finishedAt} />
+        <Timestamp
+          date={workflow.memo.finishedAt}
+          className={styles.timestamp}
+        />
       </td>
       <td className={styles.historyCell}>
         <FlowHistoryDuration workflow={workflow} />
@@ -171,36 +172,6 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
     >
       {displayCommit}
     </a>
-  );
-}
-
-function getDisplayTimestamp(d: Date, displayIsoTimestamps: boolean) {
-  if (displayIsoTimestamps) {
-    return d.toISOString();
-  }
-  return d.toLocaleString();
-}
-
-interface TimestampProps {
-  date?: Date;
-}
-function Timestamp({ date }: TimestampProps) {
-  const displayIsoTimestamps = useContext(DisplayIsoTimestampsContext);
-  const setDisplayIsoTimestamps = useContext(SetDisplayIsoTimestampsContext);
-
-  if (date == null) {
-    return <i className="nf nf-fa-spinner" />;
-  }
-  const displayTimestamp = getDisplayTimestamp(date, displayIsoTimestamps);
-  return (
-    <div
-      className={styles.timestamp}
-      onClick={() => {
-        setDisplayIsoTimestamps((b) => !b);
-      }}
-    >
-      {displayTimestamp}
-    </div>
   );
 }
 
