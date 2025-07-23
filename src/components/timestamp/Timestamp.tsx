@@ -25,14 +25,14 @@ function Timestamp({ date, className }: TimestampProps) {
   }
   const displayTimestamp = getDisplayTimestamp(date, displayIsoTimestamps);
   return (
-    <div
+    <span
       className={className}
       onClick={() => {
         setDisplayIsoTimestamps((b) => !b);
       }}
     >
       {displayTimestamp}
-    </div>
+    </span>
   );
 }
 
