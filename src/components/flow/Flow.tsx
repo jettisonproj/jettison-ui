@@ -54,6 +54,7 @@ function FlowItem({ namespace, name }: FlowItemProps) {
   }
   const flow = flows.get(namespace)?.get(name);
   if (flow == null) {
+    localState.deleteRecentFlow(namespace, name);
     return (
       <p>
         There is no flow{" "}

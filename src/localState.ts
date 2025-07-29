@@ -54,6 +54,22 @@ class LocalState {
     this.#saveToLocalStorage();
   }
 
+  deleteRecentFlow(namespace: string, name: string) {
+    const namespaceNamePath = `${namespace}/${name}`;
+    const recentFlows = this.getRecentFlows();
+
+    const n = recentFlows.length;
+    for (let i = 0; i < n; i += 1) {
+      if (recentFlows[i] === namespaceNamePath) {
+        this.#localState.recentFlows = [
+          ...recentFlows.slice(0, i),
+          ...recentFlows.slice(i + 1),
+        ];
+        this.#saveToLocalStorage();
+      }
+    }
+  }
+
   #saveToLocalStorage() {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(this.#localState));
   }
