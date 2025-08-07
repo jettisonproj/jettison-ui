@@ -68,6 +68,10 @@
   inset: 0;
 }
 
+.recentFlowSeparator {
+  margin: 0 8px;
+}
+
 .manifestLink {
   position: relative;
   float: right;
