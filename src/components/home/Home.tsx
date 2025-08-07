@@ -136,7 +136,9 @@ function RecentFlow({ recentFlow, isFirst }: RecentFlowProps) {
         to={`${routes.flows}/${recentFlow}`}
         className={styles.recentFlowLink}
       ></Link>
-      {recentFlow}
+      {namespace}
+      <span className={styles.recentFlowSeparator}>⧸</span>
+      {name}
       <a
         className={styles.manifestLink}
         href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${name}`}
