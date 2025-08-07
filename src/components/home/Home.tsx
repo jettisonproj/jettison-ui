@@ -8,6 +8,7 @@ import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
 import {
@@ -41,45 +42,31 @@ function Overview() {
       <ul className={styles.overviewContainer}>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Namespaces</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumNamespaces namespaces={namespaces} />
-          </div>
+          <NumNamespaces namespaces={namespaces} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Flows</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumFlows flows={flows} />
-          </div>
+          <NumFlows flows={flows} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Triggers</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumTriggers flows={flows} />
-          </div>
+          <NumTriggers flows={flows} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Steps</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumSteps flows={flows} />
-          </div>
+          <NumSteps flows={flows} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Applications</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumApplications applications={applications} />
-          </div>
+          <NumApplications applications={applications} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Rollouts</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumRollouts rollouts={rollouts} />
-          </div>
+          <NumRollouts rollouts={rollouts} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Workflows</label>{" "}
-          <div className={styles.overviewValue}>
-            <NumWorkflows workflows={workflows} />
-          </div>
+          <NumWorkflows workflows={workflows} />
         </li>
       </ul>
       <Link className={styles.namespacesLink} to={routes.flows}>
@@ -156,7 +143,7 @@ interface NamespacesProp {
 }
 function NumNamespaces({ namespaces }: NamespacesProp) {
   if (namespaces == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   return namespaces.size;
 }
@@ -166,7 +153,7 @@ interface FlowsProp {
 }
 function NumFlows({ flows }: FlowsProp) {
   if (flows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numFlows = 0;
   for (const namespaceFlows of flows.values()) {
@@ -177,7 +164,7 @@ function NumFlows({ flows }: FlowsProp) {
 
 function NumTriggers({ flows }: FlowsProp) {
   if (flows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numTriggers = 0;
   for (const namespaceFlows of flows.values()) {
@@ -190,7 +177,7 @@ function NumTriggers({ flows }: FlowsProp) {
 
 function NumSteps({ flows }: FlowsProp) {
   if (flows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numSteps = 0;
   for (const namespaceFlows of flows.values()) {
@@ -206,7 +193,7 @@ interface ApplicationsProp {
 }
 function NumApplications({ applications }: ApplicationsProp) {
   if (applications == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numApplications = 0;
   for (const namespaceApplications of applications.values()) {
@@ -220,7 +207,7 @@ interface RolloutsProp {
 }
 function NumRollouts({ rollouts }: RolloutsProp) {
   if (rollouts == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numRollouts = 0;
   for (const namespaceRollouts of rollouts.values()) {
@@ -234,7 +221,7 @@ interface WorkflowsProp {
 }
 function NumWorkflows({ workflows }: WorkflowsProp) {
   if (workflows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   let numWorkflows = 0;
   for (const namespaceWorkflows of workflows.values()) {
