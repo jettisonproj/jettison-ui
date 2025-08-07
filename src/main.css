@@ -21,6 +21,7 @@
   --secondary-hover: rgb(230, 230, 230);
   --success-color: #19b698;
   --danger-color: #df3e3e;
+  --load-color: #707fa2;
 }
 
 html {

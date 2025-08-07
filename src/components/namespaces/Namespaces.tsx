@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { routes } from "src/routes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { NamespacesNavHeader } from "src/components/header/NavHeader.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { NamespacesContext } from "src/providers/provider.tsx";
 import styles from "src/components/namespaces/Namespaces.module.css";
 
@@ -21,7 +22,7 @@ function NamespacesList() {
   const namespaces = useContext(NamespacesContext);
 
   if (namespaces == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
 
   return Array.from(namespaces)

@@ -1,0 +1,45 @@
+.loadIcon {
+  --load-icon-height: 16px;
+  --load-block-width: 4px;
+
+  display: flex;
+  align-items: center;
+  height: var(--load-icon-height);
+  width: calc(var(--load-block-width) * 4);
+}
+
+.loadIconBase {
+  width: var(--load-block-width);
+  background: var(--load-color);
+  animation: loadPulse 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.loadIcon1 {
+  composes: loadIconBase;
+
+  animation-delay: -0.24s;
+}
+
+.loadIcon2 {
+  composes: loadIconBase;
+
+  margin-left: calc(var(--load-block-width) / 2);
+  animation-delay: -0.12s;
+}
+
+.loadIcon3 {
+  composes: loadIconBase;
+
+  margin-left: calc(var(--load-block-width) / 2);
+  animation-delay: 0s;
+}
+
+@keyframes loadPulse {
+  0% {
+    height: var(--load-icon-height);
+  }
+  50%,
+  100% {
+    height: calc(var(--load-icon-height) / 2);
+  }
+}

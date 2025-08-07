@@ -20,6 +20,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 
 /**
@@ -157,7 +158,7 @@ function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
 function FlowGraphLoading() {
   return (
     <div className={styles.nodeRowSmall}>
-      <i className={`nf nf-fa-spinner ${styles.loadingIcon}`} />
+      <LoadIcon className={styles.loadingIcon} />
       <span className={styles.nodeSmallText}>Waiting for workflow run</span>
     </div>
   );

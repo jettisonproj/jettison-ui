@@ -17,6 +17,7 @@ import {
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
 import type {
@@ -50,7 +51,7 @@ function FlowItem({ namespace, name }: FlowItemProps) {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   const flow = flows.get(namespace)?.get(name);
   if (flow == null) {

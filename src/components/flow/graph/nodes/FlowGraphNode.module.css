@@ -122,6 +122,7 @@
 .loadingIcon {
   font-size: 12px;
   margin-right: 5px;
+  --load-color: var(--graph-link-color);
 }
 
 .nodeSmallText {

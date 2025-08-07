@@ -5,6 +5,7 @@ import { routes } from "src/routes.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import styles from "src/components/flows/Flows.module.css";
 
 function Flows() {
@@ -30,7 +31,7 @@ interface FlowsListProps {
 function FlowsList({ namespace }: FlowsListProps) {
   const flows = useContext(FlowsContext);
   if (flows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
 
   const namespaceFlows = flows.get(namespace);
