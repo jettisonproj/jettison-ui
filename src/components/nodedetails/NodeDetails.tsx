@@ -17,6 +17,7 @@ import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { isPullRequestTrigger } from "src/components/flow/flowUtil.ts";
 import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 
 function NodeDetails() {
   const { namespace, flowName, nodeName } = useParams();
@@ -56,7 +57,7 @@ function NodeDetailsItem({
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   const flow = flows.get(namespace)?.get(flowName);
   if (flow == null) {
