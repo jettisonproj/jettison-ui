@@ -1,5 +1,6 @@
 import { useContext } from "react";
 
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
@@ -21,7 +22,7 @@ function Timestamp({ date, className }: TimestampProps) {
   const setDisplayIsoTimestamps = useContext(SetDisplayIsoTimestampsContext);
 
   if (date == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
   const displayTimestamp = getDisplayTimestamp(date, displayIsoTimestamps);
   return (

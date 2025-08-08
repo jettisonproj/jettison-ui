@@ -19,6 +19,7 @@ import {
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { getWorkflowRevision } from "src/components/flow/workflowNodeUtil.ts";
 import type { WorkflowNode } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -108,7 +109,7 @@ function FlowGraphArgoCDStepStatus({
   if (applications == null || rollouts == null) {
     return (
       <div className={styles.nodeRowText}>
-        <i className="nf nf-fa-spinner" />
+        <LoadIcon />
       </div>
     );
   }

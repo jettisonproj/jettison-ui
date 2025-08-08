@@ -149,7 +149,7 @@ function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
     case "Failed":
       return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
     case "Running":
-      return <i className="nf nf-fa-spinner" />;
+      return <LoadIcon />;
     default:
       return <i className="nf nf-fa-question_circle" />;
   }

@@ -1,5 +1,6 @@
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
@@ -113,7 +114,7 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
     case "Failed":
       return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
     case "Running":
-      return <i className="nf nf-fa-spinner" />;
+      return <LoadIcon />;
     default:
       return <i className="nf nf-fa-question_circle" />;
   }
@@ -158,7 +159,7 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
 function FlowHistoryDuration({ workflow }: FlowHistoryCellProps) {
   const { startedAt, finishedAt } = workflow.memo;
   if (finishedAt == null) {
-    return <i className="nf nf-fa-spinner" />;
+    return <LoadIcon />;
   }
 
   const durationMs = finishedAt.getTime() - startedAt.getTime();
