@@ -150,6 +150,8 @@ function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
       return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
     case "Running":
       return <LoadIcon />;
+    case "Pending":
+      return <i className="nf nf-fa-hourglass" />;
     default:
       return <i className="nf nf-fa-question_circle" />;
   }
