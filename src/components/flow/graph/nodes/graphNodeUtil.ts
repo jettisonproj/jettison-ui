@@ -76,7 +76,13 @@ function getLastWorkflowNode(
   }
   for (const workflow of workflows) {
     const node = workflow.memo.nodes[nodeName];
-    if (node != null) {
+    // todo add enum
+    // todo more specific check
+    if (
+      node != null &&
+      node.phase !== "Skipped" &&
+      node.outputMap["docker-build-pr-status"] !== "Skipped"
+    ) {
       return { workflow, node };
     }
   }
