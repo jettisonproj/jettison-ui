@@ -8,11 +8,16 @@ function memoizeWorkflow(workflow: Workflow) {
   // Also convert dates to Date type
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
   Object.values(workflow.status.nodes).forEach((node) => {
-    const { displayName, phase, startedAt, finishedAt, inputs } = node;
+    const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
 
     const parameterMap: Record<string, string> = {};
     inputs?.parameters.forEach((parameter) => {
       parameterMap[parameter.name] = parameter.value;
+    });
+
+    const outputMap: Record<string, string> = {};
+    outputs?.parameters?.forEach((parameter) => {
+      outputMap[parameter.name] = parameter.value;
     });
 
     const memoNode: WorkflowMemoStatusNode = {
@@ -20,6 +25,7 @@ function memoizeWorkflow(workflow: Workflow) {
       phase,
       startedAt: new Date(startedAt),
       parameterMap,
+      outputMap,
     };
     if (finishedAt != null) {
       memoNode.finishedAt = new Date(finishedAt);

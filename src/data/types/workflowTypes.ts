@@ -13,11 +13,15 @@ interface Workflow extends NamespacedResource {
 }
 
 interface WorkflowSpec {
-  arguments: WorkflowSpecArguments;
+  arguments: WorkflowArguments;
 }
 
-interface WorkflowSpecArguments {
+interface WorkflowArguments {
   parameters: WorkflowSpecParameter[];
+}
+
+interface WorkflowOptionalArguments {
+  parameters?: WorkflowSpecParameter[];
 }
 
 interface WorkflowSpecParameter {
@@ -47,11 +51,8 @@ interface WorkflowStatusNode {
   phase: string;
   startedAt: string;
   finishedAt?: string;
-  inputs?: WorkflowStatusNodeInputs;
-}
-
-interface WorkflowStatusNodeInputs {
-  parameters: WorkflowSpecParameter[];
+  inputs?: WorkflowArguments;
+  outputs?: WorkflowOptionalArguments;
 }
 
 interface WorkflowMemoStatusNode {
@@ -60,6 +61,7 @@ interface WorkflowMemoStatusNode {
   startedAt: Date;
   finishedAt?: Date;
   parameterMap: Record<string, string>;
+  outputMap: Record<string, string>;
 }
 
 export type { Workflow, WorkflowMemoStatusNode };
