@@ -149,7 +149,7 @@ function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
     case "Failed":
       return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
     case "Running":
-      return <LoadIcon className={styles.nodePhaseIcon} />;
+      return <LoadIcon className={styles.nodeLoadIcon} />;
     case "Pending":
       return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
     default:
@@ -162,7 +162,7 @@ function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
 function FlowGraphLoading() {
   return (
     <div className={styles.nodeRowSmall}>
-      <LoadIcon className={styles.loadingIcon} />
+      <LoadIcon className={styles.loadIcon} />
       <span className={styles.nodeSmallText}>Waiting for workflow run</span>
     </div>
   );

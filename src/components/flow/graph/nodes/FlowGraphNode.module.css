@@ -119,8 +119,7 @@
   margin-right: 5px;
 }
 
-.loadingIcon {
-  font-size: 12px;
+.loadIcon {
   margin-right: 5px;
   --load-color: var(--graph-link-color);
 }
@@ -195,6 +194,12 @@
 
 .nodePhaseIcon {
   margin-left: 5px;
+}
+
+.nodeLoadIcon {
+  composes: nodePhaseIcon;
+
+  --load-color: var(--graph-link-color);
 }
 
 .nodeDangerIcon {
