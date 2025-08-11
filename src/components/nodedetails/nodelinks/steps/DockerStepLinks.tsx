@@ -1,6 +1,6 @@
 import type { Trigger } from "src/data/types/flowTypes.ts";
 import { getRepoPathLink } from "src/utils/gitUtil.ts";
-import { flowDefaults } from "src/data/data.ts";
+import { flowDefaultDockerfilePath } from "src/data/data.ts";
 import type {
   DockerBuildTestStep,
   DockerBuildTestPublishStep,
@@ -11,7 +11,7 @@ interface DockerStepLinksProps {
   trigger: Trigger;
 }
 function DockerStepLinks({ step, trigger }: DockerStepLinksProps) {
-  const dockerfilePath = step.dockerfilePath ?? flowDefaults.dockerfilePath;
+  const dockerfilePath = flowDefaultDockerfilePath(step);
   const repoLink = getRepoPathLink(
     trigger.repoUrl,
     trigger.baseRef,
