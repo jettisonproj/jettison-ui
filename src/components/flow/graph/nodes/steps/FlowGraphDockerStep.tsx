@@ -87,7 +87,7 @@ function FlowGraphDockerNode({
         rel="noreferrer"
       >
         <i className={`nf nf-fa-file_text_o ${styles.dockerfileIcon}`} />{" "}
-        <span className={styles.nodeText}>Dockerfile</span>
+        <span className={styles.nodeText}>{dockerfilePath}</span>
       </a>
     </>
   );
