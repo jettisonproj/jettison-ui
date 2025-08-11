@@ -97,8 +97,9 @@ function FlowGraphCommit({ isPrFlow, workflow }: FlowGraphCommitProps) {
         {prNumber && (
           <>
             <i className={`nf nf-md-source_pull ${styles.prIcon}`} />
-            <span className={styles.nodeText}>{commitText}</span>
-            <span className={styles.prNumberText}>(#{prNumber})</span>
+            <span className={styles.nodeText}>
+              {commitText} (#{prNumber})
+            </span>
           </>
         )}
       </a>

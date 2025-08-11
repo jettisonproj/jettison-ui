@@ -87,12 +87,6 @@
   padding-bottom: 4px;
 }
 
-.prNumberText {
-  composes: nodeText;
-
-  margin-left: 3px;
-}
-
 .codeText {
   composes: nodeText;
 
