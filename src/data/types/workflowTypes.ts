@@ -43,7 +43,7 @@ interface WorkflowStatus {
   finishedAt?: string;
   phase: string;
   progress: string;
-  nodes: Record<string, WorkflowStatusNode>;
+  nodes?: Record<string, WorkflowStatusNode>;
 }
 
 interface WorkflowStatusNode {

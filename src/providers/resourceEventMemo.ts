@@ -7,31 +7,34 @@ function memoizeWorkflow(workflow: Workflow) {
   // Memoize or re-key the node status using the displayName
   // Also convert dates to Date type
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
-  Object.values(workflow.status.nodes).forEach((node) => {
-    const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
+  if (workflow.status.nodes != null) {
+    Object.values(workflow.status.nodes).forEach((node) => {
+      const { displayName, phase, startedAt, finishedAt, inputs, outputs } =
+        node;
 
-    const parameterMap: Record<string, string> = {};
-    inputs?.parameters.forEach((parameter) => {
-      parameterMap[parameter.name] = parameter.value;
+      const parameterMap: Record<string, string> = {};
+      inputs?.parameters.forEach((parameter) => {
+        parameterMap[parameter.name] = parameter.value;
+      });
+
+      const outputMap: Record<string, string> = {};
+      outputs?.parameters?.forEach((parameter) => {
+        outputMap[parameter.name] = parameter.value;
+      });
+
+      const memoNode: WorkflowMemoStatusNode = {
+        displayName,
+        phase,
+        startedAt: new Date(startedAt),
+        parameterMap,
+        outputMap,
+      };
+      if (finishedAt != null) {
+        memoNode.finishedAt = new Date(finishedAt);
+      }
+      nodes[node.displayName] = memoNode;
     });
-
-    const outputMap: Record<string, string> = {};
-    outputs?.parameters?.forEach((parameter) => {
-      outputMap[parameter.name] = parameter.value;
-    });
-
-    const memoNode: WorkflowMemoStatusNode = {
-      displayName,
-      phase,
-      startedAt: new Date(startedAt),
-      parameterMap,
-      outputMap,
-    };
-    if (finishedAt != null) {
-      memoNode.finishedAt = new Date(finishedAt);
-    }
-    nodes[node.displayName] = memoNode;
-  });
+  }
 
   // Memoize the parameter List to a Map
   const { parameters } = workflow.spec.arguments;
