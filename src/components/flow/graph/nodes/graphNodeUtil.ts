@@ -81,7 +81,8 @@ function getLastWorkflowNode(
     if (
       node != null &&
       node.phase !== "Skipped" &&
-      node.outputMap["docker-build-pr-status"] !== "Skipped"
+      node.outputMap["docker-build-pr-status"] !== "Skipped" &&
+      node.outputMap["docker-build-commit-status"] !== "Skipped"
     ) {
       return { workflow, node };
     }
