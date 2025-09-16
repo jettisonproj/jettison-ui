@@ -5,7 +5,7 @@ import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
-import { appendGitSuffix } from "src/utils/gitUtil.ts";
+import { appendGitSuffix, getRepoOrgName } from "src/utils/gitUtil.ts";
 import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
 
 const DELETE_EVENT_ANNOTATION =
@@ -88,58 +88,73 @@ class ResourceEventHandler {
 
   /**
    * Get the updated Map of flows.
-   * Where Map is a mapping from namespace to name to Flow
+   * Where Map is a mapping from "repoOrg/repoName" to flowName to Flow
    */
   getUpdatedFlows(
     flows: Map<string, Map<string, Flow>> | null,
   ): Map<string, Map<string, Flow>> {
     const newFlows = new Map(flows);
-    const recreatedNamespaces = new Set();
+    const recreatedRepos = new Set();
 
     for (const flowEvent of this.#flowEvents) {
       const { namespace, name } = flowEvent.metadata;
-      const namespaceFlows = newFlows.get(namespace);
+      const { triggers } = flowEvent.spec;
+      if (triggers.length !== 1) {
+        throw new ResourceEventError(
+          `unexpected number of flow triggers for ${namespace}/${name}: ${triggers.length}`,
+        );
+      }
+
+      const trigger = triggers[0];
+      if (trigger == null) {
+        throw new ResourceEventError(
+          `unexpected flow trigger for ${namespace}/${name}`,
+        );
+      }
+      const { repoUrl } = trigger;
+      const repoOrgName = getRepoOrgName(repoUrl);
+      const repoFlows = newFlows.get(repoOrgName);
 
       if (this.#isDeleteEvent(flowEvent)) {
-        if (namespaceFlows == null) {
+        if (repoFlows == null) {
           // The namespace does not exist. Skip deletion
           continue;
         }
 
-        const namespaceFlow = namespaceFlows.get(name);
-        if (namespaceFlow == null) {
+        const repoFlow = repoFlows.get(name);
+        if (repoFlow == null) {
           // The flow does not exist. Skip deletion
           continue;
         }
 
-        if (namespaceFlows.size === 1) {
+        if (repoFlows.size === 1) {
           // The namespace can be removed since it is the last entry
-          newFlows.delete(namespace);
+          newFlows.delete(repoOrgName);
         } else {
           // Get the updated namespace map. Ensures it is recreated if needed
-          let newNamespaceFlows;
-          if (recreatedNamespaces.has(namespace)) {
-            newNamespaceFlows = namespaceFlows;
+          let newRepoFlows;
+          if (recreatedRepos.has(namespace)) {
+            newRepoFlows = repoFlows;
           } else {
-            newNamespaceFlows = new Map(namespaceFlows);
-            newFlows.set(namespace, newNamespaceFlows);
-            recreatedNamespaces.add(namespace);
+            newRepoFlows = new Map(repoFlows);
+            newFlows.set(repoOrgName, newRepoFlows);
+            recreatedRepos.add(repoOrgName);
           }
 
-          newNamespaceFlows.delete(name);
+          newRepoFlows.delete(name);
         }
       } else {
         // Get the updated namespace map. Ensures it is recreated if needed
-        let newNamespaceFlows;
-        if (namespaceFlows != null && recreatedNamespaces.has(namespace)) {
-          newNamespaceFlows = namespaceFlows;
+        let newRepoFlows;
+        if (repoFlows != null && recreatedRepos.has(namespace)) {
+          newRepoFlows = repoFlows;
         } else {
-          newNamespaceFlows = new Map(namespaceFlows);
-          newFlows.set(namespace, newNamespaceFlows);
-          recreatedNamespaces.add(namespace);
+          newRepoFlows = new Map(repoFlows);
+          newFlows.set(repoOrgName, newRepoFlows);
+          recreatedRepos.add(repoOrgName);
         }
 
-        newNamespaceFlows.set(name, flowEvent);
+        newRepoFlows.set(name, flowEvent);
       }
     }
 
@@ -340,6 +355,13 @@ class ResourceEventHandler {
   #getFlowName(workflow: Workflow): string | undefined {
     const { labels } = workflow.metadata;
     return labels?.[SENSOR_NAME_LABEL];
+  }
+}
+
+class ResourceEventError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
 
