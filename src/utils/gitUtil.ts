@@ -3,6 +3,7 @@ import { flowDefaults } from "src/data/data.ts";
 const COMMIT_DISPLAY_LEN = 7;
 const BRANCH_PREFIX = "refs/heads/";
 const GIT_SUFFIX = ".git";
+const GIT_PREFIX = "https://github.com/";
 
 function appendGitSuffix(s: string) {
   if (s.endsWith(GIT_SUFFIX)) {
@@ -14,6 +15,13 @@ function appendGitSuffix(s: string) {
 function trimGitSuffix(s: string) {
   if (s.endsWith(GIT_SUFFIX)) {
     return s.slice(0, -1 * GIT_SUFFIX.length);
+  }
+  return s;
+}
+
+function trimGitPrefix(s: string) {
+  if (s.startsWith(GIT_PREFIX)) {
+    return s.slice(GIT_PREFIX.length);
   }
   return s;
 }
@@ -74,6 +82,13 @@ function getRepoPrLink(repoUrl: string, prNumber: string) {
   return `${repoUrl}/pull/${prNumber}`;
 }
 
+/**
+ * Get the repo org and repo name in format `${repoOrg}/${repoName}`
+ */
+function getRepoOrgName(repoUrl: string) {
+  return trimGitPrefix(trimGitSuffix(repoUrl));
+}
+
 export {
   appendGitSuffix,
   trimGitSuffix,
@@ -84,4 +99,5 @@ export {
   getRepoCommitLink,
   getRepoCommitPathLink,
   getRepoPrLink,
+  getRepoOrgName,
 };
