@@ -10,10 +10,10 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
+import { getRepoOrgAndName, getRepoLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/home/Home.module.css";
 import {
   FlowsContext,
-  NamespacesContext,
   ApplicationsContext,
   RolloutsContext,
   WorkflowsContext,
@@ -25,13 +25,12 @@ function Home() {
       <Header />
       <HomeNavHeader />
       <Overview />
-      <RecentFlows />
+      <RecentRepos />
     </>
   );
 }
 
 function Overview() {
-  const namespaces = useContext(NamespacesContext);
   const flows = useContext(FlowsContext);
   const applications = useContext(ApplicationsContext);
   const rollouts = useContext(RolloutsContext);
@@ -41,8 +40,8 @@ function Overview() {
       <h2 className={styles.firstSectionTitle}>Overview</h2>
       <ul className={styles.overviewContainer}>
         <li className={styles.overviewItem}>
-          <label className={styles.overviewLabel}>Namespaces</label>{" "}
-          <NumNamespaces namespaces={namespaces} />
+          <label className={styles.overviewLabel}>Repos</label>{" "}
+          <NumRepos flows={flows} />
         </li>
         <li className={styles.overviewItem}>
           <label className={styles.overviewLabel}>Flows</label>{" "}
@@ -70,87 +69,78 @@ function Overview() {
         </li>
       </ul>
       <Link className={styles.namespacesLink} to={routes.flows}>
-        See All Namespaces <i className="nf nf-fa-angle_right" />
+        See All Repos <i className="nf nf-fa-angle_right" />
       </Link>
     </>
   );
 }
 
-function RecentFlows() {
-  const recentFlows = localState.getRecentFlows();
-  if (recentFlows.length === 0) {
+function RecentRepos() {
+  const recentRepos = localState.getRecentRepos();
+  if (recentRepos.length === 0) {
     return (
       <>
-        <h2 className={styles.sectionTitle}>Recent Flows</h2>
-        <p>No recent flows found</p>
+        <h2 className={styles.sectionTitle}>Recent Repos</h2>
+        <p>No recent repos found</p>
       </>
     );
   }
   return (
     <>
-      <h2 className={styles.sectionTitle}>Recent Flows</h2>
-      {recentFlows.map((recentFlow, index) => (
-        <RecentFlow
-          key={recentFlow}
+      <h2 className={styles.sectionTitle}>Recent Repos</h2>
+      {recentRepos.map((recentRepo, index) => (
+        <RecentRepo
+          key={recentRepo}
           isFirst={index === 0}
-          recentFlow={recentFlow}
+          recentRepo={recentRepo}
         />
       ))}
     </>
   );
 }
 
-interface RecentFlowProps {
-  recentFlow: string;
+interface RecentRepoProps {
+  recentRepo: string;
   isFirst: boolean;
 }
-function RecentFlow({ recentFlow, isFirst }: RecentFlowProps) {
-  const recentFlowParts = recentFlow.split("/");
-  if (recentFlowParts.length !== 2) {
-    throw new HomeError(`unexpected recent flow: ${recentFlow}`);
-  }
-  const [namespace, name] = recentFlowParts;
-  let recentFlowClassName = styles.recentFlow;
-  if (recentFlowClassName == null) {
-    throw new HomeError("failed to find recentFlow style");
+function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
+  const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
+  let recentRepoClassName = styles.recentRepo;
+  if (recentRepoClassName == null) {
+    throw new HomeError("failed to find recentRepo style");
   }
   if (isFirst) {
-    recentFlowClassName += ` ${styles.recentFlowFirst}`;
+    recentRepoClassName += ` ${styles.recentRepoFirst}`;
   }
   return (
-    <div className={recentFlowClassName}>
+    <div className={recentRepoClassName}>
       <Link
-        to={`${routes.flows}/${recentFlow}`}
-        className={styles.recentFlowLink}
+        to={`${routes.flows}/${repoOrg}/${repoName}`}
+        className={styles.recentRepoLink}
       ></Link>
-      {namespace}
-      <span className={styles.recentFlowSeparator}>⧸</span>
-      {name}
+      {repoName}
       <a
         className={styles.manifestLink}
-        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${name}`}
+        href={getRepoLink(repoOrg, repoName)}
         target="_blank"
         rel="noreferrer"
       >
-        <i className="nf nf-fa-file_text_o" />
+        <i className="nf nf-fa-github" />
       </a>
     </div>
   );
 }
 
-interface NamespacesProp {
-  namespaces: Set<string> | null;
-}
-function NumNamespaces({ namespaces }: NamespacesProp) {
-  if (namespaces == null) {
-    return <LoadIcon />;
-  }
-  return namespaces.size;
-}
-
 interface FlowsProp {
   flows: Map<string, Map<string, Flow>> | null;
 }
+function NumRepos({ flows }: FlowsProp) {
+  if (flows == null) {
+    return <LoadIcon />;
+  }
+  return flows.size;
+}
+
 function NumFlows({ flows }: FlowsProp) {
   if (flows == null) {
     return <LoadIcon />;

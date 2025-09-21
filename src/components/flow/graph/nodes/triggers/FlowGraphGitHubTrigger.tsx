@@ -16,14 +16,16 @@ import type {
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowGraphGitHubTriggerProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flowName: string;
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;
   isPrFlow: boolean;
   workflows: Workflow[];
 }
 function FlowGraphGitHubTrigger({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   trigger,
   isPrFlow,
@@ -31,7 +33,8 @@ function FlowGraphGitHubTrigger({
 }: FlowGraphGitHubTriggerProps) {
   const displayEvent = isPrFlow ? "PR" : "PUSH";
   const triggerDetailsLink = getTriggerDetailsLink(
-    namespace,
+    repoOrg,
+    repoName,
     flowName,
     trigger,
   );

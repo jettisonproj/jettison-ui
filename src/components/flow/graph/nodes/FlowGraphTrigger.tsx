@@ -4,14 +4,16 @@ import { FlowGraphGitHubTrigger } from "src/components/flow/graph/nodes/triggers
 import { TriggerSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphTriggerProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flowName: string;
   trigger: Trigger;
   isPrFlow: boolean;
   workflows: Workflow[];
 }
 function FlowGraphTrigger({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   trigger,
   isPrFlow,
@@ -22,7 +24,8 @@ function FlowGraphTrigger({
     case TriggerSource.GitHubPush:
       return (
         <FlowGraphGitHubTrigger
-          namespace={namespace}
+          repoOrg={repoOrg}
+          repoName={repoName}
           flowName={flowName}
           trigger={trigger}
           isPrFlow={isPrFlow}

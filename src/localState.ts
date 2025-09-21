@@ -1,13 +1,13 @@
 const CONFIG_KEY = "jettison";
 
 const defaultDisplayIsoTimestamps = false;
-const defaultRecentFlows: string[] = [];
+const defaultRecentRepos: string[] = [];
 
 interface LocalStateObject {
   displayIsoTimestamps?: boolean;
 
-  // List of strings in the form `${namespace}/${name}`
-  recentFlows?: string[];
+  // List of strings in the form `${repoOrg}/${repoName}`
+  recentRepos?: string[];
 }
 
 /**
@@ -35,35 +35,35 @@ class LocalState {
     this.#saveToLocalStorage();
   }
 
-  getRecentFlows() {
-    return this.#localState.recentFlows ?? defaultRecentFlows;
+  getRecentRepos() {
+    return this.#localState.recentRepos ?? defaultRecentRepos;
   }
 
-  addRecentFlow(namespace: string, name: string) {
-    const namespaceNamePath = `${namespace}/${name}`;
-    const recentFlows = this.getRecentFlows();
-    if (recentFlows.length > 0 && recentFlows[0] == namespaceNamePath) {
+  addRecentRepo(repoOrg: string, repoName: string) {
+    const repoOrgName = `${repoOrg}/${repoName}`;
+    const recentRepos = this.getRecentRepos();
+    if (recentRepos.length > 0 && recentRepos[0] == repoOrgName) {
       return;
     }
 
     // Use an ordered Set to get a new list, with the namespaceNamePath
     // as the first item
-    const orderedRecentFlows = new Set([namespaceNamePath, ...recentFlows]);
+    const orderedRecentRepos = new Set([repoOrgName, ...recentRepos]);
 
-    this.#localState.recentFlows = [...orderedRecentFlows];
+    this.#localState.recentRepos = [...orderedRecentRepos];
     this.#saveToLocalStorage();
   }
 
-  deleteRecentFlow(namespace: string, name: string) {
-    const namespaceNamePath = `${namespace}/${name}`;
-    const recentFlows = this.getRecentFlows();
+  deleteRecentRepo(repoOrg: string, repoName: string) {
+    const repoOrgName = `${repoOrg}/${repoName}`;
+    const recentRepos = this.getRecentRepos();
 
-    const n = recentFlows.length;
+    const n = recentRepos.length;
     for (let i = 0; i < n; i += 1) {
-      if (recentFlows[i] === namespaceNamePath) {
-        this.#localState.recentFlows = [
-          ...recentFlows.slice(0, i),
-          ...recentFlows.slice(i + 1),
+      if (recentRepos[i] === repoOrgName) {
+        this.#localState.recentRepos = [
+          ...recentRepos.slice(0, i),
+          ...recentRepos.slice(i + 1),
         ];
         this.#saveToLocalStorage();
       }

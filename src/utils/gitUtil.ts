@@ -89,6 +89,43 @@ function getRepoOrgName(repoUrl: string) {
   return trimGitPrefix(trimGitSuffix(repoUrl));
 }
 
+/**
+ * Given the repo org and repo name in format `${repoOrg}/${repoName}`,
+ * Return [repoOrg, repoName]
+ */
+function getRepoOrgAndName(repoOrgName: string): [string, string] {
+  const repoOrgNameParts = repoOrgName.split("/");
+  if (repoOrgNameParts.length !== 2) {
+    throw new GitUtilError(`invalid repoOrgName: ${repoOrgName}`);
+  }
+  const [repoOrg, repoName] = repoOrgNameParts;
+  if (repoOrg == null || repoName == null) {
+    throw new GitUtilError(`invalid repoOrgName: ${repoOrgName}`);
+  }
+  return [repoOrg, repoName];
+}
+
+/**
+ * Given the two repo orgs and names in format `${repoOrg}/${repoName}`,
+ * return the comparison result of sorting by repo name
+ */
+function sortByRepoName(repoOrgNameA: string, repoOrgNameB: string) {
+  const [, repoNameA] = getRepoOrgAndName(repoOrgNameA);
+  const [, repoNameB] = getRepoOrgAndName(repoOrgNameB);
+  return repoNameA.localeCompare(repoNameB);
+}
+
+function getRepoLink(repoOrg: string, repoName: string) {
+  return `${GIT_PREFIX}/${repoOrg}/${repoName}`;
+}
+
+class GitUtilError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
 export {
   appendGitSuffix,
   trimGitSuffix,
@@ -100,4 +137,7 @@ export {
   getRepoCommitPathLink,
   getRepoPrLink,
   getRepoOrgName,
+  getRepoOrgAndName,
+  getRepoLink,
+  sortByRepoName,
 };

@@ -26,52 +26,60 @@ import type {
 } from "src/components/flow/graph/FlowGraph.tsx";
 
 function Flow() {
-  const { namespace, name } = useParams();
-  if (!namespace || !name) {
+  const { repoOrg, repoName, flowName } = useParams();
+  if (!repoOrg || !repoName || !flowName) {
     throw new FlowError(
-      `path parameters cannot be empty: namespace=${namespace} name=${name}`,
+      "path parameters cannot be empty: " +
+        `repoOrg=${repoOrg} repoName=${repoName} flowName=${flowName}`,
     );
   }
 
   return (
     <>
       <Header />
-      <FlowNavHeader namespace={namespace} name={name} />
-      <FlowItem namespace={namespace} name={name} />
+      <FlowNavHeader
+        repoOrg={repoOrg}
+        repoName={repoName}
+        flowName={flowName}
+      />
+      <FlowItem repoOrg={repoOrg} repoName={repoName} flowName={flowName} />
     </>
   );
 }
 
 interface FlowItemProps {
-  namespace: string;
-  name: string;
+  repoOrg: string;
+  repoName: string;
+  flowName: string;
 }
 
-function FlowItem({ namespace, name }: FlowItemProps) {
+function FlowItem({ repoOrg, repoName, flowName }: FlowItemProps) {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
     return <LoadIcon />;
   }
-  const flow = flows.get(namespace)?.get(name);
+  const flow = flows.get(`${repoOrg}/${repoName}`)?.get(flowName);
   if (flow == null) {
-    localState.deleteRecentFlow(namespace, name);
+    localState.deleteRecentRepo(repoOrg, repoName);
     return (
       <p>
-        There is no flow{" "}
+        There is no flow <strong>{flowName}</strong> in repo{" "}
         <strong>
-          {namespace}/{name}
+          {repoOrg}/{repoName}
         </strong>
         . Would you like to create one?
       </p>
     );
   }
-  localState.addRecentFlow(namespace, name);
+  localState.addRecentRepo(repoOrg, repoName);
 
-  const workflows = allWorkflows.get(namespace)?.get(name);
+  // The repoOrg and namespace are expected to match
+  const workflows = allWorkflows.get(repoOrg)?.get(flowName);
   return (
     <FlowWorkflowsItem
-      namespace={namespace}
+      repoOrg={repoOrg}
+      repoName={repoName}
       flow={flow}
       workflows={workflows}
     />
@@ -79,12 +87,14 @@ function FlowItem({ namespace, name }: FlowItemProps) {
 }
 
 interface FlowWorkflowsItemProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flow: Flow;
   workflows: Map<string, Workflow> | undefined;
 }
 function FlowWorkflowsItem({
-  namespace,
+  repoOrg,
+  repoName,
   flow,
   workflows,
 }: FlowWorkflowsItemProps) {
@@ -99,7 +109,14 @@ function FlowWorkflowsItem({
 
   const trigger = getFlowTrigger(flow);
   const isPrFlow = isPullRequestTrigger(trigger);
-  const flowNodes = getFlowNodes(flow, trigger, isPrFlow, sortedWorkflows);
+  const flowNodes = getFlowNodes(
+    repoOrg,
+    repoName,
+    flow,
+    trigger,
+    isPrFlow,
+    sortedWorkflows,
+  );
   const flowEdges = getFlowEdges(flow, trigger);
 
   return (
@@ -107,7 +124,7 @@ function FlowWorkflowsItem({
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
       <FlowHistory
         isPrFlow={isPrFlow}
-        namespace={namespace}
+        repoOrg={repoOrg}
         workflows={sortedWorkflows}
       />
     </>
@@ -115,14 +132,17 @@ function FlowWorkflowsItem({
 }
 
 function getFlowNodes(
+  repoOrg: string,
+  repoName: string,
   flow: Flow,
   trigger: Trigger,
   isPrFlow: boolean,
   workflows: Workflow[],
 ): FlowNode[] {
-  const { namespace, name: flowName } = flow.metadata;
+  const { name: flowName } = flow.metadata;
   const triggerNode = getFlowTriggerNode(
-    namespace,
+    repoOrg,
+    repoName,
     flowName,
     trigger,
     isPrFlow,
@@ -131,7 +151,7 @@ function getFlowNodes(
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) =>
-    getFlowStepNode(namespace, flowName, step, isPrFlow, workflows),
+    getFlowStepNode(repoOrg, repoName, flowName, step, isPrFlow, workflows),
   );
 
   return [triggerNode].concat(stepNodes);

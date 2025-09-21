@@ -5,14 +5,16 @@ import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowG
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
 
 interface FlowGraphStepProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flowName: string;
   step: Step;
   isPrFlow: boolean;
   workflows: Workflow[];
 }
 function FlowGraphStep({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   step,
   isPrFlow,
@@ -23,7 +25,8 @@ function FlowGraphStep({
     case StepSource.DockerBuildTestPublish:
       return (
         <FlowGraphDockerStep
-          namespace={namespace}
+          repoOrg={repoOrg}
+          repoName={repoName}
           flowName={flowName}
           step={step}
           isPrFlow={isPrFlow}
@@ -33,7 +36,8 @@ function FlowGraphStep({
     case StepSource.ArgoCD:
       return (
         <FlowGraphArgoCDStep
-          namespace={namespace}
+          repoOrg={repoOrg}
+          repoName={repoName}
           flowName={flowName}
           step={step}
           isPrFlow={isPrFlow}

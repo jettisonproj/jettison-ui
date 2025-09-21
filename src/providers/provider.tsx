@@ -15,7 +15,6 @@ const DisplayIsoTimestampsContext = createContext(
 const SetDisplayIsoTimestampsContext = createContext((() => {
   // Use no-op as the default, which is not expected to actually be called
 }) as Dispatch<SetStateAction<boolean>>);
-const NamespacesContext = createContext(null as Set<string> | null);
 
 const FlowsContext = createContext(
   null as Map<string, Map<string, Flow>> | null,
@@ -37,7 +36,6 @@ interface ProviderProps {
   children: ReactNode;
 }
 function Provider({ children }: ProviderProps) {
-  const [namespaces, setNamespaces] = useState(null as Set<string> | null);
   const [flows, setFlows] = useState(
     null as Map<string, Map<string, Flow>> | null,
   );
@@ -82,12 +80,6 @@ function Provider({ children }: ProviderProps) {
         console.log(resourceList);
 
         const resourceEventHandler = new ResourceEventHandler(resourceList);
-
-        if (resourceEventHandler.hasNamespaceEvents()) {
-          setNamespaces((namespaces) =>
-            resourceEventHandler.getUpdatedNamespaces(namespaces),
-          );
-        }
 
         if (resourceEventHandler.hasFlowEvents()) {
           setFlows((flows) => resourceEventHandler.getUpdatedFlows(flows));
@@ -143,17 +135,15 @@ function Provider({ children }: ProviderProps) {
   return (
     <DisplayIsoTimestampsContext.Provider value={displayIsoTimestamps}>
       <SetDisplayIsoTimestampsContext.Provider value={setDisplayIsoTimestamps}>
-        <NamespacesContext.Provider value={namespaces}>
-          <FlowsContext.Provider value={flows}>
-            <ApplicationsContext.Provider value={applications}>
-              <RolloutsContext.Provider value={rollouts}>
-                <WorkflowsContext.Provider value={workflows}>
-                  {children}
-                </WorkflowsContext.Provider>
-              </RolloutsContext.Provider>
-            </ApplicationsContext.Provider>
-          </FlowsContext.Provider>
-        </NamespacesContext.Provider>
+        <FlowsContext.Provider value={flows}>
+          <ApplicationsContext.Provider value={applications}>
+            <RolloutsContext.Provider value={rollouts}>
+              <WorkflowsContext.Provider value={workflows}>
+                {children}
+              </WorkflowsContext.Provider>
+            </RolloutsContext.Provider>
+          </ApplicationsContext.Provider>
+        </FlowsContext.Provider>
       </SetDisplayIsoTimestampsContext.Provider>
     </DisplayIsoTimestampsContext.Provider>
   );
@@ -163,7 +153,6 @@ export {
   Provider,
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
-  NamespacesContext,
   FlowsContext,
   ApplicationsContext,
   RolloutsContext,

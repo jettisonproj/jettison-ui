@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link, useParams } from "react-router";
 
+import { localState } from "src/localState.ts";
 import { routes } from "src/routes.ts";
 import { FlowsContext } from "src/providers/provider.tsx";
 import { Header } from "src/components/header/Header.tsx";
@@ -9,75 +10,86 @@ import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import styles from "src/components/flows/Flows.module.css";
 
 function Flows() {
-  const { namespace } = useParams();
-  if (!namespace) {
+  const { repoOrg, repoName } = useParams();
+  if (!repoOrg || !repoName) {
     throw new FlowsError(
-      `namespace path parameter cannot be empty: namespace=${namespace}`,
+      "repoOrg or repoName path parameter cannot be empty: " +
+        `repoOrg=${repoOrg} repoName=${repoName}`,
     );
   }
   return (
     <>
       <Header />
-      <FlowsNavHeader namespace={namespace} />
-      <FlowsList namespace={namespace} />
+      <FlowsNavHeader repoOrg={repoOrg} repoName={repoName} />
+      <FlowsList repoOrg={repoOrg} repoName={repoName} />
     </>
   );
 }
 
 interface FlowsListProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
 }
 
-function FlowsList({ namespace }: FlowsListProps) {
+function FlowsList({ repoOrg, repoName }: FlowsListProps) {
   const flows = useContext(FlowsContext);
   if (flows == null) {
     return <LoadIcon />;
   }
 
-  const namespaceFlows = flows.get(namespace);
+  const repoFlows = flows.get(`${repoOrg}/${repoName}`);
 
-  if (namespaceFlows == null) {
+  if (repoFlows == null) {
+    localState.deleteRecentRepo(repoOrg, repoName);
     return (
       <p>
-        There are no flows in namespace <strong>{namespace}</strong>. Would you
-        like to create one?
+        There are no flows in repo{" "}
+        <strong>
+          {repoOrg}/{repoName}
+        </strong>
+        . Would you like to create one?
       </p>
     );
   }
-  return Array.from(namespaceFlows.keys())
+  localState.addRecentRepo(repoOrg, repoName);
+
+  return Array.from(repoFlows.keys())
     .sort()
-    .map((flow, index) => (
+    .map((flowName, index) => (
       <FlowRow
-        key={`${namespace}/${flow}`}
+        key={`${repoOrg}/${repoName}/${flowName}`}
         isFirst={index === 0}
-        namespace={namespace}
-        flow={flow}
+        repoOrg={repoOrg}
+        repoName={repoName}
+        flowName={flowName}
       />
     ));
 }
 
 interface FlowRowProps extends FlowsListProps {
-  flow: string;
+  flowName: string;
   isFirst: boolean;
 }
-function FlowRow({ namespace, flow, isFirst }: FlowRowProps) {
+function FlowRow({ repoOrg, repoName, flowName, isFirst }: FlowRowProps) {
   let flowRowClassName = styles.flowRow;
   if (flowRowClassName == null) {
-    throw new FlowsError("Failed to find flowRow style");
+    throw new FlowsError("failed to find flowRow style");
   }
   if (isFirst) {
     flowRowClassName += ` ${styles.flowRowFirst}`;
   }
+  // The repoOrg and namespace are expected to match
+  const namespace = repoOrg;
   return (
     <div className={flowRowClassName}>
       <Link
-        to={`${routes.flows}/${namespace}/${flow}`}
+        to={`${routes.flows}/${repoOrg}/${repoName}/${flowName}`}
         className={styles.flowRowLink}
       ></Link>
-      {flow}
+      {flowName}
       <a
         className={styles.manifestLink}
-        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${flow}`}
+        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/flows/${flowName}`}
         target="_blank"
         rel="noreferrer"
       >

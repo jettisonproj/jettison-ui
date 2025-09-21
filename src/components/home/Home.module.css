@@ -40,7 +40,7 @@
   text-decoration: underline;
 }
 
-.recentFlow {
+.recentRepo {
   min-width: var(--content-width);
   position: relative;
   background-color: var(--secondary-color);
@@ -50,31 +50,27 @@
   font-size: 21px;
 }
 
-.recentFlowFirst {
+.recentRepoFirst {
   margin-top: 5px;
 }
 
-.recentFlow:last-child {
+.recentRepo:last-child {
   margin-bottom: 20px;
 }
 
-.recentFlow:hover {
+.recentRepo:hover {
   background-color: var(--secondary-hover);
 }
 
-.recentFlowLink {
+.recentRepoLink {
   position: absolute;
   inset: 0;
-}
-
-.recentFlowSeparator {
-  margin: 0 8px;
 }
 
 .manifestLink {
   position: relative;
   float: right;
-  color: var(--primary-color);
+  color: var(--text-color);
 }
 
 .manifestLink:hover {

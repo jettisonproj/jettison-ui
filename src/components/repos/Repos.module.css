@@ -1,4 +1,4 @@
-.namespace {
+.repo {
   min-width: var(--content-width);
   position: relative;
   background-color: var(--secondary-color);
@@ -8,19 +8,19 @@
   font-size: 21px;
 }
 
-.namespace:last-child {
+.repo:last-child {
   margin-bottom: 20px;
 }
 
-.namespaceFirst {
+.repoFirst {
   margin-top: 8px;
 }
 
-.namespace:hover {
+.repo:hover {
   background-color: var(--secondary-hover);
 }
 
-.namespaceLink {
+.repoLink {
   position: absolute;
   inset: 0;
 }
@@ -28,7 +28,7 @@
 .manifestLink {
   position: relative;
   float: right;
-  color: var(--primary-color);
+  color: var(--text-color);
 }
 
 .manifestLink:hover {

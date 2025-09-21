@@ -16,10 +16,10 @@ import {
 
 interface FlowHistoryProps {
   isPrFlow: boolean;
-  namespace: string;
+  repoOrg: string;
   workflows: Workflow[];
 }
-function FlowHistory({ isPrFlow, namespace, workflows }: FlowHistoryProps) {
+function FlowHistory({ isPrFlow, repoOrg, workflows }: FlowHistoryProps) {
   if (workflows.length === 0) {
     return <p>No flow history found</p>;
   }
@@ -43,7 +43,7 @@ function FlowHistory({ isPrFlow, namespace, workflows }: FlowHistoryProps) {
           <FlowHistoryRow
             key={workflow.metadata.name}
             isPrFlow={isPrFlow}
-            namespace={namespace}
+            repoOrg={repoOrg}
             workflow={workflow}
           />
         ))}
@@ -54,14 +54,10 @@ function FlowHistory({ isPrFlow, namespace, workflows }: FlowHistoryProps) {
 
 interface FlowHistoryRowProps {
   isPrFlow: boolean;
-  namespace: string;
+  repoOrg: string;
   workflow: Workflow;
 }
-function FlowHistoryRow({
-  isPrFlow,
-  namespace,
-  workflow,
-}: FlowHistoryRowProps) {
+function FlowHistoryRow({ isPrFlow, repoOrg, workflow }: FlowHistoryRowProps) {
   return (
     <tr className={styles.historyRow}>
       <td className={styles.historyCell}>
@@ -94,7 +90,7 @@ function FlowHistoryRow({
         <FlowHistoryProgress workflow={workflow} />
       </td>
       <td className={styles.historyCell}>
-        <FlowHistoryActions workflow={workflow} namespace={namespace} />
+        <FlowHistoryActions workflow={workflow} repoOrg={repoOrg} />
       </td>
     </tr>
   );
@@ -172,9 +168,11 @@ function FlowHistoryProgress({ workflow }: FlowHistoryCellProps) {
 
 interface FlowHistoryActionsProps {
   workflow: Workflow;
-  namespace: string;
+  repoOrg: string;
 }
-function FlowHistoryActions({ workflow, namespace }: FlowHistoryActionsProps) {
+function FlowHistoryActions({ workflow, repoOrg }: FlowHistoryActionsProps) {
+  // The repoOrg and namespace are expected to match
+  const namespace = repoOrg;
   return (
     <>
       <a

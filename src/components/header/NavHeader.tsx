@@ -6,8 +6,8 @@ import styles from "src/components/header/NavHeader.module.css";
 
 /* NavHeader is under the Header and provides the navigation path */
 interface NavHeaderComponent {
-  name: string;
-  link: string;
+  displayName: string;
+  navLink: string;
 }
 
 interface NavHeaderProps {
@@ -28,17 +28,17 @@ function NavHeader({ components }: NavHeaderProps) {
   return (
     <h2 className={styles.navHeader}>
       {/* The prefix components contain links */}
-      {components.slice(0, -1).map(({ link, name }) => (
-        <Fragment key={link}>
-          <Link to={link} className={styles.component}>
-            {name}
+      {components.slice(0, -1).map(({ displayName, navLink }) => (
+        <Fragment key={navLink}>
+          <Link to={navLink} className={styles.component}>
+            {displayName}
           </Link>
           <span className={styles.componentSeparator}>⧸</span>
         </Fragment>
       ))}
 
       {/* The last component has no link */}
-      <strong>{lastComponent.name}</strong>
+      <strong>{lastComponent.displayName}</strong>
     </h2>
   );
 }
@@ -46,79 +46,86 @@ function NavHeader({ components }: NavHeaderProps) {
 /* Create individual NavHeaders for the various pages */
 
 /* Home Nav Header */
-const homeNavComponent = { name: "Home", link: routes.home };
+const homeNavComponent = { displayName: "Home", navLink: routes.home };
 function HomeNavHeader() {
   return <NavHeader components={[homeNavComponent]} />;
 }
 
 /* Namespaces Nav Header */
-const namespacesNavComponent = { name: "Namespaces", link: routes.flows };
-function NamespacesNavHeader() {
-  const components = [homeNavComponent, namespacesNavComponent];
+const reposNavComponent = { displayName: "Repos", navLink: routes.flows };
+function ReposNavHeader() {
+  const components = [homeNavComponent, reposNavComponent];
   return <NavHeader components={components} />;
 }
 
 /* Flows Nav Header */
-function flowsNavComponent(namespace: string) {
-  return { name: namespace, link: `${routes.flows}/${namespace}` };
+function flowsNavComponent(repoOrg: string, repoName: string) {
+  return {
+    displayName: repoName,
+    navLink: `${routes.flows}/${repoOrg}/${repoName}`,
+  };
 }
 interface FlowsNavHeaderProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
 }
-function FlowsNavHeader({ namespace }: FlowsNavHeaderProps) {
+function FlowsNavHeader({ repoOrg, repoName }: FlowsNavHeaderProps) {
   const components = [
     homeNavComponent,
-    namespacesNavComponent,
-    flowsNavComponent(namespace),
+    reposNavComponent,
+    flowsNavComponent(repoOrg, repoName),
   ];
   return <NavHeader components={components} />;
 }
 
 /* Flow Nav Header */
-function flowNavComponent(namespace: string, name: string) {
-  return { name, link: `${routes.flows}/${namespace}/${name}` };
+function flowNavComponent(repoOrg: string, repoName: string, flowName: string) {
+  return {
+    displayName: flowName,
+    navLink: `${routes.flows}/${repoOrg}/${repoName}/${flowName}`,
+  };
 }
-interface FlowNavHeaderProps {
-  namespace: string;
-  name: string;
+interface FlowNavHeaderProps extends FlowsNavHeaderProps {
+  flowName: string;
 }
-function FlowNavHeader({ namespace, name }: FlowNavHeaderProps) {
+function FlowNavHeader({ repoOrg, repoName, flowName }: FlowNavHeaderProps) {
   const components = [
     homeNavComponent,
-    namespacesNavComponent,
-    flowsNavComponent(namespace),
-    flowNavComponent(namespace, name),
+    reposNavComponent,
+    flowsNavComponent(repoOrg, repoName),
+    flowNavComponent(repoOrg, repoName, flowName),
   ];
   return <NavHeader components={components} />;
 }
 
 /* NodeDetails Nav Header */
 function nodeDetailsNavComponent(
-  namespace: string,
+  repoOrg: string,
+  repoName: string,
   flowName: string,
   nodeName: string,
 ) {
   return {
-    name: nodeName,
-    link: `${routes.flows}/${namespace}/${flowName}/${nodeName}`,
+    displayName: nodeName,
+    navLink: `${routes.flows}/${repoOrg}/${repoName}/${flowName}/${nodeName}`,
   };
 }
-interface NodeDetailsNavHeaderProps {
-  namespace: string;
+interface NodeDetailsNavHeaderProps extends FlowsNavHeaderProps {
   flowName: string;
   nodeName: string;
 }
 function NodeDetailsNavHeader({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   nodeName,
 }: NodeDetailsNavHeaderProps) {
   const components = [
     homeNavComponent,
-    namespacesNavComponent,
-    flowsNavComponent(namespace),
-    flowNavComponent(namespace, flowName),
-    nodeDetailsNavComponent(namespace, flowName, nodeName),
+    reposNavComponent,
+    flowsNavComponent(repoOrg, repoName),
+    flowNavComponent(repoOrg, repoName, flowName),
+    nodeDetailsNavComponent(repoOrg, repoName, flowName, nodeName),
   ];
   return <NavHeader components={components} />;
 }
@@ -132,7 +139,7 @@ class NavHeaderError extends Error {
 
 export {
   HomeNavHeader,
-  NamespacesNavHeader,
+  ReposNavHeader,
   FlowsNavHeader,
   FlowNavHeader,
   NodeDetailsNavHeader,

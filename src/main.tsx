@@ -8,7 +8,7 @@ import { Flow } from "src/components/flow/Flow.tsx";
 import { Flows } from "src/components/flows/Flows.tsx";
 import { Home } from "src/components/home/Home.tsx";
 import { NodeDetails } from "src/components/nodedetails/NodeDetails.tsx";
-import { Namespaces } from "src/components/namespaces/Namespaces.tsx";
+import { Repos } from "src/components/repos/Repos.tsx";
 import { Provider } from "src/providers/provider.tsx";
 
 createRoot(document.getElementById("root") as Element).render(
@@ -17,11 +17,17 @@ createRoot(document.getElementById("root") as Element).render(
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />
-          <Route path={routes.flows} element={<Namespaces />} />
-          <Route path={`${routes.flows}/:namespace`} element={<Flows />} />
-          <Route path={`${routes.flows}/:namespace/:name`} element={<Flow />} />
+          <Route path={routes.flows} element={<Repos />} />
           <Route
-            path={`${routes.flows}/:namespace/:flowName/:nodeName`}
+            path={`${routes.flows}/:repoOrg/:repoName`}
+            element={<Flows />}
+          />
+          <Route
+            path={`${routes.flows}/:repoOrg/:repoName/:flowName`}
+            element={<Flow />}
+          />
+          <Route
+            path={`${routes.flows}/:repoOrg/:repoName/:flowName/:nodeName`}
             element={<NodeDetails />}
           />
         </Routes>

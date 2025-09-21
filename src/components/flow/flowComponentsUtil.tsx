@@ -11,7 +11,8 @@ const DOCKER_NODE_HEIGHT = 134;
 const ARGO_NODE_HEIGHT = 164;
 
 function getFlowTriggerNode(
-  namespace: string,
+  repoOrg: string,
+  repoName: string,
   flowName: string,
   trigger: Trigger,
   isPrFlow: boolean,
@@ -23,7 +24,8 @@ function getFlowTriggerNode(
     height: TRIGGER_NODE_HEIGHT,
     children: (
       <FlowGraphTrigger
-        namespace={namespace}
+        repoOrg={repoOrg}
+        repoName={repoName}
         flowName={flowName}
         trigger={trigger}
         isPrFlow={isPrFlow}
@@ -49,7 +51,8 @@ function getStepHeight(stepSource: StepSource) {
 }
 
 function getFlowStepNode(
-  namespace: string,
+  repoOrg: string,
+  repoName: string,
   flowName: string,
   step: Step,
   isPrFlow: boolean,
@@ -65,7 +68,8 @@ function getFlowStepNode(
     height,
     children: (
       <FlowGraphStep
-        namespace={namespace}
+        repoOrg={repoOrg}
+        repoName={repoName}
         flowName={flowName}
         step={step}
         isPrFlow={isPrFlow}

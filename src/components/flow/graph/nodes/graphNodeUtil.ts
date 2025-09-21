@@ -33,25 +33,32 @@ function getDisplayRepoPath(pathname: string, defaultValue: string) {
 }
 
 function getTriggerDetailsLink(
-  namespace: string,
+  repoOrg: string,
+  repoName: string,
   flowName: string,
   trigger: Trigger,
 ) {
   const triggerName = flowDefaultTriggerName(trigger);
-  return getNodeDetailsLink(namespace, flowName, triggerName);
+  return getNodeDetailsLink(repoOrg, repoName, flowName, triggerName);
 }
 
-function getStepDetailsLink(namespace: string, flowName: string, step: Step) {
+function getStepDetailsLink(
+  repoOrg: string,
+  repoName: string,
+  flowName: string,
+  step: Step,
+) {
   const stepName = flowDefaultStepName(step);
-  return getNodeDetailsLink(namespace, flowName, stepName);
+  return getNodeDetailsLink(repoOrg, repoName, flowName, stepName);
 }
 
 function getNodeDetailsLink(
-  namespace: string,
+  repoOrg: string,
+  repoName: string,
   flowName: string,
   nodeName: string,
 ) {
-  return `${routes.flows}/${namespace}/${flowName}/${nodeName}`;
+  return `${routes.flows}/${repoOrg}/${repoName}/${flowName}/${nodeName}`;
 }
 
 function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {

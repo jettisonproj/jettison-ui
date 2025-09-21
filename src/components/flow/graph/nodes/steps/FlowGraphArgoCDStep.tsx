@@ -29,14 +29,16 @@ const HEALTHY_STATUS = "Healthy";
 const APP_VERSION_LABEL = "app.kubernetes.io/version";
 
 interface FlowGraphArgoCDStepProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flowName: string;
   step: ArgoCDStep;
   isPrFlow: boolean;
   workflows: Workflow[];
 }
 function FlowGraphArgoCDStep({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   step,
   isPrFlow,
@@ -44,7 +46,7 @@ function FlowGraphArgoCDStep({
 }: FlowGraphArgoCDStepProps) {
   const { repoUrl, repoPath, baseRef } = step;
   const displayRepoPath = getDisplayRepoPath(repoPath, repoPath);
-  const stepDetailsLink = getStepDetailsLink(namespace, flowName, step);
+  const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, flowName, step);
   const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
   const workflowNode = getLastWorkflowNodeForStep(step, workflows);
   return (

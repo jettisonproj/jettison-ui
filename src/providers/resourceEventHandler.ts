@@ -1,4 +1,3 @@
-import type { Namespace } from "src/data/types/namespace.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
@@ -13,14 +12,12 @@ const DELETE_EVENT_ANNOTATION =
 const SENSOR_NAME_LABEL = "events.argoproj.io/sensor";
 
 class ResourceEventHandler {
-  #namespaceEvents: Namespace[];
   #flowEvents: Flow[];
   #applicationEvents: Application[];
   #rolloutEvents: Rollout[];
   #workflowEvents: Workflow[];
 
   constructor(resourceList: ResourceList) {
-    this.#namespaceEvents = [];
     this.#flowEvents = [];
     this.#applicationEvents = [];
     this.#rolloutEvents = [];
@@ -28,9 +25,6 @@ class ResourceEventHandler {
 
     for (const resourceEvent of resourceList.items) {
       switch (resourceEvent.kind) {
-        case ResourceKind.Namespace:
-          this.#namespaceEvents.push(resourceEvent);
-          continue;
         case ResourceKind.Flow:
           this.#flowEvents.push(resourceEvent);
           continue;
@@ -52,10 +46,6 @@ class ResourceEventHandler {
     }
   }
 
-  hasNamespaceEvents(): boolean {
-    return this.#namespaceEvents.length > 0;
-  }
-
   hasFlowEvents(): boolean {
     return this.#flowEvents.length > 0;
   }
@@ -70,20 +60,6 @@ class ResourceEventHandler {
 
   hasWorkflowEvents(): boolean {
     return this.#workflowEvents.length > 0;
-  }
-
-  /* Get the updated Set<string> of namespaces */
-  getUpdatedNamespaces(namespaces: Set<string> | null): Set<string> {
-    const newNamespaces = new Set(namespaces);
-    for (const namespaceEvent of this.#namespaceEvents) {
-      if (this.#isDeleteEvent(namespaceEvent)) {
-        newNamespaces.delete(namespaceEvent.metadata.name);
-      } else {
-        newNamespaces.add(namespaceEvent.metadata.name);
-      }
-    }
-
-    return newNamespaces;
   }
 
   /**

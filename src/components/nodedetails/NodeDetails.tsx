@@ -20,10 +20,11 @@ import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 
 function NodeDetails() {
-  const { namespace, flowName, nodeName } = useParams();
-  if (!namespace || !flowName || !nodeName) {
+  const { repoOrg, repoName, flowName, nodeName } = useParams();
+  if (!repoOrg || !repoName || !flowName || !nodeName) {
     throw new NodeDetailsError(
-      `path parameters cannot be empty: namespace=${namespace} flowName=${flowName} nodeName=${nodeName}`,
+      "path parameters cannot be empty: " +
+        `repoOrg=${repoOrg} repoName=${repoName} flowName=${flowName} nodeName=${nodeName}`,
     );
   }
 
@@ -31,12 +32,14 @@ function NodeDetails() {
     <>
       <Header />
       <NodeDetailsNavHeader
-        namespace={namespace}
+        repoOrg={repoOrg}
+        repoName={repoName}
         flowName={flowName}
         nodeName={nodeName}
       />
       <NodeDetailsItem
-        namespace={namespace}
+        repoOrg={repoOrg}
+        repoName={repoName}
         flowName={flowName}
         nodeName={nodeName}
       />
@@ -45,12 +48,14 @@ function NodeDetails() {
 }
 
 interface NodeDetailsItemProps {
-  namespace: string;
+  repoOrg: string;
+  repoName: string;
   flowName: string;
   nodeName: string;
 }
 function NodeDetailsItem({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   nodeName,
 }: NodeDetailsItemProps) {
@@ -59,24 +64,26 @@ function NodeDetailsItem({
   if (flows == null || allWorkflows == null) {
     return <LoadIcon />;
   }
-  const flow = flows.get(namespace)?.get(flowName);
+  const flow = flows.get(`${repoOrg}/${repoName}`)?.get(flowName);
   if (flow == null) {
+    localState.deleteRecentRepo(repoOrg, repoName);
     return (
       <p>
-        There is no flow{" "}
+        There is no flow <strong>{flowName}</strong> in repo{" "}
         <strong>
-          {namespace}/{flowName}
+          {repoOrg}/{repoName}
         </strong>
         . Would you like to create one?
       </p>
     );
   }
-  localState.addRecentFlow(namespace, flowName);
+  localState.addRecentRepo(repoOrg, repoName);
 
-  const workflows = allWorkflows.get(namespace)?.get(flowName);
+  const workflows = allWorkflows.get(repoOrg)?.get(flowName);
   return (
     <NodeWorkflowDetails
-      namespace={namespace}
+      repoOrg={repoOrg}
+      repoName={repoName}
       flowName={flowName}
       nodeName={nodeName}
       flow={flow}
@@ -90,7 +97,8 @@ interface NodeWorkflowDetailsProps extends NodeDetailsItemProps {
   workflows: Map<string, Workflow> | undefined;
 }
 function NodeWorkflowDetails({
-  namespace,
+  repoOrg,
+  repoName,
   flowName,
   nodeName,
   flow,
@@ -110,7 +118,8 @@ function NodeWorkflowDetails({
   if (trigger) {
     const isPrFlow = isPullRequestTrigger(trigger);
     const triggerNode = getFlowTriggerNode(
-      namespace,
+      repoOrg,
+      repoName,
       flowName,
       trigger,
       isPrFlow,
@@ -130,7 +139,8 @@ function NodeWorkflowDetails({
     const trigger = getFlowTrigger(flow);
     const isPrFlow = isPullRequestTrigger(trigger);
     const stepNode = getFlowStepNode(
-      namespace,
+      repoOrg,
+      repoName,
       flowName,
       step,
       isPrFlow,
@@ -147,7 +157,7 @@ function NodeWorkflowDetails({
     <p>
       Did not find <strong>{nodeName}</strong> in flow{" "}
       <strong>
-        {namespace}/{flowName}
+        {repoOrg}/{flowName}
       </strong>
     </p>
   );
