@@ -14,6 +14,7 @@ import type {
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 
 interface FlowGraphGitHubTriggerProps {
   repoOrg: string;
@@ -31,7 +32,7 @@ function FlowGraphGitHubTrigger({
   isPrFlow,
   workflows,
 }: FlowGraphGitHubTriggerProps) {
-  const displayEvent = isPrFlow ? "PR" : "PUSH";
+  const displayEvent = getTriggerDisplayName(isPrFlow);
   const triggerDetailsLink = getTriggerDetailsLink(
     repoOrg,
     repoName,

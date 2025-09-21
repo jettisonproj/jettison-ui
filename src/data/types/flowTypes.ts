@@ -6,11 +6,21 @@ import type {
 interface Flow extends NamespacedResource {
   kind: ResourceKind.Flow;
   spec: FlowSpec;
+  // The memo field is not actually sent by the server
+  // It contains memoized data computed in the client
+  memo: FlowMemo;
 }
 
 interface FlowSpec {
   steps: Step[];
   triggers: Trigger[];
+}
+
+// These values are not sent by the server, but instead
+// computed / derived on the client
+interface FlowMemo {
+  trigger: Trigger;
+  isPrFlow: boolean;
 }
 
 enum StepSource {
@@ -71,6 +81,11 @@ interface GitHubPushTrigger extends BaseTrigger {
 
 type Trigger = GitHubPullRequestTrigger | GitHubPushTrigger;
 
+interface PushPrFlows {
+  pushFlow?: Flow;
+  prFlow?: Flow;
+}
+
 export type {
   Flow,
   Trigger,
@@ -80,6 +95,7 @@ export type {
   DockerBuildTestStep,
   DockerBuildTestPublishStep,
   ArgoCDStep,
+  PushPrFlows,
 };
 
 export { TriggerSource, StepSource };

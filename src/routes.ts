@@ -3,4 +3,7 @@ const routes = {
   home: "/",
 };
 
-export { routes };
+const pushTriggerRoute = "push";
+const prTriggerRoute = "pr";
+
+export { routes, pushTriggerRoute, prTriggerRoute };

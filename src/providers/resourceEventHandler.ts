@@ -1,11 +1,14 @@
-import type { Flow } from "src/data/types/flowTypes.ts";
+import type { Flow, PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import { appendGitSuffix, getRepoOrgName } from "src/utils/gitUtil.ts";
-import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
+import {
+  memoizeFlow,
+  memoizeWorkflow,
+} from "src/providers/resourceEventMemo.ts";
 
 const DELETE_EVENT_ANNOTATION =
   "workflows.jettisonproj.io/v1alpha1/watcher-event-type";
@@ -64,73 +67,78 @@ class ResourceEventHandler {
 
   /**
    * Get the updated Map of flows.
-   * Where Map is a mapping from "repoOrg/repoName" to flowName to Flow
+   * Where Map is a mapping from "repoOrg/repoName" to PushPrFlows
    */
   getUpdatedFlows(
-    flows: Map<string, Map<string, Flow>> | null,
-  ): Map<string, Map<string, Flow>> {
+    flows: Map<string, PushPrFlows> | null,
+  ): Map<string, PushPrFlows> {
     const newFlows = new Map(flows);
     const recreatedRepos = new Set();
 
     for (const flowEvent of this.#flowEvents) {
-      const { namespace, name } = flowEvent.metadata;
-      const { triggers } = flowEvent.spec;
-      if (triggers.length !== 1) {
-        throw new ResourceEventError(
-          `unexpected number of flow triggers for ${namespace}/${name}: ${triggers.length}`,
-        );
-      }
-
-      const trigger = triggers[0];
-      if (trigger == null) {
-        throw new ResourceEventError(
-          `unexpected flow trigger for ${namespace}/${name}`,
-        );
-      }
+      const memoizedFlowEvent = memoizeFlow(flowEvent);
+      const { trigger, isPrFlow } = memoizedFlowEvent.memo;
       const { repoUrl } = trigger;
       const repoOrgName = getRepoOrgName(repoUrl);
-      const repoFlows = newFlows.get(repoOrgName);
+      const pushPrFlows = newFlows.get(repoOrgName);
 
-      if (this.#isDeleteEvent(flowEvent)) {
-        if (repoFlows == null) {
-          // The namespace does not exist. Skip deletion
+      if (this.#isDeleteEvent(memoizedFlowEvent)) {
+        if (pushPrFlows == null) {
+          // The repoOrgName does not exist. Skip deletion
           continue;
         }
 
-        const repoFlow = repoFlows.get(name);
-        if (repoFlow == null) {
-          // The flow does not exist. Skip deletion
-          continue;
-        }
-
-        if (repoFlows.size === 1) {
-          // The namespace can be removed since it is the last entry
-          newFlows.delete(repoOrgName);
-        } else {
-          // Get the updated namespace map. Ensures it is recreated if needed
-          let newRepoFlows;
-          if (recreatedRepos.has(namespace)) {
-            newRepoFlows = repoFlows;
+        if (isPrFlow) {
+          if (pushPrFlows.prFlow == null) {
+            continue;
+          } else if (pushPrFlows.pushFlow == null) {
+            newFlows.delete(repoOrgName);
           } else {
-            newRepoFlows = new Map(repoFlows);
-            newFlows.set(repoOrgName, newRepoFlows);
-            recreatedRepos.add(repoOrgName);
+            // Get the updated namespace map. Ensures it is recreated if needed
+            let newPushPrFlows;
+            if (recreatedRepos.has(repoOrgName)) {
+              newPushPrFlows = pushPrFlows;
+            } else {
+              newPushPrFlows = { ...pushPrFlows };
+              newFlows.set(repoOrgName, newPushPrFlows);
+              recreatedRepos.add(repoOrgName);
+            }
+            delete newPushPrFlows.prFlow;
           }
-
-          newRepoFlows.delete(name);
+        } else {
+          if (pushPrFlows.pushFlow == null) {
+            continue;
+          } else if (pushPrFlows.prFlow == null) {
+            newFlows.delete(repoOrgName);
+          } else {
+            // Get the updated namespace map. Ensures it is recreated if needed
+            let newPushPrFlows;
+            if (recreatedRepos.has(repoOrgName)) {
+              newPushPrFlows = pushPrFlows;
+            } else {
+              newPushPrFlows = { ...pushPrFlows };
+              newFlows.set(repoOrgName, newPushPrFlows);
+              recreatedRepos.add(repoOrgName);
+            }
+            delete newPushPrFlows.pushFlow;
+          }
         }
       } else {
         // Get the updated namespace map. Ensures it is recreated if needed
-        let newRepoFlows;
-        if (repoFlows != null && recreatedRepos.has(namespace)) {
-          newRepoFlows = repoFlows;
+        let newPushPrFlows;
+        if (pushPrFlows != null && recreatedRepos.has(repoOrgName)) {
+          newPushPrFlows = pushPrFlows;
         } else {
-          newRepoFlows = new Map(repoFlows);
-          newFlows.set(repoOrgName, newRepoFlows);
+          newPushPrFlows = { ...pushPrFlows };
+          newFlows.set(repoOrgName, newPushPrFlows);
           recreatedRepos.add(repoOrgName);
         }
 
-        newRepoFlows.set(name, flowEvent);
+        if (isPrFlow) {
+          newPushPrFlows.prFlow = memoizedFlowEvent;
+        } else {
+          newPushPrFlows.pushFlow = memoizedFlowEvent;
+        }
       }
     }
 
@@ -331,13 +339,6 @@ class ResourceEventHandler {
   #getFlowName(workflow: Workflow): string | undefined {
     const { labels } = workflow.metadata;
     return labels?.[SENSOR_NAME_LABEL];
-  }
-}
-
-class ResourceEventError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
   }
 }
 

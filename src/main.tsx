@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import "src/main.css";
 import { routes } from "src/routes.ts";
 import { Flow } from "src/components/flow/Flow.tsx";
-import { Flows } from "src/components/flows/Flows.tsx";
 import { Home } from "src/components/home/Home.tsx";
 import { NodeDetails } from "src/components/nodedetails/NodeDetails.tsx";
 import { Repos } from "src/components/repos/Repos.tsx";
@@ -19,15 +18,11 @@ createRoot(document.getElementById("root") as Element).render(
           <Route index element={<Home />} />
           <Route path={routes.flows} element={<Repos />} />
           <Route
-            path={`${routes.flows}/:repoOrg/:repoName`}
-            element={<Flows />}
-          />
-          <Route
-            path={`${routes.flows}/:repoOrg/:repoName/:flowName`}
+            path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute`}
             element={<Flow />}
           />
           <Route
-            path={`${routes.flows}/:repoOrg/:repoName/:flowName/:nodeName`}
+            path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute/:nodeName`}
             element={<NodeDetails />}
           />
         </Routes>

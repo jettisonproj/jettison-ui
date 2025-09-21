@@ -2,11 +2,6 @@ import { useContext, useMemo } from "react";
 import { useParams } from "react-router";
 
 import { localState } from "src/localState.ts";
-import {
-  FlowError,
-  getFlowTrigger,
-  isPullRequestTrigger,
-} from "src/components/flow/flowUtil.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -16,7 +11,7 @@ import {
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { Header } from "src/components/header/Header.tsx";
-import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
+import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
@@ -24,25 +19,31 @@ import type {
   FlowNode,
   FlowEdge,
 } from "src/components/flow/graph/FlowGraph.tsx";
+import { pushTriggerRoute, prTriggerRoute } from "src/routes.ts";
+import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 
 function Flow() {
-  const { repoOrg, repoName, flowName } = useParams();
-  if (!repoOrg || !repoName || !flowName) {
+  const { repoOrg, repoName, triggerRoute } = useParams();
+  if (!repoOrg || !repoName || !triggerRoute) {
     throw new FlowError(
       "path parameters cannot be empty: " +
-        `repoOrg=${repoOrg} repoName=${repoName} flowName=${flowName}`,
+        `repoOrg=${repoOrg} repoName=${repoName} triggerRoute=${triggerRoute}`,
     );
+  }
+
+  if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
+    throw new FlowError(`invalid path parameter triggerRoute=${triggerRoute}`);
   }
 
   return (
     <>
       <Header />
-      <FlowNavHeader
+      <FlowsNavHeader repoOrg={repoOrg} repoName={repoName} />
+      <FlowItem
         repoOrg={repoOrg}
         repoName={repoName}
-        flowName={flowName}
+        isPrFlow={triggerRoute === prTriggerRoute}
       />
-      <FlowItem repoOrg={repoOrg} repoName={repoName} flowName={flowName} />
     </>
   );
 }
@@ -50,21 +51,41 @@ function Flow() {
 interface FlowItemProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
+  isPrFlow: boolean;
 }
 
-function FlowItem({ repoOrg, repoName, flowName }: FlowItemProps) {
+function FlowItem({ repoOrg, repoName, isPrFlow }: FlowItemProps) {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
     return <LoadIcon />;
   }
-  const flow = flows.get(`${repoOrg}/${repoName}`)?.get(flowName);
-  if (flow == null) {
+  const pushPrFlows = flows.get(`${repoOrg}/${repoName}`);
+  if (pushPrFlows == null) {
     localState.deleteRecentRepo(repoOrg, repoName);
     return (
       <p>
-        There is no flow <strong>{flowName}</strong> in repo{" "}
+        There are no flows in repo{" "}
+        <strong>
+          {repoOrg}/{repoName}
+        </strong>
+        . Would you like to create one?
+      </p>
+    );
+  }
+
+  let flow;
+  if (isPrFlow) {
+    flow = pushPrFlows.prFlow;
+  } else {
+    flow = pushPrFlows.pushFlow;
+  }
+  if (flow == null) {
+    localState.deleteRecentRepo(repoOrg, repoName);
+    const triggerDisplayName = getTriggerDisplayName(isPrFlow);
+    return (
+      <p>
+        There is no <strong>{triggerDisplayName}</strong> flow in repo{" "}
         <strong>
           {repoOrg}/{repoName}
         </strong>
@@ -74,6 +95,7 @@ function FlowItem({ repoOrg, repoName, flowName }: FlowItemProps) {
   }
   localState.addRecentRepo(repoOrg, repoName);
 
+  const { name: flowName } = flow.metadata;
   // The repoOrg and namespace are expected to match
   const workflows = allWorkflows.get(repoOrg)?.get(flowName);
   return (
@@ -107,8 +129,7 @@ function FlowWorkflowsItem({
     );
   }, [workflows]);
 
-  const trigger = getFlowTrigger(flow);
-  const isPrFlow = isPullRequestTrigger(trigger);
+  const { trigger, isPrFlow } = flow.memo;
   const flowNodes = getFlowNodes(
     repoOrg,
     repoName,
@@ -177,6 +198,13 @@ function getFlowEdges(flow: Flow, trigger: Trigger): FlowEdge[] {
   );
 
   return triggerEdges.concat(nodeEdges);
+}
+
+class FlowError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { Flow };

@@ -3,7 +3,7 @@ import type { ReactNode, Dispatch, SetStateAction } from "react";
 
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 import { localState } from "src/localState.ts";
-import type { Flow } from "src/data/types/flowTypes.ts";
+import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -16,9 +16,7 @@ const SetDisplayIsoTimestampsContext = createContext((() => {
   // Use no-op as the default, which is not expected to actually be called
 }) as Dispatch<SetStateAction<boolean>>);
 
-const FlowsContext = createContext(
-  null as Map<string, Map<string, Flow>> | null,
-);
+const FlowsContext = createContext(null as Map<string, PushPrFlows> | null);
 
 const ApplicationsContext = createContext(
   null as Map<string, Map<string, Application>> | null,
@@ -36,9 +34,7 @@ interface ProviderProps {
   children: ReactNode;
 }
 function Provider({ children }: ProviderProps) {
-  const [flows, setFlows] = useState(
-    null as Map<string, Map<string, Flow>> | null,
-  );
+  const [flows, setFlows] = useState(null as Map<string, PushPrFlows> | null);
   const [applications, setApplications] = useState(
     null as Map<string, Map<string, Application>> | null,
   );

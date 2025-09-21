@@ -53,7 +53,7 @@ function Repo({ repoOrgName, isFirst }: RepoProps) {
   return (
     <div className={repoClassName}>
       <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}`}
+        to={`${routes.flows}/${repoOrg}/${repoName}/push`}
         className={styles.repoLink}
       ></Link>
       {repoName}

@@ -1,7 +1,47 @@
+import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
+import { TriggerSource } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+
+function memoizeFlow(flow: Flow) {
+  const trigger = getFlowTrigger(flow);
+  const isPrFlow = isPullRequestTrigger(trigger);
+
+  flow.memo = { trigger, isPrFlow };
+  return flow;
+}
+
+/* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
+function getFlowTrigger(flow: Flow): Trigger {
+  const { triggers } = flow.spec;
+  if (triggers.length !== 1) {
+    throw new MemoizeError(
+      `expected 1 Flow trigger but got: ${triggers.length}`,
+    );
+  }
+  const trigger = triggers[0];
+  if (!trigger) {
+    throw new MemoizeError(`expected Flow trigger but got: ${trigger}`);
+  }
+  return trigger;
+}
+
+/* Get whether the flow is a PR flow, based on the trigger type */
+function isPullRequestTrigger(trigger: Trigger) {
+  switch (trigger.triggerSource) {
+    case TriggerSource.GitHubPush:
+      return false;
+    case TriggerSource.GitHubPullRequest:
+      return true;
+    default:
+      trigger satisfies never;
+      console.log("unknown trigger");
+      console.log(trigger);
+      return false;
+  }
+}
 
 function memoizeWorkflow(workflow: Workflow) {
   // Memoize or re-key the node status using the displayName
@@ -58,4 +98,11 @@ function memoizeWorkflow(workflow: Workflow) {
   }
 }
 
-export { memoizeWorkflow };
+class MemoizeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+export { memoizeFlow, memoizeWorkflow };

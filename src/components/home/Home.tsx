@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 import { routes } from "src/routes.ts";
 import { localState } from "src/localState.ts";
-import type { Flow } from "src/data/types/flowTypes.ts";
+import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -115,7 +115,7 @@ function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
   return (
     <div className={recentRepoClassName}>
       <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}`}
+        to={`${routes.flows}/${repoOrg}/${repoName}/push`}
         className={styles.recentRepoLink}
       ></Link>
       {repoName}
@@ -132,7 +132,7 @@ function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
 }
 
 interface FlowsProp {
-  flows: Map<string, Map<string, Flow>> | null;
+  flows: Map<string, PushPrFlows> | null;
 }
 function NumRepos({ flows }: FlowsProp) {
   if (flows == null) {
@@ -145,24 +145,14 @@ function NumFlows({ flows }: FlowsProp) {
   if (flows == null) {
     return <LoadIcon />;
   }
-  let numFlows = 0;
-  for (const namespaceFlows of flows.values()) {
-    numFlows += namespaceFlows.size;
-  }
-  return numFlows;
+  return flows.size * 2;
 }
 
 function NumTriggers({ flows }: FlowsProp) {
   if (flows == null) {
     return <LoadIcon />;
   }
-  let numTriggers = 0;
-  for (const namespaceFlows of flows.values()) {
-    for (const flow of namespaceFlows.values()) {
-      numTriggers += flow.spec.triggers.length;
-    }
-  }
-  return numTriggers;
+  return flows.size * 2;
 }
 
 function NumSteps({ flows }: FlowsProp) {
@@ -170,9 +160,13 @@ function NumSteps({ flows }: FlowsProp) {
     return <LoadIcon />;
   }
   let numSteps = 0;
-  for (const namespaceFlows of flows.values()) {
-    for (const flow of namespaceFlows.values()) {
-      numSteps += flow.spec.steps.length;
+  for (const pushPrFlows of flows.values()) {
+    const { pushFlow, prFlow } = pushPrFlows;
+    if (pushFlow != null) {
+      numSteps += pushFlow.spec.steps.length;
+    }
+    if (prFlow != null) {
+      numSteps += prFlow.spec.steps.length;
     }
   }
   return numSteps;

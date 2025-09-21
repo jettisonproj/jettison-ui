@@ -78,58 +78,6 @@ function FlowsNavHeader({ repoOrg, repoName }: FlowsNavHeaderProps) {
   return <NavHeader components={components} />;
 }
 
-/* Flow Nav Header */
-function flowNavComponent(repoOrg: string, repoName: string, flowName: string) {
-  return {
-    displayName: flowName,
-    navLink: `${routes.flows}/${repoOrg}/${repoName}/${flowName}`,
-  };
-}
-interface FlowNavHeaderProps extends FlowsNavHeaderProps {
-  flowName: string;
-}
-function FlowNavHeader({ repoOrg, repoName, flowName }: FlowNavHeaderProps) {
-  const components = [
-    homeNavComponent,
-    reposNavComponent,
-    flowsNavComponent(repoOrg, repoName),
-    flowNavComponent(repoOrg, repoName, flowName),
-  ];
-  return <NavHeader components={components} />;
-}
-
-/* NodeDetails Nav Header */
-function nodeDetailsNavComponent(
-  repoOrg: string,
-  repoName: string,
-  flowName: string,
-  nodeName: string,
-) {
-  return {
-    displayName: nodeName,
-    navLink: `${routes.flows}/${repoOrg}/${repoName}/${flowName}/${nodeName}`,
-  };
-}
-interface NodeDetailsNavHeaderProps extends FlowsNavHeaderProps {
-  flowName: string;
-  nodeName: string;
-}
-function NodeDetailsNavHeader({
-  repoOrg,
-  repoName,
-  flowName,
-  nodeName,
-}: NodeDetailsNavHeaderProps) {
-  const components = [
-    homeNavComponent,
-    reposNavComponent,
-    flowsNavComponent(repoOrg, repoName),
-    flowNavComponent(repoOrg, repoName, flowName),
-    nodeDetailsNavComponent(repoOrg, repoName, flowName, nodeName),
-  ];
-  return <NavHeader components={components} />;
-}
-
 class NavHeaderError extends Error {
   constructor(message: string) {
     super(message);
@@ -137,10 +85,4 @@ class NavHeaderError extends Error {
   }
 }
 
-export {
-  HomeNavHeader,
-  ReposNavHeader,
-  FlowsNavHeader,
-  FlowNavHeader,
-  NodeDetailsNavHeader,
-};
+export { HomeNavHeader, ReposNavHeader, FlowsNavHeader };
