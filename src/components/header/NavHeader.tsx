@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 
-import { routes } from "src/routes.ts";
+import { routes, pushTriggerRoute, prTriggerRoute } from "src/routes.ts";
 import styles from "src/components/header/NavHeader.module.css";
 
 /* NavHeader is under the Header and provides the navigation path */
@@ -10,11 +10,16 @@ interface NavHeaderComponent {
   navLink: string;
 }
 
-interface NavHeaderProps {
-  components: NavHeaderComponent[];
+interface NavHeaderFilter extends NavHeaderComponent {
+  iconClassName: string;
 }
 
-function NavHeader({ components }: NavHeaderProps) {
+interface NavHeaderProps {
+  components: NavHeaderComponent[];
+  filters?: NavHeaderFilter[];
+}
+
+function NavHeader({ components, filters }: NavHeaderProps) {
   if (components.length === 0) {
     return null;
   }
@@ -26,20 +31,38 @@ function NavHeader({ components }: NavHeaderProps) {
   }
 
   return (
-    <h2 className={styles.navHeader}>
-      {/* The prefix components contain links */}
-      {components.slice(0, -1).map(({ displayName, navLink }) => (
-        <Fragment key={navLink}>
-          <Link to={navLink} className={styles.component}>
-            {displayName}
-          </Link>
-          <span className={styles.componentSeparator}>⧸</span>
-        </Fragment>
-      ))}
+    <div className={styles.navHeader}>
+      <h2>
+        {/* The prefix components contain links */}
+        {components.slice(0, -1).map(({ displayName, navLink }) => (
+          <Fragment key={navLink}>
+            <Link to={navLink} className={styles.component}>
+              {displayName}
+            </Link>
+            <span className={styles.componentSeparator}>⧸</span>
+          </Fragment>
+        ))}
 
-      {/* The last component has no link */}
-      <strong>{lastComponent.displayName}</strong>
-    </h2>
+        {/* The last component has no link */}
+        <strong>{lastComponent.displayName}</strong>
+      </h2>
+      {filters && (
+        <div className={styles.navFilter}>
+          {filters.map(({ displayName, navLink, iconClassName }) => (
+            <NavLink
+              key={displayName}
+              to={navLink}
+              className={({ isActive }) =>
+                isActive ? styles.navFilterSelected : styles.navFilterItem
+              }
+            >
+              <i className={iconClassName} />
+              {displayName}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -75,7 +98,19 @@ function FlowsNavHeader({ repoOrg, repoName }: FlowsNavHeaderProps) {
     reposNavComponent,
     flowsNavComponent(repoOrg, repoName),
   ];
-  return <NavHeader components={components} />;
+  const filters = [
+    {
+      displayName: "Push Flow",
+      navLink: `${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`,
+      iconClassName: `nf nf-fa-code ${styles.navFilterPushIcon}`,
+    },
+    {
+      displayName: "PR Flow",
+      navLink: `${routes.flows}/${repoOrg}/${repoName}/${prTriggerRoute}`,
+      iconClassName: `nf nf-md-source_pull ${styles.navFilterPrIcon}`,
+    },
+  ];
+  return <NavHeader components={components} filters={filters} />;
 }
 
 class NavHeaderError extends Error {

@@ -1,7 +1,12 @@
 .navHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   min-width: var(--content-width);
   border-bottom: 1px solid var(--separator-color);
-  padding-bottom: 25px;
+  margin-bottom: 17.43px;
+  padding-bottom: 7.57px;
 }
 
 .component {
@@ -10,4 +15,35 @@
 
 .componentSeparator {
   margin: 0 18px;
+}
+
+.navFilter {
+  background: var(--secondary-color);
+  padding: 11px 4px;
+  border-radius: 15px;
+}
+
+.navFilterItem {
+  color: var(--text-color);
+  padding: 9px 13px;
+  font-weight: bolder;
+}
+
+.navFilterSelected {
+  composes: navFilterItem;
+
+  background: #fff;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.navFilterPushIcon {
+  margin-right: 5px;
+}
+
+.navFilterPrIcon {
+  margin-right: 5px;
+  font-size: 12px;
+  position: relative;
+  top: -2px;
 }
