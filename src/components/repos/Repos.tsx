@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router";
 
-import { routes } from "src/routes.ts";
+import { routes, pushTriggerRoute } from "src/routes.ts";
 import { Header } from "src/components/header/Header.tsx";
 import { ReposNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
@@ -53,7 +53,7 @@ function Repo({ repoOrgName, isFirst }: RepoProps) {
   return (
     <div className={repoClassName}>
       <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}/push`}
+        to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
         className={styles.repoLink}
       ></Link>
       {repoName}

@@ -31,7 +31,6 @@ const APP_VERSION_LABEL = "app.kubernetes.io/version";
 interface FlowGraphArgoCDStepProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
   step: ArgoCDStep;
   isPrFlow: boolean;
   workflows: Workflow[];
@@ -39,14 +38,13 @@ interface FlowGraphArgoCDStepProps {
 function FlowGraphArgoCDStep({
   repoOrg,
   repoName,
-  flowName,
   step,
   isPrFlow,
   workflows,
 }: FlowGraphArgoCDStepProps) {
   const { repoUrl, repoPath, baseRef } = step;
   const displayRepoPath = getDisplayRepoPath(repoPath, repoPath);
-  const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, flowName, step);
+  const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, isPrFlow, step);
   const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
   const workflowNode = getLastWorkflowNodeForStep(step, workflows);
   return (

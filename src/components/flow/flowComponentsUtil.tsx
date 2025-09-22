@@ -13,7 +13,6 @@ const ARGO_NODE_HEIGHT = 164;
 function getFlowTriggerNode(
   repoOrg: string,
   repoName: string,
-  flowName: string,
   trigger: Trigger,
   isPrFlow: boolean,
   workflows: Workflow[],
@@ -26,7 +25,6 @@ function getFlowTriggerNode(
       <FlowGraphTrigger
         repoOrg={repoOrg}
         repoName={repoName}
-        flowName={flowName}
         trigger={trigger}
         isPrFlow={isPrFlow}
         workflows={workflows}
@@ -53,7 +51,6 @@ function getStepHeight(stepSource: StepSource) {
 function getFlowStepNode(
   repoOrg: string,
   repoName: string,
-  flowName: string,
   step: Step,
   isPrFlow: boolean,
   workflows: Workflow[],
@@ -70,7 +67,6 @@ function getFlowStepNode(
       <FlowGraphStep
         repoOrg={repoOrg}
         repoName={repoName}
-        flowName={flowName}
         step={step}
         isPrFlow={isPrFlow}
         workflows={workflows}

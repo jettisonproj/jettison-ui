@@ -7,7 +7,6 @@ import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowG
 interface FlowGraphStepProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
   step: Step;
   isPrFlow: boolean;
   workflows: Workflow[];
@@ -15,7 +14,6 @@ interface FlowGraphStepProps {
 function FlowGraphStep({
   repoOrg,
   repoName,
-  flowName,
   step,
   isPrFlow,
   workflows,
@@ -27,7 +25,6 @@ function FlowGraphStep({
         <FlowGraphDockerStep
           repoOrg={repoOrg}
           repoName={repoName}
-          flowName={flowName}
           step={step}
           isPrFlow={isPrFlow}
           workflows={workflows}
@@ -38,7 +35,6 @@ function FlowGraphStep({
         <FlowGraphArgoCDStep
           repoOrg={repoOrg}
           repoName={repoName}
-          flowName={flowName}
           step={step}
           isPrFlow={isPrFlow}
           workflows={workflows}

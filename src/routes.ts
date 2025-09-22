@@ -6,4 +6,11 @@ const routes = {
 const pushTriggerRoute = "push";
 const prTriggerRoute = "pr";
 
-export { routes, pushTriggerRoute, prTriggerRoute };
+function getTriggerRoute(isPrFlow: boolean) {
+  if (isPrFlow) {
+    return prTriggerRoute;
+  }
+  return pushTriggerRoute;
+}
+
+export { routes, pushTriggerRoute, prTriggerRoute, getTriggerRoute };

@@ -1,7 +1,12 @@
 import { Fragment } from "react";
 import { Link, NavLink } from "react-router";
 
-import { routes, pushTriggerRoute, prTriggerRoute } from "src/routes.ts";
+import {
+  routes,
+  pushTriggerRoute,
+  prTriggerRoute,
+  getTriggerRoute,
+} from "src/routes.ts";
 import styles from "src/components/header/NavHeader.module.css";
 
 /* NavHeader is under the Header and provides the navigation path */
@@ -81,22 +86,28 @@ function ReposNavHeader() {
   return <NavHeader components={components} />;
 }
 
-/* Flows Nav Header */
-function flowsNavComponent(repoOrg: string, repoName: string) {
+/* Flow Nav Header */
+function flowNavComponent(
+  repoOrg: string,
+  repoName: string,
+  isPrFlow: boolean,
+) {
+  const triggerRoute = getTriggerRoute(isPrFlow);
   return {
     displayName: repoName,
-    navLink: `${routes.flows}/${repoOrg}/${repoName}`,
+    navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`,
   };
 }
-interface FlowsNavHeaderProps {
+interface FlowNavHeaderProps {
   repoOrg: string;
   repoName: string;
+  isPrFlow: boolean;
 }
-function FlowsNavHeader({ repoOrg, repoName }: FlowsNavHeaderProps) {
+function FlowNavHeader({ repoOrg, repoName, isPrFlow }: FlowNavHeaderProps) {
   const components = [
     homeNavComponent,
     reposNavComponent,
-    flowsNavComponent(repoOrg, repoName),
+    flowNavComponent(repoOrg, repoName, isPrFlow),
   ];
   const filters = [
     {
@@ -113,6 +124,37 @@ function FlowsNavHeader({ repoOrg, repoName }: FlowsNavHeaderProps) {
   return <NavHeader components={components} filters={filters} />;
 }
 
+/* NodeDetails Nav Header */
+function nodeDetailsNavComponent(
+  repoOrg: string,
+  repoName: string,
+  isPrFlow: boolean,
+  nodeName: string,
+) {
+  const triggerRoute = getTriggerRoute(isPrFlow);
+  return {
+    displayName: nodeName,
+    navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`,
+  };
+}
+interface NodeDetailsNavHeaderProps extends FlowNavHeaderProps {
+  nodeName: string;
+}
+function NodeDetailsNavHeader({
+  repoOrg,
+  repoName,
+  isPrFlow,
+  nodeName,
+}: NodeDetailsNavHeaderProps) {
+  const components = [
+    homeNavComponent,
+    reposNavComponent,
+    flowNavComponent(repoOrg, repoName, isPrFlow),
+    nodeDetailsNavComponent(repoOrg, repoName, isPrFlow, nodeName),
+  ];
+  return <NavHeader components={components} />;
+}
+
 class NavHeaderError extends Error {
   constructor(message: string) {
     super(message);
@@ -120,4 +162,4 @@ class NavHeaderError extends Error {
   }
 }
 
-export { HomeNavHeader, ReposNavHeader, FlowsNavHeader };
+export { HomeNavHeader, ReposNavHeader, FlowNavHeader, NodeDetailsNavHeader };

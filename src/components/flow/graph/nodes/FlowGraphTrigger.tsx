@@ -6,7 +6,6 @@ import { TriggerSource } from "src/data/types/flowTypes.ts";
 interface FlowGraphTriggerProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
   trigger: Trigger;
   isPrFlow: boolean;
   workflows: Workflow[];
@@ -14,7 +13,6 @@ interface FlowGraphTriggerProps {
 function FlowGraphTrigger({
   repoOrg,
   repoName,
-  flowName,
   trigger,
   isPrFlow,
   workflows,
@@ -26,7 +24,6 @@ function FlowGraphTrigger({
         <FlowGraphGitHubTrigger
           repoOrg={repoOrg}
           repoName={repoName}
-          flowName={flowName}
           trigger={trigger}
           isPrFlow={isPrFlow}
           workflows={workflows}

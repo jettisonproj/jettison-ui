@@ -19,7 +19,6 @@ import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 interface FlowGraphGitHubTriggerProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;
   isPrFlow: boolean;
   workflows: Workflow[];
@@ -27,7 +26,6 @@ interface FlowGraphGitHubTriggerProps {
 function FlowGraphGitHubTrigger({
   repoOrg,
   repoName,
-  flowName,
   trigger,
   isPrFlow,
   workflows,
@@ -36,7 +34,7 @@ function FlowGraphGitHubTrigger({
   const triggerDetailsLink = getTriggerDetailsLink(
     repoOrg,
     repoName,
-    flowName,
+    isPrFlow,
     trigger,
   );
   return (

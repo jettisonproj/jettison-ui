@@ -11,7 +11,7 @@ import {
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { Header } from "src/components/header/Header.tsx";
-import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
+import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
@@ -35,15 +35,16 @@ function Flow() {
     throw new FlowError(`invalid path parameter triggerRoute=${triggerRoute}`);
   }
 
+  const isPrFlow = triggerRoute === prTriggerRoute;
   return (
     <>
       <Header />
-      <FlowsNavHeader repoOrg={repoOrg} repoName={repoName} />
-      <FlowItem
+      <FlowNavHeader
         repoOrg={repoOrg}
         repoName={repoName}
-        isPrFlow={triggerRoute === prTriggerRoute}
+        isPrFlow={isPrFlow}
       />
+      <FlowItem repoOrg={repoOrg} repoName={repoName} isPrFlow={isPrFlow} />
     </>
   );
 }
@@ -160,11 +161,9 @@ function getFlowNodes(
   isPrFlow: boolean,
   workflows: Workflow[],
 ): FlowNode[] {
-  const { name: flowName } = flow.metadata;
   const triggerNode = getFlowTriggerNode(
     repoOrg,
     repoName,
-    flowName,
     trigger,
     isPrFlow,
     workflows,
@@ -172,7 +171,7 @@ function getFlowNodes(
 
   const { steps } = flow.spec;
   const stepNodes = steps.map((step) =>
-    getFlowStepNode(repoOrg, repoName, flowName, step, isPrFlow, workflows),
+    getFlowStepNode(repoOrg, repoName, step, isPrFlow, workflows),
   );
 
   return [triggerNode].concat(stepNodes);

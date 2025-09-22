@@ -25,7 +25,6 @@ import { StepSource } from "src/data/types/flowTypes.ts";
 interface FlowGraphDockerStepProps {
   repoOrg: string;
   repoName: string;
-  flowName: string;
   step: DockerBuildTestStep | DockerBuildTestPublishStep;
   isPrFlow: boolean;
   workflows: Workflow[];
@@ -33,13 +32,12 @@ interface FlowGraphDockerStepProps {
 function FlowGraphDockerStep({
   repoOrg,
   repoName,
-  flowName,
   step,
   isPrFlow,
   workflows,
 }: FlowGraphDockerStepProps) {
   const displayEvent = getDisplayEvent(step);
-  const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, flowName, step);
+  const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, isPrFlow, step);
 
   return (
     <FlowGraphNode

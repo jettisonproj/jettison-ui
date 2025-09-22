@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router";
 
-import { routes } from "src/routes.ts";
+import { routes, pushTriggerRoute } from "src/routes.ts";
 import { localState } from "src/localState.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
@@ -115,7 +115,7 @@ function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
   return (
     <div className={recentRepoClassName}>
       <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}/push`}
+        to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
         className={styles.recentRepoLink}
       ></Link>
       {repoName}

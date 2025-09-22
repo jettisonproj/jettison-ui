@@ -14,7 +14,7 @@ import {
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { Header } from "src/components/header/Header.tsx";
-import { FlowsNavHeader } from "src/components/header/NavHeader.tsx";
+import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { pushTriggerRoute, prTriggerRoute } from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
@@ -34,14 +34,20 @@ function NodeDetails() {
     );
   }
 
+  const isPrFlow = triggerRoute === prTriggerRoute;
   return (
     <>
       <Header />
-      <FlowsNavHeader repoOrg={repoOrg} repoName={repoName} />
+      <NodeDetailsNavHeader
+        repoOrg={repoOrg}
+        repoName={repoName}
+        isPrFlow={isPrFlow}
+        nodeName={nodeName}
+      />
       <NodeDetailsItem
         repoOrg={repoOrg}
         repoName={repoName}
-        isPrFlow={triggerRoute === prTriggerRoute}
+        isPrFlow={isPrFlow}
         nodeName={nodeName}
       />
     </>
@@ -106,7 +112,7 @@ function NodeDetailsItem({
       repoOrg={repoOrg}
       repoName={repoName}
       nodeName={nodeName}
-      flowName={flowName}
+      isPrFlow={isPrFlow}
       flow={flow}
       workflows={workflows}
     />
@@ -117,15 +123,15 @@ interface NodeWorkflowDetailsProps {
   repoOrg: string;
   repoName: string;
   nodeName: string;
-  flowName: string;
+  isPrFlow: boolean;
   flow: Flow;
   workflows: Map<string, Workflow> | undefined;
 }
 function NodeWorkflowDetails({
   repoOrg,
   repoName,
-  flowName,
   nodeName,
+  isPrFlow,
   flow,
   workflows,
 }: NodeWorkflowDetailsProps) {
@@ -144,7 +150,6 @@ function NodeWorkflowDetails({
     const triggerNode = getFlowTriggerNode(
       repoOrg,
       repoName,
-      flowName,
       trigger,
       flow.memo.isPrFlow,
       sortedWorkflows,
@@ -164,7 +169,6 @@ function NodeWorkflowDetails({
     const stepNode = getFlowStepNode(
       repoOrg,
       repoName,
-      flowName,
       step,
       isPrFlow,
       sortedWorkflows,
@@ -176,11 +180,13 @@ function NodeWorkflowDetails({
       </>
     );
   }
+  const triggerDisplayName = getTriggerDisplayName(isPrFlow);
   return (
     <p>
-      Did not find <strong>{nodeName}</strong> in flow{" "}
+      Did not find <strong>{nodeName}</strong> in{" "}
+      <strong>{triggerDisplayName}</strong> flow in repo{" "}
       <strong>
-        {repoOrg}/{flowName}
+        {repoOrg}/{repoName}
       </strong>
     </p>
   );
