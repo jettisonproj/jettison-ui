@@ -6,7 +6,9 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
+  getWorkflowRevisionAuthor,
   getWorkflowRevisionNumber,
+  getWorkflowRevisionTitle,
 } from "src/components/flow/workflowNodeUtil.ts";
 import {
   getDisplayCommit,
@@ -31,6 +33,8 @@ function FlowHistory({ isPrFlow, repoOrg, workflows }: FlowHistoryProps) {
           <th className={styles.historyCellHeader}></th>
           {isPrFlow && <th className={styles.historyCellHeader}>PR</th>}
           <th className={styles.historyCellHeader}>Commit</th>
+          <th className={styles.historyCellHeader}>Title</th>
+          <th className={styles.historyCellHeader}>Author</th>
           <th className={styles.historyCellHeader}>Started</th>
           <th className={styles.historyCellHeader}>Finished</th>
           <th className={styles.historyCellHeader}>Duration</th>
@@ -70,6 +74,12 @@ function FlowHistoryRow({ isPrFlow, repoOrg, workflow }: FlowHistoryRowProps) {
       )}
       <td className={styles.historyCell}>
         <FlowHistoryCommit workflow={workflow} />
+      </td>
+      <td className={styles.historyCell}>
+        <FlowHistoryTitle workflow={workflow} />
+      </td>
+      <td className={styles.historyCell}>
+        <FlowHistoryAuthor workflow={workflow} />
       </td>
       <td className={styles.historyCell}>
         <Timestamp
@@ -150,6 +160,30 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
       {displayCommit}
     </a>
   );
+}
+
+function FlowHistoryTitle({ workflow }: FlowHistoryCellProps) {
+  const { parameterMap } = workflow.memo;
+  const commit = getWorkflowRevision(parameterMap);
+  const repoUrl = getWorkflowRepo(parameterMap);
+  const commitLink = getRepoCommitLink(repoUrl, commit);
+  const title = getWorkflowRevisionTitle(parameterMap);
+  return (
+    <a
+      className={styles.historyTitle}
+      href={commitLink}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {title}
+    </a>
+  );
+}
+
+function FlowHistoryAuthor({ workflow }: FlowHistoryCellProps) {
+  const { parameterMap } = workflow.memo;
+  const author = getWorkflowRevisionAuthor(parameterMap);
+  return author;
 }
 
 function FlowHistoryDuration({ workflow }: FlowHistoryCellProps) {

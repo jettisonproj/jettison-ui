@@ -73,6 +73,10 @@
   color: var(--text-color);
 }
 
+.historyTitle {
+  color: var(--text-color);
+}
+
 .historyCommit:hover {
   text-decoration: underline;
   color: var(--primary-color);
