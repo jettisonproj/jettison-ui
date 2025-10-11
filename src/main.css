@@ -3,6 +3,16 @@
 
   --header-height: 65px;
   --content-width: 880px;
+
+  /* History item width. These should sum up to the content width */
+  --history-sidebar-width: 150px;
+  --history-content-width: 725px;
+  --history-content-margin-left: 5px;
+  /* History grid item width.
+   * The sum of widths and gaps should divide history content width */
+  --history-grid-item-width: 101px;
+  --history-grid-item-gap: 3px;
+
   --panel-color: #f6f8fa;
   --separator-color: #eee;
 
