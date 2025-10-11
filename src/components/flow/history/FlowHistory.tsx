@@ -66,10 +66,7 @@ interface FlowHistorySidebarProps {
   isPrFlow: boolean;
   workflow: Workflow;
 }
-function FlowHistorySidebar({
-  isPrFlow,
-  workflow,
-}: FlowHistorySidebarProps) {
+function FlowHistorySidebar({ isPrFlow, workflow }: FlowHistorySidebarProps) {
   return (
     <div className={styles.historySidebar}>
       <div>
@@ -274,10 +271,7 @@ interface FlowHistoryDetailsProps {
   repoOrg: string;
   workflow: Workflow;
 }
-function FlowHistoryDetails({
-  repoOrg,
-  workflow,
-}: FlowHistoryDetailsProps) {
+function FlowHistoryDetails({ repoOrg, workflow }: FlowHistoryDetailsProps) {
   // todo add a link to expand this section
   return (
     <div className={styles.historyDetails}>
