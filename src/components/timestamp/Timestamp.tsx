@@ -1,6 +1,5 @@
 import { useContext } from "react";
 
-import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import {
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
@@ -14,16 +13,13 @@ function getDisplayTimestamp(d: Date, displayIsoTimestamps: boolean) {
 }
 
 interface TimestampProps {
-  date?: Date;
+  date: Date;
   className?: string;
 }
 function Timestamp({ date, className }: TimestampProps) {
   const displayIsoTimestamps = useContext(DisplayIsoTimestampsContext);
   const setDisplayIsoTimestamps = useContext(SetDisplayIsoTimestampsContext);
 
-  if (date == null) {
-    return <LoadIcon />;
-  }
   const displayTimestamp = getDisplayTimestamp(date, displayIsoTimestamps);
   return (
     <span
