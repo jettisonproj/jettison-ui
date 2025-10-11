@@ -4,6 +4,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { formatDuration } from "src/utils/dateUtil.ts";
 
 function memoizeFlow(flow: Flow) {
   const trigger = getFlowTrigger(flow);
@@ -45,7 +46,7 @@ function isPullRequestTrigger(trigger: Trigger) {
 
 function memoizeWorkflow(workflow: Workflow) {
   // Memoize or re-key the node status using the displayName
-  // Also convert dates to Date type
+  // Also convert dates to Date type and add duration
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
   const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
@@ -63,15 +64,22 @@ function memoizeWorkflow(workflow: Workflow) {
         outputMap[parameter.name] = parameter.value;
       });
 
+      const startedAtDate = new Date(startedAt);
+
       const memoNode: WorkflowMemoStatusNode = {
         displayName,
         phase,
-        startedAt: new Date(startedAt),
+        startedAt: startedAtDate,
         parameterMap,
         outputMap,
       };
       if (finishedAt != null) {
-        memoNode.finishedAt = new Date(finishedAt);
+        const finishedAtDate = new Date(finishedAt);
+
+        memoNode.finishedAt = finishedAtDate;
+        memoNode.duration = formatDuration(
+          finishedAtDate.getTime() - startedAtDate.getTime(),
+        );
       }
       nodes[node.displayName] = memoNode;
       sortedNodes.push(memoNode);
@@ -97,10 +105,15 @@ function memoizeWorkflow(workflow: Workflow) {
     sortedNodes,
   };
 
-  // Memoize the finishedAt string to a Date
+  // Memoize the finishedAt string to a Date. Also, memoize the duration
   const finishedAt = workflow.status.finishedAt;
   if (finishedAt != null) {
-    workflow.memo.finishedAt = new Date(finishedAt);
+    const finishedAtDate = new Date(finishedAt);
+
+    workflow.memo.finishedAt = finishedAtDate;
+    workflow.memo.duration = formatDuration(
+      finishedAtDate.getTime() - startedAt.getTime(),
+    );
   }
 }
 

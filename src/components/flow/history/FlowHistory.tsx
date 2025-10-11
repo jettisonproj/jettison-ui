@@ -12,7 +12,6 @@ import {
   getWorkflowRevisionNumber,
   getWorkflowRevisionTitle,
 } from "src/components/flow/workflowNodeUtil.ts";
-import { formatDuration } from "src/utils/dateUtil.ts";
 import {
   getDisplayCommit,
   getRepoCommitLink,
@@ -161,19 +160,15 @@ function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
-  const { startedAt, finishedAt } = workflow.memo;
-  if (finishedAt == null) {
+  const { duration } = workflow.memo;
+  if (duration == null) {
     return null;
   }
 
-  // todo potentially memoize
-  const workflowDuration = formatDuration(
-    finishedAt.getTime() - startedAt.getTime(),
-  );
   return (
     <div className={styles.sidebarItem}>
       <i className="nf nf-fa-flag_o" />
-      <span className={styles.sidebarText}>{workflowDuration}</span>
+      <span className={styles.sidebarText}>{duration}</span>
     </div>
   );
 }
@@ -252,13 +247,7 @@ function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
       break;
   }
 
-  // todo potentially memoize
-  let nodeDuration = "-";
-  if (node.finishedAt != null) {
-    nodeDuration = formatDuration(
-      node.finishedAt.getTime() - node.startedAt.getTime(),
-    );
-  }
+  const nodeDuration = node.duration ?? "-";
 
   return (
     <div className={className} title={node.displayName}>

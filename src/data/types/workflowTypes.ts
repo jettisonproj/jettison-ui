@@ -35,6 +35,7 @@ interface WorkflowMemo {
   parameterMap: Record<string, string>;
   startedAt: Date;
   finishedAt?: Date;
+  duration?: string;
   nodes: Record<string, WorkflowMemoStatusNode>;
   sortedNodes: WorkflowMemoStatusNode[];
 }
@@ -60,6 +61,7 @@ interface WorkflowMemoStatusNode {
   phase: string;
   startedAt: Date;
   finishedAt?: Date;
+  duration?: string;
   parameterMap: Record<string, string>;
   outputMap: Record<string, string>;
 }
