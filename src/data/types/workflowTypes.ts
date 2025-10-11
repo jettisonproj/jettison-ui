@@ -36,13 +36,13 @@ interface WorkflowMemo {
   startedAt: Date;
   finishedAt?: Date;
   nodes: Record<string, WorkflowMemoStatusNode>;
+  sortedNodes: WorkflowMemoStatusNode[];
 }
 
 interface WorkflowStatus {
   startedAt: string;
   finishedAt?: string;
   phase: string;
-  progress: string;
   nodes?: Record<string, WorkflowStatusNode>;
 }
 

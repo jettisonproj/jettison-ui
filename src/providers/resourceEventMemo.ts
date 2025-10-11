@@ -47,6 +47,7 @@ function memoizeWorkflow(workflow: Workflow) {
   // Memoize or re-key the node status using the displayName
   // Also convert dates to Date type
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
+  const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
     Object.values(workflow.status.nodes).forEach((node) => {
       const { displayName, phase, startedAt, finishedAt, inputs, outputs } =
@@ -73,8 +74,12 @@ function memoizeWorkflow(workflow: Workflow) {
         memoNode.finishedAt = new Date(finishedAt);
       }
       nodes[node.displayName] = memoNode;
+      sortedNodes.push(memoNode);
     });
   }
+
+  // Memoize the sorted nodes by startedAt
+  sortedNodes.sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime());
 
   // Memoize the parameter List to a Map
   const { parameters } = workflow.spec.arguments;
@@ -89,6 +94,7 @@ function memoizeWorkflow(workflow: Workflow) {
     parameterMap,
     startedAt,
     nodes,
+    sortedNodes,
   };
 
   // Memoize the finishedAt string to a Date
