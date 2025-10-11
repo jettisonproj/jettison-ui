@@ -5,6 +5,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { trimGitSuffix } from "src/utils/gitUtil.ts";
 import { getTriggerRoute } from "src/routes.ts";
 
@@ -85,12 +86,11 @@ function getLastWorkflowNode(
   }
   for (const workflow of workflows) {
     const node = workflow.memo.nodes[nodeName];
-    // todo add enum
-    // todo more specific check
+    // todo improve check
     if (
       node != null &&
-      node.phase !== "Skipped" &&
-      node.phase !== "Omitted" &&
+      node.phase !== NodePhase.Skipped &&
+      node.phase !== NodePhase.Omitted &&
       node.outputMap["docker-build-pr-status"] !== "Skipped" &&
       node.outputMap["docker-build-commit-status"] !== "Skipped"
     ) {

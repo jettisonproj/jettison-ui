@@ -5,6 +5,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { NodePhase, WorkflowPhase } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
@@ -85,16 +86,16 @@ interface FlowHistoryFieldProps {
 }
 function FlowHistoryStatus({ workflow }: FlowHistoryFieldProps) {
   switch (workflow.status.phase) {
-    // todo handle more cases
-    // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#WorkflowPhase
-    case "Succeeded":
+    case WorkflowPhase.Succeeded:
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
-    case "Error":
+    case WorkflowPhase.Error:
       return <i className={`nf nf-md-cancel ${styles.dangerIcon}`} />;
-    case "Failed":
+    case WorkflowPhase.Failed:
       return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
-    case "Running":
+    case WorkflowPhase.Running:
       return <LoadIcon />;
+    case WorkflowPhase.Pending:
+    case WorkflowPhase.Unknown:
     default:
       return <i className="nf nf-fa-question_circle" />;
   }
@@ -220,25 +221,25 @@ function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
   }
 
   switch (node.phase) {
-    // todo handle more cases
-    // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodePhase
-    case "Succeeded":
+    case NodePhase.Succeeded:
       className += ` ${styles.historyGridSuccess}`;
       break;
-    case "Error":
+    case NodePhase.Error:
       className += ` ${styles.historyGridDanger}`;
       break;
-    case "Failed":
+    case NodePhase.Failed:
       className += ` ${styles.historyGridDanger}`;
       break;
-    case "Running":
+    case NodePhase.Running:
       // todo update
       // return <LoadIcon className={styles.nodeLoadIcon} />;
       break;
-    case "Pending":
+    case NodePhase.Pending:
       // todo update
       // return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
       break;
+    case NodePhase.Skipped:
+    case NodePhase.Omitted:
     default:
       // todo update
       // return (
