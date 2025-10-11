@@ -1,8 +1,10 @@
 import styles from "src/components/flow/history/FlowHistory.module.css";
-import { getHumanDuration } from "src/components/flow/history/historyUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type {
+  Workflow,
+  WorkflowMemoStatusNode,
+} from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
@@ -10,6 +12,7 @@ import {
   getWorkflowRevisionNumber,
   getWorkflowRevisionTitle,
 } from "src/components/flow/workflowNodeUtil.ts";
+import { formatDuration } from "src/utils/dateUtil.ts";
 import {
   getDisplayCommit,
   getRepoCommitLink,
@@ -27,89 +30,64 @@ function FlowHistory({ isPrFlow, repoOrg, workflows }: FlowHistoryProps) {
   }
 
   return (
-    <table className={styles.historyTable}>
-      <thead>
-        <tr>
-          <th className={styles.historyCellHeader}></th>
-          {isPrFlow && <th className={styles.historyCellHeader}>PR</th>}
-          <th className={styles.historyCellHeader}>Commit</th>
-          <th className={styles.historyCellHeader}>Title</th>
-          <th className={styles.historyCellHeader}>Author</th>
-          <th className={styles.historyCellHeader}>Started</th>
-          <th className={styles.historyCellHeader}>Finished</th>
-          <th className={styles.historyCellHeader}>Duration</th>
-          <th className={styles.historyCellHeader}>Progress</th>
-          <th className={styles.historyCellHeader}></th>
-        </tr>
-      </thead>
-      <tbody>
-        {workflows.map((workflow) => (
-          <FlowHistoryRow
-            key={workflow.metadata.name}
-            isPrFlow={isPrFlow}
-            repoOrg={repoOrg}
-            workflow={workflow}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className={styles.historyItems}>
+      {workflows.map((workflow) => (
+        <FlowHistoryItem
+          key={workflow.metadata.name}
+          isPrFlow={isPrFlow}
+          repoOrg={repoOrg}
+          workflow={workflow}
+        />
+      ))}
+    </div>
   );
 }
 
-interface FlowHistoryRowProps {
+interface FlowHistoryItemProps {
   isPrFlow: boolean;
   repoOrg: string;
   workflow: Workflow;
 }
-function FlowHistoryRow({ isPrFlow, repoOrg, workflow }: FlowHistoryRowProps) {
+function FlowHistoryItem({
+  isPrFlow,
+  repoOrg,
+  workflow,
+}: FlowHistoryItemProps) {
   return (
-    <tr className={styles.historyRow}>
-      <td className={styles.historyCell}>
-        <FlowHistoryStatus workflow={workflow} />
-      </td>
-      {isPrFlow && (
-        <td className={styles.historyCell}>
-          <FlowHistoryPR workflow={workflow} />
-        </td>
-      )}
-      <td className={styles.historyCell}>
-        <FlowHistoryCommit workflow={workflow} />
-      </td>
-      <td className={styles.historyCell}>
-        <FlowHistoryTitle workflow={workflow} />
-      </td>
-      <td className={styles.historyCell}>
-        <FlowHistoryAuthor workflow={workflow} />
-      </td>
-      <td className={styles.historyCell}>
-        <Timestamp
-          date={workflow.memo.startedAt}
-          className={styles.timestamp}
-        />
-      </td>
-      <td className={styles.historyCell}>
-        <Timestamp
-          date={workflow.memo.finishedAt}
-          className={styles.timestamp}
-        />
-      </td>
-      <td className={styles.historyCell}>
-        <FlowHistoryDuration workflow={workflow} />
-      </td>
-      <td className={styles.historyCell}>
-        <FlowHistoryProgress workflow={workflow} />
-      </td>
-      <td className={styles.historyCell}>
-        <FlowHistoryActions workflow={workflow} repoOrg={repoOrg} />
-      </td>
-    </tr>
+    <div className={styles.historyItem}>
+      <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
+      <FlowHistoryContent workflow={workflow} />
+      <FlowHistoryDetails repoOrg={repoOrg} workflow={workflow} />
+    </div>
   );
 }
 
-interface FlowHistoryCellProps {
+interface FlowHistorySidebarProps {
+  isPrFlow: boolean;
   workflow: Workflow;
 }
-function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
+function FlowHistorySidebar({
+  isPrFlow,
+  workflow,
+}: FlowHistorySidebarProps) {
+  return (
+    <div className={styles.historySidebar}>
+      <div>
+        <FlowHistoryStatus workflow={workflow} />
+        {isPrFlow && <FlowHistoryPR workflow={workflow} />}
+        {!isPrFlow && <FlowHistoryCommit workflow={workflow} />}
+      </div>
+      <FlowHistoryAuthor workflow={workflow} />
+      <FlowHistoryTimestamp workflow={workflow} />
+      <FlowHistoryDuration workflow={workflow} />
+    </div>
+  );
+}
+
+interface FlowHistoryFieldProps {
+  workflow: Workflow;
+}
+function FlowHistoryStatus({ workflow }: FlowHistoryFieldProps) {
   switch (workflow.status.phase) {
     // todo handle more cases
     // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#WorkflowPhase
@@ -126,7 +104,7 @@ function FlowHistoryStatus({ workflow }: FlowHistoryCellProps) {
   }
 }
 
-function FlowHistoryPR({ workflow }: FlowHistoryCellProps) {
+function FlowHistoryPR({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const repoUrl = getWorkflowRepo(parameterMap);
   const prNumber = getWorkflowRevisionNumber(parameterMap);
@@ -134,7 +112,7 @@ function FlowHistoryPR({ workflow }: FlowHistoryCellProps) {
   const prLink = getRepoPrLink(repoUrl, prNumber);
   return (
     <a
-      className={styles.historyCommit}
+      className={styles.historyCommitText}
       href={prLink}
       target="_blank"
       rel="noreferrer"
@@ -144,7 +122,7 @@ function FlowHistoryPR({ workflow }: FlowHistoryCellProps) {
   );
 }
 
-function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
+function FlowHistoryCommit({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const commit = getWorkflowRevision(parameterMap);
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -152,7 +130,7 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
   const commitLink = getRepoCommitLink(repoUrl, commit);
   return (
     <a
-      className={styles.historyCommit}
+      className={styles.historyCommitText}
       href={commitLink}
       target="_blank"
       rel="noreferrer"
@@ -162,7 +140,57 @@ function FlowHistoryCommit({ workflow }: FlowHistoryCellProps) {
   );
 }
 
-function FlowHistoryTitle({ workflow }: FlowHistoryCellProps) {
+function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
+  const { parameterMap } = workflow.memo;
+  const author = getWorkflowRevisionAuthor(parameterMap);
+  return (
+    <div className={styles.sidebarItem}>
+      <i className="nf nf-fa-user" />
+      <span className={styles.historyAuthorText}>{author}</span>
+    </div>
+  );
+}
+
+function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
+  return (
+    <div className={styles.sidebarItem}>
+      <i className="nf nf-fa-clock" />
+      <Timestamp
+        date={workflow.memo.startedAt}
+        className={styles.timestampText}
+      />
+    </div>
+  );
+}
+
+function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
+  const { startedAt, finishedAt } = workflow.memo;
+  if (finishedAt == null) {
+    return null;
+  }
+
+  // todo potentially memoize
+  const workflowDuration = formatDuration(
+    finishedAt.getTime() - startedAt.getTime(),
+  );
+  return (
+    <div className={styles.sidebarItem}>
+      <i className="nf nf-fa-flag_o" />
+      <span className={styles.sidebarText}>{workflowDuration}</span>
+    </div>
+  );
+}
+
+function FlowHistoryContent({ workflow }: FlowHistoryFieldProps) {
+  return (
+    <div className={styles.historyContent}>
+      <FlowHistoryTitle workflow={workflow} />
+      <FlowHistoryGrid workflow={workflow} />
+    </div>
+  );
+}
+
+function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const commit = getWorkflowRevision(parameterMap);
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -180,35 +208,93 @@ function FlowHistoryTitle({ workflow }: FlowHistoryCellProps) {
   );
 }
 
-function FlowHistoryAuthor({ workflow }: FlowHistoryCellProps) {
-  const { parameterMap } = workflow.memo;
-  const author = getWorkflowRevisionAuthor(parameterMap);
-  return author;
+function FlowHistoryGrid({ workflow }: FlowHistoryFieldProps) {
+  return (
+    <div className={styles.historyGrid}>
+      {workflow.memo.sortedNodes.map((node) => (
+        <FlowHistoryGridItem key={node.displayName} node={node} />
+      ))}
+    </div>
+  );
 }
 
-function FlowHistoryDuration({ workflow }: FlowHistoryCellProps) {
-  const { startedAt, finishedAt } = workflow.memo;
-  if (finishedAt == null) {
-    return <LoadIcon />;
+interface FlowHistoryGridItemProps {
+  node: WorkflowMemoStatusNode;
+}
+function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
+  let className = styles.historyGridItem;
+  if (className == null) {
+    throw new FlowHistoryError("empty className: historyGridItem");
   }
 
-  const durationMs = finishedAt.getTime() - startedAt.getTime();
-  return getHumanDuration(durationMs);
+  switch (node.phase) {
+    // todo handle more cases
+    // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodePhase
+    case "Succeeded":
+      className += ` ${styles.historyGridSuccess}`;
+      break;
+    case "Error":
+      className += ` ${styles.historyGridDanger}`;
+      break;
+    case "Failed":
+      className += ` ${styles.historyGridDanger}`;
+      break;
+    case "Running":
+      // todo update
+      // return <LoadIcon className={styles.nodeLoadIcon} />;
+      break;
+    case "Pending":
+      // todo update
+      // return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
+      break;
+    default:
+      // todo update
+      // return (
+      //   <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
+      // );
+      break;
+  }
+
+  // todo potentially memoize
+  let nodeDuration = "-";
+  if (node.finishedAt != null) {
+    nodeDuration = formatDuration(
+      node.finishedAt.getTime() - node.startedAt.getTime(),
+    );
+  }
+
+  return (
+    <div className={className} title={node.displayName}>
+      <div className={styles.historyGridText}>{nodeDuration}</div>
+    </div>
+  );
 }
 
-function FlowHistoryProgress({ workflow }: FlowHistoryCellProps) {
-  return workflow.status.progress;
-}
-
-interface FlowHistoryActionsProps {
-  workflow: Workflow;
+interface FlowHistoryDetailsProps {
   repoOrg: string;
+  workflow: Workflow;
 }
-function FlowHistoryActions({ workflow, repoOrg }: FlowHistoryActionsProps) {
+function FlowHistoryDetails({
+  repoOrg,
+  workflow,
+}: FlowHistoryDetailsProps) {
+  // todo add a link to expand this section
+  return (
+    <div className={styles.historyDetails}>
+      <div className={styles.historyDetailsLink}>
+        <i className="nf nf-fa-chevron_right" />
+        <span className={styles.sidebarText}>See Details</span>
+      </div>
+      <FlowHistoryActions repoOrg={repoOrg} workflow={workflow} />
+    </div>
+  );
+}
+
+function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryDetailsProps) {
   // The repoOrg and namespace are expected to match
   const namespace = repoOrg;
   return (
-    <>
+    <div>
       <a
         href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
         target="_blank"
@@ -225,8 +311,15 @@ function FlowHistoryActions({ workflow, repoOrg }: FlowHistoryActionsProps) {
       >
         <i className="nf nf-fa-external_link" />
       </a>
-    </>
+    </div>
   );
+}
+
+class FlowHistoryError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { FlowHistory };

@@ -10,7 +10,6 @@
 
 .linkIcon {
   color: var(--primary-color);
-  font-size: 16px;
 }
 
 .linkIcon:not(:first-child) {
@@ -21,71 +20,122 @@
   text-shadow: var(--primary-shadow);
 }
 
-.historyTable {
-  background-color: transparent;
-  border-collapse: collapse;
-  min-width: var(--content-width);
+.historyItems {
   margin: 20px 0;
-  line-height: 2;
+  border-bottom: 1px solid var(--separator-color);
 }
 
-.historyRow:hover {
+.historyItem {
+  border-top: 1px solid var(--separator-color);
+  padding: 15px 0;
+}
+
+.historyItem:hover {
   background-color: var(--table-color-hover);
 }
 
-.historyCell {
-  border-top: 1px solid var(--separator-color);
-  border-bottom: 1px solid var(--separator-color);
-  padding: 8px;
+.historySidebar {
+  display: inline-flex;
+  flex-direction: column;
+  width: var(--history-sidebar-width);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.historyCell:first-child {
-  padding-left: 30px;
+.sidebarItem {
+  color: var(--graph-text-color);
+  font-size: 12px;
+  font-weight: bolder;
 }
 
-.historyCell:last-child {
-  padding-right: 30px;
+.sidebarText {
+  margin-left: 5px;
 }
 
-.historyCellHeader {
-  composes: historyCell;
+.historyCommitText {
+  composes: sidebarText;
 
-  font-family: "Open Sans", sans-serif;
-  font-weight: 600;
-  color: var(--text-color);
-
-  border-bottom: 2px solid var(--separator-color);
-  text-align: left;
-  border-top: 0;
-  background-color: var(--panel-color);
-}
-
-.historyCellHeader:first-child {
-  border-top-left-radius: 30px;
-}
-
-.historyCellHeader:last-child {
-  border-top-right-radius: 30px;
-}
-
-.historyCommit {
   font-family: monospace;
   color: var(--text-color);
 }
 
-.historyTitle {
-  color: var(--text-color);
-}
-
-.historyCommit:hover {
+.historyCommitText:hover {
   text-decoration: underline;
   color: var(--primary-color);
 }
 
-.timestamp {
+.timestampText {
+  composes: sidebarText;
+
   cursor: pointer;
 }
 
-.timestamp:hover {
+.timestampText:hover {
+  text-decoration: underline;
+}
+
+.historyAuthorText {
+  composes: sidebarText;
+
+  font-family: monospace;
+}
+
+.historyTitle {
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+.historyContent {
+  margin-left: var(--history-content-margin-left);
+
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.historyGrid {
+  display: grid;
+  gap: var(--history-grid-item-gap);
+  width: var(--history-content-width);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--history-grid-item-width), 1fr)
+  );
+}
+
+.historyGridItem {
+  height: 25px;
+  line-height: 25px;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.historyGridSuccess {
+  background-color: var(--success-color);
+}
+
+.historyGridDanger {
+  background-color: var(--danger-color);
+}
+
+.historyGridText {
+  margin-top: 1px;
+}
+
+.historyDetails {
+  display: flex;
+  justify-content: space-between;
+  min-width: var(--content-width);
+}
+
+.historyDetailsLink {
+  composes: sidebarItem;
+
+  cursor: pointer;
+}
+
+.historyDetailsLink:hover {
   text-decoration: underline;
 }
