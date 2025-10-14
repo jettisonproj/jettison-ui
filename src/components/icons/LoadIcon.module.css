@@ -2,7 +2,7 @@
   --load-icon-height: 16px;
   --load-block-width: 4px;
 
-  display: flex;
+  display: inline-flex;
   align-items: center;
   height: var(--load-icon-height);
   width: calc(var(--load-block-width) * 4);
