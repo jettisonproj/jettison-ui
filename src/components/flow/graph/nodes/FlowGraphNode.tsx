@@ -20,6 +20,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 
@@ -137,23 +138,32 @@ function FlowGraphTimestamp({ node }: FlowGraphTimestampProps) {
 }
 
 interface FlowGraphPhaseProps {
-  phase: string;
+  phase: NodePhase;
 }
 function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
   switch (phase) {
     // todo handle more cases
     // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodePhase
-    case "Succeeded":
+    case NodePhase.Succeeded:
       return null;
-    case "Error":
+    case NodePhase.Error:
       return <i className={`nf nf-md-cancel ${styles.nodeDangerIcon}`} />;
-    case "Failed":
+    case NodePhase.Failed:
       return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
-    case "Running":
+    case NodePhase.Running:
       return <LoadIcon className={styles.nodeLoadIcon} />;
-    case "Pending":
+    case NodePhase.Pending:
       return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
+    // The Omitted / Skipped phases are expected to be filtered out
+    case NodePhase.Omitted:
+    case NodePhase.Skipped:
+      return (
+        <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
+      );
     default:
+      phase satisfies never;
+      console.log("unknown node phase:");
+      console.log(phase);
       return (
         <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
       );
