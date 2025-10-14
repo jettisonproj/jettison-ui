@@ -85,7 +85,8 @@ interface FlowHistoryFieldProps {
   workflow: Workflow;
 }
 function FlowHistoryStatus({ workflow }: FlowHistoryFieldProps) {
-  switch (workflow.status.phase) {
+  const { phase } = workflow.status;
+  switch (phase) {
     case WorkflowPhase.Succeeded:
       return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
     case WorkflowPhase.Error:
@@ -95,9 +96,14 @@ function FlowHistoryStatus({ workflow }: FlowHistoryFieldProps) {
     case WorkflowPhase.Running:
       return <LoadIcon />;
     case WorkflowPhase.Pending:
+      return <i className={`nf nf-fa-hourglass ${styles.statusIcon}`} />;
     case WorkflowPhase.Unknown:
+      return <i className={`nf nf-fa-question_circle ${styles.statusIcon}`} />;
     default:
-      return <i className="nf nf-fa-question_circle" />;
+      phase satisfies never;
+      console.log("unknown workflow phase:");
+      console.log(phase);
+      return <i className={`nf nf-fa-question_circle ${styles.statusIcon}`} />;
   }
 }
 
@@ -220,7 +226,8 @@ function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
     throw new FlowHistoryError("empty className: historyGridItem");
   }
 
-  switch (node.phase) {
+  const { phase } = node;
+  switch (phase) {
     case NodePhase.Succeeded:
       className += ` ${styles.historyGridSuccess}`;
       break;
@@ -231,20 +238,19 @@ function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
       className += ` ${styles.historyGridDanger}`;
       break;
     case NodePhase.Running:
-      // todo update
-      // return <LoadIcon className={styles.nodeLoadIcon} />;
+      className += ` ${styles.historyGridRunning}`;
       break;
     case NodePhase.Pending:
-      // todo update
-      // return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
+      className += ` ${styles.historyGridPending}`;
       break;
     case NodePhase.Skipped:
     case NodePhase.Omitted:
+      className += ` ${styles.historyGridSkipped}`;
+      break;
     default:
-      // todo update
-      // return (
-      //   <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
-      // );
+      phase satisfies never;
+      console.log("unknown node phase:");
+      console.log(phase);
       break;
   }
 
