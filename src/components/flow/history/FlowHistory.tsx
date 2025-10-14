@@ -283,7 +283,7 @@ function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryDetailsProps) {
         href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
         target="_blank"
         rel="noreferrer"
-        className={styles.linkIcon}
+        className={styles.actionIcon}
       >
         <i className="nf nf-fa-file_text_o" />
       </a>
@@ -291,7 +291,7 @@ function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryDetailsProps) {
         href={`https://argo.osoriano.com/workflows/${namespace}/${workflow.metadata.name}`}
         target="_blank"
         rel="noreferrer"
-        className={styles.linkIcon}
+        className={styles.actionIcon}
       >
         <i className="nf nf-fa-external_link" />
       </a>
