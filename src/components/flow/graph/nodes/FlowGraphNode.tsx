@@ -142,8 +142,6 @@ interface FlowGraphPhaseProps {
 }
 function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
   switch (phase) {
-    // todo handle more cases
-    // See https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodePhase
     case NodePhase.Succeeded:
       return null;
     case NodePhase.Error:
