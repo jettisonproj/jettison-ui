@@ -50,6 +50,7 @@ interface WorkflowStatus {
 interface WorkflowStatusNode {
   displayName: string;
   phase: NodePhase;
+  type: string;
   startedAt: string;
   finishedAt?: string;
   inputs?: WorkflowArguments;

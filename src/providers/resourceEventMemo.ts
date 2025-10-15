@@ -51,8 +51,25 @@ function memoizeWorkflow(workflow: Workflow) {
   const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
     Object.values(workflow.status.nodes).forEach((node) => {
-      const { displayName, phase, startedAt, finishedAt, inputs, outputs } =
-        node;
+      const {
+        displayName,
+        phase,
+        startedAt,
+        finishedAt,
+        inputs,
+        outputs,
+        type,
+      } = node;
+
+      // Ignore top level workflow node since it is redundant with overall workflow status
+      if (type === "DAG") {
+        return;
+      }
+
+      // Ignore subtasks, which do not map to Flow nodes
+      if (type === "Container") {
+        return;
+      }
 
       const parameterMap: Record<string, string> = {};
       inputs?.parameters.forEach((parameter) => {
