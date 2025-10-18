@@ -7,9 +7,8 @@ import type {
 } from "src/data/types/workflowTypes.ts";
 import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { trimGitSuffix } from "src/utils/gitUtil.ts";
+import { TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
 import { getTriggerRoute } from "src/routes.ts";
-
-const TRIGGER_NODE_NAME = "github-check-start";
 
 /**
  * Return the last path component as a shorthand for

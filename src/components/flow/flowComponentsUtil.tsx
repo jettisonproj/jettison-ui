@@ -75,4 +75,4 @@ function getFlowStepNode(
   };
 }
 
-export { getFlowStepNode, getFlowTriggerNode };
+export { getFlowStepNode, getFlowTriggerNode, NODE_WIDTH };
