@@ -48,13 +48,20 @@ interface WorkflowStatus {
 }
 
 interface WorkflowStatusNode {
+  id: string;
   displayName: string;
   phase: NodePhase;
-  type: string;
+  type: NodeType;
+  templateRef: NodeTemplateRef;
   startedAt: string;
   finishedAt?: string;
   inputs?: WorkflowArguments;
   outputs?: WorkflowOptionalArguments;
+  children?: string[];
+}
+
+interface NodeTemplateRef {
+  template: TemplateName;
 }
 
 interface WorkflowMemoStatusNode {
@@ -98,5 +105,23 @@ enum NodePhase {
   Omitted = "Omitted",
 }
 
-export type { Workflow, WorkflowMemoStatusNode };
-export { WorkflowPhase, NodePhase };
+// SOT: https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodeType
+// Currently, only a subset is needed
+enum NodeType {
+  Pod = "Pod",
+  Container = "Container",
+  DAG = "DAG",
+  Skipped = "Skipped",
+}
+
+// SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
+enum TemplateName {
+  GitHubCheckStart = "deploy-step-github-check-start",
+  DockerBuildTest = "docker-build-test",
+  DockerBuildTestPublish = "docker-build-test-publish",
+  ArgoCD = "deploy-step-argocd",
+  GitHubCheckComplete = "deploy-step-github-check-complete",
+}
+
+export type { Workflow, WorkflowStatusNode, WorkflowMemoStatusNode };
+export { WorkflowPhase, NodePhase, NodeType, TemplateName };
