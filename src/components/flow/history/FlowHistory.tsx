@@ -1,6 +1,9 @@
+import { Link } from "react-router";
+
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
+import { FlowHistoryWorkflow } from "src/components/flow/history/FlowHistoryWorkflow.tsx";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
@@ -23,8 +26,16 @@ interface FlowHistoryProps {
   isPrFlow: boolean;
   repoOrg: string;
   workflows: Workflow[];
+  flowBaseUrl: string;
+  selectedWorkflow?: string;
 }
-function FlowHistory({ isPrFlow, repoOrg, workflows }: FlowHistoryProps) {
+function FlowHistory({
+  isPrFlow,
+  repoOrg,
+  workflows,
+  flowBaseUrl,
+  selectedWorkflow,
+}: FlowHistoryProps) {
   if (workflows.length === 0) {
     return <p>No flow history found</p>;
   }
@@ -37,6 +48,8 @@ function FlowHistory({ isPrFlow, repoOrg, workflows }: FlowHistoryProps) {
           isPrFlow={isPrFlow}
           repoOrg={repoOrg}
           workflow={workflow}
+          flowBaseUrl={flowBaseUrl}
+          isSelected={workflow.metadata.name === selectedWorkflow}
         />
       ))}
     </div>
@@ -47,17 +60,29 @@ interface FlowHistoryItemProps {
   isPrFlow: boolean;
   repoOrg: string;
   workflow: Workflow;
+  flowBaseUrl: string;
+  isSelected: boolean;
 }
 function FlowHistoryItem({
   isPrFlow,
   repoOrg,
   workflow,
+  flowBaseUrl,
+  isSelected,
 }: FlowHistoryItemProps) {
   return (
     <div className={styles.historyItem}>
-      <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
-      <FlowHistoryContent workflow={workflow} />
-      <FlowHistoryDetails repoOrg={repoOrg} workflow={workflow} />
+      <div>
+        <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
+        <FlowHistoryContent workflow={workflow} flowBaseUrl={flowBaseUrl} />
+        <FlowHistoryDetails
+          repoOrg={repoOrg}
+          workflow={workflow}
+          flowBaseUrl={flowBaseUrl}
+          isSelected={isSelected}
+        />
+      </div>
+      {isSelected && <FlowHistoryWorkflow workflow={workflow} />}
     </div>
   );
 }
@@ -180,11 +205,18 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryContent({ workflow }: FlowHistoryFieldProps) {
+interface FlowHistoryContentProps {
+  workflow: Workflow;
+  flowBaseUrl: string;
+}
+function FlowHistoryContent({
+  workflow,
+  flowBaseUrl,
+}: FlowHistoryContentProps) {
   return (
     <div className={styles.historyContent}>
       <FlowHistoryTitle workflow={workflow} />
-      <FlowHistoryGrid workflow={workflow} />
+      <FlowHistoryGrid workflow={workflow} flowBaseUrl={flowBaseUrl} />
     </div>
   );
 }
@@ -207,11 +239,16 @@ function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryGrid({ workflow }: FlowHistoryFieldProps) {
+function FlowHistoryGrid({ workflow, flowBaseUrl }: FlowHistoryContentProps) {
   return (
     <div className={styles.historyGrid}>
       {workflow.memo.sortedNodes.map((node) => (
-        <FlowHistoryGridItem key={node.displayName} node={node} />
+        <FlowHistoryGridItem
+          key={node.displayName}
+          node={node}
+          workflowName={workflow.metadata.name}
+          flowBaseUrl={flowBaseUrl}
+        />
       ))}
     </div>
   );
@@ -219,8 +256,14 @@ function FlowHistoryGrid({ workflow }: FlowHistoryFieldProps) {
 
 interface FlowHistoryGridItemProps {
   node: WorkflowMemoStatusNode;
+  workflowName: string;
+  flowBaseUrl: string;
 }
-function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
+function FlowHistoryGridItem({
+  node,
+  workflowName,
+  flowBaseUrl,
+}: FlowHistoryGridItemProps) {
   let className = styles.historyGridItem;
   if (className == null) {
     throw new FlowHistoryError("empty className: historyGridItem");
@@ -257,30 +300,54 @@ function FlowHistoryGridItem({ node }: FlowHistoryGridItemProps) {
   const nodeDuration = node.duration ?? "-";
 
   return (
-    <div className={className} title={node.displayName}>
+    <Link
+      to={`${flowBaseUrl}/workflows/${workflowName}?node=${node.displayName}`}
+      className={className}
+      title={node.displayName}
+    >
       <div className={styles.historyGridText}>{nodeDuration}</div>
-    </div>
+    </Link>
   );
 }
 
 interface FlowHistoryDetailsProps {
   repoOrg: string;
   workflow: Workflow;
+  flowBaseUrl: string;
+  isSelected: boolean;
 }
-function FlowHistoryDetails({ repoOrg, workflow }: FlowHistoryDetailsProps) {
-  // todo add a link to expand this section
+function FlowHistoryDetails({
+  repoOrg,
+  workflow,
+  flowBaseUrl,
+  isSelected,
+}: FlowHistoryDetailsProps) {
+  let detailsUrl;
+  let detailsIcon;
+  if (isSelected) {
+    detailsUrl = flowBaseUrl;
+    detailsIcon = "nf nf-fa-chevron_down";
+  } else {
+    detailsUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
+    detailsIcon = "nf nf-fa-chevron_right";
+  }
+
   return (
     <div className={styles.historyDetails}>
-      <div className={styles.historyDetailsLink}>
-        <i className="nf nf-fa-chevron_right" />
+      <Link to={detailsUrl} className={styles.historyDetailsLink}>
+        <i className={detailsIcon} />
         <span className={styles.sidebarText}>See Details</span>
-      </div>
+      </Link>
       <FlowHistoryActions repoOrg={repoOrg} workflow={workflow} />
     </div>
   );
 }
 
-function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryDetailsProps) {
+interface FlowHistoryActionsProps {
+  repoOrg: string;
+  workflow: Workflow;
+}
+function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryActionsProps) {
   // The repoOrg and namespace are expected to match
   const namespace = repoOrg;
   return (
