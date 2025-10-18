@@ -5,6 +5,7 @@ import type {
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { formatDuration } from "src/utils/dateUtil.ts";
+import { isMemoizedNode } from "src/utils/workflowUtil.ts";
 
 function memoizeFlow(flow: Flow) {
   const trigger = getFlowTrigger(flow);
@@ -61,13 +62,7 @@ function memoizeWorkflow(workflow: Workflow) {
         type,
       } = node;
 
-      // Ignore top level workflow node since it is redundant with overall workflow status
-      if (type === "DAG") {
-        return;
-      }
-
-      // Ignore subtasks, which do not map to Flow nodes
-      if (type === "Container") {
+      if (!isMemoizedNode(type)) {
         return;
       }
 
