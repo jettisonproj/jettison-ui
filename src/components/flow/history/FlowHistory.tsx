@@ -240,14 +240,14 @@ function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryGrid({ workflow, flowBaseUrl }: FlowHistoryContentProps) {
+  const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   return (
     <div className={styles.historyGrid}>
       {workflow.memo.sortedNodes.map((node) => (
         <FlowHistoryGridItem
           key={node.displayName}
           node={node}
-          workflowName={workflow.metadata.name}
-          flowBaseUrl={flowBaseUrl}
+          workflowBaseUrl={workflowBaseUrl}
         />
       ))}
     </div>
@@ -256,13 +256,11 @@ function FlowHistoryGrid({ workflow, flowBaseUrl }: FlowHistoryContentProps) {
 
 interface FlowHistoryGridItemProps {
   node: WorkflowMemoStatusNode;
-  workflowName: string;
-  flowBaseUrl: string;
+  workflowBaseUrl: string;
 }
 function FlowHistoryGridItem({
   node,
-  workflowName,
-  flowBaseUrl,
+  workflowBaseUrl,
 }: FlowHistoryGridItemProps) {
   let className = styles.historyGridItem;
   if (className == null) {
@@ -301,7 +299,7 @@ function FlowHistoryGridItem({
 
   return (
     <Link
-      to={`${flowBaseUrl}/workflows/${workflowName}?node=${node.displayName}`}
+      to={`${workflowBaseUrl}?node=${node.displayName}`}
       className={className}
       title={node.displayName}
     >
