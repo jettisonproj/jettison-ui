@@ -163,7 +163,7 @@ function getEdgeDestinations(
         break;
       case NodeType.DAG:
         throw new FlowHistoryWorkflowError(
-          `unexpected DAG node edge ${child} in workflow ${workflowName}`,
+          `unexpected ${NodeType.DAG} node edge ${child} in workflow ${workflowName}`,
         );
       default:
         childNode.type satisfies never;
