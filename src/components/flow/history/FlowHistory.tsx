@@ -70,11 +70,15 @@ function FlowHistoryItem({
   flowBaseUrl,
   isSelected,
 }: FlowHistoryItemProps) {
+  const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   return (
     <div className={styles.historyItem}>
       <div>
         <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
-        <FlowHistoryContent workflow={workflow} flowBaseUrl={flowBaseUrl} />
+        <FlowHistoryContent
+          workflow={workflow}
+          workflowBaseUrl={workflowBaseUrl}
+        />
         <FlowHistoryDetails
           repoOrg={repoOrg}
           workflow={workflow}
@@ -82,7 +86,12 @@ function FlowHistoryItem({
           isSelected={isSelected}
         />
       </div>
-      {isSelected && <FlowHistoryWorkflow workflow={workflow} />}
+      {isSelected && (
+        <FlowHistoryWorkflow
+          workflow={workflow}
+          workflowBaseUrl={workflowBaseUrl}
+        />
+      )}
     </div>
   );
 }
@@ -207,16 +216,16 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
 
 interface FlowHistoryContentProps {
   workflow: Workflow;
-  flowBaseUrl: string;
+  workflowBaseUrl: string;
 }
 function FlowHistoryContent({
   workflow,
-  flowBaseUrl,
+  workflowBaseUrl,
 }: FlowHistoryContentProps) {
   return (
     <div className={styles.historyContent}>
       <FlowHistoryTitle workflow={workflow} />
-      <FlowHistoryGrid workflow={workflow} flowBaseUrl={flowBaseUrl} />
+      <FlowHistoryGrid workflow={workflow} workflowBaseUrl={workflowBaseUrl} />
     </div>
   );
 }
@@ -239,8 +248,10 @@ function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryGrid({ workflow, flowBaseUrl }: FlowHistoryContentProps) {
-  const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
+function FlowHistoryGrid({
+  workflow,
+  workflowBaseUrl,
+}: FlowHistoryContentProps) {
   return (
     <div className={styles.historyGrid}>
       {workflow.memo.sortedNodes.map((node) => (

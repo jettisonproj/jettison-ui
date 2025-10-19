@@ -32,7 +32,7 @@ interface FlowGraphNodeProps {
   headerLink: string;
   titleIcon: string;
   titleText: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 function FlowGraphNode({
   headerLink,

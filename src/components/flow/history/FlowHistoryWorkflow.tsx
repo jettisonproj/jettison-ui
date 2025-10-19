@@ -21,8 +21,12 @@ const NODE_HEIGHT = 39;
 
 interface FlowHistoryWorkflowProps {
   workflow: Workflow;
+  workflowBaseUrl: string;
 }
-function FlowHistoryWorkflow({ workflow }: FlowHistoryWorkflowProps) {
+function FlowHistoryWorkflow({
+  workflow,
+  workflowBaseUrl,
+}: FlowHistoryWorkflowProps) {
   const [searchParams] = useSearchParams();
   const selectedNode = searchParams.get("node");
   console.log("todo use selectedNode");
@@ -39,7 +43,10 @@ function FlowHistoryWorkflow({ workflow }: FlowHistoryWorkflowProps) {
     .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
     .filter(isWorkflowGraphNode);
 
-  const workflowGraphNodes = getWorkflowGraphNodes(workflowNodesArray);
+  const workflowGraphNodes = getWorkflowGraphNodes(
+    workflowNodesArray,
+    workflowBaseUrl,
+  );
 
   const workflowGraphEdges = getWorkflowGraphEdges(
     workflowNodesArray,
@@ -54,12 +61,15 @@ function FlowHistoryWorkflow({ workflow }: FlowHistoryWorkflowProps) {
 
 function getWorkflowGraphNodes(
   workflowNodesArray: WorkflowStatusNode[],
+  workflowBaseUrl: string,
 ): FlowNode[] {
   return workflowNodesArray.map((node) => ({
     label: node.id,
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
-    children: <WorkflowGraphNode node={node} />,
+    children: (
+      <WorkflowGraphNode node={node} workflowBaseUrl={workflowBaseUrl} />
+    ),
   }));
 }
 
