@@ -6,6 +6,11 @@ import type {
 } from "src/data/types/workflowTypes.ts";
 import { NodeType } from "src/data/types/workflowTypes.ts";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowHistoryNodeDetails } from "src/components/flow/history/FlowHistoryNodeDetails.tsx";
+import {
+  Tab,
+  DEFAULT_TAB,
+} from "src/components/flow/history/FlowHistoryNodeTabs.ts";
 import type {
   FlowNode,
   FlowEdge,
@@ -16,6 +21,7 @@ import {
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
+import styles from "src/components/flow/history/FlowHistoryWorkflow.module.css";
 
 const NODE_HEIGHT = 39;
 
@@ -28,9 +34,8 @@ function FlowHistoryWorkflow({
   workflowBaseUrl,
 }: FlowHistoryWorkflowProps) {
   const [searchParams] = useSearchParams();
-  const selectedNode = searchParams.get("node");
-  console.log("todo use selectedNode");
-  console.log(selectedNode);
+  const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
+  const selectedTab = parseTab(searchParams.get("tab"));
 
   // This component is rendered on the fly, so memoized access is not needed
   const { nodes: workflowNodesMap } = workflow.status;
@@ -54,8 +59,29 @@ function FlowHistoryWorkflow({
     workflowName,
   );
 
+  const selectedNode = workflowNodesArray.find(
+    (node) => node.displayName === selectedNodeName,
+  );
+  if (selectedNode == null) {
+    throw new FlowHistoryWorkflowError(
+      `workflow ${workflowName} is missing selected node: ${selectedNodeName}`,
+    );
+  }
+
+  const nodeBaseUrl = `${workflowBaseUrl}?node=${selectedNodeName}`;
+
   return (
-    <FlowGraph flowNodes={workflowGraphNodes} flowEdges={workflowGraphEdges} />
+    <div className={styles.flowHistoryWorkflow}>
+      <FlowGraph
+        flowNodes={workflowGraphNodes}
+        flowEdges={workflowGraphEdges}
+      />
+      <FlowHistoryNodeDetails
+        node={selectedNode}
+        nodeBaseUrl={nodeBaseUrl}
+        selectedTab={selectedTab}
+      />
+    </div>
   );
 }
 
@@ -193,6 +219,13 @@ class FlowHistoryWorkflowError extends Error {
     super(message);
     this.name = this.constructor.name;
   }
+}
+
+function parseTab(tabValue: string | null) {
+  if (tabValue == null) {
+    return DEFAULT_TAB;
+  }
+  return Tab[tabValue as keyof typeof Tab];
 }
 
 export { FlowHistoryWorkflow };
