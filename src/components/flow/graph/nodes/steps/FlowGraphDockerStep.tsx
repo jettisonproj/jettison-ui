@@ -16,6 +16,10 @@ import {
   getLastWorkflowNodeForStep,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import {
+  BUILD_DISPLAY_NAME,
+  PUBLISH_DISPLAY_NAME,
+} from "src/utils/flowUtil.ts";
+import {
   getWorkflowRepo,
   getWorkflowRevision,
   getNodeDockerfilePath,
@@ -98,13 +102,14 @@ function getDisplayEvent(
 ) {
   switch (step.stepSource) {
     case StepSource.DockerBuildTest:
-      return "BUILD";
+      return BUILD_DISPLAY_NAME;
     case StepSource.DockerBuildTestPublish:
-      return "PUBLISH";
+      return PUBLISH_DISPLAY_NAME;
     default:
       step satisfies never;
       console.log("unknown step");
       console.log(step);
+      // todo throw err
       return "UNKNOWN";
   }
 }
