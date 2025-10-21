@@ -1,5 +1,9 @@
-import { NodeType } from "src/data/types/workflowTypes.ts";
+import {
+  NodeType,
+  WorkflowSpecParameter,
+} from "src/data/types/workflowTypes.ts";
 import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
+import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
 const EXIT_NODE_SUFFIX = ".onExit";
@@ -28,7 +32,7 @@ function isMemoizedNode(nodeType: NodeType) {
       nodeType satisfies never;
       console.log("unexpected node type in workflow");
       console.log(nodeType);
-      throw new InvalidNodeTypeError(`unexpected node type in workflow`);
+      throw new InvalidNodeError(`unexpected node type in workflow`);
   }
 }
 
@@ -43,11 +47,108 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
   );
 }
 
-class InvalidNodeTypeError extends Error {
+class InvalidNodeError extends Error {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
   }
 }
 
-export { isMemoizedNode, isWorkflowGraphNode, TRIGGER_NODE_NAME };
+//
+// Contains functions to get workflow or workflow node parameters
+// Should be kept in sync with:
+// - https://github.com/jettisonproj/jettison-controller/blob/main/internal/controller/sensor/sensor_trigger_parameters.go
+//
+function getWorkflowRepo(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "repo");
+}
+
+function getWorkflowRevision(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "revision");
+}
+
+function getWorkflowRevisionRef(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "revision-ref");
+}
+
+function getWorkflowRevisionTitle(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "revision-title");
+}
+
+function getWorkflowRevisionAuthor(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "revision-author");
+}
+
+// PR parameter
+function getWorkflowRevisionNumber(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "revision-number");
+}
+
+// Workflow node parameters
+function getNodeDockerfilePath(parameterMap: Record<string, string>) {
+  return getWorkflowParameter(parameterMap, "dockerfile-path");
+}
+
+function getWorkflowParameter(
+  parameterMap: Record<string, string>,
+  parameterKey: string,
+) {
+  const parameterValue = parameterMap[parameterKey];
+  if (parameterValue == null) {
+    throw new InvalidNodeError(
+      `did not find ${parameterKey} in workflow parameters`,
+    );
+  }
+  return parameterValue;
+}
+
+//
+// Contains functions to get workflow or workflow node parameters
+// Should be kept in sync with:
+// - https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
+//
+function getResourcePath(parameters: WorkflowSpecParameter[] | undefined) {
+  return getNodeParameter(parameters, "resource-path");
+}
+
+function getTriggerDisplayName(
+  parameters: WorkflowSpecParameter[] | undefined,
+) {
+  const eventType = getNodeParameter(parameters, "event-type");
+  switch (eventType) {
+    case "PR":
+      return PR_DISPLAY_NAME;
+    case "commit":
+      return PUSH_DISPLAY_NAME;
+    default:
+      throw new InvalidNodeError(`invalid event type for node: ${eventType}`);
+  }
+}
+
+function getNodeParameter(
+  parameters: WorkflowSpecParameter[] | undefined,
+  parameterKey: string,
+) {
+  const parameter = parameters?.find((param) => param.name === parameterKey);
+  if (parameter == null) {
+    throw new InvalidNodeError(
+      `did not find ${parameterKey} in node parameters`,
+    );
+  }
+  return parameter.value;
+}
+
+export {
+  isMemoizedNode,
+  isWorkflowGraphNode,
+  TRIGGER_NODE_NAME,
+  getWorkflowRepo,
+  getWorkflowRevision,
+  getWorkflowRevisionRef,
+  getWorkflowRevisionTitle,
+  getWorkflowRevisionAuthor,
+  getWorkflowRevisionNumber,
+  getNodeDockerfilePath,
+  getResourcePath,
+  getTriggerDisplayName,
+};

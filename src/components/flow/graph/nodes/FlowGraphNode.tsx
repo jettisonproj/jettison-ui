@@ -15,7 +15,7 @@ import {
   getWorkflowRevisionTitle,
   getWorkflowRevisionAuthor,
   getWorkflowRevisionNumber,
-} from "src/components/flow/workflowNodeUtil.ts";
+} from "src/utils/workflowUtil.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,

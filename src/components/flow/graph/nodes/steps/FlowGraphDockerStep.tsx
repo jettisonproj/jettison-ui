@@ -19,7 +19,7 @@ import {
   getWorkflowRepo,
   getWorkflowRevision,
   getNodeDockerfilePath,
-} from "src/components/flow/workflowNodeUtil.ts";
+} from "src/utils/workflowUtil.ts";
 import { StepSource } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphDockerStepProps {

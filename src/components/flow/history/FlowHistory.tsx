@@ -15,7 +15,7 @@ import {
   getWorkflowRevisionAuthor,
   getWorkflowRevisionNumber,
   getWorkflowRevisionTitle,
-} from "src/components/flow/workflowNodeUtil.ts";
+} from "src/utils/workflowUtil.ts";
 import {
   getDisplayCommit,
   getRepoCommitLink,

@@ -123,5 +123,10 @@ enum TemplateName {
   GitHubCheckComplete = "deploy-step-github-check-complete",
 }
 
-export type { Workflow, WorkflowStatusNode, WorkflowMemoStatusNode };
+export type {
+  Workflow,
+  WorkflowStatusNode,
+  WorkflowMemoStatusNode,
+  WorkflowSpecParameter,
+};
 export { WorkflowPhase, NodePhase, NodeType, TemplateName };

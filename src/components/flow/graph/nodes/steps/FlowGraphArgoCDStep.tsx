@@ -17,7 +17,7 @@ import {
   getStepDetailsLink,
   getLastWorkflowNodeForStep,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
-import { getWorkflowRevision } from "src/components/flow/workflowNodeUtil.ts";
+import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 import type { WorkflowNode } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
