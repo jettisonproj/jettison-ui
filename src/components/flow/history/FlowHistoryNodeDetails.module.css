@@ -58,6 +58,8 @@
   letter-spacing: 1.2px;
 
   padding: 8px 15px;
+
+  color: var(--graph-text-color);
 }
 
 .timestampText {
