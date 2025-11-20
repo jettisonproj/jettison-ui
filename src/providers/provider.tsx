@@ -9,6 +9,10 @@ import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
+const websocket = new WebSocket("ws://osoriano.com:2846/ws");
+
+const WebSocketContext = createContext(websocket);
+
 const DisplayIsoTimestampsContext = createContext(
   localState.getDisplayIsoTimestamps(),
 );
@@ -62,14 +66,11 @@ function Provider({ children }: ProviderProps) {
 
   /* Handle websocket notifications */
   useEffect(() => {
-    const server = "ws://osoriano.com:2846/ws";
-    const ws = new WebSocket(server);
-
-    ws.onopen = () => {
+    websocket.onopen = () => {
       console.log("Websocket opened");
     };
 
-    ws.onmessage = (ev: MessageEvent<string>) => {
+    websocket.onmessage = (ev: MessageEvent<string>) => {
       try {
         console.log("got websocket resource list");
         const resourceList = JSON.parse(ev.data) as ResourceList;
@@ -111,13 +112,13 @@ function Provider({ children }: ProviderProps) {
       }
     };
 
-    ws.onclose = (ev) => {
+    websocket.onclose = (ev) => {
       console.log("Websocket closed");
       console.log(`Code: ${ev.code}`);
       console.log(`Reason: ${ev.reason}`);
     };
 
-    ws.onerror = (err) => {
+    websocket.onerror = (err) => {
       if (!(err instanceof Error)) {
         console.log("unknown error from websocket");
         console.log(err);
@@ -129,24 +130,29 @@ function Provider({ children }: ProviderProps) {
   }, []);
 
   return (
-    <DisplayIsoTimestampsContext.Provider value={displayIsoTimestamps}>
-      <SetDisplayIsoTimestampsContext.Provider value={setDisplayIsoTimestamps}>
-        <FlowsContext.Provider value={flows}>
-          <ApplicationsContext.Provider value={applications}>
-            <RolloutsContext.Provider value={rollouts}>
-              <WorkflowsContext.Provider value={workflows}>
-                {children}
-              </WorkflowsContext.Provider>
-            </RolloutsContext.Provider>
-          </ApplicationsContext.Provider>
-        </FlowsContext.Provider>
-      </SetDisplayIsoTimestampsContext.Provider>
-    </DisplayIsoTimestampsContext.Provider>
+    <WebSocketContext.Provider value={websocket}>
+      <DisplayIsoTimestampsContext.Provider value={displayIsoTimestamps}>
+        <SetDisplayIsoTimestampsContext.Provider
+          value={setDisplayIsoTimestamps}
+        >
+          <FlowsContext.Provider value={flows}>
+            <ApplicationsContext.Provider value={applications}>
+              <RolloutsContext.Provider value={rollouts}>
+                <WorkflowsContext.Provider value={workflows}>
+                  {children}
+                </WorkflowsContext.Provider>
+              </RolloutsContext.Provider>
+            </ApplicationsContext.Provider>
+          </FlowsContext.Provider>
+        </SetDisplayIsoTimestampsContext.Provider>
+      </DisplayIsoTimestampsContext.Provider>
+    </WebSocketContext.Provider>
   );
 }
 
 export {
   Provider,
+  WebSocketContext,
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
   FlowsContext,
