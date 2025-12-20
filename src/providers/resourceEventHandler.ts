@@ -2,6 +2,7 @@ import type { Flow, PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { ContainerLog } from "src/data/types/containerLogTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import { appendGitSuffix, getRepoOrgName } from "src/utils/gitUtil.ts";
@@ -19,12 +20,14 @@ class ResourceEventHandler {
   #applicationEvents: Application[];
   #rolloutEvents: Rollout[];
   #workflowEvents: Workflow[];
+  #containerLogEvents: ContainerLog[];
 
   constructor(resourceList: ResourceList) {
     this.#flowEvents = [];
     this.#applicationEvents = [];
     this.#rolloutEvents = [];
     this.#workflowEvents = [];
+    this.#containerLogEvents = [];
 
     for (const resourceEvent of resourceList.items) {
       switch (resourceEvent.kind) {
@@ -39,6 +42,9 @@ class ResourceEventHandler {
           continue;
         case ResourceKind.Workflow:
           this.#workflowEvents.push(resourceEvent);
+          continue;
+        case ResourceKind.ContainerLog:
+          this.#containerLogEvents.push(resourceEvent);
           continue;
         default:
           resourceEvent satisfies never;
@@ -63,6 +69,10 @@ class ResourceEventHandler {
 
   hasWorkflowEvents(): boolean {
     return this.#workflowEvents.length > 0;
+  }
+
+  hasContainerLogEvents(): boolean {
+    return this.#containerLogEvents.length > 0;
   }
 
   /**
@@ -329,6 +339,80 @@ class ResourceEventHandler {
     }
 
     return newWorkflows;
+  }
+
+  /**
+   * Get the updated Map of container logs.
+   * Where Map is a mapping from namespace to podName to containerName to Set of log lines
+   *
+   * A set is used to deduplicate logs in case the logs are requested multiple times
+   */
+  getUpdatedContainerLogs(
+    containerLogs: Map<string, Map<string, Map<string, Set<string>>>> | null,
+  ): Map<string, Map<string, Map<string, Set<string>>>> {
+    const newContainerLogs = new Map(containerLogs);
+    // Map from namespaces to set of pod names to track updates
+    const recreatedNamespacePods = new Map();
+
+    for (const containerLogEvent of this.#containerLogEvents) {
+      const { namespace, name: podName } = containerLogEvent.metadata;
+      const { containerName, logLines } = containerLogEvent.spec;
+      const namespacePods = newContainerLogs.get(namespace);
+
+      if (this.#isDeleteEvent(containerLogEvent)) {
+        // Container logs are not typically deleted. The implementation
+        // is likely not needed
+        console.log("unhandled container log delete event");
+        console.log(containerLogEvent);
+      } else {
+        // Get the updated namespace map. Ensures it is recreated if needed
+        let newNamespacePods;
+        let recreatedPodNames;
+        if (namespacePods != null && recreatedNamespacePods.has(namespace)) {
+          newNamespacePods = namespacePods;
+          recreatedPodNames = recreatedNamespacePods.get(
+            namespace,
+          ) as Set<string>;
+        } else {
+          newNamespacePods = new Map(namespacePods);
+          newContainerLogs.set(namespace, newNamespacePods);
+          recreatedPodNames = new Set<string>();
+          recreatedNamespacePods.set(namespace, recreatedPodNames);
+        }
+
+        const podContainers = newNamespacePods.get(podName);
+
+        // Get the updated podNames map. Ensures it is recreated if needed
+        let newPodContainers;
+        if (podContainers != null && recreatedPodNames.has(podName)) {
+          newPodContainers = podContainers;
+        } else {
+          newPodContainers = new Map(podContainers);
+          newNamespacePods.set(podName, newPodContainers);
+          recreatedPodNames.add(podName);
+        }
+
+        const existingLogLines = newPodContainers.get(containerName);
+        if (existingLogLines == null) {
+          newPodContainers.set(containerName, new Set(logLines));
+        } else {
+          let updatedLogLines = null;
+          for (const logLine of logLines) {
+            if (!existingLogLines.has(logLine)) {
+              if (updatedLogLines == null) {
+                updatedLogLines = new Set(existingLogLines);
+              }
+              updatedLogLines.add(logLine);
+            }
+          }
+
+          if (updatedLogLines != null) {
+            newPodContainers.set(containerName, updatedLogLines);
+          }
+        }
+      }
+    }
+    return newContainerLogs;
   }
 
   #isDeleteEvent(resourceEvent: Resource): boolean {

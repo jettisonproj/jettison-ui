@@ -33,6 +33,10 @@ const WorkflowsContext = createContext(
   null as Map<string, Map<string, Map<string, Workflow>>> | null,
 );
 
+const ContainerLogsContext = createContext(
+  null as Map<string, Map<string, Map<string, Set<string>>>> | null,
+);
+
 interface ProviderProps {
   children: ReactNode;
 }
@@ -48,6 +52,10 @@ function Provider({ children }: ProviderProps) {
 
   const [workflows, setWorkflows] = useState(
     null as Map<string, Map<string, Map<string, Workflow>>> | null,
+  );
+
+  const [containerLogs, setContainerLogs] = useState(
+    null as Map<string, Map<string, Map<string, Set<string>>>> | null,
   );
 
   const [displayIsoTimestamps, setDisplayIsoTimestamps] = useState(
@@ -94,6 +102,11 @@ function Provider({ children }: ProviderProps) {
             resourceEventHandler.getUpdatedWorkflows(workflows),
           );
         }
+        if (resourceEventHandler.hasContainerLogEvents()) {
+          setContainerLogs((containerLogs) =>
+            resourceEventHandler.getUpdatedContainerLogs(containerLogs),
+          );
+        }
       } catch (err) {
         if (!(err instanceof Error)) {
           console.log("unknown error while processing message");
@@ -120,7 +133,9 @@ function Provider({ children }: ProviderProps) {
             <ApplicationsContext.Provider value={applications}>
               <RolloutsContext.Provider value={rollouts}>
                 <WorkflowsContext.Provider value={workflows}>
-                  {children}
+                  <ContainerLogsContext.Provider value={containerLogs}>
+                    {children}
+                  </ContainerLogsContext.Provider>
                 </WorkflowsContext.Provider>
               </RolloutsContext.Provider>
             </ApplicationsContext.Provider>
@@ -140,4 +155,5 @@ export {
   ApplicationsContext,
   RolloutsContext,
   WorkflowsContext,
+  ContainerLogsContext,
 };
