@@ -3,15 +3,14 @@ import type { ReactNode, Dispatch, SetStateAction } from "react";
 
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 import { localState } from "src/localState.ts";
+import { flowWebSocket } from "src/providers/flowWebSocket.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
-const websocket = new WebSocket("ws://osoriano.com:2846/ws");
-
-const WebSocketContext = createContext(websocket);
+const FlowWebSocketContext = createContext(flowWebSocket);
 
 const DisplayIsoTimestampsContext = createContext(
   localState.getDisplayIsoTimestamps(),
@@ -64,15 +63,11 @@ function Provider({ children }: ProviderProps) {
     }
   }, [displayIsoTimestamps]);
 
-  /* Handle websocket notifications */
+  /* Handle flowWebSocket notifications */
   useEffect(() => {
-    websocket.onopen = () => {
-      console.log("Websocket opened");
-    };
-
-    websocket.onmessage = (ev: MessageEvent<string>) => {
+    flowWebSocket.setOnMessage((ev: MessageEvent<string>) => {
       try {
-        console.log("got websocket resource list");
+        console.log("got flowWebSocket resource list");
         const resourceList = JSON.parse(ev.data) as ResourceList;
         console.log(resourceList);
 
@@ -103,34 +98,20 @@ function Provider({ children }: ProviderProps) {
         if (!(err instanceof Error)) {
           console.log("unknown error while processing message");
           console.log(err);
+          console.log(ev.data);
           throw new Error("unknown error while processing message", {
             cause: err,
           });
         }
-        console.log(`Error processing websocket message: ${err}`);
+        console.log(`Error processing flowWebSocket message: ${err}`);
         console.log(err);
+        console.log(ev.data);
       }
-    };
-
-    websocket.onclose = (ev) => {
-      console.log("Websocket closed");
-      console.log(`Code: ${ev.code}`);
-      console.log(`Reason: ${ev.reason}`);
-    };
-
-    websocket.onerror = (err) => {
-      if (!(err instanceof Error)) {
-        console.log("unknown error from websocket");
-        console.log(err);
-        throw new Error("unknown error from websocket", { cause: err });
-      }
-      console.log(`Websocket encountered error: ${err}`);
-      console.log(err);
-    };
+    });
   }, []);
 
   return (
-    <WebSocketContext.Provider value={websocket}>
+    <FlowWebSocketContext.Provider value={flowWebSocket}>
       <DisplayIsoTimestampsContext.Provider value={displayIsoTimestamps}>
         <SetDisplayIsoTimestampsContext.Provider
           value={setDisplayIsoTimestamps}
@@ -146,13 +127,13 @@ function Provider({ children }: ProviderProps) {
           </FlowsContext.Provider>
         </SetDisplayIsoTimestampsContext.Provider>
       </DisplayIsoTimestampsContext.Provider>
-    </WebSocketContext.Provider>
+    </FlowWebSocketContext.Provider>
   );
 }
 
 export {
   Provider,
-  WebSocketContext,
+  FlowWebSocketContext,
   DisplayIsoTimestampsContext,
   SetDisplayIsoTimestampsContext,
   FlowsContext,
