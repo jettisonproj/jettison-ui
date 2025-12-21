@@ -1,9 +1,9 @@
 import { TemplateName } from "src/data/types/workflowTypes.ts";
-import { ArgoCDNode } from "src/components/flow/history/nodes/ArgoCDNode.tsx";
-import { GitHubCheckStartNode } from "src/components/flow/history/nodes/GitHubCheckStartNode.tsx";
-import { DockerBuildTestNode } from "src/components/flow/history/nodes/DockerBuildTestNode.tsx";
-import { DockerBuildTestPublishNode } from "src/components/flow/history/nodes/DockerBuildTestPublishNode.tsx";
-import type { WorkflowGraphNodeProps } from "src/components/flow/history/nodes/WorkflowGraphNodeBase.ts";
+import { ArgoCDNode } from "src/components/flow/history/selected/nodes/ArgoCDNode.tsx";
+import { GitHubCheckStartNode } from "src/components/flow/history/selected/nodes/GitHubCheckStartNode.tsx";
+import { DockerBuildTestNode } from "src/components/flow/history/selected/nodes/DockerBuildTestNode.tsx";
+import { DockerBuildTestPublishNode } from "src/components/flow/history/selected/nodes/DockerBuildTestPublishNode.tsx";
+import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 
 function WorkflowGraphNode({ node, workflowBaseUrl }: WorkflowGraphNodeProps) {
   const { template } = node.templateRef;

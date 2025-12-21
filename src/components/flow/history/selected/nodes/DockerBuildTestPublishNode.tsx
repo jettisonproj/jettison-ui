@@ -1,9 +1,9 @@
-import type { WorkflowGraphNodeProps } from "src/components/flow/history/nodes/WorkflowGraphNodeBase.ts";
+import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
-import { BUILD_DISPLAY_NAME } from "src/utils/flowUtil.ts";
+import { PUBLISH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 
-function DockerBuildTestNode({
+function DockerBuildTestPublishNode({
   node,
   workflowBaseUrl,
 }: WorkflowGraphNodeProps) {
@@ -11,8 +11,8 @@ function DockerBuildTestNode({
     <FlowGraphNode
       headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
       titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
-      titleText={BUILD_DISPLAY_NAME}
+      titleText={PUBLISH_DISPLAY_NAME}
     />
   );
 }
-export { DockerBuildTestNode };
+export { DockerBuildTestPublishNode };

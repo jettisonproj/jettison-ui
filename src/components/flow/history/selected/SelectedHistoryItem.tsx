@@ -6,33 +6,33 @@ import type {
 } from "src/data/types/workflowTypes.ts";
 import { NodeType } from "src/data/types/workflowTypes.ts";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
-import { FlowHistoryNodeDetails } from "src/components/flow/history/FlowHistoryNodeDetails.tsx";
+import { FlowHistoryNodeDetails } from "src/components/flow/history/selected/FlowHistoryNodeDetails.tsx";
 import {
   Tab,
   DEFAULT_TAB,
-} from "src/components/flow/history/FlowHistoryNodeTabs.ts";
+} from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import type {
   FlowNode,
   FlowEdge,
 } from "src/components/flow/graph/FlowGraph.tsx";
-import { WorkflowGraphNode } from "src/components/flow/history/nodes/WorkflowGraphNode.tsx";
+import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
 import {
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
-import styles from "src/components/flow/history/FlowHistoryWorkflow.module.css";
+import styles from "src/components/flow/history/selected/SelectedHistoryItem.module.css";
 
 const NODE_HEIGHT = 39;
 
-interface FlowHistoryWorkflowProps {
+interface SelectedHistoryItemProps {
   workflow: Workflow;
   workflowBaseUrl: string;
 }
-function FlowHistoryWorkflow({
+function SelectedHistoryItem({
   workflow,
   workflowBaseUrl,
-}: FlowHistoryWorkflowProps) {
+}: SelectedHistoryItemProps) {
   const [searchParams] = useSearchParams();
   const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
   const selectedTab = parseTab(searchParams.get("tab"));
@@ -63,7 +63,7 @@ function FlowHistoryWorkflow({
     (node) => node.displayName === selectedNodeName,
   );
   if (selectedNode == null) {
-    throw new FlowHistoryWorkflowError(
+    throw new SelectedHistoryItemError(
       `workflow ${workflowName} is missing selected node: ${selectedNodeName}`,
     );
   }
@@ -71,12 +71,13 @@ function FlowHistoryWorkflow({
   const nodeBaseUrl = `${workflowBaseUrl}?node=${selectedNodeName}`;
 
   return (
-    <div className={styles.flowHistoryWorkflow}>
+    <div className={styles.selectedHistoryItem}>
       <FlowGraph
         flowNodes={workflowGraphNodes}
         flowEdges={workflowGraphEdges}
       />
       <FlowHistoryNodeDetails
+        workflow={workflow}
         node={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
@@ -131,7 +132,7 @@ function getWorkflowGraphEdges(
     (node) => node.displayName === TRIGGER_NODE_NAME,
   );
   if (triggerNode == null) {
-    throw new FlowHistoryWorkflowError(
+    throw new SelectedHistoryItemError(
       `workflow is missing trigger node: ${workflowName}`,
     );
   }
@@ -170,14 +171,14 @@ function getEdgeDestinations(
     const child = children.pop();
     if (child == null) {
       // This should not occur due to check above
-      throw new FlowHistoryWorkflowError(
+      throw new SelectedHistoryItemError(
         `empty child in workflow ${workflowName}`,
       );
     }
 
     const childNode = workflowNodesMap[child];
     if (childNode == null) {
-      throw new FlowHistoryWorkflowError(
+      throw new SelectedHistoryItemError(
         `missing node ${child} in workflow ${workflowName}`,
       );
     }
@@ -198,14 +199,14 @@ function getEdgeDestinations(
         }
         break;
       case NodeType.DAG:
-        throw new FlowHistoryWorkflowError(
+        throw new SelectedHistoryItemError(
           `unexpected ${NodeType.DAG} node edge ${child} in workflow ${workflowName}`,
         );
       default:
         childNode.type satisfies never;
         console.log("unexpected node type");
         console.log(childNode.type);
-        throw new FlowHistoryWorkflowError(
+        throw new SelectedHistoryItemError(
           `unexpected node type for ${child} in workflow ${workflowName}`,
         );
     }
@@ -214,7 +215,7 @@ function getEdgeDestinations(
   return edgeDestinations;
 }
 
-class FlowHistoryWorkflowError extends Error {
+class SelectedHistoryItemError extends Error {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
@@ -228,4 +229,4 @@ function parseTab(tabValue: string | null) {
   return Tab[tabValue as keyof typeof Tab];
 }
 
-export { FlowHistoryWorkflow };
+export { SelectedHistoryItem };

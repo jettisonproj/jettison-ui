@@ -1,4 +1,4 @@
-import type { WorkflowGraphNodeProps } from "src/components/flow/history/nodes/WorkflowGraphNodeBase.ts";
+import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import { getTriggerDisplayName } from "src/utils/workflowUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";

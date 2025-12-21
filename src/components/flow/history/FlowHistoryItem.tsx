@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import styles from "src/components/flow/history/FlowHistoryItem.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
-import { FlowHistoryWorkflow } from "src/components/flow/history/FlowHistoryWorkflow.tsx";
+import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
@@ -53,7 +53,7 @@ function FlowHistoryItem({
         />
       </div>
       {isSelected && (
-        <FlowHistoryWorkflow
+        <SelectedHistoryItem
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
         />
