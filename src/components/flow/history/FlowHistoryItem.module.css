@@ -1,0 +1,163 @@
+.statusIcon {
+  font-size: 16px;
+}
+
+.successIcon {
+  composes: statusIcon;
+
+  color: var(--success-color);
+}
+
+.dangerIcon {
+  composes: statusIcon;
+
+  color: var(--danger-color);
+}
+
+.historyItem {
+  border-top: 1px solid var(--separator-color);
+  padding: 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.historyItem:hover {
+  background-color: var(--table-color-hover);
+}
+
+.historySidebar {
+  display: inline-flex;
+  flex-direction: column;
+  width: var(--history-sidebar-width);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebarItem {
+  color: var(--graph-text-color);
+  font-size: 12px;
+  font-weight: bolder;
+}
+
+.sidebarText {
+  margin-left: 5px;
+}
+
+.historyCommitText {
+  composes: sidebarText;
+
+  font-family: monospace;
+  color: var(--text-color);
+}
+
+.historyCommitText:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.timestampText {
+  composes: sidebarText;
+
+  cursor: pointer;
+}
+
+.timestampText:hover {
+  text-decoration: underline;
+}
+
+.historyAuthorText {
+  composes: sidebarText;
+
+  font-family: monospace;
+}
+
+.historyTitle {
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+.historyContent {
+  margin-left: var(--history-content-margin-left);
+
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.historyGrid {
+  display: grid;
+  gap: var(--history-grid-item-gap);
+  width: var(--history-content-width);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--history-grid-item-width), 1fr)
+  );
+}
+
+.historyGridItem {
+  height: 25px;
+  line-height: 25px;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 5px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.historyGridItem:hover {
+  text-decoration: underline;
+}
+
+.historyGridSuccess {
+  background-color: var(--success-color);
+}
+
+.historyGridDanger {
+  background-color: var(--danger-color);
+}
+
+.historyGridRunning {
+  background-color: var(--primary-color);
+}
+
+.historyGridPending {
+  background-color: #fff;
+}
+
+.historyGridSkipped {
+  background-color: var(--graph-node-border-color);
+}
+
+.historyGridText {
+  margin-top: 1px;
+}
+
+.historyDetails {
+  display: flex;
+  justify-content: space-between;
+  min-width: var(--content-width);
+}
+
+.historyDetailsLink {
+  composes: sidebarItem;
+
+  cursor: pointer;
+}
+
+.historyDetailsLink:hover {
+  text-decoration: underline;
+}
+
+.actionIcon {
+  color: var(--primary-color);
+}
+
+.actionIcon:not(:first-child) {
+  margin-left: 5px;
+}
+
+.actionIcon:hover {
+  text-shadow: var(--primary-shadow);
+}
