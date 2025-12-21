@@ -8,6 +8,7 @@ import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { Pod } from "src/data/types/podTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
 const FlowWebSocketContext = createContext(flowWebSocket);
@@ -33,6 +34,8 @@ const WorkflowsContext = createContext(
   null as Map<string, Map<string, Map<string, Workflow>>> | null,
 );
 
+const PodsContext = createContext(null as Map<string, Map<string, Pod>> | null);
+
 const ContainerLogsContext = createContext(
   null as Map<string, Map<string, Map<string, Set<string>>>> | null,
 );
@@ -52,6 +55,10 @@ function Provider({ children }: ProviderProps) {
 
   const [workflows, setWorkflows] = useState(
     null as Map<string, Map<string, Map<string, Workflow>>> | null,
+  );
+
+  const [pods, setPods] = useState(
+    null as Map<string, Map<string, Pod>> | null,
   );
 
   const [containerLogs, setContainerLogs] = useState(
@@ -102,6 +109,9 @@ function Provider({ children }: ProviderProps) {
             resourceEventHandler.getUpdatedWorkflows(workflows),
           );
         }
+        if (resourceEventHandler.hasPodEvents()) {
+          setPods((pods) => resourceEventHandler.getUpdatedPods(pods));
+        }
         if (resourceEventHandler.hasContainerLogEvents()) {
           setContainerLogs((containerLogs) =>
             resourceEventHandler.getUpdatedContainerLogs(containerLogs),
@@ -133,9 +143,11 @@ function Provider({ children }: ProviderProps) {
             <ApplicationsContext.Provider value={applications}>
               <RolloutsContext.Provider value={rollouts}>
                 <WorkflowsContext.Provider value={workflows}>
-                  <ContainerLogsContext.Provider value={containerLogs}>
-                    {children}
-                  </ContainerLogsContext.Provider>
+                  <PodsContext.Provider value={pods}>
+                    <ContainerLogsContext.Provider value={containerLogs}>
+                      {children}
+                    </ContainerLogsContext.Provider>
+                  </PodsContext.Provider>
                 </WorkflowsContext.Provider>
               </RolloutsContext.Provider>
             </ApplicationsContext.Provider>
@@ -155,5 +167,6 @@ export {
   ApplicationsContext,
   RolloutsContext,
   WorkflowsContext,
+  PodsContext,
   ContainerLogsContext,
 };

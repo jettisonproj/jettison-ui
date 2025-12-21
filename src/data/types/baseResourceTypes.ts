@@ -3,6 +3,8 @@ enum ResourceKind {
   Application = "Application",
   Rollout = "Rollout",
   Workflow = "Workflow",
+  Pod = "Pod",
+  ContainerLog = "ContainerLog",
 }
 
 interface BaseResource {

@@ -2,6 +2,7 @@ import type { Flow, PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { Pod } from "src/data/types/podTypes.ts";
 import type { ContainerLog } from "src/data/types/containerLogTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
@@ -20,6 +21,7 @@ class ResourceEventHandler {
   #applicationEvents: Application[];
   #rolloutEvents: Rollout[];
   #workflowEvents: Workflow[];
+  #podEvents: Pod[];
   #containerLogEvents: ContainerLog[];
 
   constructor(resourceList: ResourceList) {
@@ -27,6 +29,7 @@ class ResourceEventHandler {
     this.#applicationEvents = [];
     this.#rolloutEvents = [];
     this.#workflowEvents = [];
+    this.#podEvents = [];
     this.#containerLogEvents = [];
 
     for (const resourceEvent of resourceList.items) {
@@ -42,6 +45,9 @@ class ResourceEventHandler {
           continue;
         case ResourceKind.Workflow:
           this.#workflowEvents.push(resourceEvent);
+          continue;
+        case ResourceKind.Pod:
+          this.#podEvents.push(resourceEvent);
           continue;
         case ResourceKind.ContainerLog:
           this.#containerLogEvents.push(resourceEvent);
@@ -69,6 +75,10 @@ class ResourceEventHandler {
 
   hasWorkflowEvents(): boolean {
     return this.#workflowEvents.length > 0;
+  }
+
+  hasPodEvents(): boolean {
+    return this.#podEvents.length > 0;
   }
 
   hasContainerLogEvents(): boolean {
@@ -217,63 +227,74 @@ class ResourceEventHandler {
   }
 
   /**
+   * Get the updated Map of resource T.
+   * Where Map is a mapping from namespace to name to T
+   */
+  #getUpdatedResources<T extends Resource>(
+    resources: Map<string, Map<string, T>> | null,
+    resourceEvents: T[],
+  ): Map<string, Map<string, T>> {
+    const newResources = new Map(resources);
+    const recreatedNamespaces = new Set();
+
+    for (const resourceEvent of resourceEvents) {
+      const { namespace, name } = resourceEvent.metadata;
+      const namespaceResources = newResources.get(namespace);
+
+      if (this.#isDeleteEvent(resourceEvent)) {
+        if (namespaceResources == null) {
+          // The namespace does not exist. Skip deletion
+          continue;
+        }
+
+        const namespaceResource = namespaceResources.get(name);
+        if (namespaceResource == null) {
+          // The rollout does not exist. Skip deletion
+          continue;
+        }
+
+        if (namespaceResources.size === 1) {
+          // The namespace can be removed since it is the last entry
+          newResources.delete(namespace);
+        } else {
+          // Get the updated namespace map. Ensures it is recreated if needed
+          let newNamespaceResources;
+          if (recreatedNamespaces.has(namespace)) {
+            newNamespaceResources = namespaceResources;
+          } else {
+            newNamespaceResources = new Map(namespaceResources);
+            newResources.set(namespace, newNamespaceResources);
+            recreatedNamespaces.add(namespace);
+          }
+
+          newNamespaceResources.delete(name);
+        }
+      } else {
+        // Get the updated namespace map. Ensures it is recreated if needed
+        let newNamespaceResources;
+        if (namespaceResources != null && recreatedNamespaces.has(namespace)) {
+          newNamespaceResources = namespaceResources;
+        } else {
+          newNamespaceResources = new Map(namespaceResources);
+          newResources.set(namespace, newNamespaceResources);
+          recreatedNamespaces.add(namespace);
+        }
+
+        newNamespaceResources.set(name, resourceEvent);
+      }
+    }
+
+    return newResources;
+  }
+
+  /**
    * Get the updated Map of rollouts.
    * Where Map is a mapping from namespace to name to Rollout
    */
   getUpdatedRollouts(
     rollouts: Map<string, Map<string, Rollout>> | null,
   ): Map<string, Map<string, Rollout>> {
-    const newRollouts = new Map(rollouts);
-    const recreatedNamespaces = new Set();
-
-    for (const rolloutEvent of this.#rolloutEvents) {
-      const { namespace, name } = rolloutEvent.metadata;
-      const namespaceRollouts = newRollouts.get(namespace);
-
-      if (this.#isDeleteEvent(rolloutEvent)) {
-        if (namespaceRollouts == null) {
-          // The namespace does not exist. Skip deletion
-          continue;
-        }
-
-        const namespaceRollout = namespaceRollouts.get(name);
-        if (namespaceRollout == null) {
-          // The rollout does not exist. Skip deletion
-          continue;
-        }
-
-        if (namespaceRollouts.size === 1) {
-          // The namespace can be removed since it is the last entry
-          newRollouts.delete(namespace);
-        } else {
-          // Get the updated namespace map. Ensures it is recreated if needed
-          let newNamespaceRollouts;
-          if (recreatedNamespaces.has(namespace)) {
-            newNamespaceRollouts = namespaceRollouts;
-          } else {
-            newNamespaceRollouts = new Map(namespaceRollouts);
-            newRollouts.set(namespace, newNamespaceRollouts);
-            recreatedNamespaces.add(namespace);
-          }
-
-          newNamespaceRollouts.delete(name);
-        }
-      } else {
-        // Get the updated namespace map. Ensures it is recreated if needed
-        let newNamespaceRollouts;
-        if (namespaceRollouts != null && recreatedNamespaces.has(namespace)) {
-          newNamespaceRollouts = namespaceRollouts;
-        } else {
-          newNamespaceRollouts = new Map(namespaceRollouts);
-          newRollouts.set(namespace, newNamespaceRollouts);
-          recreatedNamespaces.add(namespace);
-        }
-
-        newNamespaceRollouts.set(name, rolloutEvent);
-      }
-    }
-
-    return newRollouts;
+    return this.#getUpdatedResources(rollouts, this.#rolloutEvents);
   }
 
   /**
@@ -339,6 +360,16 @@ class ResourceEventHandler {
     }
 
     return newWorkflows;
+  }
+
+  /**
+   * Get the updated Map of rollouts.
+   * Where Map is a mapping from namespace to name to Rollout
+   */
+  getUpdatedPods(
+    pods: Map<string, Map<string, Pod>> | null,
+  ): Map<string, Map<string, Pod>> {
+    return this.#getUpdatedResources(pods, this.#podEvents);
   }
 
   /**
