@@ -6,7 +6,7 @@ import type {
 } from "src/data/types/workflowTypes.ts";
 import { NodeType } from "src/data/types/workflowTypes.ts";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
-import { FlowHistoryNodeDetails } from "src/components/flow/history/selected/FlowHistoryNodeDetails.tsx";
+import { SelectedHistoryTabs } from "src/components/flow/history/selected/SelectedHistoryTabs.tsx";
 import {
   Tab,
   DEFAULT_TAB,
@@ -76,7 +76,7 @@ function SelectedHistoryItem({
         flowNodes={workflowGraphNodes}
         flowEdges={workflowGraphEdges}
       />
-      <FlowHistoryNodeDetails
+      <SelectedHistoryTabs
         workflow={workflow}
         node={selectedNode}
         nodeBaseUrl={nodeBaseUrl}

@@ -1,5 +1,5 @@
 /* Based on graphContainer: src/components/flow/graph/FlowGraph.module.css */
-.historyNodeDetails {
+.selectedHistoryTabs {
   min-width: var(--content-width);
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
 }
 
 /* Based on: src/components/flow/graph/FlowGraph.module.css */
-.historyNodeTab {
+.selectedHistoryTab {
   display: inline-block;
 
   text-transform: uppercase;
@@ -30,42 +30,6 @@
   padding: 8px 15px;
 }
 
-.historyNodeActiveTab {
+.selectedHistoryActiveTab {
   border-bottom: 3px solid var(--graph-title-color);
-}
-
-.nodeSummary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: 12px;
-  column-gap: 14px;
-}
-
-.nodeSummaryKey {
-  font-weight: bold;
-  justify-self: end;
-}
-
-.nodeSummaryParameters {
-  font-weight: bold;
-
-  text-transform: uppercase;
-
-  font-size: 14px;
-  margin-top: 5px;
-
-  font-weight: bold;
-  letter-spacing: 1.2px;
-
-  padding: 8px 15px;
-
-  color: var(--graph-text-color);
-}
-
-.timestampText {
-  cursor: pointer;
-}
-
-.timestampText:hover {
-  text-decoration: underline;
 }
