@@ -49,6 +49,7 @@ interface WorkflowStatus {
 
 interface WorkflowStatusNode {
   id: string;
+  name: string;
   displayName: string;
   phase: NodePhase;
   type: NodeType;
