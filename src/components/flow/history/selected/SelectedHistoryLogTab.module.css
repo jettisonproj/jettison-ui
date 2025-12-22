@@ -1,0 +1,19 @@
+.containerNameSelectorContainer {
+  margin-bottom: 10px;
+}
+
+.containerNameLabel {
+  margin-right: 12px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.containerNameSelector {
+  font-family: monospace;
+  font-size: 15px;
+  padding: 3px 10px;
+}
+
+.containerNameOption {
+  font-size: 22px;
+}

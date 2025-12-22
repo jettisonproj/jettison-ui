@@ -10,6 +10,7 @@ import {
   PodsContext,
   ContainerLogsContext,
 } from "src/providers/provider.tsx";
+import styles from "src/components/flow/history/selected/SelectedHistoryLogTab.module.css";
 
 const defaultContainerName = "main";
 
@@ -37,12 +38,15 @@ function SelectedHistoryLogTab({
 
   return (
     <>
-      <SelectedHistoryContainerSelector
-        workflowNamespace={workflowNamespace}
-        podName={podName}
-        containerName={containerName}
-        onContainerNameChange={onContainerNameChange}
-      />
+      <div className={styles.containerNameSelectorContainer}>
+        <span className={styles.containerNameLabel}>Container</span>
+        <SelectedHistoryContainerSelector
+          workflowNamespace={workflowNamespace}
+          podName={podName}
+          containerName={containerName}
+          onContainerNameChange={onContainerNameChange}
+        />
+      </div>
       <SelectedHistoryLog
         workflowNamespace={workflowNamespace}
         podName={podName}
@@ -93,11 +97,18 @@ function SelectedHistoryContainerSelector({
     });
   }, [pods, workflowNamespace, podName]);
 
-  // todo improve style
   return (
-    <select value={containerName} onChange={onContainerNameChange}>
+    <select
+      value={containerName}
+      onChange={onContainerNameChange}
+      className={styles.containerNameSelector}
+    >
       {containerNames.map((containerNameOption) => (
-        <option key={containerNameOption} value={containerNameOption}>
+        <option
+          key={containerNameOption}
+          value={containerNameOption}
+          className={styles.containerNameOption}
+        >
           {containerNameOption}
         </option>
       ))}
