@@ -223,7 +223,7 @@ function SelectedHistoryLog({
     });
   }, []);
 
-  return <div ref={elementRef} />;
+  return <div className={styles.containerXterm} ref={elementRef} />;
 }
 
 function nodeLogsUnavailable(nodePhase: NodePhase) {
