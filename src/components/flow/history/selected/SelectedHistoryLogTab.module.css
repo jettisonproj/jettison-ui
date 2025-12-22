@@ -23,3 +23,16 @@
   padding: 13px 13px;
   border-radius: 10px;
 }
+
+.actionIcon {
+  color: var(--primary-color);
+  margin-left: 5px;
+}
+
+.actionIcon:not(:last-child) {
+  margin-left: 12px;
+}
+
+.actionIcon:hover {
+  text-shadow: var(--primary-shadow);
+}

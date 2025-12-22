@@ -36,6 +36,7 @@ function SelectedHistoryLogTab({
     ?.get(podName)
     ?.get(containerName);
 
+  // todo support container log sse
   return (
     <>
       <div className={styles.containerNameSelectorContainer}>
@@ -46,6 +47,22 @@ function SelectedHistoryLogTab({
           containerName={containerName}
           onContainerNameChange={onContainerNameChange}
         />
+        <a
+          href={`http://osoriano.com:2846/api/v1/namespaces/${workflowNamespace}/pods/${podName}`}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.actionIcon}
+        >
+          <i className="nf nf-fa-file_text_o" />
+        </a>
+        <a
+          href={"https://google.com"}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.actionIcon}
+        >
+          <i className="nf nf-fa-external_link" />
+        </a>
       </div>
       <SelectedHistoryLog
         workflowNamespace={workflowNamespace}
