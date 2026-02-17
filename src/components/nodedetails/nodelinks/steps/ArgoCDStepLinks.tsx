@@ -136,7 +136,7 @@ function getKubernetesRolloutLink(
     return null;
   }
   const { namespace, name } = rolloutResource;
-  return `https://jettison.osoriano.com/api/v1/namespaces/${namespace}/rollouts/${name}`;
+  return `/api/v1/namespaces/${namespace}/rollouts/${name}`;
 }
 
 function getKubernetesApplicationLink(application?: Application) {
@@ -144,7 +144,7 @@ function getKubernetesApplicationLink(application?: Application) {
     return null;
   }
   const { namespace, name } = application.metadata;
-  return `https://jettison.osoriano.com/api/v1/namespaces/${namespace}/applications/${name}`;
+  return `/api/v1/namespaces/${namespace}/applications/${name}`;
 }
 
 class ArgoCDStepLinksError extends Error {

@@ -49,7 +49,7 @@ function SelectedHistoryLogTab({
           onContainerNameChange={onContainerNameChange}
         />
         <a
-          href={`https://jettison.osoriano.com/api/v1/namespaces/${workflowNamespace}/pods/${podName}`}
+          href={`/api/v1/namespaces/${workflowNamespace}/pods/${podName}`}
           target="_blank"
           rel="noreferrer"
           className={styles.actionIcon}
