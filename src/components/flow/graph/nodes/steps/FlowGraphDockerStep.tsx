@@ -109,8 +109,14 @@ function getDisplayEvent(
       step satisfies never;
       console.log("unknown step");
       console.log(step);
-      // todo throw err
-      return "UNKNOWN";
+      throw new FlowGraphDockerStepError("invalid step source");
+  }
+}
+
+class FlowGraphDockerStepError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
 
