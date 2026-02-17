@@ -5,7 +5,7 @@ class FlowWebSocket {
   #websocket: WebSocket;
 
   constructor() {
-    const websocket = new WebSocket("ws://osoriano.com:2846/ws");
+    const websocket = new WebSocket("wss://jettison.osoriano.com/ws");
     this.#websocket = websocket;
 
     websocket.onopen = () => {

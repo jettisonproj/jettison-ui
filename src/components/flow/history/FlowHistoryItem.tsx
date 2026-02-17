@@ -328,7 +328,7 @@ function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryActionsProps) {
   return (
     <div>
       <a
-        href={`http://osoriano.com:2846/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
+        href={`https://jettison.osoriano.com/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
         target="_blank"
         rel="noreferrer"
         className={styles.actionIcon}
