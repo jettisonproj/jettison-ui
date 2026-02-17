@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
-// todo remove linting exceptions needed due to async loading of xterm
 import { useContext, useEffect, useRef, useState, ChangeEvent } from "react";
+
+import { Terminal } from "@xterm/xterm";
+import "@xterm/xterm/css/xterm.css";
 
 import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { Container } from "src/data/types/podTypes.ts";
@@ -150,70 +151,41 @@ function SelectedHistoryLog({
 }: SelectedHistoryLogProps) {
   const flowWebSocket = useContext(FlowWebSocketContext);
   const elementRef = useRef<HTMLDivElement>(null);
-  const xtermRef = useRef<Promise<any> | null>(null);
+  const xtermRef = useRef<Terminal | null>(null);
 
   /* Open xterm and set xtermRef */
   useEffect(() => {
-    let closed = false;
-    xtermRef.current = import("@xterm/xterm")
-      .then(({ Terminal }) => {
-        if (closed) {
-          return null;
-        }
+    const currentElement = elementRef.current;
+    if (currentElement == null) {
+      console.log("error: null element ref while rendering container logs");
+      return;
+    }
 
-        const currentElement = elementRef.current;
-        if (currentElement == null) {
-          console.log("error: null element ref while rendering container logs");
-          return null;
-        }
-
-        const term = new Terminal({ cols: 150, rows: 50 });
-        term.open(currentElement);
-        return term;
-      })
-      .catch((err: unknown) => {
-        console.log("error while opening xterm:");
-        console.log(err);
-      });
+    const term = new Terminal({ cols: 150, rows: 50 });
+    term.open(currentElement);
+    xtermRef.current = term;
 
     return () => {
-      closed = true;
-      xtermRef.current
-        ?.then((term) => {
-          if (term != null) {
-            term.dispose();
-          }
-        })
-        .catch((err: unknown) => {
-          console.log("error while cleaning up xterm:");
-          console.log(err);
-        });
-      xtermRef.current = null;
+      term.dispose();
     };
   }, []);
 
   /* Write logs to xterm */
   useEffect(() => {
-    xtermRef.current
-      ?.then((term) => {
-        // In case the xterm has been closed, return early
-        if (xtermRef.current == null || term == null) {
-          return;
-        }
+    const term = xtermRef.current;
+    if (term == null) {
+      console.log("error: null xterm while rendering container logs");
+      return;
+    }
 
-        if (logLines == null) {
-          return;
-        }
+    if (logLines == null) {
+      return;
+    }
 
-        term.clear();
-        for (const logLine of logLines) {
-          term.writeln(logLine);
-        }
-      })
-      .catch((err: unknown) => {
-        console.log("error while writing to xterm");
-        console.log(err);
-      });
+    term.clear();
+    for (const logLine of logLines) {
+      term.writeln(logLine);
+    }
   }, [logLines, workflowNamespace, podName, containerName]);
 
   /* Send container log request if pod is available */
@@ -231,14 +203,6 @@ function SelectedHistoryLog({
       },
     });
   }, [nodePhase, flowWebSocket, workflowNamespace, podName, containerName]);
-
-  /* Load xterm css */
-  useEffect(() => {
-    import("@xterm/xterm/css/xterm.css").catch((err: unknown) => {
-      console.log("failed to load xterm css");
-      console.log(err);
-    });
-  }, []);
 
   return <div className={styles.containerXterm} ref={elementRef} />;
 }

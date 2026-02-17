@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router";
 
 import type {
@@ -6,9 +7,17 @@ import type {
 } from "src/data/types/workflowTypes.ts";
 import { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import { SelectedHistorySummaryTab } from "src/components/flow/history/selected/SelectedHistorySummaryTab.tsx";
-import { SelectedHistoryLogTab } from "src/components/flow/history/selected/SelectedHistoryLogTab.tsx";
 import { getWorkflowPodName } from "src/components/flow/history/selected/getWorkflowPodName.ts";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import styles from "src/components/flow/history/selected/SelectedHistoryTabs.module.css";
+
+const SelectedHistoryLogTab = lazy(() =>
+  import("src/components/flow/history/selected/SelectedHistoryLogTab.tsx").then(
+    (module) => ({
+      default: module.SelectedHistoryLogTab,
+    }),
+  ),
+);
 
 interface SelectedHistoryTabsProps {
   workflow: Workflow;
@@ -81,11 +90,13 @@ function SelectedHistoryTab({
       return <SelectedHistorySummaryTab node={node} />;
     case Tab.logs:
       return (
-        <SelectedHistoryLogTab
-          workflowNamespace={workflow.metadata.namespace}
-          podName={getWorkflowPodName(workflow.metadata.name, node)}
-          nodePhase={node.phase}
-        />
+        <Suspense fallback={<LoadIcon />}>
+          <SelectedHistoryLogTab
+            workflowNamespace={workflow.metadata.namespace}
+            podName={getWorkflowPodName(workflow.metadata.name, node)}
+            nodePhase={node.phase}
+          />
+        </Suspense>
       );
     default:
       selectedTab satisfies never;
