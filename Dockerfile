@@ -22,6 +22,6 @@ FROM nginx:1.25.5-bookworm
 LABEL org.opencontainers.image.source=https://github.com/jettisonproj/jettison-ui
 EXPOSE 80
 
-COPY --from=build /home/node/dist/build/* /srv/http/
+COPY --from=build /home/node/dist/* /srv/http/
 COPY --from=build /home/node/rootfs/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /home/node/rootfs/etc/nginx/sites/jettison /etc/nginx/sites/jettison
