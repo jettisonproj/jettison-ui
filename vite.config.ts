@@ -10,4 +10,12 @@ export default defineConfig({
       src: "/src",
     },
   },
+  // Configure the dev proxy. This should route to the dev api
+  // See nginx for the prod proxy
+  server: {
+    proxy: {
+      "/api": "http://osoriano.com:2846",
+      "/ws": "ws://osoriano.com:2846",
+    },
+  },
 });
