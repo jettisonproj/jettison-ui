@@ -14,8 +14,8 @@ export default defineConfig({
   // See nginx for the prod proxy
   server: {
     proxy: {
-      "/api": "http://osoriano.com:2846",
-      "/ws": "ws://osoriano.com:2846",
+      "/api": "http://osoriano.com:2847",
+      "/ws": "ws://osoriano.com:2847",
     },
   },
 });

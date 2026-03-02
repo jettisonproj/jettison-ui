@@ -11,11 +11,20 @@ interface Application extends NamespacedResource {
 
 interface ApplicationSpec {
   source: ApplicationSource;
+  syncPolicy: ApplicationSyncPolicy;
 }
 
 interface ApplicationSource {
   repoURL: string;
   path: string;
+}
+
+interface ApplicationSyncPolicy {
+  automated: ApplicationSyncPolicyAutomated;
+}
+
+interface ApplicationSyncPolicyAutomated {
+  enabled: boolean;
 }
 
 interface ApplicationStatus {
