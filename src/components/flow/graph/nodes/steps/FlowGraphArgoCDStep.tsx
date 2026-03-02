@@ -98,6 +98,7 @@ function FlowGraphArgoCDStepStatus({
   //
   // application health status bad           | Failing       | None
   // rollout status bad                      | Failing       | None
+  // flow step is paused                     | None          | Paused
   // application sync status bad             | None          | Drift
   // multiple rollouts different versions    | None          | Drift
   // rollout version doesn't match workflow  | None          | Drift
@@ -138,6 +139,7 @@ function FlowGraphArgoCDStepStatus({
     );
   }
 
+  const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
   const { status: healthStatus } = application.status.health;
   const { status: syncStatus } = application.status.sync;
   if (healthStatus !== HEALTHY_STATUS) {
@@ -182,6 +184,7 @@ function FlowGraphArgoCDStepStatus({
       <FlowGraphArgoCDSyncBadge
         applicationSyncError={applicationSyncError}
         rolloutSyncError={rolloutSyncError}
+        autoSyncEnabled={autoSyncEnabled}
       />
     </div>
   );
@@ -220,11 +223,20 @@ function FlowGraphArgoCDHealthBadge({
 interface FlowGraphArgoCDSyncBadgeProps {
   applicationSyncError?: string;
   rolloutSyncError?: string;
+  autoSyncEnabled: boolean;
 }
 function FlowGraphArgoCDSyncBadge({
   applicationSyncError,
   rolloutSyncError,
+  autoSyncEnabled,
 }: FlowGraphArgoCDSyncBadgeProps) {
+  if (!autoSyncEnabled) {
+    return (
+      <div className={styles.driftBadge} title="todo add pause reason">
+        Paused
+      </div>
+    );
+  }
   if (applicationSyncError != null) {
     return (
       <div className={styles.driftBadge} title={applicationSyncError}>
