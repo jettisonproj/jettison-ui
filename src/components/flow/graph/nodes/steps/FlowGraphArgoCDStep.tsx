@@ -184,6 +184,7 @@ function FlowGraphArgoCDStepStatus({
       <FlowGraphArgoCDSyncBadge
         applicationSyncError={applicationSyncError}
         rolloutSyncError={rolloutSyncError}
+        pausedReason={step.pausedReason}
         autoSyncEnabled={autoSyncEnabled}
       />
     </div>
@@ -223,16 +224,18 @@ function FlowGraphArgoCDHealthBadge({
 interface FlowGraphArgoCDSyncBadgeProps {
   applicationSyncError?: string;
   rolloutSyncError?: string;
+  pausedReason?: string;
   autoSyncEnabled: boolean;
 }
 function FlowGraphArgoCDSyncBadge({
   applicationSyncError,
   rolloutSyncError,
+  pausedReason,
   autoSyncEnabled,
 }: FlowGraphArgoCDSyncBadgeProps) {
   if (!autoSyncEnabled) {
     return (
-      <div className={styles.driftBadge} title="todo add pause reason">
+      <div className={styles.driftBadge} title={pausedReason}>
         Paused
       </div>
     );
