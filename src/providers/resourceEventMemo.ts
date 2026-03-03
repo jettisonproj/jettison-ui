@@ -4,7 +4,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { formatDuration } from "src/utils/dateUtil.ts";
+import { formatDurationFromMs } from "src/utils/dateUtil.ts";
 import {
   isMemoizedNode,
   EXIT_NODE_SUFFIX,
@@ -95,7 +95,7 @@ function memoizeWorkflow(workflow: Workflow) {
         const finishedAtDate = new Date(finishedAt);
 
         memoNode.finishedAt = finishedAtDate;
-        memoNode.duration = formatDuration(
+        memoNode.duration = formatDurationFromMs(
           finishedAtDate.getTime() - startedAtDate.getTime(),
         );
       }
@@ -129,7 +129,7 @@ function memoizeWorkflow(workflow: Workflow) {
     const finishedAtDate = new Date(finishedAt);
 
     workflow.memo.finishedAt = finishedAtDate;
-    workflow.memo.duration = formatDuration(
+    workflow.memo.duration = formatDurationFromMs(
       finishedAtDate.getTime() - startedAt.getTime(),
     );
   }
