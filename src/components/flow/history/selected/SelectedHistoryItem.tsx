@@ -1,5 +1,7 @@
 import { useSearchParams } from "react-router";
 
+import { flowDefaultStepName } from "src/data/data.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowStatusNode,
@@ -18,6 +20,8 @@ import type {
 import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
 import {
   isWorkflowGraphNode,
+  EXIT_NODE_NAME,
+  EXIT_NODE_SUFFIX,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
@@ -26,10 +30,12 @@ import styles from "src/components/flow/history/selected/SelectedHistoryItem.mod
 const NODE_HEIGHT = 39;
 
 interface SelectedHistoryItemProps {
+  flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
 }
 function SelectedHistoryItem({
+  flowSteps,
   workflow,
   workflowBaseUrl,
 }: SelectedHistoryItemProps) {
@@ -44,7 +50,8 @@ function SelectedHistoryItem({
     return <div>No workload data for {workflowName}</div>;
   }
 
-  const workflowNodesArray = Object.values(workflowNodesMap)
+  const workflowNodesValues = Object.values(workflowNodesMap);
+  const workflowNodesArray = workflowNodesValues
     .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
     .filter(isWorkflowGraphNode);
 
@@ -59,10 +66,19 @@ function SelectedHistoryItem({
     workflowName,
   );
 
-  const selectedNode = workflowNodesArray.find(
-    (node) => node.displayName === selectedNodeName,
-  );
-  if (selectedNode == null) {
+  const selectedNode = workflowNodesValues.find((node) => {
+    if (node.displayName === selectedNodeName) {
+      return true;
+    }
+    return (
+      selectedNodeName === EXIT_NODE_NAME &&
+      node.displayName.endsWith(EXIT_NODE_SUFFIX)
+    );
+  });
+  if (
+    selectedNode == null &&
+    !isSelectedNodePendingCreate(selectedNodeName, flowSteps)
+  ) {
     throw new SelectedHistoryItemError(
       `workflow ${workflowName} is missing selected node: ${selectedNodeName}`,
     );
@@ -78,6 +94,7 @@ function SelectedHistoryItem({
       />
       <SelectedHistoryTabs
         workflow={workflow}
+        selectedNodeName={selectedNodeName}
         selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
@@ -213,6 +230,27 @@ function getEdgeDestinations(
   }
 
   return edgeDestinations;
+}
+
+/**
+ * Return whether the selected node is expected to be created by looking at
+ * the Flow steps, since Workflow nodes may not be created until needed.
+ */
+function isSelectedNodePendingCreate(
+  selectedNodeName: string,
+  flowSteps: Step[],
+) {
+  if (selectedNodeName === EXIT_NODE_NAME) {
+    return true;
+  }
+
+  for (const flowStep of flowSteps) {
+    const stepName = flowDefaultStepName(flowStep);
+    if (stepName === selectedNodeName) {
+      return true;
+    }
+  }
+  return false;
 }
 
 class SelectedHistoryItemError extends Error {

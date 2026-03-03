@@ -56,6 +56,7 @@ function FlowHistoryItem({
       </div>
       {isSelected && (
         <SelectedHistoryItem
+          flowSteps={flowSteps}
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
         />
