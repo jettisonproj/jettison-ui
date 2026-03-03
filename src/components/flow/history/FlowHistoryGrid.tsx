@@ -1,23 +1,42 @@
 import { Link } from "react-router";
 
-import type {
-  Workflow,
-  WorkflowMemoStatusNode,
-} from "src/data/types/workflowTypes.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { flowDefaultStepName } from "src/data/data.ts";
 import { NodePhase } from "src/data/types/workflowTypes.ts";
 import styles from "src/components/flow/history/FlowHistoryGrid.module.css";
 
 interface FlowHistoryGridProps {
+  flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
 }
-function FlowHistoryGrid({ workflow, workflowBaseUrl }: FlowHistoryGridProps) {
+function FlowHistoryGrid({
+  flowSteps,
+  workflow,
+  workflowBaseUrl,
+}: FlowHistoryGridProps) {
+  const nodesPendingCreation = flowSteps
+    .map((flowStep) => flowDefaultStepName(flowStep))
+    .filter((stepName) => workflow.memo.nodes[stepName] == null);
+
   return (
     <div className={styles.historyGrid}>
       {workflow.memo.sortedNodes.map((node) => (
         <FlowHistoryGridItem
           key={node.displayName}
-          node={node}
+          nodeDisplayName={node.displayName}
+          nodePhase={node.phase}
+          nodeDuration={node.duration}
+          workflowBaseUrl={workflowBaseUrl}
+        />
+      ))}
+      {nodesPendingCreation.map((nodeDisplayName) => (
+        <FlowHistoryGridItem
+          key={nodeDisplayName}
+          nodeDisplayName={nodeDisplayName}
+          nodePhase={NodePhase.Pending}
+          nodeDuration={undefined}
           workflowBaseUrl={workflowBaseUrl}
         />
       ))}
@@ -26,11 +45,15 @@ function FlowHistoryGrid({ workflow, workflowBaseUrl }: FlowHistoryGridProps) {
 }
 
 interface FlowHistoryGridItemProps {
-  node: WorkflowMemoStatusNode;
+  nodeDisplayName: string;
+  nodePhase: NodePhase;
+  nodeDuration: string | undefined;
   workflowBaseUrl: string;
 }
 function FlowHistoryGridItem({
-  node,
+  nodeDisplayName,
+  nodePhase,
+  nodeDuration,
   workflowBaseUrl,
 }: FlowHistoryGridItemProps) {
   let className = styles.historyGridItem;
@@ -38,8 +61,7 @@ function FlowHistoryGridItem({
     throw new FlowHistoryGridError("empty className: historyGridItem");
   }
 
-  const { phase } = node;
-  switch (phase) {
+  switch (nodePhase) {
     case NodePhase.Succeeded:
       className += ` ${styles.historyGridSuccess}`;
       break;
@@ -60,25 +82,35 @@ function FlowHistoryGridItem({
       className += ` ${styles.historyGridSkipped}`;
       break;
     default:
-      phase satisfies never;
+      nodePhase satisfies never;
       console.log("unknown node phase:");
-      console.log(phase);
+      console.log(nodePhase);
       throw new FlowHistoryGridError(
-        `unknown phase for node: ${node.displayName}`,
+        `unknown phase for node: ${nodeDisplayName}`,
       );
   }
 
-  const nodeDuration = node.duration ?? "-";
-
   return (
     <Link
-      to={`${workflowBaseUrl}?node=${node.displayName}`}
+      to={`${workflowBaseUrl}?node=${nodeDisplayName}`}
       className={className}
-      title={node.displayName}
+      title={nodeDisplayName}
     >
-      <div className={styles.historyGridText}>{nodeDuration}</div>
+      <div className={styles.historyGridText}>
+        <NodeDuration nodeDuration={nodeDuration} />
+      </div>
     </Link>
   );
+}
+
+interface NodeDurationProps {
+  nodeDuration: string | undefined;
+}
+function NodeDuration({ nodeDuration }: NodeDurationProps) {
+  if (nodeDuration == null) {
+    return "-";
+  }
+  return nodeDuration;
 }
 
 class FlowHistoryGridError extends Error {

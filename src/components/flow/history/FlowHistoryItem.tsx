@@ -5,6 +5,7 @@ import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
+import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { WorkflowPhase } from "src/data/types/workflowTypes.ts";
 import {
@@ -22,6 +23,7 @@ import {
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
+  flowSteps: Step[];
   repoOrg: string;
   workflow: Workflow;
   flowBaseUrl: string;
@@ -29,6 +31,7 @@ interface FlowHistoryItemProps {
 }
 function FlowHistoryItem({
   isPrFlow,
+  flowSteps,
   repoOrg,
   workflow,
   flowBaseUrl,
@@ -40,6 +43,7 @@ function FlowHistoryItem({
       <div>
         <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
         <FlowHistoryContent
+          flowSteps={flowSteps}
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
         />
@@ -179,17 +183,23 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
 }
 
 interface FlowHistoryContentProps {
+  flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
 }
 function FlowHistoryContent({
+  flowSteps,
   workflow,
   workflowBaseUrl,
 }: FlowHistoryContentProps) {
   return (
     <div className={styles.historyContent}>
       <FlowHistoryTitle workflow={workflow} />
-      <FlowHistoryGrid workflow={workflow} workflowBaseUrl={workflowBaseUrl} />
+      <FlowHistoryGrid
+        flowSteps={flowSteps}
+        workflow={workflow}
+        workflowBaseUrl={workflowBaseUrl}
+      />
     </div>
   );
 }

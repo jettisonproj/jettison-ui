@@ -35,7 +35,7 @@
 }
 
 .historyGridPending {
-  background-color: #fff;
+  background-color: var(--secondary-color);
 }
 
 .historyGridSkipped {
