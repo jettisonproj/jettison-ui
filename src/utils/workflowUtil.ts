@@ -6,6 +6,7 @@ import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
+const EXIT_NODE_NAME = "on-exit";
 const EXIT_NODE_SUFFIX = ".onExit";
 
 /**
@@ -142,6 +143,8 @@ export {
   isMemoizedNode,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
+  EXIT_NODE_NAME,
+  EXIT_NODE_SUFFIX,
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionRef,

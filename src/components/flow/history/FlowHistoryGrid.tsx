@@ -4,6 +4,7 @@ import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
 import { NodePhase } from "src/data/types/workflowTypes.ts";
+import { EXIT_NODE_NAME } from "src/utils/workflowUtil.ts";
 import styles from "src/components/flow/history/FlowHistoryGrid.module.css";
 
 interface FlowHistoryGridProps {
@@ -19,6 +20,8 @@ function FlowHistoryGrid({
   const nodesPendingCreation = flowSteps
     .map((flowStep) => flowDefaultStepName(flowStep))
     .filter((stepName) => workflow.memo.nodes[stepName] == null);
+
+  const exitNodePendingCreation = workflow.memo.nodes[EXIT_NODE_NAME] == null;
 
   return (
     <div className={styles.historyGrid}>
@@ -40,6 +43,15 @@ function FlowHistoryGrid({
           workflowBaseUrl={workflowBaseUrl}
         />
       ))}
+      {exitNodePendingCreation && (
+        <FlowHistoryGridItem
+          key={EXIT_NODE_NAME}
+          nodeDisplayName={EXIT_NODE_NAME}
+          nodePhase={NodePhase.Pending}
+          nodeDuration={undefined}
+          workflowBaseUrl={workflowBaseUrl}
+        />
+      )}
     </div>
   );
 }

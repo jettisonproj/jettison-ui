@@ -5,7 +5,12 @@ import type {
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { formatDuration } from "src/utils/dateUtil.ts";
-import { isMemoizedNode, TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
+import {
+  isMemoizedNode,
+  EXIT_NODE_SUFFIX,
+  EXIT_NODE_NAME,
+  TRIGGER_NODE_NAME,
+} from "src/utils/workflowUtil.ts";
 
 function memoizeFlow(flow: Flow) {
   const trigger = getFlowTrigger(flow);
@@ -78,8 +83,9 @@ function memoizeWorkflow(workflow: Workflow) {
 
       const startedAtDate = new Date(startedAt);
 
+      const memoDisplayName = getMemoDisplayName(displayName);
       const memoNode: WorkflowMemoStatusNode = {
-        displayName,
+        displayName: memoDisplayName,
         phase,
         startedAt: startedAtDate,
         parameterMap,
@@ -93,7 +99,7 @@ function memoizeWorkflow(workflow: Workflow) {
           finishedAtDate.getTime() - startedAtDate.getTime(),
         );
       }
-      nodes[node.displayName] = memoNode;
+      nodes[memoDisplayName] = memoNode;
       sortedNodes.push(memoNode);
     });
   }
@@ -142,6 +148,13 @@ function workflowMemoNodeCompareFn(
   }
   // Then, order by time
   return a.startedAt.getTime() - b.startedAt.getTime();
+}
+
+function getMemoDisplayName(displayName: string) {
+  if (displayName.endsWith(EXIT_NODE_SUFFIX)) {
+    return EXIT_NODE_NAME;
+  }
+  return displayName;
 }
 
 class MemoizeError extends Error {
