@@ -78,7 +78,7 @@ function SelectedHistoryItem({
       />
       <SelectedHistoryTabs
         workflow={workflow}
-        node={selectedNode}
+        selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
       />
