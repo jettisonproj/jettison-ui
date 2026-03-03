@@ -3,12 +3,11 @@ import { Link } from "react-router";
 import styles from "src/components/flow/history/FlowHistoryItem.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
+import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
-import type {
-  Workflow,
-  WorkflowMemoStatusNode,
-} from "src/data/types/workflowTypes.ts";
-import { NodePhase, WorkflowPhase } from "src/data/types/workflowTypes.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { WorkflowPhase } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
@@ -24,6 +23,7 @@ import {
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
+  flowSteps: Step[];
   repoOrg: string;
   workflow: Workflow;
   flowBaseUrl: string;
@@ -31,6 +31,7 @@ interface FlowHistoryItemProps {
 }
 function FlowHistoryItem({
   isPrFlow,
+  flowSteps,
   repoOrg,
   workflow,
   flowBaseUrl,
@@ -42,6 +43,7 @@ function FlowHistoryItem({
       <div>
         <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
         <FlowHistoryContent
+          flowSteps={flowSteps}
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
         />
@@ -54,6 +56,7 @@ function FlowHistoryItem({
       </div>
       {isSelected && (
         <SelectedHistoryItem
+          flowSteps={flowSteps}
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
         />
@@ -181,17 +184,23 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
 }
 
 interface FlowHistoryContentProps {
+  flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
 }
 function FlowHistoryContent({
+  flowSteps,
   workflow,
   workflowBaseUrl,
 }: FlowHistoryContentProps) {
   return (
     <div className={styles.historyContent}>
       <FlowHistoryTitle workflow={workflow} />
-      <FlowHistoryGrid workflow={workflow} workflowBaseUrl={workflowBaseUrl} />
+      <FlowHistoryGrid
+        flowSteps={flowSteps}
+        workflow={workflow}
+        workflowBaseUrl={workflowBaseUrl}
+      />
     </div>
   );
 }
@@ -211,77 +220,6 @@ function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
     >
       {title}
     </a>
-  );
-}
-
-function FlowHistoryGrid({
-  workflow,
-  workflowBaseUrl,
-}: FlowHistoryContentProps) {
-  return (
-    <div className={styles.historyGrid}>
-      {workflow.memo.sortedNodes.map((node) => (
-        <FlowHistoryGridItem
-          key={node.displayName}
-          node={node}
-          workflowBaseUrl={workflowBaseUrl}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface FlowHistoryGridItemProps {
-  node: WorkflowMemoStatusNode;
-  workflowBaseUrl: string;
-}
-function FlowHistoryGridItem({
-  node,
-  workflowBaseUrl,
-}: FlowHistoryGridItemProps) {
-  let className = styles.historyGridItem;
-  if (className == null) {
-    throw new FlowHistoryError("empty className: historyGridItem");
-  }
-
-  const { phase } = node;
-  switch (phase) {
-    case NodePhase.Succeeded:
-      className += ` ${styles.historyGridSuccess}`;
-      break;
-    case NodePhase.Error:
-      className += ` ${styles.historyGridDanger}`;
-      break;
-    case NodePhase.Failed:
-      className += ` ${styles.historyGridDanger}`;
-      break;
-    case NodePhase.Running:
-      className += ` ${styles.historyGridRunning}`;
-      break;
-    case NodePhase.Pending:
-      className += ` ${styles.historyGridPending}`;
-      break;
-    case NodePhase.Skipped:
-    case NodePhase.Omitted:
-      className += ` ${styles.historyGridSkipped}`;
-      break;
-    default:
-      phase satisfies never;
-      console.log("unknown node phase:");
-      console.log(phase);
-      break;
-  }
-
-  const nodeDuration = node.duration ?? "-";
-
-  return (
-    <Link
-      to={`${workflowBaseUrl}?node=${node.displayName}`}
-      className={className}
-      title={node.displayName}
-    >
-      <div className={styles.historyGridText}>{nodeDuration}</div>
-    </Link>
   );
 }
 
@@ -345,13 +283,6 @@ function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryActionsProps) {
       </a>
     </div>
   );
-}
-
-class FlowHistoryError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { FlowHistoryItem };

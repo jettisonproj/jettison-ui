@@ -21,13 +21,15 @@ const SelectedHistoryLogTab = lazy(() =>
 
 interface SelectedHistoryTabsProps {
   workflow: Workflow;
-  node: WorkflowStatusNode;
+  selectedNodeName: string;
+  selectedNode?: WorkflowStatusNode;
   nodeBaseUrl: string;
   selectedTab: Tab;
 }
 function SelectedHistoryTabs({
   workflow,
-  node,
+  selectedNodeName,
+  selectedNode,
   nodeBaseUrl,
   selectedTab,
 }: SelectedHistoryTabsProps) {
@@ -39,7 +41,8 @@ function SelectedHistoryTabs({
       />
       <SelectedHistoryTab
         workflow={workflow}
-        node={node}
+        selectedNodeName={selectedNodeName}
+        selectedNode={selectedNode}
         selectedTab={selectedTab}
       />
     </div>
@@ -77,24 +80,34 @@ function SelectedHistoryTabSelector({
 
 interface SelectedHistoryTabProps {
   workflow: Workflow;
-  node: WorkflowStatusNode;
+  selectedNodeName: string;
+  selectedNode?: WorkflowStatusNode;
   selectedTab: Tab;
 }
 function SelectedHistoryTab({
   workflow,
-  node,
+  selectedNodeName,
+  selectedNode,
   selectedTab,
 }: SelectedHistoryTabProps) {
+  if (selectedNode == null) {
+    return (
+      <div className={styles.historyNodeNotFound}>
+        Step <span className={styles.historyNodeName}>{selectedNodeName}</span>{" "}
+        not started.
+      </div>
+    );
+  }
   switch (selectedTab) {
     case Tab.summary:
-      return <SelectedHistorySummaryTab node={node} />;
+      return <SelectedHistorySummaryTab selectedNode={selectedNode} />;
     case Tab.logs:
       return (
         <Suspense fallback={<LoadIcon />}>
           <SelectedHistoryLogTab
             workflowNamespace={workflow.metadata.namespace}
-            podName={getWorkflowPodName(workflow.metadata.name, node)}
-            nodePhase={node.phase}
+            podName={getWorkflowPodName(workflow.metadata.name, selectedNode)}
+            nodePhase={selectedNode.phase}
           />
         </Suspense>
       );

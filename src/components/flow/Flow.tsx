@@ -167,6 +167,7 @@ function FlowWorkflowsItem({
       <FlowGraph flowNodes={flowNodes} flowEdges={flowEdges} />
       <FlowHistory
         isPrFlow={isPrFlow}
+        flowSteps={flow.spec.steps}
         repoOrg={repoOrg}
         workflows={sortedWorkflows}
         flowBaseUrl={flowBaseUrl}

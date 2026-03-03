@@ -1,9 +1,11 @@
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { FlowHistoryItem } from "src/components/flow/history/FlowHistoryItem.tsx";
 
 interface FlowHistoryProps {
   isPrFlow: boolean;
+  flowSteps: Step[];
   repoOrg: string;
   workflows: Workflow[];
   flowBaseUrl: string;
@@ -11,6 +13,7 @@ interface FlowHistoryProps {
 }
 function FlowHistory({
   isPrFlow,
+  flowSteps,
   repoOrg,
   workflows,
   flowBaseUrl,
@@ -26,6 +29,7 @@ function FlowHistory({
         <FlowHistoryItem
           key={workflow.metadata.name}
           isPrFlow={isPrFlow}
+          flowSteps={flowSteps}
           repoOrg={repoOrg}
           workflow={workflow}
           flowBaseUrl={flowBaseUrl}

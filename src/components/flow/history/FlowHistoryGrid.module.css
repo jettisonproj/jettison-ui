@@ -1,0 +1,47 @@
+.historyGrid {
+  display: grid;
+  gap: var(--history-grid-item-gap);
+  width: var(--history-content-width);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--history-grid-item-width), 1fr)
+  );
+}
+
+.historyGridItem {
+  height: 25px;
+  line-height: 25px;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 5px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.historyGridItem:hover {
+  text-decoration: underline;
+}
+
+.historyGridSuccess {
+  background-color: var(--success-color);
+}
+
+.historyGridDanger {
+  background-color: var(--danger-color);
+}
+
+.historyGridRunning {
+  background-color: var(--primary-color);
+}
+
+.historyGridPending {
+  background-color: var(--secondary-color);
+}
+
+.historyGridSkipped {
+  background-color: var(--graph-node-border-color);
+}
+
+.historyGridText {
+  margin-top: 1px;
+}
