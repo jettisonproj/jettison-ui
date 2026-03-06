@@ -10,7 +10,7 @@
 
 .historyGridItem {
   height: 25px;
-  line-height: 25px;
+  line-height: 23px;
   font-weight: bolder;
   text-align: center;
   border-radius: 5px;
@@ -24,22 +24,32 @@
 
 .historyGridSuccess {
   background-color: var(--success-color);
+  border: 1px solid var(--success-color);
 }
 
 .historyGridDanger {
   background-color: var(--danger-color);
+  border: 1px solid var(--danger-color);
 }
 
 .historyGridRunning {
   background-color: var(--progress-color);
+  border: 1px solid var(--progress-color);
 }
 
 .historyGridPending {
   background-color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
 }
 
 .historyGridSkipped {
   background-color: var(--graph-node-border-color);
+  border: 1px solid var(--graph-node-border-color);
+}
+
+.historyGridItemSelected {
+  font-weight: bold;
+  border: 1px solid #000;
 }
 
 .historyGridText {

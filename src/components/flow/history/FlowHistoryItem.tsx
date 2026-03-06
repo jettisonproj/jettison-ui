@@ -28,6 +28,7 @@ interface FlowHistoryItemProps {
   workflow: Workflow;
   flowBaseUrl: string;
   isSelected: boolean;
+  selectedNodeName: string;
 }
 function FlowHistoryItem({
   isPrFlow,
@@ -36,6 +37,7 @@ function FlowHistoryItem({
   workflow,
   flowBaseUrl,
   isSelected,
+  selectedNodeName,
 }: FlowHistoryItemProps) {
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   return (
@@ -46,6 +48,8 @@ function FlowHistoryItem({
           flowSteps={flowSteps}
           workflow={workflow}
           workflowBaseUrl={workflowBaseUrl}
+          isSelected={isSelected}
+          selectedNodeName={selectedNodeName}
         />
         <FlowHistoryDetails
           repoOrg={repoOrg}
@@ -187,11 +191,15 @@ interface FlowHistoryContentProps {
   flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
+  isSelected: boolean;
+  selectedNodeName: string;
 }
 function FlowHistoryContent({
   flowSteps,
   workflow,
   workflowBaseUrl,
+  isSelected,
+  selectedNodeName,
 }: FlowHistoryContentProps) {
   return (
     <div className={styles.historyContent}>
@@ -200,6 +208,8 @@ function FlowHistoryContent({
         flowSteps={flowSteps}
         workflow={workflow}
         workflowBaseUrl={workflowBaseUrl}
+        isSelected={isSelected}
+        selectedNodeName={selectedNodeName}
       />
     </div>
   );

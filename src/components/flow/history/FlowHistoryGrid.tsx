@@ -6,17 +6,22 @@ import { flowDefaultStepName } from "src/data/data.ts";
 import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { EXIT_NODE_NAME } from "src/utils/workflowUtil.ts";
 import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
+import { concatStyles } from "src/utils/styleUtil.ts";
 import styles from "src/components/flow/history/FlowHistoryGrid.module.css";
 
 interface FlowHistoryGridProps {
   flowSteps: Step[];
   workflow: Workflow;
   workflowBaseUrl: string;
+  isSelected: boolean;
+  selectedNodeName: string;
 }
 function FlowHistoryGrid({
   flowSteps,
   workflow,
   workflowBaseUrl,
+  isSelected,
+  selectedNodeName,
 }: FlowHistoryGridProps) {
   const nodesPendingCreation = flowSteps
     .map((flowStep) => flowDefaultStepName(flowStep))
@@ -34,6 +39,7 @@ function FlowHistoryGrid({
           nodeDuration={node.duration}
           nodeStartedAt={node.startedAt}
           workflowBaseUrl={workflowBaseUrl}
+          isSelected={isSelected && selectedNodeName === node.displayName}
         />
       ))}
       {nodesPendingCreation.map((nodeDisplayName) => (
@@ -44,6 +50,7 @@ function FlowHistoryGrid({
           nodeDuration={undefined}
           nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
+          isSelected={isSelected && selectedNodeName === nodeDisplayName}
         />
       ))}
       {exitNodePendingCreation && (
@@ -54,6 +61,7 @@ function FlowHistoryGrid({
           nodeDuration={undefined}
           nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
+          isSelected={isSelected && selectedNodeName === EXIT_NODE_NAME}
         />
       )}
     </div>
@@ -66,6 +74,7 @@ interface FlowHistoryGridItemProps {
   nodeDuration: string | undefined;
   nodeStartedAt: Date | undefined;
   workflowBaseUrl: string;
+  isSelected: boolean;
 }
 function FlowHistoryGridItem({
   nodeDisplayName,
@@ -73,11 +82,13 @@ function FlowHistoryGridItem({
   nodeDuration,
   nodeStartedAt,
   workflowBaseUrl,
+  isSelected,
 }: FlowHistoryGridItemProps) {
-  let className = styles.historyGridItem;
-  if (className == null) {
-    throw new FlowHistoryGridError("empty className: historyGridItem");
-  }
+  let className = concatStyles(
+    styles.historyGridItem,
+    styles.historyGridItemSelected,
+    isSelected,
+  );
 
   switch (nodePhase) {
     case NodePhase.Succeeded:

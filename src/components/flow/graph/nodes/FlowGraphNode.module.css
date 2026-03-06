@@ -22,9 +22,18 @@
   background-color: var(--graph-node-bg-color);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  border: 1px solid var(--graph-node-bg-color);
   font-size: 16px;
-  padding: 8px 0;
+  padding: 7px 0;
   margin-bottom: 10px;
+}
+
+.nodeRowHeaderOnly {
+  border-radius: 5px;
+}
+
+.nodeRowHeaderSelected {
+  border: 1px solid var(--graph-title-color);
 }
 
 .nodeTitle {

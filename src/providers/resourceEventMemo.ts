@@ -164,4 +164,4 @@ class MemoizeError extends Error {
   }
 }
 
-export { memoizeFlow, memoizeWorkflow };
+export { memoizeFlow, memoizeWorkflow, getMemoDisplayName };

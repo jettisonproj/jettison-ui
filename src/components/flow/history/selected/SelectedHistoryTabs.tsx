@@ -9,6 +9,7 @@ import { Tab } from "src/components/flow/history/selected/selectedHistoryTabData
 import { SelectedHistorySummaryTab } from "src/components/flow/history/selected/SelectedHistorySummaryTab.tsx";
 import { getWorkflowPodName } from "src/components/flow/history/selected/getWorkflowPodName.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
+import { concatStyles } from "src/utils/styleUtil.ts";
 import styles from "src/components/flow/history/selected/SelectedHistoryTabs.module.css";
 
 const SelectedHistoryLogTab = lazy(() =>
@@ -60,10 +61,11 @@ function SelectedHistoryTabSelector({
   return (
     <div>
       {Object.values(Tab).map((tab) => {
-        let tabClassName = styles.selectedHistoryTab;
-        if (tab === selectedTab) {
-          tabClassName = `${styles.selectedHistoryTab} ${styles.selectedHistoryActiveTab}`;
-        }
+        const tabClassName = concatStyles(
+          styles.selectedHistoryTab,
+          styles.selectedHistoryActiveTab,
+          tab === selectedTab,
+        );
         return (
           <Link
             key={tab}
