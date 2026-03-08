@@ -31,7 +31,7 @@
 }
 
 .historyGridRunning {
-  background-color: var(--primary-color);
+  background-color: var(--progress-color);
 }
 
 .historyGridPending {

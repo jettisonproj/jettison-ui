@@ -3,8 +3,12 @@ const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 
 /* Format the milliseconds into "H:M:S" */
-function formatDuration(totalMilliseconds: number) {
-  let seconds = totalMilliseconds / 1000;
+function formatDurationFromMs(totalMilliseconds: number) {
+  return formatDurationFromSeconds(totalMilliseconds / 1000);
+}
+
+function formatDurationFromSeconds(totalSeconds: number) {
+  let seconds = totalSeconds;
 
   const hours = Math.trunc(seconds / HOUR);
   seconds -= hours * HOUR;
@@ -26,4 +30,4 @@ function formatSegment(n: number) {
   return n.toString();
 }
 
-export { formatDuration };
+export { formatDurationFromMs, formatDurationFromSeconds };

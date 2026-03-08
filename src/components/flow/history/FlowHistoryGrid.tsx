@@ -5,6 +5,7 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
 import { NodePhase } from "src/data/types/workflowTypes.ts";
 import { EXIT_NODE_NAME } from "src/utils/workflowUtil.ts";
+import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
 import styles from "src/components/flow/history/FlowHistoryGrid.module.css";
 
 interface FlowHistoryGridProps {
@@ -31,6 +32,7 @@ function FlowHistoryGrid({
           nodeDisplayName={node.displayName}
           nodePhase={node.phase}
           nodeDuration={node.duration}
+          nodeStartedAt={node.startedAt}
           workflowBaseUrl={workflowBaseUrl}
         />
       ))}
@@ -40,6 +42,7 @@ function FlowHistoryGrid({
           nodeDisplayName={nodeDisplayName}
           nodePhase={NodePhase.Pending}
           nodeDuration={undefined}
+          nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
         />
       ))}
@@ -49,6 +52,7 @@ function FlowHistoryGrid({
           nodeDisplayName={EXIT_NODE_NAME}
           nodePhase={NodePhase.Pending}
           nodeDuration={undefined}
+          nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
         />
       )}
@@ -60,12 +64,14 @@ interface FlowHistoryGridItemProps {
   nodeDisplayName: string;
   nodePhase: NodePhase;
   nodeDuration: string | undefined;
+  nodeStartedAt: Date | undefined;
   workflowBaseUrl: string;
 }
 function FlowHistoryGridItem({
   nodeDisplayName,
   nodePhase,
   nodeDuration,
+  nodeStartedAt,
   workflowBaseUrl,
 }: FlowHistoryGridItemProps) {
   let className = styles.historyGridItem;
@@ -109,17 +115,30 @@ function FlowHistoryGridItem({
       title={nodeDisplayName}
     >
       <div className={styles.historyGridText}>
-        <NodeDuration nodeDuration={nodeDuration} />
+        <NodeDuration
+          nodeDuration={nodeDuration}
+          nodePhase={nodePhase}
+          nodeStartedAt={nodeStartedAt}
+        />
       </div>
     </Link>
   );
 }
 
 interface NodeDurationProps {
+  nodePhase: NodePhase;
   nodeDuration: string | undefined;
+  nodeStartedAt: Date | undefined;
 }
-function NodeDuration({ nodeDuration }: NodeDurationProps) {
+function NodeDuration({
+  nodePhase,
+  nodeDuration,
+  nodeStartedAt,
+}: NodeDurationProps) {
   if (nodeDuration == null) {
+    if (nodePhase === NodePhase.Running && nodeStartedAt != null) {
+      return <ElapsedTime startedAt={nodeStartedAt} />;
+    }
     return "-";
   }
   return nodeDuration;
