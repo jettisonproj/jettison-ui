@@ -10,6 +10,7 @@ interface FlowHistoryProps {
   workflows: Workflow[];
   flowBaseUrl: string;
   selectedWorkflow?: string;
+  selectedNodeName: string;
 }
 function FlowHistory({
   isPrFlow,
@@ -18,6 +19,7 @@ function FlowHistory({
   workflows,
   flowBaseUrl,
   selectedWorkflow,
+  selectedNodeName,
 }: FlowHistoryProps) {
   if (workflows.length === 0) {
     return <p>No flow history found</p>;
@@ -34,6 +36,7 @@ function FlowHistory({
           workflow={workflow}
           flowBaseUrl={flowBaseUrl}
           isSelected={workflow.metadata.name === selectedWorkflow}
+          selectedNodeName={selectedNodeName}
         />
       ))}
     </div>

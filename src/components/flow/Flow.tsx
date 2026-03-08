@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 
 import { localState } from "src/localState.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
@@ -21,9 +21,12 @@ import type {
 } from "src/components/flow/graph/FlowGraph.tsx";
 import { pushTriggerRoute, prTriggerRoute, routes } from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
+import { TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
 
 function Flow() {
   const { repoOrg, repoName, triggerRoute, selectedWorkflow } = useParams();
+  const [searchParams] = useSearchParams();
+
   if (!repoOrg || !repoName || !triggerRoute) {
     throw new FlowError(
       "path parameters cannot be empty: " +
@@ -35,6 +38,7 @@ function Flow() {
     throw new FlowError(`invalid path parameter triggerRoute=${triggerRoute}`);
   }
 
+  const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
   const flowBaseUrl = `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`;
   const isPrFlow = triggerRoute === prTriggerRoute;
   return (
@@ -51,6 +55,7 @@ function Flow() {
         isPrFlow={isPrFlow}
         flowBaseUrl={flowBaseUrl}
         selectedWorkflow={selectedWorkflow}
+        selectedNodeName={selectedNodeName}
       />
     </>
   );
@@ -62,6 +67,7 @@ interface FlowItemProps {
   isPrFlow: boolean;
   flowBaseUrl: string;
   selectedWorkflow?: string;
+  selectedNodeName: string;
 }
 
 function FlowItem({
@@ -70,6 +76,7 @@ function FlowItem({
   isPrFlow,
   flowBaseUrl,
   selectedWorkflow,
+  selectedNodeName,
 }: FlowItemProps) {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
@@ -122,6 +129,7 @@ function FlowItem({
       workflows={workflows}
       flowBaseUrl={flowBaseUrl}
       selectedWorkflow={selectedWorkflow}
+      selectedNodeName={selectedNodeName}
     />
   );
 }
@@ -133,6 +141,7 @@ interface FlowWorkflowsItemProps {
   workflows: Map<string, Workflow> | undefined;
   flowBaseUrl: string;
   selectedWorkflow?: string;
+  selectedNodeName: string;
 }
 function FlowWorkflowsItem({
   repoOrg,
@@ -141,6 +150,7 @@ function FlowWorkflowsItem({
   workflows,
   flowBaseUrl,
   selectedWorkflow,
+  selectedNodeName,
 }: FlowWorkflowsItemProps) {
   const sortedWorkflows = useMemo(() => {
     if (workflows == null) {
@@ -172,6 +182,7 @@ function FlowWorkflowsItem({
         workflows={sortedWorkflows}
         flowBaseUrl={flowBaseUrl}
         selectedWorkflow={selectedWorkflow}
+        selectedNodeName={selectedNodeName}
       />
     </>
   );

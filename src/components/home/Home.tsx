@@ -11,6 +11,7 @@ import { Header } from "src/components/header/Header.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import { getRepoOrgAndName, getRepoLink } from "src/utils/gitUtil.ts";
+import { concatStyles } from "src/utils/styleUtil.ts";
 import styles from "src/components/home/Home.module.css";
 import {
   FlowsContext,
@@ -105,13 +106,11 @@ interface RecentRepoProps {
 }
 function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
   const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
-  let recentRepoClassName = styles.recentRepo;
-  if (recentRepoClassName == null) {
-    throw new HomeError("failed to find recentRepo style");
-  }
-  if (isFirst) {
-    recentRepoClassName += ` ${styles.recentRepoFirst}`;
-  }
+  const recentRepoClassName = concatStyles(
+    styles.recentRepo,
+    styles.recentRepoFirst,
+    isFirst,
+  );
   return (
     <div className={recentRepoClassName}>
       <Link
@@ -214,13 +213,6 @@ function NumWorkflows({ workflows }: WorkflowsProp) {
     }
   }
   return numWorkflows;
-}
-
-class HomeError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { Home };

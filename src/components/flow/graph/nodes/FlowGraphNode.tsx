@@ -16,6 +16,7 @@ import {
   getWorkflowRevisionAuthor,
   getWorkflowRevisionNumber,
 } from "src/utils/workflowUtil.ts";
+import { concatOptionalStyle } from "src/utils/styleUtil.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
@@ -33,13 +34,16 @@ interface FlowGraphNodeProps {
   titleIcon: string;
   titleText: string;
   children?: ReactNode;
+  className?: string;
 }
 function FlowGraphNode({
   headerLink,
   titleIcon,
   titleText,
   children,
+  className,
 }: FlowGraphNodeProps) {
+  const headerClass = concatOptionalStyle(styles.nodeRowHeader, className);
   return (
     <div
       // @ts-expect-error Since this is the root html element inside the svg, xmlns
@@ -47,7 +51,7 @@ function FlowGraphNode({
       // See https://stackoverflow.com/questions/39504988/react-svg-html-inside-foreignobject-not-rendered
       xmlns="http://www.w3.org/1999/xhtml"
     >
-      <Link to={headerLink} className={styles.nodeRowHeader}>
+      <Link to={headerLink} className={headerClass}>
         <i className={titleIcon}></i>
         <span className={styles.nodeTitle}>{titleText}</span>
       </Link>

@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router";
 
 import { flowDefaultStepName } from "src/data/data.ts";
+import { getMemoDisplayName } from "src/providers/resourceEventMemo.ts";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
@@ -18,10 +19,10 @@ import type {
   FlowEdge,
 } from "src/components/flow/graph/FlowGraph.tsx";
 import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
+import { WorkflowPendingGraphNode } from "src/components/flow/history/selected/nodes/WorkflowPendingGraphNode.tsx";
 import {
   isWorkflowGraphNode,
   EXIT_NODE_NAME,
-  EXIT_NODE_SUFFIX,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
@@ -43,46 +44,66 @@ function SelectedHistoryItem({
   const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
   const selectedTab = parseTab(searchParams.get("tab"));
 
-  // This component is rendered on the fly, so memoized access is not needed
+  // This component is rendered on the fly, so no need to memoize data for this
+  // component. Instead, use the raw data to compute the derived data here.
   const { nodes: workflowNodesMap } = workflow.status;
   const { name: workflowName } = workflow.metadata;
   if (workflowNodesMap == null) {
     return <div>No workload data for {workflowName}</div>;
   }
 
+  // Use memoDisplayName instead of displayName to align with the flow step naming
+  const workflowNodesByDisplayName: Record<string, WorkflowStatusNode> = {};
+  const workflowNodesById: Record<string, WorkflowStatusNode> = {};
   const workflowNodesValues = Object.values(workflowNodesMap);
-  const workflowNodesArray = workflowNodesValues
-    .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
-    .filter(isWorkflowGraphNode);
+  workflowNodesValues.forEach((workflowNode) => {
+    const memoDisplayName = getMemoDisplayName(workflowNode.displayName);
+    const workflowMemoNode = {
+      ...workflowNode,
+      displayName: memoDisplayName,
+    };
 
-  const workflowGraphNodes = getWorkflowGraphNodes(
-    workflowNodesArray,
-    workflowBaseUrl,
-  );
-
-  const workflowGraphEdges = getWorkflowGraphEdges(
-    workflowNodesArray,
-    workflowNodesMap,
-    workflowName,
-  );
-
-  const selectedNode = workflowNodesValues.find((node) => {
-    if (node.displayName === selectedNodeName) {
-      return true;
-    }
-    return (
-      selectedNodeName === EXIT_NODE_NAME &&
-      node.displayName.endsWith(EXIT_NODE_SUFFIX)
-    );
+    workflowNodesByDisplayName[memoDisplayName] = workflowMemoNode;
+    workflowNodesById[workflowMemoNode.id] = workflowMemoNode;
   });
+
+  const selectedNode = workflowNodesByDisplayName[selectedNodeName];
+
+  // The workflow nodes might not exist yet. Use the flow step to repesent
+  // the nodes pending creation
+  const nodesPendingCreation = flowSteps.filter(
+    (flowStep) =>
+      workflowNodesByDisplayName[flowDefaultStepName(flowStep)] == null,
+  );
+
   if (
     selectedNode == null &&
-    !isSelectedNodePendingCreate(selectedNodeName, flowSteps)
+    selectedNodeName !== EXIT_NODE_NAME &&
+    !isSelectedNodePendingCreation(selectedNodeName, nodesPendingCreation)
   ) {
     throw new SelectedHistoryItemError(
       `workflow ${workflowName} is missing selected node: ${selectedNodeName}`,
     );
   }
+
+  // Filter out DAG and sub-nodes, to avoid rendering them in the Graph
+  const workflowNodesToRender = workflowNodesValues
+    .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
+    .filter(isWorkflowGraphNode);
+
+  const workflowGraphNodes = getWorkflowGraphNodes(
+    workflowNodesToRender,
+    workflowBaseUrl,
+    selectedNodeName,
+    nodesPendingCreation,
+  );
+
+  const workflowGraphEdges = getWorkflowGraphEdges(
+    workflowNodesToRender,
+    workflowNodesById,
+    workflowName,
+    nodesPendingCreation,
+  );
 
   const nodeBaseUrl = `${workflowBaseUrl}?node=${selectedNodeName}`;
 
@@ -104,32 +125,57 @@ function SelectedHistoryItem({
 }
 
 function getWorkflowGraphNodes(
-  workflowNodesArray: WorkflowStatusNode[],
+  workflowNodesToRender: WorkflowStatusNode[],
   workflowBaseUrl: string,
+  selectedNodeName: string,
+  nodesPendingCreation: Step[],
 ): FlowNode[] {
-  return workflowNodesArray.map((node) => ({
-    label: node.id,
+  const workflowGraphNodes = workflowNodesToRender.map((node) => ({
+    label: node.displayName,
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
     children: (
-      <WorkflowGraphNode node={node} workflowBaseUrl={workflowBaseUrl} />
+      <WorkflowGraphNode
+        node={node}
+        workflowBaseUrl={workflowBaseUrl}
+        isSelected={node.displayName === selectedNodeName}
+      />
     ),
   }));
+
+  const workflowPendingGraphNodes = nodesPendingCreation.map(
+    (nodePendingCreation) => ({
+      label: flowDefaultStepName(nodePendingCreation),
+      width: NODE_WIDTH,
+      height: NODE_HEIGHT,
+      children: (
+        <WorkflowPendingGraphNode
+          nodePendingCreation={nodePendingCreation}
+          workflowBaseUrl={workflowBaseUrl}
+          isSelected={
+            flowDefaultStepName(nodePendingCreation) === selectedNodeName
+          }
+        />
+      ),
+    }),
+  );
+  return workflowGraphNodes.concat(workflowPendingGraphNodes);
 }
 
 function getWorkflowGraphEdges(
-  workflowNodesArray: WorkflowStatusNode[],
-  workflowNodesMap: Record<string, WorkflowStatusNode>,
+  workflowNodesToRender: WorkflowStatusNode[],
+  workflowNodesById: Record<string, WorkflowStatusNode>,
   workflowName: string,
+  nodesPendingCreation: Step[],
 ): FlowEdge[] {
   let edgeIndex = 0;
 
   // First generate the native workflow edges
-  const workflowGraphEdges = workflowNodesArray.flatMap((node) =>
-    getEdgeDestinations(node.children, workflowNodesMap, workflowName).map(
+  const workflowGraphEdges = workflowNodesToRender.flatMap((node) =>
+    getEdgeDestinations(node.children, workflowNodesById, workflowName).map(
       (edgeDestination) => ({
         label: `e${++edgeIndex}`,
-        v: node.id,
+        v: node.displayName,
         w: edgeDestination,
       }),
     ),
@@ -137,7 +183,7 @@ function getWorkflowGraphEdges(
 
   // Get nodes without dependencies
   const workflowNodesWithoutDeps = new Set(
-    workflowNodesArray.map((node) => node.id),
+    workflowNodesToRender.map((node) => node.displayName),
   );
   for (const workflowGraphEdge of workflowGraphEdges) {
     const edgeDestination = workflowGraphEdge.w;
@@ -145,7 +191,7 @@ function getWorkflowGraphEdges(
   }
 
   // Exclude the pseudo-trigger from the nodes without dependencies
-  const triggerNode = workflowNodesArray.find(
+  const triggerNode = workflowNodesToRender.find(
     (node) => node.displayName === TRIGGER_NODE_NAME,
   );
   if (triggerNode == null) {
@@ -153,18 +199,27 @@ function getWorkflowGraphEdges(
       `workflow is missing trigger node: ${workflowName}`,
     );
   }
-  workflowNodesWithoutDeps.delete(triggerNode.id);
+  workflowNodesWithoutDeps.delete(triggerNode.displayName);
 
   // Add edges from trigger node to nodes without dependencies
   workflowNodesWithoutDeps.forEach((workflowNodeWithoutDeps) => {
     workflowGraphEdges.push({
       label: `e${++edgeIndex}`,
-      v: triggerNode.id,
+      v: triggerNode.displayName,
       w: workflowNodeWithoutDeps,
     });
   });
 
-  return workflowGraphEdges;
+  const pendingGraphEdges = nodesPendingCreation.flatMap(
+    (nodePendingCreation) =>
+      (nodePendingCreation.dependsOn ?? []).map((dep) => ({
+        label: `e${++edgeIndex}`,
+        v: dep,
+        w: flowDefaultStepName(nodePendingCreation),
+      })),
+  );
+
+  return workflowGraphEdges.concat(pendingGraphEdges);
 }
 
 /**
@@ -174,7 +229,7 @@ function getWorkflowGraphEdges(
  */
 function getEdgeDestinations(
   initialChildren: string[] | undefined,
-  workflowNodesMap: Record<string, WorkflowStatusNode>,
+  workflowNodesById: Record<string, WorkflowStatusNode>,
   workflowName: string,
 ) {
   const edgeDestinations: string[] = [];
@@ -193,7 +248,7 @@ function getEdgeDestinations(
       );
     }
 
-    const childNode = workflowNodesMap[child];
+    const childNode = workflowNodesById[child];
     if (childNode == null) {
       throw new SelectedHistoryItemError(
         `missing node ${child} in workflow ${workflowName}`,
@@ -202,10 +257,10 @@ function getEdgeDestinations(
 
     switch (childNode.type) {
       case NodeType.Skipped:
-        edgeDestinations.push(child);
+        edgeDestinations.push(childNode.displayName);
         break;
       case NodeType.Pod:
-        edgeDestinations.push(child);
+        edgeDestinations.push(childNode.displayName);
         break;
       case NodeType.Container:
         if (childNode.children == null) {
@@ -232,25 +287,14 @@ function getEdgeDestinations(
   return edgeDestinations;
 }
 
-/**
- * Return whether the selected node is expected to be created by looking at
- * the Flow steps, since Workflow nodes may not be created until needed.
- */
-function isSelectedNodePendingCreate(
+function isSelectedNodePendingCreation(
   selectedNodeName: string,
-  flowSteps: Step[],
+  nodesPendingCreation: Step[],
 ) {
-  if (selectedNodeName === EXIT_NODE_NAME) {
-    return true;
-  }
-
-  for (const flowStep of flowSteps) {
-    const stepName = flowDefaultStepName(flowStep);
-    if (stepName === selectedNodeName) {
-      return true;
-    }
-  }
-  return false;
+  return nodesPendingCreation.some(
+    (nodePendingCreation) =>
+      flowDefaultStepName(nodePendingCreation) === selectedNodeName,
+  );
 }
 
 class SelectedHistoryItemError extends Error {
