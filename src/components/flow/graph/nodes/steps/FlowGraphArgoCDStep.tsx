@@ -21,6 +21,7 @@ import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 import type { WorkflowNode } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
+import { RolloutPhase } from "src/data/types/rolloutTypes.ts";
 import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
@@ -156,7 +157,10 @@ function FlowGraphArgoCDStepStatus({
         rolloutMissing = true;
         continue;
       }
-      if (rollout.status.phase !== HEALTHY_STATUS) {
+      if (
+        rollout.status.phase !== RolloutPhase.Healthy &&
+        rollout.status.phase !== RolloutPhase.Paused
+      ) {
         rolloutHealthError = `Rollout status is ${rollout.status.phase}`;
       }
       const rolloutVersion = rollout.metadata.labels?.[APP_VERSION_LABEL];

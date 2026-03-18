@@ -69,7 +69,7 @@ function SelectedHistoryItem({
 
   const selectedNode = workflowNodesByDisplayName[selectedNodeName];
 
-  // The workflow nodes might not exist yet. Use the flow step to repesent
+  // The workflow nodes might not exist yet. Use the flow step to represent
   // the nodes pending creation
   const nodesPendingCreation = flowSteps.filter(
     (flowStep) =>
