@@ -211,12 +211,25 @@ function getWorkflowGraphEdges(
   });
 
   const pendingGraphEdges = nodesPendingCreation.flatMap(
-    (nodePendingCreation) =>
-      (nodePendingCreation.dependsOn ?? []).map((dep) => ({
+    (nodePendingCreation) => {
+      if (
+        nodePendingCreation.dependsOn == null ||
+        nodePendingCreation.dependsOn.length === 0
+      ) {
+        return [
+          {
+            label: `e${++edgeIndex}`,
+            v: triggerNode.displayName,
+            w: flowDefaultStepName(nodePendingCreation),
+          },
+        ];
+      }
+      return nodePendingCreation.dependsOn.map((dep) => ({
         label: `e${++edgeIndex}`,
         v: dep,
         w: flowDefaultStepName(nodePendingCreation),
-      })),
+      }));
+    },
   );
 
   return workflowGraphEdges.concat(pendingGraphEdges);
