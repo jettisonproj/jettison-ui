@@ -17,17 +17,12 @@ function formatDurationFromSeconds(totalSeconds: number) {
   seconds -= minutes * MINUTE;
 
   if (hours > 0) {
-    return `${formatSegment(hours)}:${formatSegment(minutes)}:${formatSegment(seconds)}`;
+    return `${hours}h ${minutes}m ${seconds}s`;
   }
-  return `${formatSegment(minutes)}:${formatSegment(seconds)}`;
-}
-
-/** Format the duration segment by adding zero padding if needed */
-function formatSegment(n: number) {
-  if (n < 10) {
-    return `0${n}`;
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
   }
-  return n.toString();
+  return `${seconds}s`;
 }
 
 export { formatDurationFromMs, formatDurationFromSeconds };
