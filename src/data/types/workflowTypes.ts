@@ -68,6 +68,7 @@ interface NodeTemplateRef {
 interface WorkflowMemoStatusNode {
   displayName: string;
   phase: NodePhase;
+  templateRef: NodeTemplateRef;
   startedAt: Date;
   finishedAt?: Date;
   duration?: string;
