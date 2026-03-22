@@ -1,0 +1,34 @@
+.historyStatusBadge {
+  background-color: var(--status-badge-bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--status-badge-border-color);
+  padding: 3px 10px;
+}
+
+.successIcon {
+  color: var(--status-badge-success-color);
+}
+
+.dangerIcon {
+  color: var(--status-badge-danger-color);
+}
+
+.loadingIcon {
+  --load-color: var(--status-badge-loading-color);
+}
+
+.badgeIcon {
+  color: var(--status-badge-text-color);
+}
+
+.historyCommitText {
+  margin-left: 5px;
+  color: var(--status-badge-text-color);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--status-badge-font-family);
+}
+
+.historyStatusBadge:hover {
+  opacity: 0.8;
+}

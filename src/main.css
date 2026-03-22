@@ -33,6 +33,16 @@
   --danger-color: #df3e3e;
   --load-color: #707fa2;
   --progress-color: #709bd4;
+
+  --status-badge-bg-color: #f9fafb;
+  --status-badge-border-color: #e5e7eb;
+  --status-badge-text-color: #25292e;
+  --status-badge-success-color: #00a63e;
+  --status-badge-danger-color: #e7000b;
+  --status-badge-loading-color: #155dfc;
+  --status-badge-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
 }
 
 html {
