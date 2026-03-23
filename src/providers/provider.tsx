@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useRef } from "react";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
-import { localState } from "src/localState.ts";
+import { localState, TimestampFormat } from "src/localState.ts";
 import { flowWebSocket } from "src/providers/flowWebSocket.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";
@@ -13,12 +13,10 @@ import type { ResourceList } from "src/data/types/resourceTypes.ts";
 
 const FlowWebSocketContext = createContext(flowWebSocket);
 
-const DisplayIsoTimestampsContext = createContext(
-  localState.getDisplayIsoTimestamps(),
-);
-const SetDisplayIsoTimestampsContext = createContext((() => {
+const TimestampFormatContext = createContext(localState.getTimestampFormat());
+const SetTimestampFormatContext = createContext((() => {
   // Use no-op as the default, which is not expected to actually be called
-}) as Dispatch<SetStateAction<boolean>>);
+}) as Dispatch<SetStateAction<TimestampFormat>>);
 
 const FlowsContext = createContext(null as Map<string, PushPrFlows> | null);
 
@@ -65,18 +63,18 @@ function Provider({ children }: ProviderProps) {
     null as Map<string, Map<string, Map<string, Set<string>>>> | null,
   );
 
-  const [displayIsoTimestamps, setDisplayIsoTimestamps] = useState(
-    localState.getDisplayIsoTimestamps(),
+  const [timestampFormat, setTimestampFormat] = useState(
+    localState.getTimestampFormat(),
   );
 
   /* Update localStorage whenever the value changes */
-  const previousDisplayIsoTimestamps = useRef(displayIsoTimestamps);
+  const previousTimestampFormat = useRef(timestampFormat);
   useEffect(() => {
-    if (previousDisplayIsoTimestamps.current != displayIsoTimestamps) {
-      localState.setDisplayIsoTimestamps(displayIsoTimestamps);
-      previousDisplayIsoTimestamps.current = displayIsoTimestamps;
+    if (previousTimestampFormat.current != timestampFormat) {
+      localState.setTimestampFormat(timestampFormat);
+      previousTimestampFormat.current = timestampFormat;
     }
-  }, [displayIsoTimestamps]);
+  }, [timestampFormat]);
 
   /* Handle flowWebSocket notifications */
   useEffect(() => {
@@ -135,10 +133,8 @@ function Provider({ children }: ProviderProps) {
 
   return (
     <FlowWebSocketContext.Provider value={flowWebSocket}>
-      <DisplayIsoTimestampsContext.Provider value={displayIsoTimestamps}>
-        <SetDisplayIsoTimestampsContext.Provider
-          value={setDisplayIsoTimestamps}
-        >
+      <TimestampFormatContext.Provider value={timestampFormat}>
+        <SetTimestampFormatContext.Provider value={setTimestampFormat}>
           <FlowsContext.Provider value={flows}>
             <ApplicationsContext.Provider value={applications}>
               <RolloutsContext.Provider value={rollouts}>
@@ -152,8 +148,8 @@ function Provider({ children }: ProviderProps) {
               </RolloutsContext.Provider>
             </ApplicationsContext.Provider>
           </FlowsContext.Provider>
-        </SetDisplayIsoTimestampsContext.Provider>
-      </DisplayIsoTimestampsContext.Provider>
+        </SetTimestampFormatContext.Provider>
+      </TimestampFormatContext.Provider>
     </FlowWebSocketContext.Provider>
   );
 }
@@ -161,8 +157,8 @@ function Provider({ children }: ProviderProps) {
 export {
   Provider,
   FlowWebSocketContext,
-  DisplayIsoTimestampsContext,
-  SetDisplayIsoTimestampsContext,
+  TimestampFormatContext,
+  SetTimestampFormatContext,
   FlowsContext,
   ApplicationsContext,
   RolloutsContext,
