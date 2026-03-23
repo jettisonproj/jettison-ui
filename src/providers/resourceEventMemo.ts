@@ -60,6 +60,7 @@ function memoizeWorkflow(workflow: Workflow) {
       const {
         displayName,
         phase,
+        templateRef,
         startedAt,
         finishedAt,
         inputs,
@@ -87,6 +88,7 @@ function memoizeWorkflow(workflow: Workflow) {
       const memoNode: WorkflowMemoStatusNode = {
         displayName: memoDisplayName,
         phase,
+        templateRef,
         startedAt: startedAtDate,
         parameterMap,
         outputMap,

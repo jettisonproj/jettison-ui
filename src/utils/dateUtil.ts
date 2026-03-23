@@ -2,7 +2,10 @@
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 
-/* Format the milliseconds into "H:M:S" */
+/**
+ * Format the milliseconds into "Xh Ym Zs", omitting units if unnecessary.
+ * Examples: "5s", "3m 5s", "2h 40m 33s"
+ */
 function formatDurationFromMs(totalMilliseconds: number) {
   return formatDurationFromSeconds(totalMilliseconds / 1000);
 }

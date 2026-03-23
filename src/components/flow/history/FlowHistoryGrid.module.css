@@ -1,11 +1,16 @@
 .historyGrid {
+  width: var(--content-width);
   display: grid;
+  margin-top: 9px;
   gap: var(--history-grid-item-gap);
-  width: var(--history-content-width);
   grid-template-columns: repeat(
     auto-fit,
     minmax(var(--history-grid-item-width), 1fr)
   );
+}
+
+.historyGridText {
+  margin-top: 1px;
 }
 
 .historyGridItem {
@@ -19,39 +24,44 @@
 }
 
 .historyGridItem:hover {
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
 .historyGridSuccess {
-  background-color: var(--success-color);
-  border: 1px solid var(--success-color);
+  background-color: var(--history-grid-success-bg);
+  border: 1px solid var(--history-grid-success-border);
+  color: var(--history-grid-success-color);
 }
 
 .historyGridDanger {
-  background-color: var(--danger-color);
-  border: 1px solid var(--danger-color);
+  background-color: var(--history-grid-danger-bg);
+  border: 1px solid var(--history-grid-danger-border);
+  color: var(--history-grid-danger-color);
 }
 
 .historyGridRunning {
-  background-color: var(--progress-color);
-  border: 1px solid var(--progress-color);
+  background-color: var(--history-grid-running-bg);
+  border: 1px solid var(--history-grid-running-border);
+  color: var(--history-grid-running-color);
+  --load-color: var(--history-grid-running-color);
 }
 
 .historyGridPending {
-  background-color: var(--secondary-color);
-  border: 1px solid var(--secondary-color);
+  background-color: var(--history-grid-pending-bg);
+  border: 1px solid var(--history-grid-pending-border);
+  color: var(--history-grid-pending-color);
 }
 
-.historyGridSkipped {
-  background-color: var(--graph-node-border-color);
-  border: 1px solid var(--graph-node-border-color);
+.historyGridIcon {
+  margin-right: 5px;
 }
 
 .historyGridItemSelected {
-  font-weight: bold;
-  border: 1px solid #000;
+  border: 1px solid var(--history-grid-selection-border);
 }
 
-.historyGridText {
-  margin-top: 1px;
+.historyGridNodeTitle {
+  margin-right: 5px;
+  text-transform: uppercase;
+  font-weight: bold;
 }

@@ -8,8 +8,8 @@ import {
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import {
-  getResourcePath,
-  getTriggerDisplayName,
+  getNodeResourcePath,
+  getNodeTriggerDisplayName,
 } from "src/utils/workflowUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 
@@ -22,7 +22,9 @@ function WorkflowGraphNode({
   const className = getWorkflowGraphNodeClass(isSelected);
   switch (template) {
     case TemplateName.GitHubCheckStart: {
-      const triggerDisplayName = getTriggerDisplayName(node.inputs?.parameters);
+      const triggerDisplayName = getNodeTriggerDisplayName(
+        node.inputs?.parameters,
+      );
       return (
         <FlowGraphNode
           className={className}
@@ -53,7 +55,7 @@ function WorkflowGraphNode({
       );
     }
     case TemplateName.ArgoCD: {
-      const resourcePath = getResourcePath(node.inputs?.parameters);
+      const resourcePath = getNodeResourcePath(node.inputs?.parameters);
       return (
         <FlowGraphNode
           className={className}
