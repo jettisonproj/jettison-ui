@@ -43,6 +43,20 @@
   --status-badge-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji";
+
+  --history-grid-success-bg: #dcfce7;
+  --history-grid-success-border: #7bf1a8;
+  --history-grid-success-color: #016630;
+  --history-grid-danger-bg: #ffe2e2;
+  --history-grid-danger-border: #ffa2a2;
+  --history-grid-danger-color: #9f0712;
+  --history-grid-running-bg: #dbeafe;
+  --history-grid-running-border: #8ec5ff;
+  --history-grid-running-color: #193cb8;
+  --history-grid-pending-bg: #f3f4f6;
+  --history-grid-pending-border: #d1d5dc;
+  --history-grid-pending-color: #4a5565;
+  --history-grid-selection-border: #2b7fff;
 }
 
 html {
