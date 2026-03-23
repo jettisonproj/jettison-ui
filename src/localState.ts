@@ -1,10 +1,16 @@
 const CONFIG_KEY = "jettison";
 
-const defaultDisplayIsoTimestamps = false;
+enum TimestampFormat {
+  Relative = "Relative",
+  Locale = "Locale",
+  Iso = "Iso",
+}
+
+const defaultTimestampFormat = TimestampFormat.Relative;
 const defaultRecentRepos: string[] = [];
 
 interface LocalStateObject {
-  displayIsoTimestamps?: boolean;
+  timestampFormat?: TimestampFormat;
 
   // List of strings in the form `${repoOrg}/${repoName}`
   recentRepos?: string[];
@@ -26,12 +32,12 @@ class LocalState {
     }
   }
 
-  getDisplayIsoTimestamps() {
-    return this.#localState.displayIsoTimestamps ?? defaultDisplayIsoTimestamps;
+  getTimestampFormat() {
+    return this.#localState.timestampFormat ?? defaultTimestampFormat;
   }
 
-  setDisplayIsoTimestamps(displayIsoTimestamps: boolean) {
-    this.#localState.displayIsoTimestamps = displayIsoTimestamps;
+  setTimestampFormat(timestampFormat: TimestampFormat) {
+    this.#localState.timestampFormat = timestampFormat;
     this.#saveToLocalStorage();
   }
 
@@ -76,4 +82,4 @@ class LocalState {
 }
 
 const localState = new LocalState();
-export { localState };
+export { localState, TimestampFormat };
