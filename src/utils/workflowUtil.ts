@@ -9,6 +9,9 @@ const TRIGGER_NODE_NAME = "github-check-start";
 const EXIT_NODE_NAME = "on-exit";
 const EXIT_NODE_SUFFIX = ".onExit";
 
+const NODE_PARAM_EVENT_TYPE = "event-type";
+const NODE_PARAM_RESOURCE_PATH = "resource-path";
+
 /**
  * Determines whether a workflow node should be memoized.
  *
@@ -48,74 +51,90 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
   );
 }
 
-class InvalidNodeError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
 //
 // Contains functions to get workflow or workflow node parameters
 // Should be kept in sync with:
 // - https://github.com/jettisonproj/jettison-controller/blob/main/internal/controller/sensor/sensor_trigger_parameters.go
+// - https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
 //
 function getWorkflowRepo(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "repo");
+  return getFromParameterMap(parameterMap, "repo");
 }
 
 function getWorkflowRevision(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "revision");
+  return getFromParameterMap(parameterMap, "revision");
 }
 
 function getWorkflowRevisionRef(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "revision-ref");
+  return getFromParameterMap(parameterMap, "revision-ref");
 }
 
 function getWorkflowRevisionTitle(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "revision-title");
+  return getFromParameterMap(parameterMap, "revision-title");
 }
 
 function getWorkflowRevisionAuthor(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "revision-author");
+  return getFromParameterMap(parameterMap, "revision-author");
 }
 
 // PR parameter
 function getWorkflowRevisionNumber(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "revision-number");
+  return getFromParameterMap(parameterMap, "revision-number");
+}
+
+// Workflow memo node parameters
+function getNodeDockerfilePath(parameterMap: Record<string, string>) {
+  return getFromParameterMap(parameterMap, "dockerfile-path");
+}
+
+function getMemoResourcePath(parameterMap: Record<string, string>) {
+  return getFromParameterMap(parameterMap, NODE_PARAM_RESOURCE_PATH);
+}
+
+function getMemoTriggerDisplayName(parameterMap: Record<string, string>) {
+  const eventType = getFromParameterMap(parameterMap, NODE_PARAM_EVENT_TYPE);
+  return getTriggerDisplayNameFromEventType(eventType);
 }
 
 // Workflow node parameters
-function getNodeDockerfilePath(parameterMap: Record<string, string>) {
-  return getWorkflowParameter(parameterMap, "dockerfile-path");
+function getNodeResourcePath(parameters: WorkflowSpecParameter[] | undefined) {
+  return getFromParameterArray(parameters, NODE_PARAM_RESOURCE_PATH);
 }
 
-function getWorkflowParameter(
+function getNodeTriggerDisplayName(
+  parameters: WorkflowSpecParameter[] | undefined,
+) {
+  const eventType = getFromParameterArray(parameters, NODE_PARAM_EVENT_TYPE);
+  return getTriggerDisplayNameFromEventType(eventType);
+}
+
+function getFromParameterMap(
   parameterMap: Record<string, string>,
   parameterKey: string,
 ) {
   const parameterValue = parameterMap[parameterKey];
   if (parameterValue == null) {
     throw new InvalidNodeError(
-      `did not find ${parameterKey} in workflow parameters`,
+      `did not find ${parameterKey} in workflow parameter map`,
     );
   }
   return parameterValue;
 }
 
-//
-// Contains functions to get workflow or workflow node parameters
-// Should be kept in sync with:
-// - https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
-//
-function getResourcePath(parameters: WorkflowSpecParameter[] | undefined) {
-  return getNodeParameter(parameters, "resource-path");
+function getFromParameterArray(
+  parameters: WorkflowSpecParameter[] | undefined,
+  parameterKey: string,
+) {
+  const parameter = parameters?.find((param) => param.name === parameterKey);
+  if (parameter == null) {
+    throw new InvalidNodeError(
+      `did not find ${parameterKey} in parameter array`,
+    );
+  }
+  return parameter.value;
 }
 
-function getTriggerDisplayName(
-  parameters: WorkflowSpecParameter[] | undefined,
-) {
-  const eventType = getNodeParameter(parameters, "event-type");
+function getTriggerDisplayNameFromEventType(eventType: string) {
   switch (eventType) {
     case "PR":
       return PR_DISPLAY_NAME;
@@ -126,17 +145,11 @@ function getTriggerDisplayName(
   }
 }
 
-function getNodeParameter(
-  parameters: WorkflowSpecParameter[] | undefined,
-  parameterKey: string,
-) {
-  const parameter = parameters?.find((param) => param.name === parameterKey);
-  if (parameter == null) {
-    throw new InvalidNodeError(
-      `did not find ${parameterKey} in node parameters`,
-    );
+class InvalidNodeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
-  return parameter.value;
 }
 
 export {
@@ -152,6 +165,8 @@ export {
   getWorkflowRevisionAuthor,
   getWorkflowRevisionNumber,
   getNodeDockerfilePath,
-  getResourcePath,
-  getTriggerDisplayName,
+  getNodeResourcePath,
+  getNodeTriggerDisplayName,
+  getMemoTriggerDisplayName,
+  getMemoResourcePath,
 };
