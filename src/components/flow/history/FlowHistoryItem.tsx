@@ -5,6 +5,7 @@ import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
 import { FlowHistoryStatusBadge } from "src/components/flow/history/FlowHistoryStatusBadge.tsx";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
+import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
@@ -126,15 +127,13 @@ function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
 
 // todo show branch name after this component
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
-  const { duration } = workflow.memo;
-  if (duration == null) {
-    return null;
-  }
-
+  const { duration, startedAt } = workflow.memo;
   return (
     <div className={styles.historySubtitleItem}>
       <i className="nf nf-fa-clock" />
-      <span className={styles.historySubtitleText}>{duration}</span>
+      <span className={styles.historySubtitleText}>
+        {duration ?? <ElapsedTime startedAt={startedAt} />}
+      </span>
     </div>
   );
 }
