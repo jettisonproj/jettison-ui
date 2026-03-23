@@ -22,7 +22,6 @@
 
 .historyTitleText {
   margin-left: 8px;
-  color: var(--text-color);
   font-family: var(--gh-font-family);
   font-weight: 500;
   letter-spacing: -0.31px;
@@ -76,7 +75,6 @@
   display: flex;
   margin-top: 9px;
   justify-content: space-between;
-  min-width: var(--content-width);
 }
 
 .actionIcon {

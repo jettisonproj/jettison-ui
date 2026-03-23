@@ -5,15 +5,17 @@ import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
 import { FlowHistoryStatusBadge } from "src/components/flow/history/FlowHistoryStatusBadge.tsx";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
+import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
+  getWorkflowRevisionRef,
   getWorkflowRevisionTitle,
 } from "src/utils/workflowUtil.ts";
-import { getRepoCommitLink } from "src/utils/gitUtil.ts";
+import { getRepoCommitLink, trimBranchPrefix } from "src/utils/gitUtil.ts";
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
@@ -97,6 +99,7 @@ function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
       <FlowHistoryAuthor workflow={workflow} />
       <FlowHistoryTimestamp workflow={workflow} />
       <FlowHistoryDuration workflow={workflow} />
+      <FlowHistoryBranch workflow={workflow} />
     </div>
   );
 }
@@ -124,17 +127,26 @@ function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-// todo show branch name after this component
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
-  const { duration } = workflow.memo;
-  if (duration == null) {
-    return null;
-  }
-
+  const { duration, startedAt } = workflow.memo;
   return (
     <div className={styles.historySubtitleItem}>
       <i className="nf nf-fa-clock" />
-      <span className={styles.historySubtitleText}>{duration}</span>
+      <span className={styles.historySubtitleText}>
+        {duration ?? <ElapsedTime startedAt={startedAt} />}
+      </span>
+    </div>
+  );
+}
+
+function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
+  const { parameterMap } = workflow.memo;
+  const revisionRef = getWorkflowRevisionRef(parameterMap);
+  const branch = trimBranchPrefix(revisionRef);
+  return (
+    <div className={styles.historySubtitleItem}>
+      <i className="nf nf-fa-code_branch" />
+      <span className={styles.historySubtitleText}>{branch}</span>
     </div>
   );
 }
