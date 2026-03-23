@@ -12,9 +12,10 @@ import {
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
+  getWorkflowRevisionRef,
   getWorkflowRevisionTitle,
 } from "src/utils/workflowUtil.ts";
-import { getRepoCommitLink } from "src/utils/gitUtil.ts";
+import { getRepoCommitLink, trimBranchPrefix } from "src/utils/gitUtil.ts";
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
@@ -98,6 +99,7 @@ function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
       <FlowHistoryAuthor workflow={workflow} />
       <FlowHistoryTimestamp workflow={workflow} />
       <FlowHistoryDuration workflow={workflow} />
+      <FlowHistoryBranch workflow={workflow} />
     </div>
   );
 }
@@ -125,7 +127,6 @@ function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-// todo show branch name after this component
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
   const { duration, startedAt } = workflow.memo;
   return (
@@ -134,6 +135,18 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
       <span className={styles.historySubtitleText}>
         {duration ?? <ElapsedTime startedAt={startedAt} />}
       </span>
+    </div>
+  );
+}
+
+function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
+  const { parameterMap } = workflow.memo;
+  const revisionRef = getWorkflowRevisionRef(parameterMap);
+  const branch = trimBranchPrefix(revisionRef);
+  return (
+    <div className={styles.historySubtitleItem}>
+      <i className="nf nf-fa-code_branch" />
+      <span className={styles.historySubtitleText}>{branch}</span>
     </div>
   );
 }
