@@ -1,25 +1,19 @@
 import { Link } from "react-router";
 
 import styles from "src/components/flow/history/FlowHistoryItem.module.css";
-import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
+import { FlowHistoryStatusBadge } from "src/components/flow/history/FlowHistoryStatusBadge.tsx";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { WorkflowPhase } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
-  getWorkflowRevisionNumber,
   getWorkflowRevisionTitle,
 } from "src/utils/workflowUtil.ts";
-import {
-  getDisplayCommit,
-  getRepoCommitLink,
-  getRepoPrLink,
-} from "src/utils/gitUtil.ts";
+import { getRepoCommitLink } from "src/utils/gitUtil.ts";
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
@@ -42,22 +36,21 @@ function FlowHistoryItem({
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   return (
     <div className={styles.historyItem}>
-      <div>
-        <FlowHistorySidebar isPrFlow={isPrFlow} workflow={workflow} />
-        <FlowHistoryContent
-          flowSteps={flowSteps}
-          workflow={workflow}
-          workflowBaseUrl={workflowBaseUrl}
-          isSelected={isSelected}
-          selectedNodeName={selectedNodeName}
-        />
-        <FlowHistoryDetails
-          repoOrg={repoOrg}
-          workflow={workflow}
-          flowBaseUrl={flowBaseUrl}
-          isSelected={isSelected}
-        />
-      </div>
+      <FlowHistoryTitle isPrFlow={isPrFlow} workflow={workflow} />
+      <FlowHistorySubtitle workflow={workflow} />
+      <FlowHistoryGrid
+        flowSteps={flowSteps}
+        workflow={workflow}
+        workflowBaseUrl={workflowBaseUrl}
+        isSelected={isSelected}
+        selectedNodeName={selectedNodeName}
+      />
+      <FlowHistoryDetails
+        repoOrg={repoOrg}
+        workflow={workflow}
+        flowBaseUrl={flowBaseUrl}
+        isSelected={isSelected}
+      />
       {isSelected && (
         <SelectedHistoryItem
           flowSteps={flowSteps}
@@ -69,21 +62,27 @@ function FlowHistoryItem({
   );
 }
 
-interface FlowHistorySidebarProps {
+interface FlowHistoryTitleProps {
   isPrFlow: boolean;
   workflow: Workflow;
 }
-function FlowHistorySidebar({ isPrFlow, workflow }: FlowHistorySidebarProps) {
+function FlowHistoryTitle({ isPrFlow, workflow }: FlowHistoryTitleProps) {
+  const { parameterMap } = workflow.memo;
+  const commit = getWorkflowRevision(parameterMap);
+  const repoUrl = getWorkflowRepo(parameterMap);
+  const commitLink = getRepoCommitLink(repoUrl, commit);
+  const title = getWorkflowRevisionTitle(parameterMap);
   return (
-    <div className={styles.historySidebar}>
-      <div>
-        <FlowHistoryStatus workflow={workflow} />
-        {isPrFlow && <FlowHistoryPR workflow={workflow} />}
-        {!isPrFlow && <FlowHistoryCommit workflow={workflow} />}
-      </div>
-      <FlowHistoryAuthor workflow={workflow} />
-      <FlowHistoryTimestamp workflow={workflow} />
-      <FlowHistoryDuration workflow={workflow} />
+    <div className={styles.historyTitle}>
+      <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
+      <a
+        href={commitLink}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.historyTitleText}
+      >
+        {title}
+      </a>
     </div>
   );
 }
@@ -91,62 +90,14 @@ function FlowHistorySidebar({ isPrFlow, workflow }: FlowHistorySidebarProps) {
 interface FlowHistoryFieldProps {
   workflow: Workflow;
 }
-function FlowHistoryStatus({ workflow }: FlowHistoryFieldProps) {
-  const { phase } = workflow.status;
-  switch (phase) {
-    case WorkflowPhase.Succeeded:
-      return <i className={`nf nf-fa-check_circle ${styles.successIcon}`} />;
-    case WorkflowPhase.Error:
-      return <i className={`nf nf-md-cancel ${styles.dangerIcon}`} />;
-    case WorkflowPhase.Failed:
-      return <i className={`nf nf-fa-warning ${styles.dangerIcon}`} />;
-    case WorkflowPhase.Running:
-      return <LoadIcon />;
-    case WorkflowPhase.Pending:
-      return <i className={`nf nf-fa-hourglass ${styles.statusIcon}`} />;
-    case WorkflowPhase.Unknown:
-      return <i className={`nf nf-fa-question_circle ${styles.statusIcon}`} />;
-    default:
-      phase satisfies never;
-      console.log("unknown workflow phase:");
-      console.log(phase);
-      return <i className={`nf nf-fa-question_circle ${styles.statusIcon}`} />;
-  }
-}
 
-function FlowHistoryPR({ workflow }: FlowHistoryFieldProps) {
-  const { parameterMap } = workflow.memo;
-  const repoUrl = getWorkflowRepo(parameterMap);
-  const prNumber = getWorkflowRevisionNumber(parameterMap);
-
-  const prLink = getRepoPrLink(repoUrl, prNumber);
+function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
   return (
-    <a
-      className={styles.historyCommitText}
-      href={prLink}
-      target="_blank"
-      rel="noreferrer"
-    >
-      #{prNumber}
-    </a>
-  );
-}
-
-function FlowHistoryCommit({ workflow }: FlowHistoryFieldProps) {
-  const { parameterMap } = workflow.memo;
-  const commit = getWorkflowRevision(parameterMap);
-  const repoUrl = getWorkflowRepo(parameterMap);
-  const displayCommit = getDisplayCommit(commit);
-  const commitLink = getRepoCommitLink(repoUrl, commit);
-  return (
-    <a
-      className={styles.historyCommitText}
-      href={commitLink}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {displayCommit}
-    </a>
+    <div className={styles.historySubtitle}>
+      <FlowHistoryAuthor workflow={workflow} />
+      <FlowHistoryTimestamp workflow={workflow} />
+      <FlowHistoryDuration workflow={workflow} />
+    </div>
   );
 }
 
@@ -154,25 +105,26 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const author = getWorkflowRevisionAuthor(parameterMap);
   return (
-    <div className={styles.sidebarItem}>
-      <i className="nf nf-fa-user" />
-      <span className={styles.historyAuthorText}>{author}</span>
+    <div className={styles.historySubtitleItem}>
+      <i className="nf nf-fa-user_o" />
+      <span className={styles.historySubtitleText}>{author}</span>
     </div>
   );
 }
 
 function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
   return (
-    <div className={styles.sidebarItem}>
-      <i className="nf nf-fa-clock" />
+    <div className={styles.historySubtitleLink}>
+      <i className="nf nf-fa-calendar_o" />
       <Timestamp
         date={workflow.memo.startedAt}
-        className={styles.timestampText}
+        className={styles.historySubtitleText}
       />
     </div>
   );
 }
 
+// todo show branch name after this component
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
   const { duration } = workflow.memo;
   if (duration == null) {
@@ -180,56 +132,10 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
   }
 
   return (
-    <div className={styles.sidebarItem}>
-      <i className="nf nf-fa-flag_o" />
-      <span className={styles.sidebarText}>{duration}</span>
+    <div className={styles.historySubtitleItem}>
+      <i className="nf nf-fa-clock" />
+      <span className={styles.historySubtitleText}>{duration}</span>
     </div>
-  );
-}
-
-interface FlowHistoryContentProps {
-  flowSteps: Step[];
-  workflow: Workflow;
-  workflowBaseUrl: string;
-  isSelected: boolean;
-  selectedNodeName: string;
-}
-function FlowHistoryContent({
-  flowSteps,
-  workflow,
-  workflowBaseUrl,
-  isSelected,
-  selectedNodeName,
-}: FlowHistoryContentProps) {
-  return (
-    <div className={styles.historyContent}>
-      <FlowHistoryTitle workflow={workflow} />
-      <FlowHistoryGrid
-        flowSteps={flowSteps}
-        workflow={workflow}
-        workflowBaseUrl={workflowBaseUrl}
-        isSelected={isSelected}
-        selectedNodeName={selectedNodeName}
-      />
-    </div>
-  );
-}
-
-function FlowHistoryTitle({ workflow }: FlowHistoryFieldProps) {
-  const { parameterMap } = workflow.memo;
-  const commit = getWorkflowRevision(parameterMap);
-  const repoUrl = getWorkflowRepo(parameterMap);
-  const commitLink = getRepoCommitLink(repoUrl, commit);
-  const title = getWorkflowRevisionTitle(parameterMap);
-  return (
-    <a
-      className={styles.historyTitle}
-      href={commitLink}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {title}
-    </a>
   );
 }
 
@@ -257,9 +163,9 @@ function FlowHistoryDetails({
 
   return (
     <div className={styles.historyDetails}>
-      <Link to={detailsUrl} className={styles.historyDetailsLink}>
+      <Link to={detailsUrl} className={styles.historySubtitleLink}>
         <i className={detailsIcon} />
-        <span className={styles.sidebarText}>See Details</span>
+        <span className={styles.historySubtitleText}>See Details</span>
       </Link>
       <FlowHistoryActions repoOrg={repoOrg} workflow={workflow} />
     </div>

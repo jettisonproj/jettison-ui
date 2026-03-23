@@ -1,105 +1,82 @@
-.statusIcon {
-  font-size: 16px;
-}
-
-.successIcon {
-  composes: statusIcon;
-
-  color: var(--success-color);
-}
-
-.dangerIcon {
-  composes: statusIcon;
-
-  color: var(--danger-color);
-}
-
+/* History Item */
 .historyItem {
   border-top: 1px solid var(--separator-color);
-  padding: 15px 0;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .historyItem:hover {
-  background-color: var(--table-color-hover);
+  background-color: var(--panel-color);
 }
 
-.historySidebar {
-  display: inline-flex;
-  flex-direction: column;
-  width: var(--history-sidebar-width);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebarItem {
-  color: var(--graph-text-color);
-  font-size: 12px;
-  font-weight: bolder;
-}
-
-.sidebarText {
-  margin-left: 5px;
-}
-
-.historyCommitText {
-  composes: sidebarText;
-
-  font-family: monospace;
-  color: var(--text-color);
-}
-
-.historyCommitText:hover {
-  text-decoration: underline;
-  color: var(--primary-color);
-}
-
-.timestampText {
-  composes: sidebarText;
-
-  cursor: pointer;
-}
-
-.timestampText:hover {
-  text-decoration: underline;
-}
-
-.historyAuthorText {
-  composes: sidebarText;
-
-  font-family: monospace;
-}
-
+/* Title Row */
 .historyTitle {
-  color: var(--text-color);
+  min-width: var(--content-width);
+  display: flex;
+  align-items: center;
   font-size: 16px;
   font-weight: bolder;
 }
 
-.historyContent {
-  margin-left: var(--history-content-margin-left);
-
-  display: inline-flex;
-  flex-direction: column;
+.historyTitleText {
+  margin-left: 8px;
+  color: var(--text-color);
+  font-family: var(--gh-font-family);
+  font-weight: 500;
+  letter-spacing: -0.31px;
+  color: var(--gh-text-color);
 }
 
-.historyDetails {
-  display: flex;
-  justify-content: space-between;
+.historyTitleText:hover {
+  text-decoration: underline;
+}
+
+/* Subtitle Row */
+.historySubtitle {
   min-width: var(--content-width);
+  display: flex;
+  margin-top: 7px;
 }
 
-.historyDetailsLink {
-  composes: sidebarItem;
+.historySubtitleItem {
+  color: var(--graph-text-color);
+  font-size: 14px;
+  font-weight: bolder;
+  padding: 6px 8px;
+}
 
+.historySubtitleItem:first-child {
+  margin-left: -8px;
+}
+
+.historySubtitleItem:not(:first-child) {
+  margin-left: 5px;
+}
+
+.historySubtitleText {
+  margin-left: 5px;
+}
+
+.historySubtitleLink {
+  composes: historySubtitleItem;
+
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.historyDetailsLink:hover {
-  text-decoration: underline;
+.historySubtitleLink:hover {
+  background-color: var(--panel-hover-color);
+}
+
+/* Details Expander Row */
+.historyDetails {
+  min-width: var(--content-width);
+  display: flex;
+  margin-top: 9px;
+  justify-content: space-between;
+  min-width: var(--content-width);
 }
 
 .actionIcon {
