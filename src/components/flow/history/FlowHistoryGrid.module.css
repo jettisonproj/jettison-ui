@@ -61,7 +61,10 @@
 }
 
 .historyGridNodeTitle {
-  margin-right: 5px;
   text-transform: uppercase;
   font-weight: bold;
+}
+
+.historyGridNodeDuration {
+  margin-left: 5px;
 }
