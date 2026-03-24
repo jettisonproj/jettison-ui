@@ -242,11 +242,19 @@ function NodeDuration({
 }: NodeDurationProps) {
   if (nodeDuration == null) {
     if (nodePhase === NodePhases.Running && nodeStartedAt != null) {
-      return <ElapsedTime startedAt={nodeStartedAt} />;
+      return (
+        <span className={styles.historyGridNodeDuration}>
+          <ElapsedTime startedAt={nodeStartedAt} />
+        </span>
+      );
     }
-    return "-";
+    return null;
   }
-  return nodeDuration;
+  return (
+    <span className={styles.historyGridNodeDuration}>
+      {nodeDuration}
+    </span>
+  );
 }
 
 class FlowHistoryGridError extends Error {
