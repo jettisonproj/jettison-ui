@@ -1,4 +1,5 @@
-import { useContext, useEffect, useRef, useState, ChangeEvent } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEvent } from "react";
 
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
@@ -15,6 +16,7 @@ import {
 import styles from "src/components/flow/history/selected/SelectedHistoryLogTab.module.css";
 
 const defaultContainerName = "main";
+const defaultContainerNames = [defaultContainerName];
 
 interface SelectedHistoryLogTabProps {
   workflowNamespace: string;
@@ -27,16 +29,10 @@ function SelectedHistoryLogTab({
   nodePhase,
 }: SelectedHistoryLogTabProps) {
   const [containerName, setContainerName] = useState(defaultContainerName);
-  const containerLogs = useContext(ContainerLogsContext);
 
   const onContainerNameChange = (ev: ChangeEvent<HTMLSelectElement>) => {
     setContainerName(ev.target.value);
   };
-
-  const logLines = containerLogs
-    ?.get(workflowNamespace)
-    ?.get(podName)
-    ?.get(containerName);
 
   // todo support container log sse
   return (
@@ -71,7 +67,6 @@ function SelectedHistoryLogTab({
         podName={podName}
         nodePhase={nodePhase}
         containerName={containerName}
-        logLines={logLines}
       />
     </>
   );
@@ -89,32 +84,26 @@ function SelectedHistoryContainerSelector({
   containerName,
   onContainerNameChange,
 }: SelectedHistoryContainerSelectorProps) {
-  const [containerNames, setContainerNames] = useState([defaultContainerName]);
   const pods = useContext(PodsContext);
+  const pod = pods?.get(workflowNamespace)?.get(podName);
 
-  useEffect(() => {
-    const pod = pods?.get(workflowNamespace)?.get(podName);
+  const podContainerNames = useMemo(() => {
     if (pod == null) {
-      return;
+      return defaultContainerNames;
     }
-    setContainerNames((oldContainerNames) => {
-      const podContainerNames = getContainerNames(pod.spec.containers);
-      const podInitContainerNames = getContainerNames(pod.spec.initContainers);
-      const newContainerNames = podContainerNames.concat(podInitContainerNames);
+    return getContainerNames(pod.spec.containers);
+  }, [pod]);
 
-      if (oldContainerNames.length !== newContainerNames.length) {
-        return newContainerNames;
-      }
+  const podInitContainerNames = useMemo(() => {
+    if (pod == null) {
+      return [];
+    }
+    return getContainerNames(pod.spec.initContainers);
+  }, [pod]);
 
-      for (let i = 0; i < oldContainerNames.length; i += 1) {
-        if (oldContainerNames[i] !== newContainerNames[i]) {
-          return newContainerNames;
-        }
-      }
-
-      return oldContainerNames;
-    });
-  }, [pods, workflowNamespace, podName]);
+  const containerNames = useMemo(() => {
+    return podContainerNames.concat(podInitContainerNames);
+  }, [podContainerNames, podInitContainerNames]);
 
   return (
     <select
@@ -141,18 +130,22 @@ function getContainerNames(containers: Container[]) {
 
 interface SelectedHistoryLogProps extends SelectedHistoryLogTabProps {
   containerName: string;
-  logLines: Set<string> | undefined;
 }
 function SelectedHistoryLog({
   workflowNamespace,
   podName,
   nodePhase,
   containerName,
-  logLines,
 }: SelectedHistoryLogProps) {
+  const containerLogs = useContext(ContainerLogsContext);
   const flowWebSocket = useContext(FlowWebSocketContext);
   const elementRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal | null>(null);
+
+  const logLines = containerLogs
+    ?.get(workflowNamespace)
+    ?.get(podName)
+    ?.get(containerName);
 
   /* Open xterm and set xtermRef */
   useEffect(() => {
