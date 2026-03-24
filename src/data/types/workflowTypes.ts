@@ -31,7 +31,7 @@ interface WorkflowSpecParameter {
 // computed / derived on the client
 interface WorkflowMemo {
   parameterMap: Record<string, string>;
-  startedAt: Date;
+  startedAt?: Date;
   finishedAt?: Date;
   duration?: string;
   nodes: Record<string, WorkflowMemoStatusNode>;
@@ -39,9 +39,9 @@ interface WorkflowMemo {
 }
 
 interface WorkflowStatus {
-  startedAt: string;
+  startedAt?: string;
   finishedAt?: string;
-  phase: WorkflowPhase;
+  phase?: WorkflowPhase;
   nodes?: Record<string, WorkflowStatusNode>;
 }
 

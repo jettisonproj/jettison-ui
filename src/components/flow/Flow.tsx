@@ -156,9 +156,20 @@ function FlowWorkflowsItem({
     if (workflows == null) {
       return [];
     }
-    return Array.from(workflows.values()).sort(
-      (a, b) => b.memo.startedAt.getTime() - a.memo.startedAt.getTime(),
-    );
+    return Array.from(workflows.values()).sort((a, b) => {
+      const bDate = b.memo.startedAt;
+      const aDate = a.memo.startedAt;
+      if (bDate == null && aDate == null) {
+        return 0;
+      }
+      if (bDate == null) {
+        return 1;
+      }
+      if (aDate == null) {
+        return -1;
+      }
+      return bDate.getTime() - aDate.getTime();
+    });
   }, [workflows]);
 
   const { trigger, isPrFlow } = flow.memo;

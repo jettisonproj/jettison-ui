@@ -116,13 +116,14 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
+  const { startedAt } = workflow.memo;
+  if (startedAt == null) {
+    return null;
+  }
   return (
     <div className={styles.historySubtitleLink}>
       <i className="nf nf-fa-calendar_o" />
-      <Timestamp
-        date={workflow.memo.startedAt}
-        className={styles.historySubtitleText}
-      />
+      <Timestamp date={startedAt} className={styles.historySubtitleText} />
     </div>
   );
 }
@@ -133,10 +134,27 @@ function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
     <div className={styles.historySubtitleItem}>
       <i className="nf nf-fa-clock" />
       <span className={styles.historySubtitleText}>
-        {duration ?? <ElapsedTime startedAt={startedAt} />}
+        <FlowHistoryDurationText duration={duration} startedAt={startedAt} />
       </span>
     </div>
   );
+}
+
+interface FlowHistoryDurationTextProps {
+  duration?: string;
+  startedAt?: Date;
+}
+function FlowHistoryDurationText({
+  duration,
+  startedAt,
+}: FlowHistoryDurationTextProps) {
+  if (duration != null) {
+    return duration;
+  }
+  if (startedAt != null) {
+    return <ElapsedTime startedAt={startedAt} />;
+  }
+  return "-";
 }
 
 function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
