@@ -38,7 +38,11 @@ function FlowHistoryItem({
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   return (
     <div className={styles.historyItem}>
-      <FlowHistoryTitle isPrFlow={isPrFlow} workflow={workflow} />
+      <FlowHistoryTitle
+        isPrFlow={isPrFlow}
+        workflow={workflow}
+        repoOrg={repoOrg}
+      />
       <FlowHistorySubtitle workflow={workflow} />
       <FlowHistoryGrid
         flowSteps={flowSteps}
@@ -48,7 +52,6 @@ function FlowHistoryItem({
         selectedNodeName={selectedNodeName}
       />
       <FlowHistoryDetails
-        repoOrg={repoOrg}
         workflow={workflow}
         flowBaseUrl={flowBaseUrl}
         isSelected={isSelected}
@@ -67,8 +70,13 @@ function FlowHistoryItem({
 interface FlowHistoryTitleProps {
   isPrFlow: boolean;
   workflow: Workflow;
+  repoOrg: string;
 }
-function FlowHistoryTitle({ isPrFlow, workflow }: FlowHistoryTitleProps) {
+function FlowHistoryTitle({
+  isPrFlow,
+  workflow,
+  repoOrg,
+}: FlowHistoryTitleProps) {
   const { parameterMap } = workflow.memo;
   const commit = getWorkflowRevision(parameterMap);
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -76,16 +84,63 @@ function FlowHistoryTitle({ isPrFlow, workflow }: FlowHistoryTitleProps) {
   const title = getWorkflowRevisionTitle(parameterMap);
   return (
     <div className={styles.historyTitle}>
-      <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
-      <a
-        href={commitLink}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.historyTitleText}
-      >
-        {title}
-      </a>
+      <div className={styles.historyTitleHeading}>
+        <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
+        <a
+          href={commitLink}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.historyTitleText}
+        >
+          {title}
+        </a>
+      </div>
+      <FlowHistoryMenu workflow={workflow} repoOrg={repoOrg} />
     </div>
+  );
+}
+
+interface FlowHistoryMenuProps {
+  workflow: Workflow;
+  repoOrg: string;
+}
+function FlowHistoryMenu({ workflow, repoOrg }: FlowHistoryMenuProps) {
+  const { name: workflowName } = workflow.metadata;
+  // The repoOrg and namespace are expected to match
+  const namespace = repoOrg;
+  return (
+    <>
+      <button
+        popoverTarget={workflowName}
+        className={`nf nf-fa-ellipsis ${styles.historyMenuIcon}`}
+      />
+      <div id={workflowName} className={styles.historyMenu} popover="auto">
+        <div className={styles.historyMenuItems}>
+          <a
+            className={styles.historyMenuItem}
+            href={`/api/v1/namespaces/${namespace}/workflows/${workflowName}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i
+              className={`nf nf-fa-file_text_o ${styles.historyMenuItemIcon}`}
+            />{" "}
+            View YAML
+          </a>
+          <a
+            className={styles.historyMenuItem}
+            href={`https://argo.osoriano.com/workflows/${namespace}/${workflowName}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i
+              className={`nf nf-fa-external_link ${styles.historyMenuItemIcon}`}
+            />{" "}
+            View in Workflow UI
+          </a>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -116,8 +171,9 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
-  const { startedAt } = workflow.memo;
-  if (startedAt == null) {
+  const { duration, startedAt } = workflow.memo;
+  if (duration == null || startedAt == null) {
+    // Hide if in progress (e.g. FlowHistoryDuration is active)
     return null;
   }
   return (
@@ -170,13 +226,11 @@ function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
 }
 
 interface FlowHistoryDetailsProps {
-  repoOrg: string;
   workflow: Workflow;
   flowBaseUrl: string;
   isSelected: boolean;
 }
 function FlowHistoryDetails({
-  repoOrg,
   workflow,
   flowBaseUrl,
   isSelected,
@@ -197,36 +251,6 @@ function FlowHistoryDetails({
         <i className={detailsIcon} />
         <span className={styles.historySubtitleText}>See Details</span>
       </Link>
-      <FlowHistoryActions repoOrg={repoOrg} workflow={workflow} />
-    </div>
-  );
-}
-
-interface FlowHistoryActionsProps {
-  repoOrg: string;
-  workflow: Workflow;
-}
-function FlowHistoryActions({ repoOrg, workflow }: FlowHistoryActionsProps) {
-  // The repoOrg and namespace are expected to match
-  const namespace = repoOrg;
-  return (
-    <div>
-      <a
-        href={`/api/v1/namespaces/${namespace}/workflows/${workflow.metadata.name}`}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.actionIcon}
-      >
-        <i className="nf nf-fa-file_text_o" />
-      </a>
-      <a
-        href={`https://argo.osoriano.com/workflows/${namespace}/${workflow.metadata.name}`}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.actionIcon}
-      >
-        <i className="nf nf-fa-external_link" />
-      </a>
     </div>
   );
 }

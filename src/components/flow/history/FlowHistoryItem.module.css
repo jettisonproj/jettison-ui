@@ -15,9 +15,14 @@
 .historyTitle {
   min-width: var(--content-width);
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   font-size: 16px;
   font-weight: bolder;
+}
+
+.historyTitleHeading {
+  display: flex;
+  align-items: center;
 }
 
 .historyTitleText {
@@ -30,6 +35,56 @@
 
 .historyTitleText:hover {
   text-decoration: underline;
+}
+
+.historyMenuIcon {
+  color: var(--graph-text-color);
+  font-size: 16px;
+  padding: 6px 8px;
+  margin-right: -8px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  visibility: hidden;
+}
+
+.historyMenuIcon:hover {
+  background-color: var(--panel-hover-color);
+}
+
+.historyItem:hover .historyMenuIcon {
+  visibility: visible;
+}
+
+/* Menu Popover*/
+.historyMenu {
+  margin: 0;
+  padding: 0;
+  inset: auto;
+  position-area: bottom left;
+  border: 1px solid var(--menu-border-color);
+  border-radius: 8px;
+  box-shadow: var(--menu-shadow);
+}
+
+.historyMenuItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.historyMenuItem {
+  color: var(--menu-text-color);
+  padding: 10px 14px;
+}
+
+.historyMenuItem:hover {
+  background-color: var(--panel-hover-color);
+  opacity: 0.8;
+}
+
+.historyMenuItemIcon {
+  margin-right: 8px;
 }
 
 /* Subtitle Row */
@@ -74,17 +129,4 @@
   min-width: var(--content-width);
   display: flex;
   margin-top: 9px;
-  justify-content: space-between;
-}
-
-.actionIcon {
-  color: var(--primary-color);
-}
-
-.actionIcon:not(:first-child) {
-  margin-left: 5px;
-}
-
-.actionIcon:hover {
-  text-shadow: var(--primary-shadow);
 }

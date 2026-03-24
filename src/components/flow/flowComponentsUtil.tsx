@@ -76,4 +76,6 @@ function getFlowStepNode(
   };
 }
 
+// todo move out when removing NodeDetails
+// eslint-disable-next-line react-refresh/only-export-components
 export { getFlowStepNode, getFlowTriggerNode, NODE_WIDTH };
