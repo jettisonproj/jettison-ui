@@ -1,6 +1,7 @@
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { StepSource } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
+import type { StepSource } from "src/data/types/flowTypes.ts";
 import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
 import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
@@ -35,10 +36,10 @@ function getFlowTriggerNode(
 
 function getStepHeight(stepSource: StepSource) {
   switch (stepSource) {
-    case StepSource.DockerBuildTest:
-    case StepSource.DockerBuildTestPublish:
+    case StepSources.DockerBuildTest:
+    case StepSources.DockerBuildTestPublish:
       return DOCKER_NODE_HEIGHT;
-    case StepSource.ArgoCD:
+    case StepSources.ArgoCD:
       return ARGO_NODE_HEIGHT;
     default:
       stepSource satisfies never;

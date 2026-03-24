@@ -21,8 +21,8 @@ import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 import type { WorkflowNode } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
-import { RolloutPhase } from "src/data/types/rolloutTypes.ts";
-import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
+import { RolloutPhases } from "src/data/types/rolloutTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 const SYNCED_STATUS = "Synced";
@@ -150,7 +150,7 @@ function FlowGraphArgoCDStepStatus({
   }
 
   for (const resource of application.status.resources) {
-    if (resource.kind === ResourceKind.Rollout.valueOf()) {
+    if (resource.kind === ResourceKinds.Rollout) {
       const { namespace, name } = resource;
       const rollout = rollouts.get(namespace)?.get(name);
       if (rollout == null) {
@@ -158,8 +158,8 @@ function FlowGraphArgoCDStepStatus({
         continue;
       }
       if (
-        rollout.status.phase !== RolloutPhase.Healthy &&
-        rollout.status.phase !== RolloutPhase.Paused
+        rollout.status.phase !== RolloutPhases.Healthy &&
+        rollout.status.phase !== RolloutPhases.Paused
       ) {
         rolloutHealthError = `Rollout status is ${rollout.status.phase}`;
       }
@@ -172,9 +172,8 @@ function FlowGraphArgoCDStepStatus({
       ) {
         rolloutSyncError = "Rollout versions are inconsistent";
       }
-      if (expectedRolloutVersion == null) {
-        expectedRolloutVersion = rolloutVersion;
-      }
+
+      expectedRolloutVersion ??= rolloutVersion;
     }
   }
 

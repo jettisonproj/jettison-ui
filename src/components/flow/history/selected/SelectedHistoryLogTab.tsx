@@ -3,9 +3,10 @@ import { useContext, useEffect, useRef, useState, ChangeEvent } from "react";
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 
-import { NodePhase } from "src/data/types/workflowTypes.ts";
-import { Container } from "src/data/types/podTypes.ts";
-import { FlowMessageType } from "src/providers/flowWebSocket.ts";
+import { NodePhases } from "src/data/types/workflowTypes.ts";
+import type { NodePhase } from "src/data/types/workflowTypes.ts";
+import type { Container } from "src/data/types/podTypes.ts";
+import { FlowMessageTypes } from "src/providers/flowWebSocket.ts";
 import {
   FlowWebSocketContext,
   PodsContext,
@@ -195,7 +196,7 @@ function SelectedHistoryLog({
     }
 
     flowWebSocket.send({
-      messageType: FlowMessageType.containerLog,
+      messageType: FlowMessageTypes.containerLog,
       messageData: {
         namespace: workflowNamespace,
         podName: podName,
@@ -209,9 +210,9 @@ function SelectedHistoryLog({
 
 function nodeLogsUnavailable(nodePhase: NodePhase) {
   return (
-    nodePhase === NodePhase.Pending ||
-    nodePhase === NodePhase.Skipped ||
-    nodePhase === NodePhase.Omitted
+    nodePhase === NodePhases.Pending ||
+    nodePhase === NodePhases.Skipped ||
+    nodePhase === NodePhases.Omitted
   );
 }
 

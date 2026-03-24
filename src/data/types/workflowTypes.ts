@@ -1,10 +1,8 @@
-import type {
-  ResourceKind,
-  NamespacedResource,
-} from "src/data/types/baseResourceTypes.ts";
+import type { NamespacedResource } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 
 interface Workflow extends NamespacedResource {
-  kind: ResourceKind.Workflow;
+  kind: typeof ResourceKinds.Workflow;
   spec: WorkflowSpec;
   status: WorkflowStatus;
   // The memo field is not actually sent by the server
@@ -77,53 +75,57 @@ interface WorkflowMemoStatusNode {
 }
 
 // SOT: https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#WorkflowPhase
-enum WorkflowPhase {
-  Unknown = "",
+const WorkflowPhases = {
+  Unknown: "",
   // pending some set-up - rarely used
-  Pending = "Pending",
+  Pending: "Pending",
   // any node has started; pods might not be running yet, the workflow maybe suspended too
-  Running = "Running",
-  Succeeded = "Succeeded",
+  Running: "Running",
+  Succeeded: "Succeeded",
   // it maybe that the workflow was terminated
-  Failed = "Failed",
-  Error = "Error",
-}
+  Failed: "Failed",
+  Error: "Error",
+} as const;
+type WorkflowPhase = (typeof WorkflowPhases)[keyof typeof WorkflowPhases];
 
 // SOT: https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodePhase
-enum NodePhase {
+const NodePhases = {
   // Node is waiting to run
-  Pending = "Pending",
+  Pending: "Pending",
   // Node is running
-  Running = "Running",
+  Running: "Running",
   // Node finished with no errors
-  Succeeded = "Succeeded",
+  Succeeded: "Succeeded",
   // Node was skipped
-  Skipped = "Skipped",
+  Skipped: "Skipped",
   // Node or child of node exited with non-0 code
-  Failed = "Failed",
+  Failed: "Failed",
   // Node had an error other than a non 0 exit code
-  Error = "Error",
+  Error: "Error",
   // Node was omitted because its `depends` condition was not met (only relevant in DAGs)
-  Omitted = "Omitted",
-}
+  Omitted: "Omitted",
+} as const;
+type NodePhase = (typeof NodePhases)[keyof typeof NodePhases];
 
 // SOT: https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#NodeType
 // Currently, only a subset is needed
-enum NodeType {
-  Pod = "Pod",
-  Container = "Container",
-  DAG = "DAG",
-  Skipped = "Skipped",
-}
+const NodeTypes = {
+  Pod: "Pod",
+  Container: "Container",
+  DAG: "DAG",
+  Skipped: "Skipped",
+} as const;
+type NodeType = (typeof NodeTypes)[keyof typeof NodeTypes];
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
-enum TemplateName {
-  GitHubCheckStart = "deploy-step-github-check-start",
-  DockerBuildTest = "docker-build-test",
-  DockerBuildTestPublish = "docker-build-test-publish",
-  ArgoCD = "deploy-step-argocd",
-  GitHubCheckComplete = "deploy-step-github-check-complete",
-}
+const TemplateNames = {
+  GitHubCheckStart: "deploy-step-github-check-start",
+  DockerBuildTest: "docker-build-test",
+  DockerBuildTestPublish: "docker-build-test-publish",
+  ArgoCD: "deploy-step-argocd",
+  GitHubCheckComplete: "deploy-step-github-check-complete",
+} as const;
+type TemplateName = (typeof TemplateNames)[keyof typeof TemplateNames];
 
 export type {
   Workflow,
@@ -131,4 +133,5 @@ export type {
   WorkflowMemoStatusNode,
   WorkflowSpecParameter,
 };
-export { WorkflowPhase, NodePhase, NodeType, TemplateName };
+export { WorkflowPhases, NodePhases, NodeTypes, TemplateNames };
+export type { WorkflowPhase, NodePhase, NodeType, TemplateName };

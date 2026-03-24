@@ -1,5 +1,5 @@
 import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
-import { NodeType } from "src/data/types/workflowTypes.ts";
+import { NodeTypes } from "src/data/types/workflowTypes.ts";
 
 const maxK8sResourceNameLength = 253;
 const k8sNamingHashLength = 10;
@@ -17,7 +17,7 @@ function getWorkflowPodName(
   // convert containerSet node name to its corresponding pod node name by removing the ".<containerName>" postfix
   // this part is from workflow/controller/container_set_template.go#executeContainerSet; the inverse never happens in the back-end, so is unique to the front-end
   const podNodeName =
-    node.type == NodeType.Container
+    node.type == NodeTypes.Container
       ? node.name.replace(/\.[^/.]+$/, "")
       : node.name;
   if (workflowName === podNodeName) {

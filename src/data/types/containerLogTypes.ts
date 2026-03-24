@@ -1,10 +1,8 @@
-import type {
-  ResourceKind,
-  NamespacedResource,
-} from "src/data/types/baseResourceTypes.ts";
+import type { NamespacedResource } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 
 interface ContainerLog extends NamespacedResource {
-  kind: ResourceKind.ContainerLog;
+  kind: typeof ResourceKinds.ContainerLog;
   spec: ContainerLogSpec;
 }
 

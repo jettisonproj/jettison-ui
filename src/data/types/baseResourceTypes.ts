@@ -1,11 +1,12 @@
-enum ResourceKind {
-  Flow = "Flow",
-  Application = "Application",
-  Rollout = "Rollout",
-  Workflow = "Workflow",
-  Pod = "Pod",
-  ContainerLog = "ContainerLog",
-}
+const ResourceKinds = {
+  Flow: "Flow",
+  Application: "Application",
+  Rollout: "Rollout",
+  Workflow: "Workflow",
+  Pod: "Pod",
+  ContainerLog: "ContainerLog",
+} as const;
+type ResourceKind = (typeof ResourceKinds)[keyof typeof ResourceKinds];
 
 interface BaseResource {
   kind: ResourceKind;
@@ -26,5 +27,5 @@ interface NamespacedResource extends BaseResource {
   metadata: NamespacedMetadata;
 }
 
-export type { BaseResource, NamespacedResource };
-export { ResourceKind };
+export type { BaseResource, NamespacedResource, ResourceKind };
+export { ResourceKinds };

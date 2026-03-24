@@ -1,6 +1,6 @@
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { StepSource } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
 
@@ -19,8 +19,8 @@ function FlowGraphStep({
   workflows,
 }: FlowGraphStepProps) {
   switch (step.stepSource) {
-    case StepSource.DockerBuildTest:
-    case StepSource.DockerBuildTestPublish:
+    case StepSources.DockerBuildTest:
+    case StepSources.DockerBuildTestPublish:
       return (
         <FlowGraphDockerStep
           repoOrg={repoOrg}
@@ -30,7 +30,7 @@ function FlowGraphStep({
           workflows={workflows}
         />
       );
-    case StepSource.ArgoCD:
+    case StepSources.ArgoCD:
       return (
         <FlowGraphArgoCDStep
           repoOrg={repoOrg}

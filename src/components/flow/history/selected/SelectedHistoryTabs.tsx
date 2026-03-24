@@ -5,7 +5,8 @@ import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import { Tabs } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import type { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import { SelectedHistorySummaryTab } from "src/components/flow/history/selected/SelectedHistorySummaryTab.tsx";
 import { getWorkflowPodName } from "src/components/flow/history/selected/getWorkflowPodName.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
@@ -60,7 +61,7 @@ function SelectedHistoryTabSelector({
 }: SelectedHistoryTabSelectorProps) {
   return (
     <div>
-      {Object.values(Tab).map((tab) => {
+      {Object.values(Tabs).map((tab) => {
         const tabClassName = concatStyles(
           styles.selectedHistoryTab,
           styles.selectedHistoryActiveTab,
@@ -101,9 +102,9 @@ function SelectedHistoryTab({
     );
   }
   switch (selectedTab) {
-    case Tab.summary:
+    case Tabs.summary:
       return <SelectedHistorySummaryTab selectedNode={selectedNode} />;
-    case Tab.logs:
+    case Tabs.logs:
       return (
         <Suspense fallback={<LoadIcon />}>
           <SelectedHistoryLogTab

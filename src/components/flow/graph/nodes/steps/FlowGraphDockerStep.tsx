@@ -24,7 +24,7 @@ import {
   getWorkflowRevision,
   getNodeDockerfilePath,
 } from "src/utils/workflowUtil.ts";
-import { StepSource } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphDockerStepProps {
   repoOrg: string;
@@ -101,9 +101,9 @@ function getDisplayEvent(
   step: DockerBuildTestStep | DockerBuildTestPublishStep,
 ) {
   switch (step.stepSource) {
-    case StepSource.DockerBuildTest:
+    case StepSources.DockerBuildTest:
       return BUILD_DISPLAY_NAME;
-    case StepSource.DockerBuildTestPublish:
+    case StepSources.DockerBuildTestPublish:
       return PUBLISH_DISPLAY_NAME;
     default:
       step satisfies never;

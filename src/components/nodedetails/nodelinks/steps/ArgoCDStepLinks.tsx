@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import { ApplicationsContext } from "src/providers/provider.tsx";
 import { getRepoPathLink, getRepoCommitLink } from "src/utils/gitUtil.ts";
-import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type {
   Application,
@@ -96,7 +96,7 @@ function getRolloutResource(application?: Application) {
   }
   const rolloutResources = [];
   for (const resource of application.status.resources) {
-    if (resource.kind === ResourceKind.Rollout.valueOf()) {
+    if (resource.kind === ResourceKinds.Rollout) {
       rolloutResources.push(resource);
     }
   }

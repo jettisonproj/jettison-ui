@@ -1,10 +1,8 @@
-import type {
-  ResourceKind,
-  NamespacedResource,
-} from "src/data/types/baseResourceTypes.ts";
+import type { NamespacedResource } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 
 interface Application extends NamespacedResource {
-  kind: ResourceKind.Application;
+  kind: typeof ResourceKinds.Application;
   spec: ApplicationSpec;
   status: ApplicationStatus;
 }

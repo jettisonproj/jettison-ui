@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback, useContext } from "react";
 
-import { TimestampFormat } from "src/localState.ts";
+import { TimestampFormats } from "src/localState.ts";
+import type { TimestampFormat } from "src/localState.ts";
 import { formatTimestamp, getNextTickSeconds } from "src/utils/dateUtil.ts";
 import {
   TimestampFormatContext,
@@ -9,12 +10,12 @@ import {
 
 function getNextTimestampFormat(timestampFormat: TimestampFormat) {
   switch (timestampFormat) {
-    case TimestampFormat.Relative:
-      return TimestampFormat.Locale;
-    case TimestampFormat.Locale:
-      return TimestampFormat.Iso;
-    case TimestampFormat.Iso:
-      return TimestampFormat.Relative;
+    case TimestampFormats.Relative:
+      return TimestampFormats.Locale;
+    case TimestampFormats.Locale:
+      return TimestampFormats.Iso;
+    case TimestampFormats.Iso:
+      return TimestampFormats.Relative;
     default:
       timestampFormat satisfies never;
       console.log("unknown timestamp format while calculating next");
@@ -35,13 +36,13 @@ function Timestamp({ date, className }: TimestampProps) {
 
   let formattedTimestamp;
   switch (timestampFormat) {
-    case TimestampFormat.Relative:
+    case TimestampFormats.Relative:
       formattedTimestamp = <RelativeTimestamp date={date} />;
       break;
-    case TimestampFormat.Locale:
+    case TimestampFormats.Locale:
       formattedTimestamp = date.toLocaleString();
       break;
-    case TimestampFormat.Iso:
+    case TimestampFormats.Iso:
       formattedTimestamp = date.toISOString();
       break;
     default:
@@ -73,7 +74,7 @@ function RelativeTimestamp({ date }: RelativeTimestampProps) {
 
   /* For this component, the source of truth is secondsElapsedRef,
    * which will sync its values with secondsElapsed after a timeout */
-  const secondsElapsedRef = useRef<number>(secondsElapsed);
+  const secondsElapsedRef = useRef(secondsElapsed);
   const timeoutRef = useRef<number | null>(null);
 
   const stopWatchTick = useCallback(() => {

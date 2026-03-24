@@ -1,8 +1,9 @@
-import {
+import { NodeTypes } from "src/data/types/workflowTypes.ts";
+import type {
   NodeType,
   WorkflowSpecParameter,
+  WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
@@ -21,15 +22,15 @@ const NODE_PARAM_RESOURCE_PATH = "resource-path";
 function isMemoizedNode(nodeType: NodeType) {
   switch (nodeType) {
     // Pods are either a Flow step/trigger or github status check
-    case NodeType.Pod:
+    case NodeTypes.Pod:
       return true;
     // Skipped nodes should be Pods. todo confirm this
-    case NodeType.Skipped:
+    case NodeTypes.Skipped:
       return true;
-    case NodeType.Container:
+    case NodeTypes.Container:
       // Containers are considered subtasks and do not map to a Flow step/trigger
       return false;
-    case NodeType.DAG:
+    case NodeTypes.DAG:
       // DAG is the top level workflow node and does not map to a Flow step/trigger
       return false;
     default:

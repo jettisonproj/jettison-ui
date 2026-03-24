@@ -1,5 +1,5 @@
 import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
-import { TriggerSource } from "src/data/types/flowTypes.ts";
+import { TriggerSources } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
@@ -38,9 +38,9 @@ function getFlowTrigger(flow: Flow): Trigger {
 /* Get whether the flow is a PR flow, based on the trigger type */
 function isPullRequestTrigger(trigger: Trigger) {
   switch (trigger.triggerSource) {
-    case TriggerSource.GitHubPush:
+    case TriggerSources.GitHubPush:
       return false;
-    case TriggerSource.GitHubPullRequest:
+    case TriggerSources.GitHubPullRequest:
       return true;
     default:
       trigger satisfies never;

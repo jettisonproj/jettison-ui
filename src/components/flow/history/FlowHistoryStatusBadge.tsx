@@ -1,6 +1,6 @@
 import styles from "src/components/flow/history/FlowHistoryStatusBadge.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { WorkflowPhase } from "src/data/types/workflowTypes.ts";
+import { WorkflowPhases } from "src/data/types/workflowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getWorkflowRepo,
@@ -42,17 +42,17 @@ interface FlowHistoryStatusIconProps {
 function FlowHistoryStatusIcon({ workflow }: FlowHistoryStatusIconProps) {
   const { phase } = workflow.status;
   switch (phase) {
-    case WorkflowPhase.Succeeded:
+    case WorkflowPhases.Succeeded:
       return <i className={`nf nf-fa-circle_check ${styles.successIcon}`} />;
-    case WorkflowPhase.Error:
+    case WorkflowPhases.Error:
       return <i className={`nf nf-md-cancel ${styles.dangerIcon}`} />;
-    case WorkflowPhase.Failed:
+    case WorkflowPhases.Failed:
       return <i className={`nf nf-fa-circle_xmark ${styles.dangerIcon}`} />;
-    case WorkflowPhase.Running:
+    case WorkflowPhases.Running:
       return <LoadIcon className={styles.loadingIcon} />;
-    case WorkflowPhase.Pending:
+    case WorkflowPhases.Pending:
       return <i className={`nf nf-fa-clock ${styles.badgeIcon}`} />;
-    case WorkflowPhase.Unknown:
+    case WorkflowPhases.Unknown:
       return <i className={`nf nf-fa-question_circle_o ${styles.badgeIcon}`} />;
     default:
       phase satisfies never;

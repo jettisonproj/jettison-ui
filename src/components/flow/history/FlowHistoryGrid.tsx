@@ -1,14 +1,15 @@
 import { Link } from "react-router";
 
-import { TemplateName } from "src/data/types/workflowTypes.ts";
-import { StepSource } from "src/data/types/flowTypes.ts";
+import { TemplateNames } from "src/data/types/workflowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
-import { NodePhase } from "src/data/types/workflowTypes.ts";
+import { NodePhases } from "src/data/types/workflowTypes.ts";
+import type { NodePhase } from "src/data/types/workflowTypes.ts";
 import { getDisplayRepoPath } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import {
@@ -63,7 +64,7 @@ function FlowHistoryGrid({
           key={flowDefaultStepName(nodePendingCreation)}
           nodeTitleName={getNodePendingCreationTitleName(nodePendingCreation)}
           nodeDisplayName={flowDefaultStepName(nodePendingCreation)}
-          nodePhase={NodePhase.Pending}
+          nodePhase={NodePhases.Pending}
           nodeDuration={undefined}
           nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
@@ -78,7 +79,7 @@ function FlowHistoryGrid({
           key={EXIT_NODE_NAME}
           nodeTitleName={EXIT_NODE_NAME}
           nodeDisplayName={EXIT_NODE_NAME}
-          nodePhase={NodePhase.Pending}
+          nodePhase={NodePhases.Pending}
           nodeDuration={undefined}
           nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
@@ -92,20 +93,20 @@ function FlowHistoryGrid({
 function getNodeTitleName(node: WorkflowMemoStatusNode) {
   const { template } = node.templateRef;
   switch (template) {
-    case TemplateName.GitHubCheckStart: {
+    case TemplateNames.GitHubCheckStart: {
       return getMemoTriggerDisplayName(node.parameterMap);
     }
-    case TemplateName.DockerBuildTest: {
+    case TemplateNames.DockerBuildTest: {
       return BUILD_DISPLAY_NAME;
     }
-    case TemplateName.DockerBuildTestPublish: {
+    case TemplateNames.DockerBuildTestPublish: {
       return PUBLISH_DISPLAY_NAME;
     }
-    case TemplateName.ArgoCD: {
+    case TemplateNames.ArgoCD: {
       const resourcePath = getMemoResourcePath(node.parameterMap);
       return getDisplayRepoPath(resourcePath, resourcePath);
     }
-    case TemplateName.GitHubCheckComplete: {
+    case TemplateNames.GitHubCheckComplete: {
       return EXIT_NODE_NAME;
     }
     default: {
@@ -119,13 +120,13 @@ function getNodeTitleName(node: WorkflowMemoStatusNode) {
 
 function getNodePendingCreationTitleName(nodePendingCreation: Step) {
   switch (nodePendingCreation.stepSource) {
-    case StepSource.DockerBuildTest: {
+    case StepSources.DockerBuildTest: {
       return BUILD_DISPLAY_NAME;
     }
-    case StepSource.DockerBuildTestPublish: {
+    case StepSources.DockerBuildTestPublish: {
       return PUBLISH_DISPLAY_NAME;
     }
-    case StepSource.ArgoCD: {
+    case StepSources.ArgoCD: {
       const { repoPath } = nodePendingCreation;
       return getDisplayRepoPath(repoPath, repoPath);
     }
@@ -166,36 +167,36 @@ function FlowHistoryGridItem({
   let iconComponent;
 
   switch (nodePhase) {
-    case NodePhase.Succeeded:
+    case NodePhases.Succeeded:
       itemClassName += ` ${styles.historyGridSuccess}`;
       iconComponent = (
         <i className={`nf nf-fa-circle_check ${styles.historyGridIcon}`} />
       );
       break;
-    case NodePhase.Error:
+    case NodePhases.Error:
       itemClassName += ` ${styles.historyGridDanger}`;
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
       );
       break;
-    case NodePhase.Failed:
+    case NodePhases.Failed:
       itemClassName += ` ${styles.historyGridDanger}`;
       iconComponent = (
         <i className={`nf nf-fa-circle_xmark ${styles.historyGridIcon}`} />
       );
       break;
-    case NodePhase.Running:
+    case NodePhases.Running:
       itemClassName += ` ${styles.historyGridRunning}`;
       iconComponent = <LoadIcon className={styles.historyGridIcon} />;
       break;
-    case NodePhase.Pending:
+    case NodePhases.Pending:
       itemClassName += ` ${styles.historyGridPending}`;
       iconComponent = (
         <i className={`nf nf-fa-clock ${styles.historyGridIcon}`} />
       );
       break;
-    case NodePhase.Skipped:
-    case NodePhase.Omitted:
+    case NodePhases.Skipped:
+    case NodePhases.Omitted:
       itemClassName += ` ${styles.historyGridPending}`;
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
@@ -240,7 +241,7 @@ function NodeDuration({
   nodeStartedAt,
 }: NodeDurationProps) {
   if (nodeDuration == null) {
-    if (nodePhase === NodePhase.Running && nodeStartedAt != null) {
+    if (nodePhase === NodePhases.Running && nodeStartedAt != null) {
       return <ElapsedTime startedAt={nodeStartedAt} />;
     }
     return "-";
