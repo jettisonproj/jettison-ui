@@ -5,7 +5,7 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { NodePhase } from "src/data/types/workflowTypes.ts";
+import { NodePhases } from "src/data/types/workflowTypes.ts";
 import { trimGitSuffix } from "src/utils/gitUtil.ts";
 import { TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
 import { getTriggerRoute } from "src/routes.ts";
@@ -88,8 +88,8 @@ function getLastWorkflowNode(
     // todo improve check
     if (
       node != null &&
-      node.phase !== NodePhase.Skipped &&
-      node.phase !== NodePhase.Omitted &&
+      node.phase !== NodePhases.Skipped &&
+      node.phase !== NodePhases.Omitted &&
       node.outputMap["docker-build-pr-status"] !== "Skipped" &&
       node.outputMap["docker-build-commit-status"] !== "Skipped"
     ) {

@@ -39,13 +39,13 @@ class FlowWebSocket {
 }
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
-enum FlowMessageType {
-  containerLog = "containerLog",
-}
+const FlowMessageTypes = {
+  containerLog: "containerLog",
+} as const;
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
 interface ContainerLogMessage {
-  messageType: FlowMessageType.containerLog;
+  messageType: typeof FlowMessageTypes.containerLog;
   messageData: {
     namespace: string;
     podName: string;
@@ -57,4 +57,4 @@ type FlowMessage = ContainerLogMessage;
 
 const flowWebSocket = new FlowWebSocket();
 
-export { flowWebSocket, FlowMessageType };
+export { flowWebSocket, FlowMessageTypes };

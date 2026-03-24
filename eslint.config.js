@@ -5,9 +5,10 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default tseslint.config(
-  { ignores: ["dist"] },
+export default defineConfig([
+  globalIgnores(["dist"]),
   {
     settings: { react: { version: "18.3" } },
     extends: [
@@ -53,4 +54,4 @@ export default tseslint.config(
     },
   },
   eslintConfigPrettier,
-);
+]);

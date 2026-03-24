@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router";
 
 import {
@@ -21,7 +21,8 @@ import type {
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { NodePhase } from "src/data/types/workflowTypes.ts";
+import { NodePhases } from "src/data/types/workflowTypes.ts";
+import type { NodePhase } from "src/data/types/workflowTypes.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 
@@ -146,19 +147,19 @@ interface FlowGraphPhaseProps {
 }
 function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
   switch (phase) {
-    case NodePhase.Succeeded:
+    case NodePhases.Succeeded:
       return null;
-    case NodePhase.Error:
+    case NodePhases.Error:
       return <i className={`nf nf-md-cancel ${styles.nodeDangerIcon}`} />;
-    case NodePhase.Failed:
+    case NodePhases.Failed:
       return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
-    case NodePhase.Running:
+    case NodePhases.Running:
       return <LoadIcon className={styles.nodeLoadIcon} />;
-    case NodePhase.Pending:
+    case NodePhases.Pending:
       return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
     // The Omitted / Skipped phases are expected to be filtered out
-    case NodePhase.Omitted:
-    case NodePhase.Skipped:
+    case NodePhases.Omitted:
+    case NodePhases.Skipped:
       return (
         <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
       );

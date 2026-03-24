@@ -1,4 +1,4 @@
-import { TemplateName } from "src/data/types/workflowTypes.ts";
+import { TemplateNames } from "src/data/types/workflowTypes.ts";
 import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
@@ -21,7 +21,7 @@ function WorkflowGraphNode({
   const { template } = node.templateRef;
   const className = getWorkflowGraphNodeClass(isSelected);
   switch (template) {
-    case TemplateName.GitHubCheckStart: {
+    case TemplateNames.GitHubCheckStart: {
       const triggerDisplayName = getNodeTriggerDisplayName(
         node.inputs?.parameters,
       );
@@ -34,7 +34,7 @@ function WorkflowGraphNode({
         />
       );
     }
-    case TemplateName.DockerBuildTest: {
+    case TemplateNames.DockerBuildTest: {
       return (
         <FlowGraphNode
           className={className}
@@ -44,7 +44,7 @@ function WorkflowGraphNode({
         />
       );
     }
-    case TemplateName.DockerBuildTestPublish: {
+    case TemplateNames.DockerBuildTestPublish: {
       return (
         <FlowGraphNode
           className={className}
@@ -54,7 +54,7 @@ function WorkflowGraphNode({
         />
       );
     }
-    case TemplateName.ArgoCD: {
+    case TemplateNames.ArgoCD: {
       const resourcePath = getNodeResourcePath(node.inputs?.parameters);
       return (
         <FlowGraphNode
@@ -65,9 +65,9 @@ function WorkflowGraphNode({
         />
       );
     }
-    case TemplateName.GitHubCheckComplete: {
+    case TemplateNames.GitHubCheckComplete: {
       throw new WorkflowGraphNodeError(
-        `invalid template to render: ${TemplateName.GitHubCheckComplete}`,
+        `invalid template to render: ${TemplateNames.GitHubCheckComplete}`,
       );
     }
     default: {

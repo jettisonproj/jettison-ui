@@ -2,7 +2,8 @@ import { createContext, useState, useEffect, useRef } from "react";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
-import { localState, TimestampFormat } from "src/localState.ts";
+import { localState } from "src/localState.ts";
+import type { TimestampFormat } from "src/localState.ts";
 import { flowWebSocket } from "src/providers/flowWebSocket.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Application } from "src/data/types/applicationTypes.ts";

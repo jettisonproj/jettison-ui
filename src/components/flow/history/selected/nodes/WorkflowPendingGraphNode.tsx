@@ -1,4 +1,4 @@
-import { StepSource } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
 import type { WorkflowPendingGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
@@ -17,7 +17,7 @@ function WorkflowPendingGraphNode({
 }: WorkflowPendingGraphNodeProps) {
   const className = getWorkflowGraphNodeClass(isSelected);
   switch (nodePendingCreation.stepSource) {
-    case StepSource.DockerBuildTest: {
+    case StepSources.DockerBuildTest: {
       return (
         <FlowGraphNode
           className={className}
@@ -27,7 +27,7 @@ function WorkflowPendingGraphNode({
         />
       );
     }
-    case StepSource.DockerBuildTestPublish: {
+    case StepSources.DockerBuildTestPublish: {
       return (
         <FlowGraphNode
           className={className}
@@ -37,7 +37,7 @@ function WorkflowPendingGraphNode({
         />
       );
     }
-    case StepSource.ArgoCD: {
+    case StepSources.ArgoCD: {
       const { repoPath } = nodePendingCreation;
       return (
         <FlowGraphNode

@@ -1,12 +1,13 @@
 const CONFIG_KEY = "jettison";
 
-enum TimestampFormat {
-  Relative = "Relative",
-  Locale = "Locale",
-  Iso = "Iso",
-}
+const TimestampFormats = {
+  Relative: "Relative",
+  Locale: "Locale",
+  Iso: "Iso",
+} as const;
+type TimestampFormat = (typeof TimestampFormats)[keyof typeof TimestampFormats];
 
-const defaultTimestampFormat = TimestampFormat.Relative;
+const defaultTimestampFormat = TimestampFormats.Relative;
 const defaultRecentRepos: string[] = [];
 
 interface LocalStateObject {
@@ -82,4 +83,5 @@ class LocalState {
 }
 
 const localState = new LocalState();
-export { localState, TimestampFormat };
+export { localState, TimestampFormats };
+export type { TimestampFormat };

@@ -7,13 +7,11 @@ import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { NodeType } from "src/data/types/workflowTypes.ts";
+import { NodeTypes } from "src/data/types/workflowTypes.ts";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { SelectedHistoryTabs } from "src/components/flow/history/selected/SelectedHistoryTabs.tsx";
-import {
-  Tab,
-  DEFAULT_TAB,
-} from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import { DEFAULT_TAB } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import type { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import type {
   FlowNode,
   FlowEdge,
@@ -269,13 +267,13 @@ function getEdgeDestinations(
     }
 
     switch (childNode.type) {
-      case NodeType.Skipped:
+      case NodeTypes.Skipped:
         edgeDestinations.push(childNode.displayName);
         break;
-      case NodeType.Pod:
+      case NodeTypes.Pod:
         edgeDestinations.push(childNode.displayName);
         break;
-      case NodeType.Container:
+      case NodeTypes.Container:
         if (childNode.children == null) {
           break;
         }
@@ -283,9 +281,9 @@ function getEdgeDestinations(
           children.push(subChild);
         }
         break;
-      case NodeType.DAG:
+      case NodeTypes.DAG:
         throw new SelectedHistoryItemError(
-          `unexpected ${NodeType.DAG} node edge ${child} in workflow ${workflowName}`,
+          `unexpected ${NodeTypes.DAG} node edge ${child} in workflow ${workflowName}`,
         );
       default:
         childNode.type satisfies never;
@@ -321,7 +319,7 @@ function parseTab(tabValue: string | null) {
   if (tabValue == null) {
     return DEFAULT_TAB;
   }
-  return Tab[tabValue as keyof typeof Tab];
+  return tabValue as Tab;
 }
 
 export { SelectedHistoryItem };

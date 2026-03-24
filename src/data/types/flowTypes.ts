@@ -1,10 +1,8 @@
-import type {
-  ResourceKind,
-  NamespacedResource,
-} from "src/data/types/baseResourceTypes.ts";
+import type { NamespacedResource } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 
 interface Flow extends NamespacedResource {
-  kind: ResourceKind.Flow;
+  kind: typeof ResourceKinds.Flow;
   spec: FlowSpec;
   // The memo field is not actually sent by the server
   // It contains memoized data computed in the client
@@ -23,11 +21,12 @@ interface FlowMemo {
   isPrFlow: boolean;
 }
 
-enum StepSource {
-  DockerBuildTest = "DockerBuildTest",
-  DockerBuildTestPublish = "DockerBuildTestPublish",
-  ArgoCD = "ArgoCD",
-}
+const StepSources = {
+  DockerBuildTest: "DockerBuildTest",
+  DockerBuildTestPublish: "DockerBuildTestPublish",
+  ArgoCD: "ArgoCD",
+} as const;
+type StepSource = (typeof StepSources)[keyof typeof StepSources];
 
 interface BaseStep {
   stepName?: string;
@@ -36,19 +35,19 @@ interface BaseStep {
 }
 
 interface DockerBuildTestStep extends BaseStep {
-  stepSource: StepSource.DockerBuildTest;
+  stepSource: typeof StepSources.DockerBuildTest;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface DockerBuildTestPublishStep extends BaseStep {
-  stepSource: StepSource.DockerBuildTestPublish;
+  stepSource: typeof StepSources.DockerBuildTestPublish;
   dockerfilePath?: string;
   dockerContextDir?: string;
 }
 
 interface ArgoCDStep extends BaseStep {
-  stepSource: StepSource.ArgoCD;
+  stepSource: typeof StepSources.ArgoCD;
   repoUrl: string;
   repoPath: string;
   baseRef?: string;
@@ -57,10 +56,11 @@ interface ArgoCDStep extends BaseStep {
 
 type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
 
-enum TriggerSource {
-  GitHubPullRequest = "GitHubPullRequest",
-  GitHubPush = "GitHubPush",
-}
+const TriggerSources = {
+  GitHubPullRequest: "GitHubPullRequest",
+  GitHubPush: "GitHubPush",
+} as const;
+type TriggerSource = (typeof TriggerSources)[keyof typeof TriggerSources];
 
 interface BaseTrigger {
   triggerName?: string;
@@ -68,14 +68,14 @@ interface BaseTrigger {
 }
 
 interface GitHubPullRequestTrigger extends BaseTrigger {
-  triggerSource: TriggerSource.GitHubPullRequest;
+  triggerSource: typeof TriggerSources.GitHubPullRequest;
   repoUrl: string;
   baseRef?: string;
   pullRequestEvents?: string[];
 }
 
 interface GitHubPushTrigger extends BaseTrigger {
-  triggerSource: TriggerSource.GitHubPush;
+  triggerSource: typeof TriggerSources.GitHubPush;
   repoUrl: string;
   baseRef?: string | undefined;
 }
@@ -99,4 +99,5 @@ export type {
   PushPrFlows,
 };
 
-export { TriggerSource, StepSource };
+export { TriggerSources, StepSources };
+export type { StepSource, TriggerSource };

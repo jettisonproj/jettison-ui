@@ -5,7 +5,7 @@ import { localState } from "src/localState.ts";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import type { Flow, Trigger } from "src/data/types/flowTypes.ts";
+import type { Flow as FlowType, Trigger } from "src/data/types/flowTypes.ts";
 import {
   getFlowStepNode,
   getFlowTriggerNode,
@@ -137,7 +137,7 @@ function FlowItem({
 interface FlowWorkflowsItemProps {
   repoOrg: string;
   repoName: string;
-  flow: Flow;
+  flow: FlowType;
   workflows: Map<string, Workflow> | undefined;
   flowBaseUrl: string;
   selectedWorkflow?: string;
@@ -191,7 +191,7 @@ function FlowWorkflowsItem({
 function getFlowNodes(
   repoOrg: string,
   repoName: string,
-  flow: Flow,
+  flow: FlowType,
   trigger: Trigger,
   isPrFlow: boolean,
   workflows: Workflow[],
@@ -212,7 +212,7 @@ function getFlowNodes(
   return [triggerNode].concat(stepNodes);
 }
 
-function getFlowEdges(flow: Flow, trigger: Trigger): FlowEdge[] {
+function getFlowEdges(flow: FlowType, trigger: Trigger): FlowEdge[] {
   const { steps } = flow.spec;
   let edgeIndex = 0;
   const triggerEdges = steps

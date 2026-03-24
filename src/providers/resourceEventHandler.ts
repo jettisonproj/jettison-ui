@@ -5,7 +5,7 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { Pod } from "src/data/types/podTypes.ts";
 import type { ContainerLog } from "src/data/types/containerLogTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
-import { ResourceKind } from "src/data/types/baseResourceTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import { appendGitSuffix, getRepoOrgName } from "src/utils/gitUtil.ts";
 import {
   memoizeFlow,
@@ -34,22 +34,22 @@ class ResourceEventHandler {
 
     for (const resourceEvent of resourceList.items) {
       switch (resourceEvent.kind) {
-        case ResourceKind.Flow:
+        case ResourceKinds.Flow:
           this.#flowEvents.push(resourceEvent);
           continue;
-        case ResourceKind.Application:
+        case ResourceKinds.Application:
           this.#applicationEvents.push(resourceEvent);
           continue;
-        case ResourceKind.Rollout:
+        case ResourceKinds.Rollout:
           this.#rolloutEvents.push(resourceEvent);
           continue;
-        case ResourceKind.Workflow:
+        case ResourceKinds.Workflow:
           this.#workflowEvents.push(resourceEvent);
           continue;
-        case ResourceKind.Pod:
+        case ResourceKinds.Pod:
           this.#podEvents.push(resourceEvent);
           continue;
-        case ResourceKind.ContainerLog:
+        case ResourceKinds.ContainerLog:
           this.#containerLogEvents.push(resourceEvent);
           continue;
         default:
@@ -430,9 +430,7 @@ class ResourceEventHandler {
           let updatedLogLines = null;
           for (const logLine of logLines) {
             if (!existingLogLines.has(logLine)) {
-              if (updatedLogLines == null) {
-                updatedLogLines = new Set(existingLogLines);
-              }
+              updatedLogLines ??= new Set(existingLogLines);
               updatedLogLines.add(logLine);
             }
           }

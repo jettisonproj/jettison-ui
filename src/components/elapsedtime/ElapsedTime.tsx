@@ -13,6 +13,9 @@ function ElapsedTime({ startedAt }: ElapsedTimeProps) {
 
   const stopWatchTick = useCallback(() => {
     setSecondsElapsed((prevSecondsElapsed) => prevSecondsElapsed + 1);
+    // Allow recursive call. Otherwise, gives the error:
+    // "Cannot access variable before it is declared"
+    // eslint-disable-next-line react-hooks/immutability
     timeoutRef.current = setTimeout(stopWatchTick, 1_000);
   }, [setSecondsElapsed]);
 
