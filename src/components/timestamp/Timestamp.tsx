@@ -84,6 +84,10 @@ function RelativeTimestamp({ date }: RelativeTimestampProps) {
       return;
     }
     secondsElapsedRef.current += nextTickSeconds;
+
+    // Allow recursive call. Otherwise, gives the error:
+    // "Cannot access variable before it is declared"
+    // eslint-disable-next-line react-hooks/immutability
     timeoutRef.current = setTimeout(stopWatchTick, nextTickSeconds * 1_000);
   }, [setSecondsElapsed]);
 

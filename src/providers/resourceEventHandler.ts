@@ -430,9 +430,7 @@ class ResourceEventHandler {
           let updatedLogLines = null;
           for (const logLine of logLines) {
             if (!existingLogLines.has(logLine)) {
-              if (updatedLogLines == null) {
-                updatedLogLines = new Set(existingLogLines);
-              }
+              updatedLogLines ??= new Set(existingLogLines);
               updatedLogLines.add(logLine);
             }
           }
