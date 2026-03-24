@@ -116,8 +116,9 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
-  const { startedAt } = workflow.memo;
-  if (startedAt == null) {
+  const { duration, startedAt } = workflow.memo;
+  if (duration == null || startedAt == null) {
+    // Hide if in progress (e.g. FlowHistoryDuration is active)
     return null;
   }
   return (
