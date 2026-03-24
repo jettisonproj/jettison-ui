@@ -116,24 +116,31 @@ function memoizeWorkflow(workflow: Workflow) {
     parameterMap[parameter.name] = parameter.value;
   });
 
-  // Memoize the startedAt string to a Date
-  const startedAt = new Date(workflow.status.startedAt);
   workflow.memo = {
     parameterMap,
-    startedAt,
     nodes,
     sortedNodes,
   };
+
+  // Memoize the startedAt string to a Date
+  const startedAt = workflow.status.startedAt;
+  if (startedAt != null) {
+    const startedAtDate = new Date(startedAt);
+    workflow.memo.startedAt = startedAtDate;
+  }
 
   // Memoize the finishedAt string to a Date. Also, memoize the duration
   const finishedAt = workflow.status.finishedAt;
   if (finishedAt != null) {
     const finishedAtDate = new Date(finishedAt);
-
     workflow.memo.finishedAt = finishedAtDate;
-    workflow.memo.duration = formatDurationFromMs(
-      finishedAtDate.getTime() - startedAt.getTime(),
-    );
+
+    const startedAtDate = workflow.memo.startedAt;
+    if (startedAtDate != null) {
+      workflow.memo.duration = formatDurationFromMs(
+        finishedAtDate.getTime() - startedAtDate.getTime(),
+      );
+    }
   }
 }
 

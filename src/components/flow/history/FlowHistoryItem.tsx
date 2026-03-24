@@ -116,25 +116,35 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
 }
 
 function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
+  const { startedAt } = workflow.memo;
+  const timestampComponent =
+    startedAt == null ? (
+      "-"
+    ) : (
+      <Timestamp date={startedAt} className={styles.historySubtitleText} />
+    );
   return (
     <div className={styles.historySubtitleLink}>
       <i className="nf nf-fa-calendar_o" />
-      <Timestamp
-        date={workflow.memo.startedAt}
-        className={styles.historySubtitleText}
-      />
+      {timestampComponent}
     </div>
   );
 }
 
 function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
   const { duration, startedAt } = workflow.memo;
+  let durationComponent;
+  if (duration != null) {
+    durationComponent = duration;
+  } else if (startedAt != null) {
+    durationComponent = <ElapsedTime startedAt={startedAt} />;
+  } else {
+    durationComponent = "-";
+  }
   return (
     <div className={styles.historySubtitleItem}>
       <i className="nf nf-fa-clock" />
-      <span className={styles.historySubtitleText}>
-        {duration ?? <ElapsedTime startedAt={startedAt} />}
-      </span>
+      <span className={styles.historySubtitleText}>{durationComponent}</span>
     </div>
   );
 }

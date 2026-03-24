@@ -50,10 +50,12 @@ function FlowHistoryStatusIcon({ workflow }: FlowHistoryStatusIconProps) {
       return <i className={`nf nf-fa-circle_xmark ${styles.dangerIcon}`} />;
     case WorkflowPhases.Running:
       return <LoadIcon className={styles.loadingIcon} />;
-    case WorkflowPhases.Pending:
-      return <i className={`nf nf-fa-clock ${styles.badgeIcon}`} />;
     case WorkflowPhases.Unknown:
       return <i className={`nf nf-fa-question_circle_o ${styles.badgeIcon}`} />;
+    case WorkflowPhases.Pending:
+    case null:
+    case undefined:
+      return <i className={`nf nf-fa-clock ${styles.badgeIcon}`} />;
     default:
       phase satisfies never;
       console.log("unknown workflow phase:");
