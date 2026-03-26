@@ -21,7 +21,7 @@ function FlowHistoryStatusBadge({
   isPrFlow,
   workflow,
 }: FlowHistoryStatusBadgeProps) {
-  const { title, href } = getStatusLinkData(isPrFlow, workflow);
+  const { title, href, textClassName } = getStatusLinkData(isPrFlow, workflow);
   return (
     <a
       className={styles.historyStatusBadge}
@@ -30,7 +30,7 @@ function FlowHistoryStatusBadge({
       rel="noreferrer"
     >
       <FlowHistoryStatusIcon workflow={workflow} />
-      <span className={styles.historyCommitText}>{title}</span>
+      <span className={textClassName}>{title}</span>
     </a>
   );
 }
@@ -74,6 +74,7 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
     return {
       title: `#${prNumber}`,
       href: prLink,
+      textClassName: styles.historyCommitPrText,
     };
   }
 
@@ -85,6 +86,7 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
   return {
     title: displayCommit,
     href: commitLink,
+    textClassName: styles.historyCommitText,
   };
 }
 
