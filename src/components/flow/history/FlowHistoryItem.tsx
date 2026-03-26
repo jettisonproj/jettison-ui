@@ -15,7 +15,17 @@ import {
   getWorkflowRevisionRef,
   getWorkflowRevisionTitle,
 } from "src/utils/workflowUtil.ts";
-import { getRepoCommitLink, trimBranchPrefix } from "src/utils/gitUtil.ts";
+import {
+  getRepoCommitLink,
+  getRepoPrLink,
+  trimBranchPrefix,
+} from "src/utils/gitUtil.ts";
+
+/**
+ * Matches the PR numbers in commit messages
+ * Example: "commit message (#53)"
+ */
+const PR_IN_COMMIT_TITLE_RE = /(#\d+)/;
 
 interface FlowHistoryItemProps {
   isPrFlow: boolean;
@@ -86,17 +96,53 @@ function FlowHistoryTitle({
     <div className={styles.historyTitle}>
       <div className={styles.historyTitleHeading}>
         <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
-        <a
-          href={commitLink}
-          target="_blank"
-          rel="noreferrer"
-          className={styles.historyTitleText}
-        >
-          {title}
-        </a>
+        {title.split(PR_IN_COMMIT_TITLE_RE).map((titlePart) => (
+          <FlowHistoryTitlePart
+            key={titlePart}
+            repoUrl={repoUrl}
+            titlePart={titlePart}
+            commitLink={commitLink}
+          />
+        ))}
       </div>
       <FlowHistoryMenu workflow={workflow} repoOrg={repoOrg} />
     </div>
+  );
+}
+
+interface FlowHistoryTitlePartProps {
+  repoUrl: string;
+  titlePart: string;
+  commitLink: string;
+}
+function FlowHistoryTitlePart({
+  repoUrl,
+  titlePart,
+  commitLink,
+}: FlowHistoryTitlePartProps) {
+  if (PR_IN_COMMIT_TITLE_RE.test(titlePart)) {
+    const prNumber = titlePart.substring(1);
+    const prLink = getRepoPrLink(repoUrl, prNumber);
+    return (
+      <a
+        href={prLink}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.historyTitlePrText}
+      >
+        {titlePart}
+      </a>
+    );
+  }
+  return (
+    <a
+      href={commitLink}
+      target="_blank"
+      rel="noreferrer"
+      className={styles.historyTitleText}
+    >
+      {titlePart}
+    </a>
   );
 }
 
