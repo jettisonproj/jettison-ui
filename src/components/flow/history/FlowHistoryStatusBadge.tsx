@@ -66,8 +66,8 @@ function FlowHistoryStatusIcon({ workflow }: FlowHistoryStatusIconProps) {
 function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
   const { parameterMap } = workflow.memo;
 
+  const repoUrl = getWorkflowRepo(parameterMap);
   if (isPrFlow) {
-    const repoUrl = getWorkflowRepo(parameterMap);
     const prNumber = getWorkflowRevisionNumber(parameterMap);
     const prLink = getRepoPrLink(repoUrl, prNumber);
 
@@ -78,7 +78,6 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
   }
 
   const commit = getWorkflowRevision(parameterMap);
-  const repoUrl = getWorkflowRepo(parameterMap);
   const displayCommit = getDisplayCommit(commit);
   const commitLink = getRepoCommitLink(repoUrl, commit);
 

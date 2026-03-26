@@ -26,7 +26,6 @@
 }
 
 .historyTitleText {
-  margin-left: 8px;
   font-family: var(--gh-font-family);
   font-weight: 500;
   letter-spacing: -0.31px;
@@ -35,6 +34,12 @@
 
 .historyTitleText:hover {
   text-decoration: underline;
+}
+
+.historyTitlePrText {
+  composes: historyTitleText;
+
+  color: var(--gh-link-color);
 }
 
 .historyMenuIcon {
