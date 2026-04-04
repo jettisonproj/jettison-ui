@@ -76,4 +76,9 @@ export {
   formatDurationFromSeconds,
   formatTimestamp,
   getNextTickSeconds,
+  MINUTE,
+  HOUR,
+  DAY,
+  MONTH,
+  YEAR,
 };
