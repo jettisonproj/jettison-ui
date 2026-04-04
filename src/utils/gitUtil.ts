@@ -116,7 +116,7 @@ function sortByRepoName(repoOrgNameA: string, repoOrgNameB: string) {
 }
 
 function getRepoLink(repoOrg: string, repoName: string) {
-  return `${GIT_PREFIX}/${repoOrg}/${repoName}`;
+  return `${GIT_PREFIX}${repoOrg}/${repoName}`;
 }
 
 /**
