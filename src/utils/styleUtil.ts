@@ -35,4 +35,4 @@ class StyleUtilError extends Error {
   }
 }
 
-export { concatStyles, concatOptionalStyle };
+export { concatStyles, concatOptionalStyle, StyleUtilError };
