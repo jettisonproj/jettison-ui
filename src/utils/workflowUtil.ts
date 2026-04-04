@@ -170,4 +170,5 @@ export {
   getNodeTriggerDisplayName,
   getMemoTriggerDisplayName,
   getMemoResourcePath,
+  InvalidNodeError,
 };
