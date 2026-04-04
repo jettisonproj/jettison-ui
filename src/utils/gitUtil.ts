@@ -140,4 +140,5 @@ export {
   getRepoOrgAndName,
   getRepoLink,
   sortByRepoName,
+  GitUtilError,
 };

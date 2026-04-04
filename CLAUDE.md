@@ -10,6 +10,7 @@ npm run build     # TypeScript check + Vite production build
 npm run lint      # ESLint + TypeScript check + Prettier format check
 npm run format    # Auto-format code with Prettier
 npm run preview   # Serve production build locally
+npm test          # Vitest unit tests with coverage
 ```
 
 **Integration test** (requires a running server):
@@ -18,7 +19,7 @@ npm run preview   # Serve production build locally
 ./tests/integration-test.sh <URL>
 ```
 
-There is no unit test framework configured. Type checking and linting serve as the primary static validation (`npm run lint`).
+Unit tests use [Vitest](https://vitest.dev/) with `assert` (Chai-style). Test files live alongside source files as `*.test.ts`. Target pure-logic `.ts` files — avoid React components and files with WebSocket or DOM side effects. Export error classes (e.g. `InvalidNodeError`, `GitUtilError`) so tests can assert on type and message.
 
 ## Architecture
 

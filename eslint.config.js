@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["dist"]),
+  globalIgnores(["coverage", "dist"]),
   {
     settings: { react: { version: "18.3" } },
     extends: [

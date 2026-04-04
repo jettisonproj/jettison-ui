@@ -6,7 +6,7 @@ RUN npm ci
 RUN npm run build
 
 FROM build as test
-RUN npm run lint
+RUN npm run lint && npm run test
 
 # Build the Integration Tests for the Go application
 FROM ubuntu:24.04 as integration-test
