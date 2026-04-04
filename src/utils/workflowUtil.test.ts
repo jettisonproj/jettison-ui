@@ -5,7 +5,10 @@ import {
   NodeTypes,
   TemplateNames,
 } from "src/data/types/workflowTypes.ts";
-import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
+import type {
+  NodeType,
+  WorkflowStatusNode,
+} from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import {
   EXIT_NODE_SUFFIX,
@@ -24,21 +27,6 @@ import {
   isMemoizedNode,
   isWorkflowGraphNode,
 } from "src/utils/workflowUtil.ts";
-
-function makeNode(
-  type: WorkflowStatusNode["type"],
-  displayName: string,
-): WorkflowStatusNode {
-  return {
-    id: "test-id",
-    name: "test-name",
-    displayName,
-    phase: NodePhases.Running,
-    type,
-    templateRef: { template: TemplateNames.GitHubCheckStart },
-    startedAt: "2026-01-01T00:00:00Z",
-  };
-}
 
 describe("isMemoizedNode", () => {
   it("returns true for Pod", () => {
@@ -59,7 +47,7 @@ describe("isMemoizedNode", () => {
 
   it("throws for an unknown node type", () => {
     assert.throws(
-      () => isMemoizedNode("Unknown" as WorkflowStatusNode["type"]),
+      () => isMemoizedNode("Unknown" as NodeType),
       InvalidNodeError,
       "unexpected node type in workflow",
     );
@@ -68,25 +56,26 @@ describe("isMemoizedNode", () => {
 
 describe("isWorkflowGraphNode", () => {
   it("returns true for a Pod node without the exit suffix", () => {
-    assert.isTrue(isWorkflowGraphNode(makeNode(NodeTypes.Pod, "build-step")));
+    const testNode = getTestNode(NodeTypes.Pod, "build-step");
+    assert.isTrue(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Pod node with the exit suffix", () => {
-    assert.isFalse(
-      isWorkflowGraphNode(
-        makeNode(NodeTypes.Pod, `build-step${EXIT_NODE_SUFFIX}`),
-      ),
+    const testNode = getTestNode(
+      NodeTypes.Pod,
+      `build-step${EXIT_NODE_SUFFIX}`,
     );
+    assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Container node", () => {
-    assert.isFalse(
-      isWorkflowGraphNode(makeNode(NodeTypes.Container, "build-step")),
-    );
+    const testNode = getTestNode(NodeTypes.Container, "internal-build-step");
+    assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a DAG node", () => {
-    assert.isFalse(isWorkflowGraphNode(makeNode(NodeTypes.DAG, "build-step")));
+    const testNode = getTestNode(NodeTypes.DAG, "build-step");
+    assert.isFalse(isWorkflowGraphNode(testNode));
   });
 });
 
@@ -128,6 +117,14 @@ describe("getWorkflowRevisionRef", () => {
       "refs/heads/main",
     );
   });
+
+  it("throws when revision-ref is missing", () => {
+    assert.throws(
+      () => getWorkflowRevisionRef({}),
+      InvalidNodeError,
+      "did not find revision-ref in workflow parameter map",
+    );
+  });
 });
 
 describe("getWorkflowRevisionTitle", () => {
@@ -135,6 +132,14 @@ describe("getWorkflowRevisionTitle", () => {
     assert.strictEqual(
       getWorkflowRevisionTitle({ "revision-title": "fix: bug" }),
       "fix: bug",
+    );
+  });
+
+  it("throws when revision-title is missing", () => {
+    assert.throws(
+      () => getWorkflowRevisionTitle({}),
+      InvalidNodeError,
+      "did not find revision-title in workflow parameter map",
     );
   });
 });
@@ -146,6 +151,14 @@ describe("getWorkflowRevisionAuthor", () => {
       "octocat",
     );
   });
+
+  it("throws when revision-author is missing", () => {
+    assert.throws(
+      () => getWorkflowRevisionAuthor({}),
+      InvalidNodeError,
+      "did not find revision-author in workflow parameter map",
+    );
+  });
 });
 
 describe("getWorkflowRevisionNumber", () => {
@@ -153,6 +166,14 @@ describe("getWorkflowRevisionNumber", () => {
     assert.strictEqual(
       getWorkflowRevisionNumber({ "revision-number": "42" }),
       "42",
+    );
+  });
+
+  it("throws when revision-number is missing", () => {
+    assert.throws(
+      () => getWorkflowRevisionNumber({}),
+      InvalidNodeError,
+      "did not find revision-number in workflow parameter map",
     );
   });
 });
@@ -164,29 +185,12 @@ describe("getNodeDockerfilePath", () => {
       "app/Dockerfile",
     );
   });
-});
 
-describe("getNodeResourcePath", () => {
-  it("returns the resource-path value from the parameter array", () => {
-    assert.strictEqual(
-      getNodeResourcePath([{ name: "resource-path", value: "/deploy/app" }]),
-      "/deploy/app",
-    );
-  });
-
-  it("throws when the parameter is missing from the array", () => {
+  it("throws when dockerfile-path is missing", () => {
     assert.throws(
-      () => getNodeResourcePath([]),
+      () => getNodeDockerfilePath({}),
       InvalidNodeError,
-      "did not find resource-path in parameter array",
-    );
-  });
-
-  it("throws when the parameter array is undefined", () => {
-    assert.throws(
-      () => getNodeResourcePath(undefined),
-      InvalidNodeError,
-      "did not find resource-path in parameter array",
+      "did not find dockerfile-path in workflow parameter map",
     );
   });
 });
@@ -230,6 +234,39 @@ describe("getMemoTriggerDisplayName", () => {
       "invalid event type for node: unknown",
     );
   });
+
+  it("throws when event-type is missing", () => {
+    assert.throws(
+      () => getMemoTriggerDisplayName({}),
+      InvalidNodeError,
+      "did not find event-type in workflow parameter map",
+    );
+  });
+});
+
+describe("getNodeResourcePath", () => {
+  it("returns the resource-path value from the parameter array", () => {
+    assert.strictEqual(
+      getNodeResourcePath([{ name: "resource-path", value: "/deploy/app" }]),
+      "/deploy/app",
+    );
+  });
+
+  it("throws when the parameter is missing from the array", () => {
+    assert.throws(
+      () => getNodeResourcePath([]),
+      InvalidNodeError,
+      "did not find resource-path in parameter array",
+    );
+  });
+
+  it("throws when the parameter array is undefined", () => {
+    assert.throws(
+      () => getNodeResourcePath(undefined),
+      InvalidNodeError,
+      "did not find resource-path in parameter array",
+    );
+  });
 });
 
 describe("getNodeTriggerDisplayName", () => {
@@ -255,4 +292,29 @@ describe("getNodeTriggerDisplayName", () => {
       "invalid event type for node: unknown",
     );
   });
+
+  it("throws when the parameter array is undefined", () => {
+    assert.throws(
+      () => getNodeTriggerDisplayName(undefined),
+      InvalidNodeError,
+      "did not find event-type in parameter array",
+    );
+  });
 });
+
+function getTestNode(
+  nodeType: NodeType,
+  displayName: string,
+): WorkflowStatusNode {
+  return {
+    id: "test-id",
+    name: "test-name",
+    displayName,
+    phase: NodePhases.Running,
+    type: nodeType,
+    templateRef: {
+      template: TemplateNames.GitHubCheckStart,
+    },
+    startedAt: "2026-01-01T00:00:00Z",
+  };
+}
