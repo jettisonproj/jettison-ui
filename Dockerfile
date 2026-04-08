@@ -1,22 +1,23 @@
+# Build the production assets
 FROM node:24 AS build
 
 WORKDIR /home/node
 COPY . .
-RUN npm ci
-RUN npm run build
+RUN npm ci && npm run build
 
+# Run unit and integration tsts
 FROM build as test
-RUN npm run lint && npm run test
+RUN npm run lint && \
+  npm run test && \
+  cd tests/e2e && \
+  npm ci && \
+  CI=true npm run test
 
-# Build the Integration Tests for the Go application
-FROM ubuntu:24.04 as integration-test
-RUN apt-get update && \
-  apt-get -y install curl && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists /var/cache/apt/archives
-WORKDIR /root
-COPY tests .
-CMD [ "./integration-test.sh" ]
+# Build the Integration Tests
+FROM tests as integration-test
+WORKDIR /home/node/tests/e2e
+ENV CI=true
+CMD [ "npm", "run", "test" ]
 
 FROM nginx:1.25.5-bookworm
 LABEL org.opencontainers.image.source=https://github.com/jettisonproj/jettison-ui
