@@ -13,10 +13,11 @@ npm run preview   # Serve production build locally
 npm test          # Vitest unit tests with coverage
 ```
 
-**Integration test** (requires a running server):
+**Integration test**
 
 ```bash
-./tests/integration-test.sh <URL>
+cd tests/e2e
+npm test
 ```
 
 Unit tests use [Vitest](https://vitest.dev/) with `assert` (Chai-style). Test files live alongside source files as `*.test.ts`. Target pure-logic `.ts` files — avoid React components and files with WebSocket or DOM side effects. Export error classes (e.g. `InvalidNodeError`, `GitUtilError`) so tests can assert on type and message.
