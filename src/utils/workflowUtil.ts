@@ -1,10 +1,14 @@
-import { NodeTypes } from "src/data/types/workflowTypes.ts";
+import { NodeTypes, NodePhases } from "src/data/types/workflowTypes.ts";
 import type {
   NodeType,
+  Workflow,
+  WorkflowMemoStatusNode,
   WorkflowSpecParameter,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
+import { flowDefaultStepName } from "src/data/data.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
 const EXIT_NODE_NAME = "on-exit";
@@ -146,6 +150,42 @@ function getTriggerDisplayNameFromEventType(eventType: string) {
   }
 }
 
+function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {
+  const stepName = flowDefaultStepName(step);
+  return getLastWorkflowNode(stepName, workflows);
+}
+
+function getLastWorkflowNodeForTrigger(workflows: Workflow[]) {
+  return getLastWorkflowNode(TRIGGER_NODE_NAME, workflows);
+}
+
+interface WorkflowNode {
+  workflow: Workflow;
+  node: WorkflowMemoStatusNode;
+}
+function getLastWorkflowNode(
+  nodeName: string,
+  workflows: Workflow[],
+): WorkflowNode | null {
+  if (workflows.length === 0) {
+    return null;
+  }
+  for (const workflow of workflows) {
+    const node = workflow.memo.nodes[nodeName];
+    // todo improve check
+    if (
+      node != null &&
+      node.phase !== NodePhases.Skipped &&
+      node.phase !== NodePhases.Omitted &&
+      node.outputMap["docker-build-pr-status"] !== "Skipped" &&
+      node.outputMap["docker-build-commit-status"] !== "Skipped"
+    ) {
+      return { workflow, node };
+    }
+  }
+  return null;
+}
+
 class InvalidNodeError extends Error {
   constructor(message: string) {
     super(message);
@@ -170,5 +210,9 @@ export {
   getNodeTriggerDisplayName,
   getMemoTriggerDisplayName,
   getMemoResourcePath,
+  getLastWorkflowNodeForStep,
+  getLastWorkflowNodeForTrigger,
   InvalidNodeError,
 };
+
+export type { WorkflowNode };

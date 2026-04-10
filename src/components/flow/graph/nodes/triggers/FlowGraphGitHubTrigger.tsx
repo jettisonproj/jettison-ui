@@ -5,16 +5,14 @@ import {
   FlowGraphLoading,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
-import {
-  getTriggerDetailsLink,
-  getLastWorkflowNodeForTrigger,
-} from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+import { getTriggerDetailsLink } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
+import { getLastWorkflowNodeForTrigger } from "src/utils/workflowUtil.ts";
 
 interface FlowGraphGitHubTriggerProps {
   repoOrg: string;
