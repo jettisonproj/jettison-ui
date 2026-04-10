@@ -1,11 +1,15 @@
 import { assert, describe, it } from "vitest";
 
-import { NodeTypes } from "src/data/types/workflowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
+import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
 import type { NodeType } from "src/data/types/workflowTypes.ts";
-import { getTestNode } from "src/utils/testUtil.ts";
+import { getTestNode, getTestWorkflow } from "src/utils/testUtil.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import {
   EXIT_NODE_SUFFIX,
+  getLastWorkflowNodeForStep,
+  getLastWorkflowNodeForTrigger,
   getMemoResourcePath,
   getMemoTriggerDisplayName,
   getNodeDockerfilePath,
@@ -20,6 +24,7 @@ import {
   InvalidNodeError,
   isMemoizedNode,
   isWorkflowGraphNode,
+  TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 
 describe("isMemoizedNode", () => {
@@ -50,25 +55,34 @@ describe("isMemoizedNode", () => {
 
 describe("isWorkflowGraphNode", () => {
   it("returns true for a Pod node without the exit suffix", () => {
-    const testNode = getTestNode("build-step", NodeTypes.Pod);
+    const testNode = getTestNode({
+      displayName: "build-step",
+      type: NodeTypes.Pod,
+    });
     assert.isTrue(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Pod node with the exit suffix", () => {
-    const testNode = getTestNode(
-      `build-step${EXIT_NODE_SUFFIX}`,
-      NodeTypes.Pod,
-    );
+    const testNode = getTestNode({
+      displayName: `build-step${EXIT_NODE_SUFFIX}`,
+      type: NodeTypes.Pod,
+    });
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Container node", () => {
-    const testNode = getTestNode("internal-build-step", NodeTypes.Container);
+    const testNode = getTestNode({
+      displayName: "internal-build-step",
+      type: NodeTypes.Container,
+    });
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a DAG node", () => {
-    const testNode = getTestNode("build-step", NodeTypes.DAG);
+    const testNode = getTestNode({
+      displayName: "build-step",
+      type: NodeTypes.DAG,
+    });
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 });
@@ -293,5 +307,216 @@ describe("getNodeTriggerDisplayName", () => {
       InvalidNodeError,
       "did not find event-type in parameter array",
     );
+  });
+});
+
+describe("getLastWorkflowNodeForTrigger", () => {
+  it("returns null for an empty workflow list", () => {
+    assert.isNull(getLastWorkflowNodeForTrigger([]));
+  });
+
+  it("returns null when the trigger node is not present in any workflow", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForTrigger([testWorkflow]));
+  });
+
+  it("returns the workflow and node when the trigger node exists", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: TRIGGER_NODE_NAME,
+        },
+      ],
+    });
+    const testNode = testWorkflow.memo.nodes[TRIGGER_NODE_NAME];
+    const result = getLastWorkflowNodeForTrigger([testWorkflow]);
+
+    assert.isNotNull(result);
+    assert.strictEqual(result.workflow, testWorkflow);
+
+    assert.isNotNull(testNode);
+    assert.strictEqual(result.node, testNode);
+  });
+});
+
+describe("getLastWorkflowNodeForStep", () => {
+  it("returns null for an empty workflow list", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    assert.isNull(getLastWorkflowNodeForStep(step, []));
+  });
+
+  it("returns null when no matching node", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "no-match-name",
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
+  });
+
+  it("returns null when the node phase is Skipped", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Skipped,
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
+  });
+
+  it("returns null when the node phase is Omitted", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Omitted,
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
+  });
+
+  it("returns null when docker-build-pr-status output is Skipped", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Succeeded,
+          outputs: {
+            parameters: [
+              {
+                name: "docker-build-pr-status",
+                value: "Skipped",
+              },
+            ],
+          },
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
+  });
+
+  it("returns null when docker-build-commit-status output is Skipped", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Succeeded,
+          outputs: {
+            parameters: [
+              {
+                name: "docker-build-commit-status",
+                value: "Skipped",
+              },
+            ],
+          },
+        },
+      ],
+    });
+    assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
+  });
+
+  it("looks up by stepSource by default", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Succeeded,
+        },
+      ],
+    });
+    const testNode = testWorkflow.memo.nodes["DockerBuildTest"];
+
+    const result = getLastWorkflowNodeForStep(step, [testWorkflow]);
+    assert.isNotNull(result);
+    assert.strictEqual(result.workflow, testWorkflow);
+
+    assert.isNotNull(testNode);
+    assert.strictEqual(result.node, testNode);
+  });
+
+  it("looks up by stepName if provided", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+      stepName: "custom-build-test",
+    };
+    const testWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "custom-build-test",
+          phase: NodePhases.Succeeded,
+        },
+      ],
+    });
+    const testNode = testWorkflow.memo.nodes["custom-build-test"];
+
+    const result = getLastWorkflowNodeForStep(step, [testWorkflow]);
+    assert.isNotNull(result);
+    assert.strictEqual(result.workflow, testWorkflow);
+
+    assert.isNotNull(testNode);
+    assert.strictEqual(result.node, testNode);
+  });
+
+  it("returns the first non-skipped match across multiple workflows", () => {
+    const step: Step = {
+      stepSource: StepSources.DockerBuildTest,
+    };
+    const skippedWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Skipped,
+        },
+      ],
+    });
+    const validWorkflow = getTestWorkflow({
+      workflowNodes: [
+        {
+          displayName: "DockerBuildTest",
+          phase: NodePhases.Succeeded,
+        },
+      ],
+    });
+    const validNode = validWorkflow.memo.nodes["DockerBuildTest"];
+    const result = getLastWorkflowNodeForStep(step, [
+      skippedWorkflow,
+      validWorkflow,
+    ]);
+    assert.isNotNull(result);
+    assert.strictEqual(result.workflow, validWorkflow);
+
+    assert.isNotNull(validNode);
+    assert.strictEqual(result.node, validNode);
   });
 });
