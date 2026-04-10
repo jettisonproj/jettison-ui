@@ -10,7 +10,10 @@ import type {
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { getTriggerDisplayName, getTriggerDetailsLink } from "src/utils/flowUtil.ts";
+import {
+  getTriggerDisplayName,
+  getTriggerDetailsLink,
+} from "src/utils/flowUtil.ts";
 import { getLastWorkflowNodeForTrigger } from "src/utils/workflowUtil.ts";
 
 interface FlowGraphGitHubTriggerProps {

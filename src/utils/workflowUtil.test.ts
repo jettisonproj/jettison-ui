@@ -1,11 +1,7 @@
 import { assert, describe, it } from "vitest";
 
-import {
-  NodeTypes,
-} from "src/data/types/workflowTypes.ts";
-import type {
-  NodeType,
-} from "src/data/types/workflowTypes.ts";
+import { NodeTypes } from "src/data/types/workflowTypes.ts";
+import type { NodeType } from "src/data/types/workflowTypes.ts";
 import { getTestNode } from "src/utils/testUtil.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import {

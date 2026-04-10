@@ -1,8 +1,6 @@
 import { assert, describe, it } from "vitest";
 
-import {
-  NodeTypes,
-} from "src/data/types/workflowTypes.ts";
+import { NodeTypes } from "src/data/types/workflowTypes.ts";
 import { getWorkflowPodName } from "src/components/flow/history/selected/getWorkflowPodName.ts";
 import { getTestNode } from "src/utils/testUtil.ts";
 

@@ -1,12 +1,8 @@
-import {
-  NodePhases,
-  TemplateNames,
-} from "src/data/types/workflowTypes.ts";
+import { NodePhases, TemplateNames } from "src/data/types/workflowTypes.ts";
 import type {
   NodeType,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-
 
 function getTestNode(
   displayName: string,
