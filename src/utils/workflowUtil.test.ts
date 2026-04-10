@@ -455,7 +455,7 @@ describe("getLastWorkflowNodeForStep", () => {
         },
       ],
     });
-    const testNode = testWorkflow.memo.nodes["DockerBuildTest"];
+    const testNode = testWorkflow.memo.nodes.DockerBuildTest;
 
     const result = getLastWorkflowNodeForStep(step, [testWorkflow]);
     assert.isNotNull(result);
@@ -508,7 +508,7 @@ describe("getLastWorkflowNodeForStep", () => {
         },
       ],
     });
-    const validNode = validWorkflow.memo.nodes["DockerBuildTest"];
+    const validNode = validWorkflow.memo.nodes.DockerBuildTest;
     const result = getLastWorkflowNodeForStep(step, [
       skippedWorkflow,
       validWorkflow,
