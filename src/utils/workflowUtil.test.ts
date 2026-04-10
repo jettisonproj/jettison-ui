@@ -1,14 +1,12 @@
 import { assert, describe, it } from "vitest";
 
 import {
-  NodePhases,
   NodeTypes,
-  TemplateNames,
 } from "src/data/types/workflowTypes.ts";
 import type {
   NodeType,
-  WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { getTestNode } from "src/utils/testUtil.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import {
   EXIT_NODE_SUFFIX,
@@ -56,25 +54,25 @@ describe("isMemoizedNode", () => {
 
 describe("isWorkflowGraphNode", () => {
   it("returns true for a Pod node without the exit suffix", () => {
-    const testNode = getTestNode(NodeTypes.Pod, "build-step");
+    const testNode = getTestNode("build-step", NodeTypes.Pod);
     assert.isTrue(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Pod node with the exit suffix", () => {
     const testNode = getTestNode(
-      NodeTypes.Pod,
       `build-step${EXIT_NODE_SUFFIX}`,
+      NodeTypes.Pod,
     );
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a Container node", () => {
-    const testNode = getTestNode(NodeTypes.Container, "internal-build-step");
+    const testNode = getTestNode("internal-build-step", NodeTypes.Container);
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 
   it("returns false for a DAG node", () => {
-    const testNode = getTestNode(NodeTypes.DAG, "build-step");
+    const testNode = getTestNode("build-step", NodeTypes.DAG);
     assert.isFalse(isWorkflowGraphNode(testNode));
   });
 });
@@ -301,20 +299,3 @@ describe("getNodeTriggerDisplayName", () => {
     );
   });
 });
-
-function getTestNode(
-  nodeType: NodeType,
-  displayName: string,
-): WorkflowStatusNode {
-  return {
-    id: "test-id",
-    name: "test-name",
-    displayName,
-    phase: NodePhases.Running,
-    type: nodeType,
-    templateRef: {
-      template: TemplateNames.GitHubCheckStart,
-    },
-    startedAt: "2026-01-01T00:00:00Z",
-  };
-}
