@@ -134,7 +134,7 @@ function getDisplayRepoPath(pathname: string, defaultValue: string) {
   }
 
   if (!lastPathnamePart) {
-    // If unable to find last path component, return the full url
+    // If unable to find the last path component, return the default value
     return defaultValue;
   }
 

@@ -27,7 +27,7 @@ function getTestNode({
     template: TemplateNames.DockerBuildTest,
   },
   startedAt = "2026-01-01T00:00:00Z",
-  outputs,
+  ...rest
 }: TestWorkflowStatusNode): WorkflowStatusNode {
   return {
     id,
@@ -37,7 +37,7 @@ function getTestNode({
     type,
     templateRef,
     startedAt,
-    outputs,
+    ...rest,
   };
 }
 
