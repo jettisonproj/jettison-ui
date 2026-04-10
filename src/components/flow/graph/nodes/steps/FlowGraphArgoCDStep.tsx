@@ -12,7 +12,7 @@ import {
   FlowGraphCommit,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
-import { getStepDetailsLink } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+import { getStepDetailsLink } from "src/utils/flowUtil.ts";
 import {
   getWorkflowRevision,
   getLastWorkflowNodeForStep,
