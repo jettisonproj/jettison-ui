@@ -3,6 +3,7 @@ import { assert, describe, it } from "vitest";
 import {
   appendGitSuffix,
   getDisplayCommit,
+  getDisplayRepoPath,
   getRepoCommitLink,
   getRepoCommitPathLink,
   getRepoLink,
@@ -177,6 +178,33 @@ describe("getRepoLink", () => {
       getRepoLink("org", "repo"),
       "https://github.com//org/repo",
     );
+  });
+});
+
+describe("getDisplayRepoPath", () => {
+  it("returns the last path component", () => {
+    assert.strictEqual(
+      getDisplayRepoPath("https://github.com/org/repo", "default"),
+      "repo",
+    );
+  });
+
+  it("strips .git suffix from the last path component", () => {
+    assert.strictEqual(
+      getDisplayRepoPath("https://github.com/org/repo.git", "default"),
+      "repo",
+    );
+  });
+
+  it("skips trailing slashes to find the last component", () => {
+    assert.strictEqual(
+      getDisplayRepoPath("https://github.com/org/repo/", "default"),
+      "repo",
+    );
+  });
+
+  it("returns the defaultValue when the pathname has no meaningful component", () => {
+    assert.strictEqual(getDisplayRepoPath("", "default"), "default");
   });
 });
 

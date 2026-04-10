@@ -10,7 +10,7 @@ import type {
 import { flowDefaultStepName } from "src/data/data.ts";
 import { NodePhases } from "src/data/types/workflowTypes.ts";
 import type { NodePhase } from "src/data/types/workflowTypes.ts";
-import { getDisplayRepoPath } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import {
   EXIT_NODE_NAME,

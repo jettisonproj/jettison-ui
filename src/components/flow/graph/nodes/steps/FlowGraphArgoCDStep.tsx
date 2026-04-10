@@ -4,7 +4,7 @@ import {
   ApplicationsContext,
   RolloutsContext,
 } from "src/providers/provider.tsx";
-import { getRepoPathLink } from "src/utils/gitUtil.ts";
+import { getRepoPathLink, getDisplayRepoPath } from "src/utils/gitUtil.ts";
 import {
   FlowGraphNode,
   FlowGraphLoading,
@@ -12,13 +12,12 @@ import {
   FlowGraphCommit,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import { getStepDetailsLink } from "src/utils/flowUtil.ts";
 import {
-  getDisplayRepoPath,
-  getStepDetailsLink,
+  getWorkflowRevision,
   getLastWorkflowNodeForStep,
-} from "src/components/flow/graph/nodes/graphNodeUtil.ts";
-import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
-import type { WorkflowNode } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+} from "src/utils/workflowUtil.ts";
+import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import { RolloutPhases } from "src/data/types/rolloutTypes.ts";

@@ -119,6 +119,29 @@ function getRepoLink(repoOrg: string, repoName: string) {
   return `${GIT_PREFIX}/${repoOrg}/${repoName}`;
 }
 
+/**
+ * Return the last path component as a shorthand for
+ * displaying the repo name
+ */
+function getDisplayRepoPath(pathname: string, defaultValue: string) {
+  const pathnameParts = pathname.split("/");
+
+  let lastPathnamePart = pathnameParts.pop();
+
+  // Handle potential trailing or duplicate slashes
+  while (!lastPathnamePart && pathnameParts.length > 0) {
+    lastPathnamePart = pathnameParts.pop();
+  }
+
+  if (!lastPathnamePart) {
+    // If unable to find the last path component, return the default value
+    return defaultValue;
+  }
+
+  // Remove the .git suffix for readability
+  return trimGitSuffix(lastPathnamePart);
+}
+
 class GitUtilError extends Error {
   constructor(message: string) {
     super(message);
@@ -140,5 +163,6 @@ export {
   getRepoOrgAndName,
   getRepoLink,
   sortByRepoName,
+  getDisplayRepoPath,
   GitUtilError,
 };

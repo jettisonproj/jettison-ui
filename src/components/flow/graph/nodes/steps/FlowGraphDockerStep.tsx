@@ -13,13 +13,11 @@ import type {
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getStepDetailsLink,
-  getLastWorkflowNodeForStep,
-} from "src/components/flow/graph/nodes/graphNodeUtil.ts";
-import {
   BUILD_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import {
+  getLastWorkflowNodeForStep,
   getWorkflowRepo,
   getWorkflowRevision,
   getNodeDockerfilePath,
