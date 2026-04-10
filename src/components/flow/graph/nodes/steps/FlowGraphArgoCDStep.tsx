@@ -4,7 +4,7 @@ import {
   ApplicationsContext,
   RolloutsContext,
 } from "src/providers/provider.tsx";
-import { getRepoPathLink } from "src/utils/gitUtil.ts";
+import { getRepoPathLink, getDisplayRepoPath } from "src/utils/gitUtil.ts";
 import {
   FlowGraphNode,
   FlowGraphLoading,
@@ -13,7 +13,6 @@ import {
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  getDisplayRepoPath,
   getStepDetailsLink,
   getLastWorkflowNodeForStep,
 } from "src/components/flow/graph/nodes/graphNodeUtil.ts";

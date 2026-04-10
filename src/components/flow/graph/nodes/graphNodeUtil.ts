@@ -6,32 +6,8 @@ import type {
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { NodePhases } from "src/data/types/workflowTypes.ts";
-import { trimGitSuffix } from "src/utils/gitUtil.ts";
 import { TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
 import { getTriggerRoute } from "src/routes.ts";
-
-/**
- * Return the last path component as a shorthand for
- * displaying the repo name
- */
-function getDisplayRepoPath(pathname: string, defaultValue: string) {
-  const pathnameParts = pathname.split("/");
-
-  let lastPathnamePart = pathnameParts.pop();
-
-  // Handle potential trailing or duplicate slashes
-  while (!lastPathnamePart && pathnameParts.length > 0) {
-    lastPathnamePart = pathnameParts.pop();
-  }
-
-  if (!lastPathnamePart) {
-    // If unable to find last path component, return the full url
-    return defaultValue;
-  }
-
-  // Remove the .git suffix for readability
-  return trimGitSuffix(lastPathnamePart);
-}
 
 function getTriggerDetailsLink(
   repoOrg: string,
@@ -100,7 +76,6 @@ function getLastWorkflowNode(
 }
 
 export {
-  getDisplayRepoPath,
   getTriggerDetailsLink,
   getStepDetailsLink,
   getLastWorkflowNodeForStep,

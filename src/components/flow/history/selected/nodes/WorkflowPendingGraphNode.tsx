@@ -7,7 +7,7 @@ import {
   BUILD_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
-import { getDisplayRepoPath } from "src/components/flow/graph/nodes/graphNodeUtil.ts";
+import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 
 function WorkflowPendingGraphNode({
