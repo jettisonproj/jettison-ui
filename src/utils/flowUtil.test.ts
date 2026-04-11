@@ -2,12 +2,16 @@ import { assert, describe, it } from "vitest";
 
 import { StepSources, TriggerSources } from "src/data/types/flowTypes.ts";
 import {
+  FlowUtilError,
   getTriggerDetailsLink,
   getTriggerDisplayName,
+  getFlowTrigger,
   getStepDetailsLink,
+  isPullRequestTrigger,
   PR_DISPLAY_NAME,
   PUSH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
+import { getTestFlow } from "src/utils/testUtil.ts";
 
 describe("getTriggerDisplayName", () => {
   it("returns PR display name for PR flows", () => {
@@ -79,5 +83,69 @@ describe("getStepDetailsLink", () => {
       getStepDetailsLink("org", "repo", false, step),
       "/flows/org/repo/push/DockerBuildTest",
     );
+  });
+});
+
+describe("getFlowTrigger", () => {
+  it("throws when there are no triggers", () => {
+    const flow = getTestFlow({});
+    assert.throws(
+      () => getFlowTrigger(flow),
+      FlowUtilError,
+      "expected 1 Flow trigger but got: 0",
+    );
+  });
+
+  it("throws when there are multiple triggers", () => {
+    const flow = getTestFlow({
+      triggers: [
+        {
+          triggerSource: TriggerSources.GitHubPush,
+          triggerName: "repo1-push",
+          repoUrl: "https://github.com/org/repo1",
+        },
+        {
+          triggerSource: TriggerSources.GitHubPush,
+          triggerName: "repo2-push",
+          repoUrl: "https://github.com/org/repo2",
+        },
+      ],
+    });
+    assert.throws(
+      () => getFlowTrigger(flow),
+      FlowUtilError,
+      "expected 1 Flow trigger but got: 2",
+    );
+  });
+  it("returns the single trigger", () => {
+    const flow = getTestFlow({
+      triggers: [
+        {
+          triggerSource: TriggerSources.GitHubPush,
+          repoUrl: "https://github.com/org/repo",
+        },
+      ],
+    });
+    const trigger = getFlowTrigger(flow);
+    assert.isNotNull(trigger);
+    assert.strictEqual(trigger, flow.spec.triggers[0]);
+  });
+});
+
+describe("isPullRequestTrigger", () => {
+  it("returns false for a push trigger", () => {
+    const trigger = {
+      triggerSource: TriggerSources.GitHubPush,
+      repoUrl: "https://github.com/org/repo",
+    };
+    assert.isFalse(isPullRequestTrigger(trigger));
+  });
+
+  it("returns true for a pull request trigger", () => {
+    const trigger = {
+      triggerSource: TriggerSources.GitHubPullRequest,
+      repoUrl: "https://github.com/org/repo",
+    };
+    assert.isTrue(isPullRequestTrigger(trigger));
   });
 });
