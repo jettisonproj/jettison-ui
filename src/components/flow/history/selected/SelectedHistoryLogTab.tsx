@@ -1,19 +1,19 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 
-import { NodePhases } from "src/data/types/workflowTypes.ts";
-import type { NodePhase } from "src/data/types/workflowTypes.ts";
+import styles from "src/components/flow/history/selected/SelectedHistoryLogTab.module.css";
 import type { Container } from "src/data/types/podTypes.ts";
+import type { NodePhase } from "src/data/types/workflowTypes.ts";
+import { NodePhases } from "src/data/types/workflowTypes.ts";
 import { FlowMessageTypes } from "src/providers/flowWebSocket.ts";
 import {
+  ContainerLogsContext,
   FlowWebSocketContext,
   PodsContext,
-  ContainerLogsContext,
 } from "src/providers/provider.tsx";
-import styles from "src/components/flow/history/selected/SelectedHistoryLogTab.module.css";
 
 const defaultContainerName = "main";
 const defaultContainerNames = [defaultContainerName];

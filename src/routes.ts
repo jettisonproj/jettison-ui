@@ -13,4 +13,4 @@ function getTriggerRoute(isPrFlow: boolean) {
   return pushTriggerRoute;
 }
 
-export { routes, pushTriggerRoute, prTriggerRoute, getTriggerRoute };
+export { getTriggerRoute, prTriggerRoute, pushTriggerRoute, routes };

@@ -1,8 +1,7 @@
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
-import { routes } from "src/routes.ts";
 import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
-import { getTriggerRoute } from "src/routes.ts";
+import { getTriggerRoute, routes } from "src/routes.ts";
 
 const BUILD_DISPLAY_NAME = "BUILD";
 const PUBLISH_DISPLAY_NAME = "PUBLISH";
@@ -84,14 +83,14 @@ class FlowUtilError extends Error {
 }
 
 export {
-  getTriggerDisplayName,
-  getTriggerDetailsLink,
-  getStepDetailsLink,
-  getFlowTrigger,
-  isPullRequestTrigger,
-  FlowUtilError,
-  PR_DISPLAY_NAME,
-  PUSH_DISPLAY_NAME,
   BUILD_DISPLAY_NAME,
+  FlowUtilError,
+  getFlowTrigger,
+  getStepDetailsLink,
+  getTriggerDetailsLink,
+  getTriggerDisplayName,
+  isPullRequestTrigger,
+  PR_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
+  PUSH_DISPLAY_NAME,
 };

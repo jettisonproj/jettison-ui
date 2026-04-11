@@ -88,16 +88,16 @@ interface PushPrFlows {
 }
 
 export type {
+  ArgoCDStep,
+  DockerBuildTestPublishStep,
+  DockerBuildTestStep,
   Flow,
-  Trigger,
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
-  Step,
-  DockerBuildTestStep,
-  DockerBuildTestPublishStep,
-  ArgoCDStep,
   PushPrFlows,
+  Step,
+  Trigger,
 };
 
-export { TriggerSources, StepSources };
+export { StepSources, TriggerSources };
 export type { StepSource, TriggerSource };

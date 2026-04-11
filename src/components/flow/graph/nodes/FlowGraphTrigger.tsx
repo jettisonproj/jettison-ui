@@ -1,7 +1,7 @@
-import type { Trigger } from "src/data/types/flowTypes.ts";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { FlowGraphGitHubTrigger } from "src/components/flow/graph/nodes/triggers/FlowGraphGitHubTrigger.tsx";
+import type { Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowGraphTriggerProps {
   repoOrg: string;

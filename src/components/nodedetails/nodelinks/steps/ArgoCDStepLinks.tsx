@@ -1,13 +1,13 @@
 import { useContext } from "react";
 
-import { ApplicationsContext } from "src/providers/provider.tsx";
-import { getRepoPathLink, getRepoCommitLink } from "src/utils/gitUtil.ts";
-import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
-import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type {
   Application,
   ApplicationStatusResource,
 } from "src/data/types/applicationTypes.ts";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
+import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
+import { ApplicationsContext } from "src/providers/provider.tsx";
+import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
 
 const ARGOCD_UI_URL = "https://argocd.osoriano.com";
 

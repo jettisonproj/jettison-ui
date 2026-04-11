@@ -5,5 +5,5 @@ const Tabs = {
 type Tab = (typeof Tabs)[keyof typeof Tabs];
 const DEFAULT_TAB = Tabs.summary;
 
-export { Tabs, DEFAULT_TAB };
+export { DEFAULT_TAB, Tabs };
 export type { Tab };

@@ -1,8 +1,8 @@
-import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
+import { getRepoTreeLink } from "src/utils/gitUtil.ts";
 
 interface GitHubTriggerLinksProps {
   trigger: GitHubPullRequestTrigger | GitHubPushTrigger;

@@ -1,7 +1,8 @@
-import { TemplateNames } from "src/data/types/workflowTypes.ts";
+import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
-import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import { TemplateNames } from "src/data/types/workflowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
@@ -11,7 +12,6 @@ import {
   getNodeResourcePath,
   getNodeTriggerDisplayName,
 } from "src/utils/workflowUtil.ts";
-import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 
 function WorkflowGraphNode({
   node,

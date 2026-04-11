@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef, useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
-import { TimestampFormats } from "src/localState.ts";
 import type { TimestampFormat } from "src/localState.ts";
-import { formatTimestamp, getNextTickSeconds } from "src/utils/dateUtil.ts";
+import { TimestampFormats } from "src/localState.ts";
 import {
-  TimestampFormatContext,
   SetTimestampFormatContext,
+  TimestampFormatContext,
 } from "src/providers/provider.tsx";
+import { formatTimestamp, getNextTickSeconds } from "src/utils/dateUtil.ts";
 
 function getNextTimestampFormat(timestampFormat: TimestampFormat) {
   switch (timestampFormat) {

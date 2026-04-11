@@ -1,28 +1,28 @@
-import {
-  FlowGraphNode,
-  FlowGraphCommit,
-  FlowGraphTimestamp,
-  FlowGraphLoading,
-} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
-import { getRepoCommitPathLink } from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import {
+  FlowGraphCommit,
+  FlowGraphLoading,
+  FlowGraphNode,
+  FlowGraphTimestamp,
+} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type {
-  DockerBuildTestStep,
   DockerBuildTestPublishStep,
+  DockerBuildTestStep,
 } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
-  getStepDetailsLink,
   BUILD_DISPLAY_NAME,
+  getStepDetailsLink,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
+import { getRepoCommitPathLink } from "src/utils/gitUtil.ts";
 import {
   getLastWorkflowNodeForStep,
+  getNodeDockerfilePath,
   getWorkflowRepo,
   getWorkflowRevision,
-  getNodeDockerfilePath,
 } from "src/utils/workflowUtil.ts";
-import { StepSources } from "src/data/types/flowTypes.ts";
 
 interface FlowGraphDockerStepProps {
   repoOrg: string;

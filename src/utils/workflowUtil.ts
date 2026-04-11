@@ -1,4 +1,5 @@
-import { NodeTypes, NodePhases } from "src/data/types/workflowTypes.ts";
+import { flowDefaultStepName } from "src/data/data.ts";
+import type { Step } from "src/data/types/flowTypes.ts";
 import type {
   NodeType,
   Workflow,
@@ -6,9 +7,8 @@ import type {
   WorkflowSpecParameter,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
-import { flowDefaultStepName } from "src/data/data.ts";
-import type { Step } from "src/data/types/flowTypes.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
 const EXIT_NODE_NAME = "on-exit";
@@ -194,25 +194,25 @@ class InvalidNodeError extends Error {
 }
 
 export {
-  isMemoizedNode,
-  isWorkflowGraphNode,
-  TRIGGER_NODE_NAME,
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
-  getWorkflowRepo,
-  getWorkflowRevision,
-  getWorkflowRevisionRef,
-  getWorkflowRevisionTitle,
-  getWorkflowRevisionAuthor,
-  getWorkflowRevisionNumber,
+  getLastWorkflowNodeForStep,
+  getLastWorkflowNodeForTrigger,
+  getMemoResourcePath,
+  getMemoTriggerDisplayName,
   getNodeDockerfilePath,
   getNodeResourcePath,
   getNodeTriggerDisplayName,
-  getMemoTriggerDisplayName,
-  getMemoResourcePath,
-  getLastWorkflowNodeForStep,
-  getLastWorkflowNodeForTrigger,
+  getWorkflowRepo,
+  getWorkflowRevision,
+  getWorkflowRevisionAuthor,
+  getWorkflowRevisionNumber,
+  getWorkflowRevisionRef,
+  getWorkflowRevisionTitle,
   InvalidNodeError,
+  isMemoizedNode,
+  isWorkflowGraphNode,
+  TRIGGER_NODE_NAME,
 };
 
 export type { WorkflowNode };

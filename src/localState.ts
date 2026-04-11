@@ -83,5 +83,5 @@ class LocalState {
 }
 
 const localState = new LocalState();
-export { localState, TimestampFormats };
+export { TimestampFormats, localState };
 export type { TimestampFormat };

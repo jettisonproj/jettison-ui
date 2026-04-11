@@ -1,10 +1,9 @@
-import type { Step, Trigger } from "src/data/types/flowTypes.ts";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { StepSources } from "src/data/types/flowTypes.ts";
-import type { StepSource } from "src/data/types/flowTypes.ts";
 import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
 import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
+import type { Step, StepSource, Trigger } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 const NODE_WIDTH = 268;
 const TRIGGER_NODE_HEIGHT = 115;

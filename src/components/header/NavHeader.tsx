@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { Link, NavLink } from "react-router";
 
-import {
-  routes,
-  pushTriggerRoute,
-  prTriggerRoute,
-  getTriggerRoute,
-} from "src/routes.ts";
 import styles from "src/components/header/NavHeader.module.css";
+import {
+  getTriggerRoute,
+  prTriggerRoute,
+  pushTriggerRoute,
+  routes,
+} from "src/routes.ts";
 
 /* NavHeader is under the Header and provides the navigation path */
 interface NavHeaderComponent {
@@ -162,4 +162,4 @@ class NavHeaderError extends Error {
   }
 }
 
-export { HomeNavHeader, ReposNavHeader, FlowNavHeader, NodeDetailsNavHeader };
+export { FlowNavHeader, HomeNavHeader, NodeDetailsNavHeader, ReposNavHeader };

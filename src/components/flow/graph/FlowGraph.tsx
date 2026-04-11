@@ -1,5 +1,5 @@
-import dagre from "@dagrejs/dagre";
 import type { GraphEdge, Node } from "@dagrejs/dagre";
+import dagre from "@dagrejs/dagre";
 import type { ReactNode } from "react";
 
 import styles from "src/components/flow/graph/FlowGraph.module.css";

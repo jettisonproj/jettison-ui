@@ -1,15 +1,15 @@
 import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
+import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
+import { TriggerSources } from "src/data/types/flowTypes.ts";
+import type {
+  Workflow,
+  WorkflowStatusNode,
+} from "src/data/types/workflowTypes.ts";
 import {
   NodePhases,
   NodeTypes,
   TemplateNames,
 } from "src/data/types/workflowTypes.ts";
-import type {
-  Workflow,
-  WorkflowStatusNode,
-} from "src/data/types/workflowTypes.ts";
-import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
-import { TriggerSources } from "src/data/types/flowTypes.ts";
 import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
 
 /**
@@ -108,4 +108,4 @@ function getTestFlow({
   };
 }
 
-export { getTestNode, getTestWorkflow, getTestFlow };
+export { getTestFlow, getTestNode, getTestWorkflow };

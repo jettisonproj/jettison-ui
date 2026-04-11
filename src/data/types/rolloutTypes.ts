@@ -23,5 +23,5 @@ const RolloutPhases = {
 } as const;
 type RolloutPhase = (typeof RolloutPhases)[keyof typeof RolloutPhases];
 
-export type { Rollout, RolloutPhase };
 export { RolloutPhases };
+export type { Rollout, RolloutPhase };

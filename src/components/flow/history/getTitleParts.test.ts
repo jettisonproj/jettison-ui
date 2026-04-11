@@ -17,7 +17,7 @@ describe("getTitleParts", () => {
     ]);
   });
 
-  it("splits a PR number in the middle into five parts", () => {
+  it("splits a PR number in the middle into three parts", () => {
     assert.deepEqual(getTitleParts("fix (#53) a bug"), [
       { titlePart: "fix (", isPrNumber: false },
       { titlePart: "#53", isPrNumber: true },
@@ -50,7 +50,7 @@ describe("getTitleParts", () => {
     ]);
   });
 
-  it("returns a single empty array for an empty string", () => {
+  it("returns an empty array for an empty string", () => {
     assert.isEmpty(getTitleParts(""));
   });
 });

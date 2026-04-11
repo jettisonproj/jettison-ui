@@ -1,7 +1,7 @@
+import { ArgoCDStepLinks } from "src/components/nodedetails/nodelinks/steps/ArgoCDStepLinks.tsx";
+import { DockerStepLinks } from "src/components/nodedetails/nodelinks/steps/DockerStepLinks.tsx";
 import type { Step, Trigger } from "src/data/types/flowTypes.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
-import { DockerStepLinks } from "src/components/nodedetails/nodelinks/steps/DockerStepLinks.tsx";
-import { ArgoCDStepLinks } from "src/components/nodedetails/nodelinks/steps/ArgoCDStepLinks.tsx";
 
 interface StepLinksProps {
   step: Step;

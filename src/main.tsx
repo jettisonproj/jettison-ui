@@ -1,14 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 
-import "src/main.css";
-import { routes } from "src/routes.ts";
 import { Flow } from "src/components/flow/Flow.tsx";
 import { Home } from "src/components/home/Home.tsx";
 import { NodeDetails } from "src/components/nodedetails/NodeDetails.tsx";
 import { Repos } from "src/components/repos/Repos.tsx";
+import "src/main.css";
 import { Provider } from "src/providers/provider.tsx";
+import { routes } from "src/routes.ts";
 
 createRoot(document.getElementById("root") as Element).render(
   <StrictMode>

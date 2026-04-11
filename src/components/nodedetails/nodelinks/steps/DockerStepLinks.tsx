@@ -1,10 +1,10 @@
-import type { Trigger } from "src/data/types/flowTypes.ts";
-import { getRepoPathLink } from "src/utils/gitUtil.ts";
 import { flowDefaultDockerfilePath } from "src/data/data.ts";
 import type {
-  DockerBuildTestStep,
   DockerBuildTestPublishStep,
+  DockerBuildTestStep,
+  Trigger,
 } from "src/data/types/flowTypes.ts";
+import { getRepoPathLink } from "src/utils/gitUtil.ts";
 
 interface DockerStepLinksProps {
   step: DockerBuildTestStep | DockerBuildTestPublishStep;

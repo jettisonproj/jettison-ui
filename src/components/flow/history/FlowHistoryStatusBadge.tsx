@@ -1,17 +1,17 @@
 import styles from "src/components/flow/history/FlowHistoryStatusBadge.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { WorkflowPhases } from "src/data/types/workflowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import {
-  getWorkflowRepo,
-  getWorkflowRevision,
-  getWorkflowRevisionNumber,
-} from "src/utils/workflowUtil.ts";
+import { WorkflowPhases } from "src/data/types/workflowTypes.ts";
 import {
   getDisplayCommit,
   getRepoCommitLink,
   getRepoPrLink,
 } from "src/utils/gitUtil.ts";
+import {
+  getWorkflowRepo,
+  getWorkflowRevision,
+  getWorkflowRevisionNumber,
+} from "src/utils/workflowUtil.ts";
 
 interface FlowHistoryStatusBadgeProps {
   isPrFlow: boolean;

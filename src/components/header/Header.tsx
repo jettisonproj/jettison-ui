@@ -1,8 +1,8 @@
 import { Link } from "react-router";
 
+import styles from "src/components/header/Header.module.css";
 import { routes } from "src/routes.ts";
 import jettisonLogo from "/jettison.svg";
-import styles from "src/components/header/Header.module.css";
 
 /* Header is the fixed header at the top */
 function Header() {

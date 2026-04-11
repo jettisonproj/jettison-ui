@@ -6,9 +6,9 @@ import type {
 import { formatDurationFromMs } from "src/utils/dateUtil.ts";
 import { getFlowTrigger, isPullRequestTrigger } from "src/utils/flowUtil.ts";
 import {
-  isMemoizedNode,
-  EXIT_NODE_SUFFIX,
   EXIT_NODE_NAME,
+  EXIT_NODE_SUFFIX,
+  isMemoizedNode,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
 
@@ -136,8 +136,8 @@ function getMemoDisplayName(displayName: string) {
 }
 
 export {
+  getMemoDisplayName,
   memoizeFlow,
   memoizeWorkflow,
-  getMemoDisplayName,
   workflowMemoNodeCompareFn,
 };

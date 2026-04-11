@@ -1,18 +1,18 @@
-import {
-  FlowGraphNode,
-  FlowGraphCommit,
-  FlowGraphTimestamp,
-  FlowGraphLoading,
-} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import {
+  FlowGraphCommit,
+  FlowGraphLoading,
+  FlowGraphNode,
+  FlowGraphTimestamp,
+} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type {
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
 } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
-  getTriggerDisplayName,
   getTriggerDetailsLink,
+  getTriggerDisplayName,
 } from "src/utils/flowUtil.ts";
 import { getLastWorkflowNodeForTrigger } from "src/utils/workflowUtil.ts";
 

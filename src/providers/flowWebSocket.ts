@@ -57,4 +57,4 @@ type FlowMessage = ContainerLogMessage;
 
 const flowWebSocket = new FlowWebSocket();
 
-export { flowWebSocket, FlowMessageTypes };
+export { FlowMessageTypes, flowWebSocket };
