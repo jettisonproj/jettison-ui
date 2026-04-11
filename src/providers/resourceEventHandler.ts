@@ -96,13 +96,13 @@ class ResourceEventHandler {
     const recreatedRepos = new Set();
 
     for (const flowEvent of this.#flowEvents) {
-      const memoizedFlowEvent = memoizeFlow(flowEvent);
-      const { trigger, isPrFlow } = memoizedFlowEvent.memo;
+      memoizeFlow(flowEvent);
+      const { trigger, isPrFlow } = flowEvent.memo;
       const { repoUrl } = trigger;
       const repoOrgName = getRepoOrgName(repoUrl);
       const pushPrFlows = newFlows.get(repoOrgName);
 
-      if (this.#isDeleteEvent(memoizedFlowEvent)) {
+      if (this.#isDeleteEvent(flowEvent)) {
         if (pushPrFlows == null) {
           // The repoOrgName does not exist. Skip deletion
           continue;
@@ -155,9 +155,9 @@ class ResourceEventHandler {
         }
 
         if (isPrFlow) {
-          newPushPrFlows.prFlow = memoizedFlowEvent;
+          newPushPrFlows.prFlow = flowEvent;
         } else {
-          newPushPrFlows.pushFlow = memoizedFlowEvent;
+          newPushPrFlows.pushFlow = flowEvent;
         }
       }
     }

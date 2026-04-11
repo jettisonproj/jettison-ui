@@ -8,6 +8,8 @@ import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
+import { TriggerSources } from "src/data/types/flowTypes.ts";
 import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
 
 /**
@@ -79,4 +81,31 @@ function getTestWorkflow({
   return testWorkflow;
 }
 
-export { getTestNode, getTestWorkflow };
+interface TestFlow {
+  flowName?: string;
+  steps?: Step[];
+  triggers?: Trigger[];
+}
+function getTestFlow({
+  flowName = "test-flow",
+  steps = [],
+  triggers = [],
+}: TestFlow): Flow {
+  return {
+    kind: ResourceKinds.Flow,
+    metadata: {
+      namespace: "default",
+      name: flowName,
+    },
+    spec: { steps, triggers },
+    memo: {
+      trigger: {
+        triggerSource: TriggerSources.GitHubPush,
+        repoUrl: "https://github.com/org/repo",
+      },
+      isPrFlow: false,
+    },
+  };
+}
+
+export { getTestNode, getTestWorkflow, getTestFlow };
