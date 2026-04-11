@@ -43,22 +43,27 @@ function FlowHistoryGrid({
     (flowStep) => workflow.memo.nodes[flowDefaultStepName(flowStep)] == null,
   );
 
-  const exitNodePendingCreation = workflow.memo.nodes[EXIT_NODE_NAME] == null;
-
   return (
     <div className={styles.historyGrid}>
-      {workflow.memo.sortedNodes.map((node) => (
-        <FlowHistoryGridItem
-          key={node.displayName}
-          nodeTitleName={getNodeTitleName(node)}
-          nodeDisplayName={node.displayName}
-          nodePhase={node.phase}
-          nodeDuration={node.duration}
-          nodeStartedAt={node.startedAt}
-          workflowBaseUrl={workflowBaseUrl}
-          isSelected={isSelected && selectedNodeName === node.displayName}
-        />
-      ))}
+      {workflow.memo.sortedNodes
+        .filter(
+          (node) =>
+            node.displayName !== EXIT_NODE_NAME ||
+            node.phase === NodePhases.Error ||
+            node.phase === NodePhases.Failed,
+        )
+        .map((node) => (
+          <FlowHistoryGridItem
+            key={node.displayName}
+            nodeTitleName={getNodeTitleName(node)}
+            nodeDisplayName={node.displayName}
+            nodePhase={node.phase}
+            nodeDuration={node.duration}
+            nodeStartedAt={node.startedAt}
+            workflowBaseUrl={workflowBaseUrl}
+            isSelected={isSelected && selectedNodeName === node.displayName}
+          />
+        ))}
       {nodesPendingCreation.map((nodePendingCreation) => (
         <FlowHistoryGridItem
           key={flowDefaultStepName(nodePendingCreation)}
@@ -74,18 +79,6 @@ function FlowHistoryGrid({
           }
         />
       ))}
-      {exitNodePendingCreation && (
-        <FlowHistoryGridItem
-          key={EXIT_NODE_NAME}
-          nodeTitleName={EXIT_NODE_NAME}
-          nodeDisplayName={EXIT_NODE_NAME}
-          nodePhase={NodePhases.Pending}
-          nodeDuration={undefined}
-          nodeStartedAt={undefined}
-          workflowBaseUrl={workflowBaseUrl}
-          isSelected={isSelected && selectedNodeName === EXIT_NODE_NAME}
-        />
-      )}
     </div>
   );
 }
@@ -242,11 +235,15 @@ function NodeDuration({
 }: NodeDurationProps) {
   if (nodeDuration == null) {
     if (nodePhase === NodePhases.Running && nodeStartedAt != null) {
-      return <ElapsedTime startedAt={nodeStartedAt} />;
+      return (
+        <span className={styles.historyGridNodeDuration}>
+          <ElapsedTime startedAt={nodeStartedAt} />
+        </span>
+      );
     }
-    return "-";
+    return null;
   }
-  return nodeDuration;
+  return <span className={styles.historyGridNodeDuration}>{nodeDuration}</span>;
 }
 
 class FlowHistoryGridError extends Error {

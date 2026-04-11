@@ -29,6 +29,12 @@
   font-family: var(--gh-font-family);
 }
 
+.historyCommitPrText {
+  composes: historyCommitText;
+
+  font-size: 14px;
+}
+
 .historyStatusBadge:hover {
   opacity: 0.8;
 }
