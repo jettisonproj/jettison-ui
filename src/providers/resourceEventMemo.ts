@@ -17,7 +17,6 @@ function memoizeFlow(flow: Flow) {
   const isPrFlow = isPullRequestTrigger(trigger);
 
   flow.memo = { trigger, isPrFlow };
-  return flow;
 }
 
 /* Get the trigger of the flow. Currently, exactly 1 trigger is expected */
