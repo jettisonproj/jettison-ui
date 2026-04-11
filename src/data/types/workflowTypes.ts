@@ -127,11 +127,14 @@ const TemplateNames = {
 } as const;
 type TemplateName = (typeof TemplateNames)[keyof typeof TemplateNames];
 
+export { NodePhases, NodeTypes, TemplateNames, WorkflowPhases };
 export type {
+  NodePhase,
+  NodeType,
+  TemplateName,
   Workflow,
-  WorkflowStatusNode,
   WorkflowMemoStatusNode,
+  WorkflowPhase,
   WorkflowSpecParameter,
+  WorkflowStatusNode,
 };
-export { WorkflowPhases, NodePhases, NodeTypes, TemplateNames };
-export type { WorkflowPhase, NodePhase, NodeType, TemplateName };

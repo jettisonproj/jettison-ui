@@ -1,14 +1,14 @@
-import { StepSources } from "src/data/types/flowTypes.ts";
-import { flowDefaultStepName } from "src/data/data.ts";
+import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowPendingGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
-import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import { flowDefaultStepName } from "src/data/data.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
-import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 
 function WorkflowPendingGraphNode({
   nodePendingCreation,

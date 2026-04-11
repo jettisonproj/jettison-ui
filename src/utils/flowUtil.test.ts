@@ -3,10 +3,10 @@ import { assert, describe, it } from "vitest";
 import { StepSources, TriggerSources } from "src/data/types/flowTypes.ts";
 import {
   FlowUtilError,
-  getTriggerDetailsLink,
-  getTriggerDisplayName,
   getFlowTrigger,
   getStepDetailsLink,
+  getTriggerDetailsLink,
+  getTriggerDisplayName,
   isPullRequestTrigger,
   PR_DISPLAY_NAME,
   PUSH_DISPLAY_NAME,

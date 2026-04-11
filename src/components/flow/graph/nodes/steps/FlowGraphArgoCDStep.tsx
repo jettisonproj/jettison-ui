@@ -1,28 +1,28 @@
 import { useContext } from "react";
 
+import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import {
+  FlowGraphCommit,
+  FlowGraphLoading,
+  FlowGraphNode,
+  FlowGraphTimestamp,
+} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
+import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
+import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
+import { RolloutPhases } from "src/data/types/rolloutTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   ApplicationsContext,
   RolloutsContext,
 } from "src/providers/provider.tsx";
-import { getRepoPathLink, getDisplayRepoPath } from "src/utils/gitUtil.ts";
-import {
-  FlowGraphNode,
-  FlowGraphLoading,
-  FlowGraphTimestamp,
-  FlowGraphCommit,
-} from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
-import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { getStepDetailsLink } from "src/utils/flowUtil.ts";
-import {
-  getWorkflowRevision,
-  getLastWorkflowNodeForStep,
-} from "src/utils/workflowUtil.ts";
+import { getDisplayRepoPath, getRepoPathLink } from "src/utils/gitUtil.ts";
 import type { WorkflowNode } from "src/utils/workflowUtil.ts";
-import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
-import { RolloutPhases } from "src/data/types/rolloutTypes.ts";
-import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
+import {
+  getLastWorkflowNodeForStep,
+  getWorkflowRevision,
+} from "src/utils/workflowUtil.ts";
 
 const SYNCED_STATUS = "Synced";
 const HEALTHY_STATUS = "Healthy";

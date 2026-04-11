@@ -1,7 +1,7 @@
-import type { Workflow } from "src/data/types/workflowTypes.ts";
-import type { Step } from "src/data/types/flowTypes.ts";
 import styles from "src/components/flow/history/FlowHistory.module.css";
 import { FlowHistoryItem } from "src/components/flow/history/FlowHistoryItem.tsx";
+import type { Step } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowHistoryProps {
   isPrFlow: boolean;

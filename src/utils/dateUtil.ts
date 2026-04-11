@@ -72,13 +72,13 @@ function getNextTickSeconds(secondsElapsed: number) {
 }
 
 export {
+  DAY,
+  HOUR,
+  MINUTE,
+  MONTH,
+  YEAR,
   formatDurationFromMs,
   formatDurationFromSeconds,
   formatTimestamp,
   getNextTickSeconds,
-  MINUTE,
-  HOUR,
-  DAY,
-  MONTH,
-  YEAR,
 };

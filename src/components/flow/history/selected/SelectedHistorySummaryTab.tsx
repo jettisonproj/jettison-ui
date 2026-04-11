@@ -1,8 +1,8 @@
 import { Fragment } from "react";
 
+import styles from "src/components/flow/history/selected/SelectedHistorySummaryTab.module.css";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { WorkflowStatusNode } from "src/data/types/workflowTypes.ts";
-import styles from "src/components/flow/history/selected/SelectedHistorySummaryTab.module.css";
 
 interface SelectedHistorySummaryTabProps {
   selectedNode: WorkflowStatusNode;

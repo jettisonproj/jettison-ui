@@ -1,11 +1,11 @@
 import { assert, describe, it } from "vitest";
 
-import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Step } from "src/data/types/flowTypes.ts";
-import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import type { NodeType } from "src/data/types/workflowTypes.ts";
-import { getTestNode, getTestWorkflow } from "src/utils/testUtil.ts";
+import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
+import { getTestNode, getTestWorkflow } from "src/utils/testUtil.ts";
 import {
   EXIT_NODE_SUFFIX,
   getLastWorkflowNodeForStep,

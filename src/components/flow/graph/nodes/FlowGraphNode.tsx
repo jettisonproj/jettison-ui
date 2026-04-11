@@ -1,30 +1,30 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 
-import {
-  trimBranchPrefix,
-  getDisplayCommit,
-  getRepoCommitLink,
-  getRepoPrLink,
-} from "src/utils/gitUtil.ts";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
-import {
-  getWorkflowRepo,
-  getWorkflowRevision,
-  getWorkflowRevisionRef,
-  getWorkflowRevisionTitle,
-  getWorkflowRevisionAuthor,
-  getWorkflowRevisionNumber,
-} from "src/utils/workflowUtil.ts";
-import { concatOptionalStyle } from "src/utils/styleUtil.ts";
+import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
+import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type {
+  NodePhase,
   Workflow,
   WorkflowMemoStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { NodePhases } from "src/data/types/workflowTypes.ts";
-import type { NodePhase } from "src/data/types/workflowTypes.ts";
-import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
+import {
+  getDisplayCommit,
+  getRepoCommitLink,
+  getRepoPrLink,
+  trimBranchPrefix,
+} from "src/utils/gitUtil.ts";
+import { concatOptionalStyle } from "src/utils/styleUtil.ts";
+import {
+  getWorkflowRepo,
+  getWorkflowRevision,
+  getWorkflowRevisionAuthor,
+  getWorkflowRevisionNumber,
+  getWorkflowRevisionRef,
+  getWorkflowRevisionTitle,
+} from "src/utils/workflowUtil.ts";
 
 /**
  * Returns the html content for the FlowGraphNode.
@@ -182,4 +182,4 @@ function FlowGraphLoading() {
   );
 }
 
-export { FlowGraphNode, FlowGraphCommit, FlowGraphTimestamp, FlowGraphLoading };
+export { FlowGraphCommit, FlowGraphLoading, FlowGraphNode, FlowGraphTimestamp };

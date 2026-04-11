@@ -1,6 +1,6 @@
+import { GitHubTriggerLinks } from "src/components/nodedetails/nodelinks/triggers/GitHubTriggerLinks.tsx";
 import type { Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
-import { GitHubTriggerLinks } from "src/components/nodedetails/nodelinks/triggers/GitHubTriggerLinks.tsx";
 
 interface TriggerLinksProps {
   trigger: Trigger;

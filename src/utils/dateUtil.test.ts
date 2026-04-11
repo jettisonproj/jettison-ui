@@ -1,13 +1,13 @@
 import { assert, describe, it } from "vitest";
 
 import {
+  DAY,
   formatDurationFromMs,
   formatDurationFromSeconds,
   formatTimestamp,
   getNextTickSeconds,
-  MINUTE,
   HOUR,
-  DAY,
+  MINUTE,
   MONTH,
   YEAR,
 } from "src/utils/dateUtil.ts";

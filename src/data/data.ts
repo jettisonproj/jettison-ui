@@ -1,6 +1,6 @@
 import type {
-  DockerBuildTestStep,
   DockerBuildTestPublishStep,
+  DockerBuildTestStep,
   Step,
   Trigger,
 } from "src/data/types/flowTypes.ts";
@@ -34,8 +34,8 @@ function flowDefaultTriggerName(trigger: Trigger) {
 }
 
 export {
-  flowDefaults,
   flowDefaultDockerfilePath,
+  flowDefaults,
   flowDefaultStepName,
   flowDefaultTriggerName,
 };

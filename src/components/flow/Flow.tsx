@@ -1,25 +1,25 @@
 import { useContext, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router";
 
-import { localState } from "src/localState.ts";
-import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
-import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
-import type { Flow as FlowType, Trigger } from "src/data/types/flowTypes.ts";
 import {
   getFlowStepNode,
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
+import type {
+  FlowEdge,
+  FlowNode,
+} from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
-import { FlowHistory } from "src/components/flow/history/FlowHistory.tsx";
-import type {
-  FlowNode,
-  FlowEdge,
-} from "src/components/flow/graph/FlowGraph.tsx";
-import { pushTriggerRoute, prTriggerRoute, routes } from "src/routes.ts";
+import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
+import type { Flow as FlowType, Trigger } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
+import { localState } from "src/localState.ts";
+import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
+import { prTriggerRoute, pushTriggerRoute, routes } from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 import { TRIGGER_NODE_NAME } from "src/utils/workflowUtil.ts";
 

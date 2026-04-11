@@ -1,8 +1,8 @@
-import type { Step } from "src/data/types/flowTypes.ts";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { StepSources } from "src/data/types/flowTypes.ts";
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
+import type { Step } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowGraphStepProps {
   repoOrg: string;

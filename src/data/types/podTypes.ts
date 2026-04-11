@@ -15,4 +15,4 @@ interface Container {
   name: string;
 }
 
-export type { Pod, Container };
+export type { Container, Pod };

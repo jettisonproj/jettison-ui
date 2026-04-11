@@ -1,30 +1,30 @@
 import { useSearchParams } from "react-router";
 
+import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
+import type {
+  FlowEdge,
+  FlowNode,
+} from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import styles from "src/components/flow/history/selected/SelectedHistoryItem.module.css";
+import { SelectedHistoryTabs } from "src/components/flow/history/selected/SelectedHistoryTabs.tsx";
+import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
+import { WorkflowPendingGraphNode } from "src/components/flow/history/selected/nodes/WorkflowPendingGraphNode.tsx";
+import type { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import { DEFAULT_TAB } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
-import { getMemoDisplayName } from "src/providers/resourceEventMemo.ts";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { NodeTypes } from "src/data/types/workflowTypes.ts";
-import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
-import { SelectedHistoryTabs } from "src/components/flow/history/selected/SelectedHistoryTabs.tsx";
-import { DEFAULT_TAB } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
-import type { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
-import type {
-  FlowNode,
-  FlowEdge,
-} from "src/components/flow/graph/FlowGraph.tsx";
-import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
-import { WorkflowPendingGraphNode } from "src/components/flow/history/selected/nodes/WorkflowPendingGraphNode.tsx";
+import { getMemoDisplayName } from "src/providers/resourceEventMemo.ts";
 import {
-  isWorkflowGraphNode,
   EXIT_NODE_NAME,
+  isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
-import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
-import styles from "src/components/flow/history/selected/SelectedHistoryItem.module.css";
 
 const NODE_HEIGHT = 39;
 
