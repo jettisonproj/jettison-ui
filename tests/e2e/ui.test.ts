@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 const REPO_ORG = "jettisonproj";
 const REPO_NAME = "jettison-ui";
-const REPO_URL = `https://github.com//${REPO_ORG}/${REPO_NAME}`;
+const REPO_URL = `https://github.com/${REPO_ORG}/${REPO_NAME}`;
 const YAML_URL_RE = new RegExp(
   `/api/v1/namespaces/${REPO_ORG}/workflows/${REPO_NAME}-`,
 );

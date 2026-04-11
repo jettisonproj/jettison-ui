@@ -176,7 +176,7 @@ describe("getRepoLink", () => {
   it("builds a GitHub URL from org and name", () => {
     assert.strictEqual(
       getRepoLink("org", "repo"),
-      "https://github.com//org/repo",
+      "https://github.com/org/repo",
     );
   });
 });
