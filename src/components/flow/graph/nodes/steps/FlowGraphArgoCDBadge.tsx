@@ -33,11 +33,12 @@ function ArgoCDLiveBadge() {
   );
 }
 
-// todo this reuses drift badge?
 function ArgoCDPausedBadge({ title }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.driftBadge} title={title}>
-      Paused
+    <div className={styles.pausedBadge} title={title}>
+      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
+      <div className={styles.pausedDotIcon}></div>
+      <div className={styles.badgeText}>Paused</div>
     </div>
   );
 }

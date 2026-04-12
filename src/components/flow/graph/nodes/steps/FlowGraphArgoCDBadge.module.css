@@ -49,6 +49,20 @@
   font-size: 13px;
 }
 
+.pausedBadge {
+  composes: argocdBadge;
+
+  background-color: var(--history-grid-pending-bg);
+  border: 1px solid var(--history-grid-pending-border);
+  color: var(--history-grid-pending-color);
+}
+
+.pausedDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--history-grid-pending-color);
+}
+
 .notFoundBadgeText {
   margin-left: 5px;
 }
