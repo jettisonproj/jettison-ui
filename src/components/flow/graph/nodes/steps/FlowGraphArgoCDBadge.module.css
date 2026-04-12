@@ -44,11 +44,6 @@
   background-color: var(--danger-color);
 }
 
-.notFoundIcon {
-  font-weight: normal;
-  font-size: 13px;
-}
-
 .pausedBadge {
   composes: argocdBadge;
 
@@ -61,10 +56,6 @@
   composes: dotIcon;
 
   background-color: var(--history-grid-pending-color);
-}
-
-.notFoundBadgeText {
-  margin-left: 5px;
 }
 
 .liveBadge {
@@ -93,6 +84,15 @@
   composes: dotIcon;
 
   background-color: var(--argocd-badge-drift-dot);
+}
+
+.notFoundIcon {
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.notFoundBadgeText {
+  margin-left: 5px;
 }
 
 .badgeText {
