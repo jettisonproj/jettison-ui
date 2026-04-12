@@ -5,13 +5,18 @@ interface ArgoCDBadgeProps {
 }
 
 function ArgoCDNotFoundBadge() {
-  return <div className={styles.notFoundBadge}>Not Found</div>;
+  return (
+    <div className={styles.failingBadge}>
+      <i className={`nf nf-fa-circle_xmark ${styles.notFoundIcon}`} />
+      <div className={styles.notFoundBadgeText}>Resource Not Found</div>
+    </div>
+  );
 }
 
 function ArgoCDFailingBadge({ title }: ArgoCDBadgeProps) {
   return (
     <div className={styles.failingBadge} title={title}>
-      <i className={`nf nf-oct-pulse ${styles.livePulseIcon}`} />
+      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.failingDotIcon}></div>
       <div className={styles.badgeText}>Failing</div>
     </div>
@@ -21,7 +26,7 @@ function ArgoCDFailingBadge({ title }: ArgoCDBadgeProps) {
 function ArgoCDLiveBadge() {
   return (
     <div className={styles.liveBadge}>
-      <i className={`nf nf-oct-pulse ${styles.failingPulseIcon}`} />
+      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.liveDotIcon}></div>
       <div className={styles.badgeText}>Healthy</div>
     </div>

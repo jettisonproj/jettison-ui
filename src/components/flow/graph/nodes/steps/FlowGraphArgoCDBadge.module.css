@@ -30,12 +30,6 @@
   }
 }
 
-.notFoundBadge {
-  composes: argocdBadge;
-
-  background-color: rgb(115, 115, 115);
-}
-
 .failingBadge {
   composes: argocdBadge;
 
@@ -48,6 +42,15 @@
   composes: dotIcon;
 
   background-color: var(--danger-color);
+}
+
+.notFoundIcon {
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.notFoundBadgeText {
+  margin-left: 5px;
 }
 
 .driftBadge {
