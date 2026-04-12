@@ -1,4 +1,4 @@
-import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
+import styles from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.module.css";
 
 interface ArgoCDBadgeProps {
   title: string | undefined;

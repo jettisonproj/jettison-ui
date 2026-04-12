@@ -1,0 +1,40 @@
+.nodeBadge {
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 8px 1px;
+  display: flex;
+  min-width: 50px;
+  justify-content: center;
+  flex-direction: row;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+  margin-top: 5px;
+}
+
+.notFoundBadge {
+  composes: nodeBadge;
+
+  background-color: rgb(115, 115, 115);
+}
+
+.failingBadge {
+  composes: nodeBadge;
+
+  background-color: var(--danger-color);
+}
+
+.driftBadge {
+  composes: nodeBadge;
+
+  margin-left: 8px;
+  background-color: #ff8c27;
+}
+
+.liveBadge {
+  composes: nodeBadge;
+
+  background-color: rgb(24, 190, 148);
+}
