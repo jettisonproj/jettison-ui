@@ -12,6 +12,24 @@
   border-radius: 5px;
 }
 
+.dotIcon {
+  margin-left: 7px;
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulseIcon {
+  font-weight: normal;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
 .notFoundBadge {
   composes: argocdBadge;
 
@@ -20,6 +38,14 @@
 
 .failingBadge {
   composes: argocdBadge;
+
+  background-color: var(--history-grid-danger-bg);
+  border: 1px solid var(--history-grid-danger-border);
+  color: var(--history-grid-danger-color);
+}
+
+.failingDotIcon {
+  composes: dotIcon;
 
   background-color: var(--danger-color);
 }
@@ -39,24 +65,10 @@
   color: var(--argocd-badge-success-color);
 }
 
-.pulseIcon {
-  font-weight: normal;
-  color: var(--graph-text-color);
-}
+.liveDotIcon {
+  composes: dotIcon;
 
-.dotIcon {
-  margin-left: 7px;
-  height: 7px;
-  width: 7px;
-  border-radius: 50%;
   background-color: var(--argocd-badge-health-color);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: 0.5;
-  }
 }
 
 .badgeText {

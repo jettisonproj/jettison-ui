@@ -11,7 +11,9 @@ function ArgoCDNotFoundBadge() {
 function ArgoCDFailingBadge({ title }: ArgoCDBadgeProps) {
   return (
     <div className={styles.failingBadge} title={title}>
-      Failing
+      <i className={`nf nf-oct-pulse ${styles.livePulseIcon}`} />
+      <div className={styles.failingDotIcon}></div>
+      <div className={styles.badgeText}>Failing</div>
     </div>
   );
 }
@@ -19,8 +21,8 @@ function ArgoCDFailingBadge({ title }: ArgoCDBadgeProps) {
 function ArgoCDLiveBadge() {
   return (
     <div className={styles.liveBadge}>
-      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
-      <div className={styles.dotIcon}></div>
+      <i className={`nf nf-oct-pulse ${styles.failingPulseIcon}`} />
+      <div className={styles.liveDotIcon}></div>
       <div className={styles.badgeText}>Healthy</div>
     </div>
   );
