@@ -46,7 +46,9 @@ function ArgoCDPausedBadge({ title }: ArgoCDBadgeProps) {
 function ArgoCDDriftBadge({ title }: ArgoCDBadgeProps) {
   return (
     <div className={styles.driftBadge} title={title}>
-      Drift
+      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
+      <div className={styles.driftDotIcon}></div>
+      <div className={styles.badgeText}>Resource Drifted</div>
     </div>
   );
 }

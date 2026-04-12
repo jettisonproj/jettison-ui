@@ -88,6 +88,20 @@
   background-color: var(--argocd-badge-health-color);
 }
 
+.driftBadge {
+  composes: argocdBadge;
+
+  background-color: var(--argocd-badge-drift-bg);
+  border: 1px solid var(--argocd-badge-drift-border);
+  color: var(--argocd-badge-drift-color);
+}
+
+.driftDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--argocd-badge-drift-dot);
+}
+
 .badgeText {
   margin-left: 7px;
 }
