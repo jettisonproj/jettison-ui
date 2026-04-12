@@ -1,0 +1,100 @@
+.argocdBadge {
+  margin-top: 5px;
+  padding: 3px;
+  width: calc(100% - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  font-weight: bolder;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border-radius: 5px;
+}
+
+.dotIcon {
+  margin-left: 7px;
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulseIcon {
+  font-weight: normal;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.failingBadge {
+  composes: argocdBadge;
+
+  background-color: var(--history-grid-danger-bg);
+  border: 1px solid var(--history-grid-danger-border);
+  color: var(--history-grid-danger-color);
+}
+
+.failingDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--danger-color);
+}
+
+.pausedBadge {
+  composes: argocdBadge;
+
+  background-color: var(--history-grid-pending-bg);
+  border: 1px solid var(--history-grid-pending-border);
+  color: var(--history-grid-pending-color);
+}
+
+.pausedDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--history-grid-pending-color);
+}
+
+.liveBadge {
+  composes: argocdBadge;
+
+  background-color: var(--history-grid-success-bg);
+  border: 1px solid var(--history-grid-success-border);
+  color: var(--argocd-badge-success-color);
+}
+
+.liveDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--argocd-badge-health-color);
+}
+
+.driftBadge {
+  composes: argocdBadge;
+
+  background-color: var(--argocd-badge-drift-bg);
+  border: 1px solid var(--argocd-badge-drift-border);
+  color: var(--argocd-badge-drift-color);
+}
+
+.driftDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--argocd-badge-drift-dot);
+}
+
+.notFoundIcon {
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.notFoundBadgeText {
+  margin-left: 5px;
+}
+
+.badgeText {
+  margin-left: 7px;
+}
