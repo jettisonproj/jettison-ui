@@ -7,6 +7,13 @@ import {
   FlowGraphNode,
   FlowGraphTimestamp,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
+import {
+  ArgoCDDriftBadge,
+  ArgoCDFailingBadge,
+  ArgoCDLiveBadge,
+  ArgoCDNotFoundBadge,
+  ArgoCDPausedBadge,
+} from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
@@ -119,7 +126,7 @@ function FlowGraphArgoCDStepStatus({
   if (application == null) {
     return (
       <div className={styles.nodeRowText}>
-        <div className={styles.notFoundBadge}>Not Found</div>
+        <ArgoCDNotFoundBadge />
       </div>
     );
   }
@@ -204,23 +211,15 @@ function FlowGraphArgoCDHealthBadge({
   rolloutMissing,
 }: FlowGraphArgoCDHealthBadgeProps) {
   if (rolloutHealthError != null) {
-    return (
-      <div className={styles.failingBadge} title={rolloutHealthError}>
-        Failing
-      </div>
-    );
+    return <ArgoCDFailingBadge title={rolloutHealthError} />;
   }
   if (applicationHealthError != null) {
-    return (
-      <div className={styles.failingBadge} title={applicationHealthError}>
-        Failing
-      </div>
-    );
+    return <ArgoCDFailingBadge title={applicationHealthError} />;
   }
   if (rolloutMissing) {
-    return <div className={styles.notFoundBadge}>Not Found</div>;
+    return <ArgoCDNotFoundBadge />;
   }
-  return <div className={styles.liveBadge}>Live</div>;
+  return <ArgoCDLiveBadge />;
 }
 
 interface FlowGraphArgoCDSyncBadgeProps {
@@ -236,25 +235,13 @@ function FlowGraphArgoCDSyncBadge({
   autoSyncEnabled,
 }: FlowGraphArgoCDSyncBadgeProps) {
   if (!autoSyncEnabled) {
-    return (
-      <div className={styles.driftBadge} title={pausedReason}>
-        Paused
-      </div>
-    );
+    return <ArgoCDPausedBadge title={pausedReason} />;
   }
   if (applicationSyncError != null) {
-    return (
-      <div className={styles.driftBadge} title={applicationSyncError}>
-        Drift
-      </div>
-    );
+    return <ArgoCDDriftBadge title={applicationSyncError} />;
   }
   if (rolloutSyncError != null) {
-    return (
-      <div className={styles.driftBadge} title={rolloutSyncError}>
-        Drift
-      </div>
-    );
+    return <ArgoCDDriftBadge title={rolloutSyncError} />;
   }
   return null;
 }
