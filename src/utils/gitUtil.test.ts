@@ -4,6 +4,7 @@ import {
   appendGitSuffix,
   getDisplayCommit,
   getDisplayRepoPath,
+  getRepoAuthorLink,
   getRepoCommitLink,
   getRepoCommitPathLink,
   getRepoLink,
@@ -102,6 +103,15 @@ describe("getRepoPathLink", () => {
         "src/index.ts",
       ),
       "https://github.com/org/repo/tree/main/src/index.ts",
+    );
+  });
+});
+
+describe("getRepoAuthorLink", () => {
+  it("filters commits with branch and author", () => {
+    assert.strictEqual(
+      getRepoAuthorLink("https://github.com/org/repo.git", "main", "user"),
+      "https://github.com/org/repo/commits/main?author=user",
     );
   });
 });

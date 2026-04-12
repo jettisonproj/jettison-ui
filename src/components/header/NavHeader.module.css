@@ -13,6 +13,10 @@
   color: var(--text-color);
 }
 
+.component:hover {
+  text-decoration: underline;
+}
+
 .componentSeparator {
   margin: 0 18px;
 }
@@ -29,12 +33,21 @@
   font-weight: bolder;
 }
 
+.navFilterItem:hover {
+  opacity: 0.8;
+}
+
 .navFilterSelected {
   composes: navFilterItem;
 
   background: #fff;
   border-radius: 15px;
   font-weight: bold;
+}
+
+.navFilterSelected:hover {
+  opacity: 1;
+  cursor: default;
 }
 
 .navFilterPushIcon {
