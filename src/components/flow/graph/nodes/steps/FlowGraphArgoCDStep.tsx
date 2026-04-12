@@ -13,7 +13,7 @@ import {
   ArgoCDLiveBadge,
   ArgoCDNotFoundBadge,
   ArgoCDPausedBadge,
-} from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge";
+} from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";

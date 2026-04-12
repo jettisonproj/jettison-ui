@@ -67,13 +67,6 @@
   margin-left: 5px;
 }
 
-.driftBadge {
-  composes: argocdBadge;
-
-  margin-left: 8px;
-  background-color: #ff8c27;
-}
-
 .liveBadge {
   composes: argocdBadge;
 
