@@ -58,6 +58,15 @@ function getRepoPathLink(
   return `${repoTreeLink}/${path}`;
 }
 
+/**
+ * Get the link url to the author using the repo and baseRef
+ * https://github.com/kubernetes/kubernetes/commits/release-1.36?author=richabanker
+ */
+function getRepoAuthorLink(repoUrl: string, baseRef: string, author: string) {
+  repoUrl = trimGitSuffix(repoUrl);
+  return `${repoUrl}/commits/${baseRef}?author=${author}`;
+}
+
 /*
  * Get the link to the path using the repo and commit
  */
@@ -153,6 +162,7 @@ export {
   appendGitSuffix,
   getDisplayCommit,
   getDisplayRepoPath,
+  getRepoAuthorLink,
   getRepoCommitLink,
   getRepoCommitPathLink,
   getRepoLink,

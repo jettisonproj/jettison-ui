@@ -10,8 +10,10 @@ import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
+  getRepoAuthorLink,
   getRepoCommitLink,
   getRepoPrLink,
+  getRepoTreeLink,
   trimBranchPrefix,
 } from "src/utils/gitUtil.ts";
 import {
@@ -230,11 +232,20 @@ function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
 function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const author = getWorkflowRevisionAuthor(parameterMap);
+  const repoUrl = getWorkflowRepo(parameterMap);
+  const revisionRef = getWorkflowRevisionRef(parameterMap);
+  const branch = trimBranchPrefix(revisionRef);
+  const authorLink = getRepoAuthorLink(repoUrl, branch, author);
   return (
-    <div className={styles.historySubtitleItem}>
+    <a
+      href={authorLink}
+      target="_blank"
+      rel="noreferrer"
+      className={styles.historySubtitleLink}
+    >
       <i className="nf nf-fa-user_o" />
       <span className={styles.historySubtitleText}>{author}</span>
-    </div>
+    </a>
   );
 }
 
@@ -285,11 +296,18 @@ function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
   const { parameterMap } = workflow.memo;
   const revisionRef = getWorkflowRevisionRef(parameterMap);
   const branch = trimBranchPrefix(revisionRef);
+  const repoUrl = getWorkflowRepo(parameterMap);
+  const branchLink = getRepoTreeLink(repoUrl, branch);
   return (
-    <div className={styles.historySubtitleItem}>
+    <a
+      href={branchLink}
+      target="_blank"
+      rel="noreferrer"
+      className={styles.historySubtitleLink}
+    >
       <i className="nf nf-fa-code_branch" />
       <span className={styles.historySubtitleText}>{branch}</span>
-    </div>
+    </a>
   );
 }
 
