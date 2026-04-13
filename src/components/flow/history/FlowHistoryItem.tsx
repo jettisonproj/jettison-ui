@@ -43,12 +43,16 @@ function FlowHistoryItem({
   selectedNodeName,
 }: FlowHistoryItemProps) {
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
+  const historyItemClassName = isSelected
+    ? styles.historyItemBase
+    : styles.historyItem;
   return (
-    <div className={styles.historyItem}>
+    <div className={historyItemClassName}>
       <FlowHistoryTitle
         isPrFlow={isPrFlow}
         workflow={workflow}
         repoOrg={repoOrg}
+        isSelected={isSelected}
       />
       <FlowHistorySubtitle workflow={workflow} />
       <FlowHistoryGrid
@@ -78,11 +82,13 @@ interface FlowHistoryTitleProps {
   isPrFlow: boolean;
   workflow: Workflow;
   repoOrg: string;
+  isSelected: boolean;
 }
 function FlowHistoryTitle({
   isPrFlow,
   workflow,
   repoOrg,
+  isSelected,
 }: FlowHistoryTitleProps) {
   return (
     <div className={styles.historyTitle}>
@@ -90,7 +96,11 @@ function FlowHistoryTitle({
         <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
         <FlowHistoryMessage isPrFlow={isPrFlow} workflow={workflow} />
       </div>
-      <FlowHistoryMenu workflow={workflow} repoOrg={repoOrg} />
+      <FlowHistoryMenu
+        workflow={workflow}
+        repoOrg={repoOrg}
+        isSelected={isSelected}
+      />
     </div>
   );
 }
@@ -173,16 +183,24 @@ function FlowHistoryTitlePart({
 interface FlowHistoryMenuProps {
   workflow: Workflow;
   repoOrg: string;
+  isSelected: boolean;
 }
-function FlowHistoryMenu({ workflow, repoOrg }: FlowHistoryMenuProps) {
+function FlowHistoryMenu({
+  workflow,
+  repoOrg,
+  isSelected,
+}: FlowHistoryMenuProps) {
   const { name: workflowName } = workflow.metadata;
   // The repoOrg and namespace are expected to match
   const namespace = repoOrg;
+  const historyMenuIconClassName = isSelected
+    ? styles.historyMenuIconSelected
+    : styles.historyMenuIcon;
   return (
     <>
       <button
         popoverTarget={workflowName}
-        className={`nf nf-fa-ellipsis ${styles.historyMenuIcon}`}
+        className={`nf nf-fa-ellipsis ${historyMenuIconClassName}`}
       />
       <div id={workflowName} className={styles.historyMenu} popover="auto">
         <div className={styles.historyMenuItems}>
