@@ -9,6 +9,16 @@
 
 .historyItem:hover {
   background-color: var(--panel-color);
+  border-bottom: 1px solid var(--separator-color);
+  border-radius: 15px;
+}
+
+.historyItem:hover + .historyItem {
+  border-top: 0;
+}
+
+.historyItemSelected:hover {
+  background-color: transparent;
 }
 
 /* Title Row */
@@ -59,6 +69,10 @@
 }
 
 .historyItem:hover .historyMenuIcon {
+  visibility: visible;
+}
+
+.historyMenuIconSelected {
   visibility: visible;
 }
 
