@@ -1,5 +1,5 @@
 /* History Item */
-.historyItem {
+.historyItemBase {
   border-top: 1px solid var(--separator-color);
   padding: 15px;
   display: flex;
@@ -7,8 +7,18 @@
   align-items: center;
 }
 
+.historyItem {
+  composes: historyItemBase;
+}
+
 .historyItem:hover {
   background-color: var(--panel-color);
+  border-bottom: 1px solid var(--separator-color);
+  border-radius: 15px;
+}
+
+.historyItem:hover + .historyItemBase {
+  border-top: 0;
 }
 
 /* Title Row */

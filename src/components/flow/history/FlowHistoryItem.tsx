@@ -43,8 +43,11 @@ function FlowHistoryItem({
   selectedNodeName,
 }: FlowHistoryItemProps) {
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
+  const historyItemClassName = isSelected
+    ? styles.historyItemBase
+    : styles.historyItem;
   return (
-    <div className={styles.historyItem}>
+    <div className={historyItemClassName}>
       <FlowHistoryTitle
         isPrFlow={isPrFlow}
         workflow={workflow}
