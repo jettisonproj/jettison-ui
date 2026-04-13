@@ -56,6 +56,7 @@ function FlowGraphArgoCDStep({
   const workflowNode = getLastWorkflowNodeForStep(step, workflows);
   return (
     <FlowGraphNode
+      headerClass={styles.nodeRowHeader}
       headerLink={stepDetailsLink}
       titleIcon={`nf nf-md-kubernetes ${styles.k8sIcon}`}
       titleText={displayRepoPath}

@@ -13,6 +13,8 @@
 }
 
 .repoFirst {
+  composes: repo;
+
   margin-top: 8px;
 }
 

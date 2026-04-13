@@ -51,6 +51,8 @@
 }
 
 .recentRepoFirst {
+  composes: recentRepo;
+
   margin-top: 5px;
 }
 

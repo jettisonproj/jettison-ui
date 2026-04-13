@@ -11,7 +11,6 @@ import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { concatStyles } from "src/utils/styleUtil.ts";
 
 const SelectedHistoryLogTab = lazy(() =>
   import("src/components/flow/history/selected/SelectedHistoryLogTab.tsx").then(
@@ -62,11 +61,10 @@ function SelectedHistoryTabSelector({
   return (
     <div>
       {Object.values(Tabs).map((tab) => {
-        const tabClassName = concatStyles(
-          styles.selectedHistoryTab,
-          styles.selectedHistoryActiveTab,
-          tab === selectedTab,
-        );
+        const tabClassName =
+          tab === selectedTab
+            ? styles.selectedHistoryActiveTab
+            : styles.selectedHistoryTab;
         return (
           <Link
             key={tab}

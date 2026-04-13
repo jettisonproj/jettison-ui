@@ -29,10 +29,14 @@
 }
 
 .nodeRowHeaderOnly {
+  composes: nodeRowHeader;
+
   border-radius: 5px;
 }
 
 .nodeRowHeaderSelected {
+  composes: nodeRowHeaderOnly;
+
   border: 1px solid var(--graph-title-color);
 }
 

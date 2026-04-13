@@ -39,6 +39,7 @@ function FlowGraphGitHubTrigger({
   );
   return (
     <FlowGraphNode
+      headerClass={styles.nodeRowHeader}
       headerLink={triggerDetailsLink}
       titleIcon={`nf nf-fa-github ${styles.githubIcon}`}
       titleText={displayEvent}

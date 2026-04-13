@@ -12,7 +12,6 @@ import {
   getRepoOrgAndName,
   sortByRepoName,
 } from "src/utils/gitUtil.ts";
-import { concatStyles } from "src/utils/styleUtil.ts";
 
 function Repos() {
   return (
@@ -43,7 +42,7 @@ interface RepoProps {
   isFirst: boolean;
 }
 function Repo({ repoOrgName, isFirst }: RepoProps) {
-  const repoClassName = concatStyles(styles.repo, styles.repoFirst, isFirst);
+  const repoClassName = isFirst ? styles.repoFirst : styles.repo;
   const [repoOrg, repoName] = getRepoOrgAndName(repoOrgName);
   return (
     <div className={repoClassName}>

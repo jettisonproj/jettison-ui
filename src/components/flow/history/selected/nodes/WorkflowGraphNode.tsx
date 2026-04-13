@@ -1,7 +1,6 @@
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
-import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { TemplateNames } from "src/data/types/workflowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
@@ -19,7 +18,9 @@ function WorkflowGraphNode({
   isSelected,
 }: WorkflowGraphNodeProps) {
   const { template } = node.templateRef;
-  const className = getWorkflowGraphNodeClass(isSelected);
+  const className = isSelected
+    ? styles.nodeRowHeaderSelected
+    : styles.nodeRowHeaderOnly;
   switch (template) {
     case TemplateNames.GitHubCheckStart: {
       const triggerDisplayName = getNodeTriggerDisplayName(
@@ -27,7 +28,7 @@ function WorkflowGraphNode({
       );
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
           titleIcon={`nf nf-fa-github ${styles.githubIcon}`}
           titleText={triggerDisplayName}
@@ -37,7 +38,7 @@ function WorkflowGraphNode({
     case TemplateNames.DockerBuildTest: {
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
           titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
           titleText={BUILD_DISPLAY_NAME}
@@ -47,7 +48,7 @@ function WorkflowGraphNode({
     case TemplateNames.DockerBuildTestPublish: {
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
           titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
           titleText={PUBLISH_DISPLAY_NAME}
@@ -58,7 +59,7 @@ function WorkflowGraphNode({
       const resourcePath = getNodeResourcePath(node.inputs?.parameters);
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
           titleIcon={`nf nf-md-kubernetes ${styles.k8sIcon}`}
           titleText={getDisplayRepoPath(resourcePath, resourcePath)}
