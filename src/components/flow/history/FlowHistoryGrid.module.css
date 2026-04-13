@@ -57,6 +57,8 @@
 }
 
 .historyGridItemSelected {
+  composes: historyGridItem;
+
   border: 1px solid var(--history-grid-selection-border);
 }
 

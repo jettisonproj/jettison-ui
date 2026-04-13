@@ -43,6 +43,7 @@ function FlowGraphDockerStep({
 
   return (
     <FlowGraphNode
+      headerClass={styles.nodeRowHeader}
       headerLink={stepDetailsLink}
       titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
       titleText={displayEvent}

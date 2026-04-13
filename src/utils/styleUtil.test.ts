@@ -1,23 +1,15 @@
 import { assert, describe, it } from "vitest";
 
-import {
-  concatOptionalStyle,
-  concatStyles,
-  StyleUtilError,
-} from "src/utils/styleUtil.ts";
+import { concatStyles, StyleUtilError } from "src/utils/styleUtil.ts";
 
 describe("concatStyles", () => {
-  it("concatenates classes when addAdditionalClass is true", () => {
-    assert.strictEqual(concatStyles("base", "extra", true), "base extra");
-  });
-
-  it("returns base class when addAdditionalClass is false", () => {
-    assert.strictEqual(concatStyles("base", "extra", false), "base");
+  it("concatenates classes", () => {
+    assert.strictEqual(concatStyles("base", "extra"), "base extra");
   });
 
   it("throws when baseClass is undefined", () => {
     assert.throws(
-      () => concatStyles(undefined, "extra", true),
+      () => concatStyles(undefined, "extra"),
       StyleUtilError,
       "style class was unexpectedly null",
     );
@@ -25,27 +17,9 @@ describe("concatStyles", () => {
 
   it("throws when additionalClass is undefined", () => {
     assert.throws(
-      () => concatStyles("base", undefined, true),
+      () => concatStyles("base", undefined),
       StyleUtilError,
       "style class was unexpectedly null",
-    );
-  });
-});
-
-describe("concatOptionalStyle", () => {
-  it("concatenates classes when additionalClass is provided", () => {
-    assert.strictEqual(concatOptionalStyle("base", "extra"), "base extra");
-  });
-
-  it("returns base class when additionalClass is undefined", () => {
-    assert.strictEqual(concatOptionalStyle("base", undefined), "base");
-  });
-
-  it("throws when baseClass is undefined", () => {
-    assert.throws(
-      () => concatOptionalStyle(undefined, "extra"),
-      StyleUtilError,
-      "base style class was unexpectedly null",
     );
   });
 });

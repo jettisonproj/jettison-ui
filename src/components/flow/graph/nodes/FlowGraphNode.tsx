@@ -16,7 +16,6 @@ import {
   getRepoPrLink,
   trimBranchPrefix,
 } from "src/utils/gitUtil.ts";
-import { concatOptionalStyle } from "src/utils/styleUtil.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
@@ -31,20 +30,19 @@ import {
  * This gets rendered inside of an svg
  */
 interface FlowGraphNodeProps {
+  headerClass: string | undefined;
   headerLink: string;
   titleIcon: string;
   titleText: string;
   children?: ReactNode;
-  className?: string;
 }
 function FlowGraphNode({
+  headerClass,
   headerLink,
   titleIcon,
   titleText,
   children,
-  className,
 }: FlowGraphNodeProps) {
-  const headerClass = concatOptionalStyle(styles.nodeRowHeader, className);
   return (
     <div
       // @ts-expect-error Since this is the root html element inside the svg, xmlns

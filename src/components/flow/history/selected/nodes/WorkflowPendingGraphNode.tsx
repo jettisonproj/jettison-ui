@@ -1,7 +1,6 @@
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowPendingGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
-import { getWorkflowGraphNodeClass } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
 import {
@@ -15,12 +14,14 @@ function WorkflowPendingGraphNode({
   workflowBaseUrl,
   isSelected,
 }: WorkflowPendingGraphNodeProps) {
-  const className = getWorkflowGraphNodeClass(isSelected);
+  const className = isSelected
+    ? styles.nodeRowHeaderSelected
+    : styles.nodeRowHeaderOnly;
   switch (nodePendingCreation.stepSource) {
     case StepSources.DockerBuildTest: {
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${flowDefaultStepName(nodePendingCreation)}`}
           titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
           titleText={BUILD_DISPLAY_NAME}
@@ -30,7 +31,7 @@ function WorkflowPendingGraphNode({
     case StepSources.DockerBuildTestPublish: {
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${flowDefaultStepName(nodePendingCreation)}`}
           titleIcon={`nf nf-fa-docker ${styles.dockerIcon}`}
           titleText={PUBLISH_DISPLAY_NAME}
@@ -41,7 +42,7 @@ function WorkflowPendingGraphNode({
       const { repoPath } = nodePendingCreation;
       return (
         <FlowGraphNode
-          className={className}
+          headerClass={className}
           headerLink={`${workflowBaseUrl}?node=${flowDefaultStepName(nodePendingCreation)}`}
           titleIcon={`nf nf-md-kubernetes ${styles.k8sIcon}`}
           titleText={getDisplayRepoPath(repoPath, repoPath)}

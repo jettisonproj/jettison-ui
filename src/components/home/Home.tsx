@@ -18,7 +18,6 @@ import {
 } from "src/providers/provider.tsx";
 import { pushTriggerRoute, routes } from "src/routes.ts";
 import { getRepoLink, getRepoOrgAndName } from "src/utils/gitUtil.ts";
-import { concatStyles } from "src/utils/styleUtil.ts";
 
 function Home() {
   return (
@@ -106,11 +105,9 @@ interface RecentRepoProps {
 }
 function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
   const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
-  const recentRepoClassName = concatStyles(
-    styles.recentRepo,
-    styles.recentRepoFirst,
-    isFirst,
-  );
+  const recentRepoClassName = isFirst
+    ? styles.recentRepoFirst
+    : styles.recentRepo;
   return (
     <div className={recentRepoClassName}>
       <Link

@@ -151,45 +151,43 @@ function FlowHistoryGridItem({
   workflowBaseUrl,
   isSelected,
 }: FlowHistoryGridItemProps) {
-  let itemClassName = concatStyles(
-    styles.historyGridItem,
-    styles.historyGridItemSelected,
-    isSelected,
-  );
+  let itemClassName = isSelected
+    ? styles.historyGridItemSelected
+    : styles.historyGridItem;
   let iconComponent;
 
   switch (nodePhase) {
     case NodePhases.Succeeded:
-      itemClassName += ` ${styles.historyGridSuccess}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridSuccess);
       iconComponent = (
         <i className={`nf nf-fa-circle_check ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Error:
-      itemClassName += ` ${styles.historyGridDanger}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridDanger);
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Failed:
-      itemClassName += ` ${styles.historyGridDanger}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridDanger);
       iconComponent = (
         <i className={`nf nf-fa-circle_xmark ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Running:
-      itemClassName += ` ${styles.historyGridRunning}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridRunning);
       iconComponent = <LoadIcon className={styles.historyGridIcon} />;
       break;
     case NodePhases.Pending:
-      itemClassName += ` ${styles.historyGridPending}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridPending);
       iconComponent = (
         <i className={`nf nf-fa-clock ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Skipped:
     case NodePhases.Omitted:
-      itemClassName += ` ${styles.historyGridPending}`;
+      itemClassName = concatStyles(itemClassName, styles.historyGridPending);
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
       );

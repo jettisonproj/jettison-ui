@@ -31,6 +31,8 @@
 }
 
 .selectedHistoryActiveTab {
+  composes: selectedHistoryTab;
+
   border-bottom: 3px solid var(--graph-title-color);
 }
 
