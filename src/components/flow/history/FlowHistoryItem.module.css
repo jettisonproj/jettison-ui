@@ -72,6 +72,12 @@
   visibility: visible;
 }
 
+.historyMenuIconSelected {
+  composes: historyMenuIcon;
+
+  visibility: visible;
+}
+
 /* Menu Popover*/
 .historyMenu {
   margin: 0;
