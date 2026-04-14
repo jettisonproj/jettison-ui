@@ -44,11 +44,6 @@ function Flow() {
   return (
     <>
       <Header />
-      <FlowNavHeader
-        repoOrg={repoOrg}
-        repoName={repoName}
-        isPrFlow={isPrFlow}
-      />
       <FlowItem
         repoOrg={repoOrg}
         repoName={repoName}
@@ -81,39 +76,65 @@ function FlowItem({
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
-    return <LoadIcon />;
+    return (
+      <>
+        <FlowNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+        />
+        <LoadIcon />
+      </>
+    );
   }
   const pushPrFlows = flows.get(`${repoOrg}/${repoName}`);
   if (pushPrFlows == null) {
     localState.deleteRecentRepo(repoOrg, repoName);
     return (
-      <p>
-        There are no flows in repo{" "}
-        <strong>
-          {repoOrg}/{repoName}
-        </strong>
-        . Would you like to create one?
-      </p>
+      <>
+        <FlowNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+        />
+        <p>
+          There are no flows in repo{" "}
+          <strong>
+            {repoOrg}/{repoName}
+          </strong>
+          . Would you like to create one?
+        </p>
+      </>
     );
   }
 
   let flow;
+  let additionalFlow;
   if (isPrFlow) {
     flow = pushPrFlows.prFlow;
+    additionalFlow = pushPrFlows.pushFlow;
   } else {
     flow = pushPrFlows.pushFlow;
+    additionalFlow = pushPrFlows.prFlow;
   }
   if (flow == null) {
     localState.deleteRecentRepo(repoOrg, repoName);
     const triggerDisplayName = getTriggerDisplayName(isPrFlow);
     return (
-      <p>
-        There is no <strong>{triggerDisplayName}</strong> flow in repo{" "}
-        <strong>
-          {repoOrg}/{repoName}
-        </strong>
-        . Would you like to create one?
-      </p>
+      <>
+        <FlowNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+        />
+        <p>
+          There is no <strong>{triggerDisplayName}</strong> flow in repo{" "}
+          <strong>
+            {repoOrg}/{repoName}
+          </strong>
+          . Would you like to create one?
+        </p>
+      </>
     );
   }
   localState.addRecentRepo(repoOrg, repoName);
@@ -121,16 +142,27 @@ function FlowItem({
   const { name: flowName } = flow.metadata;
   // The repoOrg and namespace are expected to match
   const workflows = allWorkflows.get(repoOrg)?.get(flowName);
+  const additionalWorkflows =
+    additionalFlow &&
+    allWorkflows.get(repoOrg)?.get(additionalFlow.metadata.name);
   return (
-    <FlowWorkflowsItem
-      repoOrg={repoOrg}
-      repoName={repoName}
-      flow={flow}
-      workflows={workflows}
-      flowBaseUrl={flowBaseUrl}
-      selectedWorkflow={selectedWorkflow}
-      selectedNodeName={selectedNodeName}
-    />
+    <>
+      <FlowNavHeader
+        repoOrg={repoOrg}
+        repoName={repoName}
+        isPrFlow={isPrFlow}
+        additionalWorkflows={additionalWorkflows}
+      />
+      <FlowWorkflowsItem
+        repoOrg={repoOrg}
+        repoName={repoName}
+        flow={flow}
+        workflows={workflows}
+        flowBaseUrl={flowBaseUrl}
+        selectedWorkflow={selectedWorkflow}
+        selectedNodeName={selectedNodeName}
+      />
+    </>
   );
 }
 

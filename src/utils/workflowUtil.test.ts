@@ -3,7 +3,11 @@ import { assert, describe, it } from "vitest";
 import type { Step } from "src/data/types/flowTypes.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
 import type { NodeType } from "src/data/types/workflowTypes.ts";
-import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
+import {
+  NodePhases,
+  NodeTypes,
+  WorkflowPhases,
+} from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import { getTestNode, getTestWorkflow } from "src/utils/testUtil.ts";
 import {
@@ -23,6 +27,7 @@ import {
   getWorkflowRevisionTitle,
   InvalidNodeError,
   isMemoizedNode,
+  isWorkflowActive,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
@@ -518,5 +523,23 @@ describe("getLastWorkflowNodeForStep", () => {
 
     assert.isNotNull(validNode);
     assert.strictEqual(result.node, validNode);
+  });
+});
+
+describe("isWorkflowActive", () => {
+  it("returns true for a pending workflow", () => {
+    assert.isTrue(isWorkflowActive(WorkflowPhases.Pending));
+  });
+
+  it("returns true for a running workflow", () => {
+    assert.isTrue(isWorkflowActive(WorkflowPhases.Running));
+  });
+
+  it("returns false when workflow phase is missing", () => {
+    assert.isFalse(isWorkflowActive(undefined));
+  });
+
+  it("returns false for a succeeded workflow", () => {
+    assert.isFalse(isWorkflowActive(WorkflowPhases.Succeeded));
   });
 });
