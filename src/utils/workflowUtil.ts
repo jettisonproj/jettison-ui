@@ -4,10 +4,15 @@ import type {
   NodeType,
   Workflow,
   WorkflowMemoStatusNode,
+  WorkflowPhase,
   WorkflowSpecParameter,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
-import { NodePhases, NodeTypes } from "src/data/types/workflowTypes.ts";
+import {
+  NodePhases,
+  NodeTypes,
+  WorkflowPhases,
+} from "src/data/types/workflowTypes.ts";
 import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 
 const TRIGGER_NODE_NAME = "github-check-start";
@@ -53,6 +58,13 @@ function isMemoizedNode(nodeType: NodeType) {
 function isWorkflowGraphNode(node: WorkflowStatusNode) {
   return (
     isMemoizedNode(node.type) && !node.displayName.endsWith(EXIT_NODE_SUFFIX)
+  );
+}
+
+function isWorkflowActive(workflowPhase: WorkflowPhase | undefined) {
+  return (
+    workflowPhase === WorkflowPhases.Pending ||
+    workflowPhase === WorkflowPhases.Running
   );
 }
 
@@ -211,6 +223,7 @@ export {
   getWorkflowRevisionTitle,
   InvalidNodeError,
   isMemoizedNode,
+  isWorkflowActive,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 };
