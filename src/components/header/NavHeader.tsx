@@ -1,13 +1,16 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { Link, NavLink } from "react-router";
 
 import styles from "src/components/header/NavHeader.module.css";
+import { NavHeaderNotificationBadge } from "src/components/header/NavHeaderNotificationBadge.tsx";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getTriggerRoute,
   prTriggerRoute,
   pushTriggerRoute,
   routes,
 } from "src/routes.ts";
+import { isWorkflowActive } from "src/utils/workflowUtil.ts";
 
 /* NavHeader is under the Header and provides the navigation path */
 interface NavHeaderComponent {
@@ -17,6 +20,7 @@ interface NavHeaderComponent {
 
 interface NavHeaderFilter extends NavHeaderComponent {
   iconClassName: string;
+  numNotifications: number;
 }
 
 interface NavHeaderProps {
@@ -53,18 +57,23 @@ function NavHeader({ components, filters }: NavHeaderProps) {
       </h2>
       {filters && (
         <div className={styles.navFilter}>
-          {filters.map(({ displayName, navLink, iconClassName }) => (
-            <NavLink
-              key={displayName}
-              to={navLink}
-              className={({ isActive }) =>
-                isActive ? styles.navFilterSelected : styles.navFilterItem
-              }
-            >
-              <i className={iconClassName} />
-              {displayName}
-            </NavLink>
-          ))}
+          {filters.map(
+            ({ displayName, navLink, iconClassName, numNotifications }) => (
+              <NavLink
+                key={displayName}
+                to={navLink}
+                className={({ isActive }) =>
+                  isActive ? styles.navFilterSelected : styles.navFilterItem
+                }
+              >
+                <i className={iconClassName} />
+                {displayName}
+                <NavHeaderNotificationBadge
+                  numNotifications={numNotifications}
+                />
+              </NavLink>
+            ),
+          )}
         </div>
       )}
     </div>
@@ -102,8 +111,27 @@ interface FlowNavHeaderProps {
   repoOrg: string;
   repoName: string;
   isPrFlow: boolean;
+  additionalWorkflows?: Map<string, Workflow> | undefined;
 }
-function FlowNavHeader({ repoOrg, repoName, isPrFlow }: FlowNavHeaderProps) {
+function FlowNavHeader({
+  repoOrg,
+  repoName,
+  isPrFlow,
+  additionalWorkflows,
+}: FlowNavHeaderProps) {
+  const numNotifications = useMemo(() => {
+    if (additionalWorkflows == null) {
+      return 0;
+    }
+    let numActiveWorkflows = 0;
+    for (const workflow of additionalWorkflows.values()) {
+      if (isWorkflowActive(workflow.status.phase)) {
+        numActiveWorkflows += 1;
+      }
+    }
+    return numActiveWorkflows;
+  }, [additionalWorkflows]);
+
   const components = [
     homeNavComponent,
     reposNavComponent,
@@ -114,11 +142,13 @@ function FlowNavHeader({ repoOrg, repoName, isPrFlow }: FlowNavHeaderProps) {
       displayName: "Push Flow",
       navLink: `${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`,
       iconClassName: `nf nf-fa-code ${styles.navFilterPushIcon}`,
+      numNotifications: isPrFlow ? numNotifications : 0,
     },
     {
       displayName: "PR Flow",
       navLink: `${routes.flows}/${repoOrg}/${repoName}/${prTriggerRoute}`,
       iconClassName: `nf nf-md-source_pull ${styles.navFilterPrIcon}`,
+      numNotifications: isPrFlow ? 0 : numNotifications,
     },
   ];
   return <NavHeader components={components} filters={filters} />;

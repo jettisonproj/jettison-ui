@@ -1,0 +1,9 @@
+.navHeaderNotificationBadge {
+  background-color: var(--nav-header-notification-color);
+  padding: 3px 8px 1px;
+  border-radius: 5px;
+  color: #fff;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: bold;
+}

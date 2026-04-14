@@ -65,6 +65,8 @@
   --menu-text-color: #364153;
   --menu-border-color: #d1d9e0;
   --menu-shadow: 0 6px 12px -3px #25292e0a, 0 6px 18px 0 #25292e1f;
+
+  --nav-header-notification-color: rgb(69 70 106);
 }
 
 html {
