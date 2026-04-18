@@ -1,7 +1,7 @@
 .argocdBadge {
   margin-top: 5px;
   padding: 3px;
-  width: calc(100% - 40px);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
