@@ -83,6 +83,7 @@ function FlowGraphDockerNode({
     <>
       <FlowGraphCommit isPrFlow={isPrFlow} workflow={workflow} />
       <FlowGraphTimestamp node={node} />
+      <div className={styles.nodeDivider} />
       <a
         className={styles.nodeRowLink}
         href={repoLink}

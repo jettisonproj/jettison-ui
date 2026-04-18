@@ -7,8 +7,8 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 const NODE_WIDTH = 268;
 const TRIGGER_NODE_HEIGHT = 115;
-const DOCKER_NODE_HEIGHT = 134;
-const ARGO_NODE_HEIGHT = 164;
+const DOCKER_NODE_HEIGHT = 154;
+const ARGO_NODE_HEIGHT = 189;
 
 function getFlowTriggerNode(
   repoOrg: string,

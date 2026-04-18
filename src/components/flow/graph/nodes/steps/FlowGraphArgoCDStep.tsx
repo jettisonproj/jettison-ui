@@ -71,6 +71,7 @@ function FlowGraphArgoCDStep({
           <FlowGraphTimestamp node={workflowNode.node} />
         </>
       )}
+      <div className={styles.nodeDivider} />
       <a
         className={styles.nodeRowLink}
         href={repoLink}
