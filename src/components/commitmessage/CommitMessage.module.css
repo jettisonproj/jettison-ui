@@ -1,0 +1,16 @@
+.commitMessageText {
+  font-family: var(--gh-font-family);
+  font-weight: 500;
+  letter-spacing: -0.31px;
+  color: var(--gh-text-color);
+}
+
+.commitMessageText:hover {
+  text-decoration: underline;
+}
+
+.prMessageText {
+  composes: commitMessageText;
+
+  color: var(--gh-link-color);
+}

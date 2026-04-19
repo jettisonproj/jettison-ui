@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 
+import { CommitMessage } from "src/components/commitmessage/CommitMessage.tsx";
 import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
 import { FlowHistoryGrid } from "src/components/flow/history/FlowHistoryGrid.tsx";
 import styles from "src/components/flow/history/FlowHistoryItem.module.css";
 import { FlowHistoryStatusBadge } from "src/components/flow/history/FlowHistoryStatusBadge.tsx";
-import { getTitleParts } from "src/components/flow/history/getTitleParts.ts";
 import { SelectedHistoryItem } from "src/components/flow/history/selected/SelectedHistoryItem.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
@@ -12,7 +12,6 @@ import type { Workflow } from "src/data/types/workflowTypes.ts";
 import {
   getRepoAuthorLink,
   getRepoCommitLink,
-  getRepoPrLink,
   getRepoTreeLink,
   trimBranchPrefix,
 } from "src/utils/gitUtil.ts";
@@ -116,67 +115,13 @@ function FlowHistoryMessage({ isPrFlow, workflow }: FlowHistoryMessageProps) {
   const commitLink = getRepoCommitLink(repoUrl, commit);
   const title = getWorkflowRevisionTitle(parameterMap);
 
-  if (isPrFlow) {
-    // No transformation of pr commit message link
-    return (
-      <a
-        href={commitLink}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.historyTitleText}
-      >
-        {title}
-      </a>
-    );
-  }
-
-  // For non-pr commit messages, parse the pr number and link to it
-  return getTitleParts(title).map(({ titlePart, isPrNumber }, i) => (
-    <FlowHistoryTitlePart
-      key={i}
-      repoUrl={repoUrl}
-      titlePart={titlePart}
-      commitLink={commitLink}
-      isPrNumber={isPrNumber}
-    />
-  ));
-}
-
-interface FlowHistoryTitlePartProps {
-  repoUrl: string;
-  titlePart: string;
-  commitLink: string;
-  isPrNumber: boolean;
-}
-function FlowHistoryTitlePart({
-  repoUrl,
-  titlePart,
-  commitLink,
-  isPrNumber,
-}: FlowHistoryTitlePartProps) {
-  if (isPrNumber) {
-    const prNumber = titlePart.substring(1);
-    const prLink = getRepoPrLink(repoUrl, prNumber);
-    return (
-      <a
-        href={prLink}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.historyTitlePrText}
-      >
-        {titlePart}
-      </a>
-    );
-  }
   return (
-    <a
-      href={commitLink}
-      target="_blank"
-      rel="noreferrer"
-      className={styles.historyTitleText}
-    >
-      {titlePart}
-    </a>
+    <CommitMessage
+      isPrFlow={isPrFlow}
+      commitLink={commitLink}
+      title={title}
+      repoUrl={repoUrl}
+    />
   );
 }
 
