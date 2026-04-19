@@ -1,9 +1,8 @@
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  FlowGraphCommit,
   FlowGraphLoading,
   FlowGraphNode,
-  FlowGraphTimestamp,
+  FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type {
   GitHubPullRequestTrigger,
@@ -61,13 +60,7 @@ function FlowGraphGitHubNode({
   if (workflowNode == null) {
     return <FlowGraphLoading />;
   }
-  const { workflow, node } = workflowNode;
-  return (
-    <>
-      <FlowGraphCommit isPrFlow={isPrFlow} workflow={workflow} />
-      <FlowGraphTimestamp node={node} />
-    </>
-  );
+  return <FlowGraphNodeInfo isPrFlow={isPrFlow} workflowNode={workflowNode} />;
 }
 
 export { FlowGraphGitHubTrigger };

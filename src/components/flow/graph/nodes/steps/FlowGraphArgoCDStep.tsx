@@ -2,10 +2,9 @@ import { useContext } from "react";
 
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  FlowGraphCommit,
   FlowGraphLoading,
   FlowGraphNode,
-  FlowGraphTimestamp,
+  FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import {
   ArgoCDDriftBadge,
@@ -63,13 +62,7 @@ function FlowGraphArgoCDStep({
     >
       {workflowNode == null && <FlowGraphLoading />}
       {workflowNode != null && (
-        <>
-          <FlowGraphCommit
-            isPrFlow={isPrFlow}
-            workflow={workflowNode.workflow}
-          />
-          <FlowGraphTimestamp node={workflowNode.node} />
-        </>
+        <FlowGraphNodeInfo isPrFlow={isPrFlow} workflowNode={workflowNode} />
       )}
       <div className={styles.nodeDivider} />
       <a
