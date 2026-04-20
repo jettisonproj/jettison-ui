@@ -1,6 +1,6 @@
 import { assert, describe, it } from "vitest";
 
-import { getTitleParts } from "src/components/flow/history/getTitleParts.ts";
+import { getTitleParts } from "src/components/commitmessage/getTitleParts.ts";
 
 describe("getTitleParts", () => {
   it("returns a single non-PR part for a plain commit message", () => {

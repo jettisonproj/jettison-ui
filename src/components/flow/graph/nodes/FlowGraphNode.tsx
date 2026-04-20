@@ -1,21 +1,21 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 
+import { CommitMessage } from "src/components/commitmessage/CommitMessage.tsx";
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Timestamp } from "src/components/timestamp/Timestamp.tsx";
-import type {
-  NodePhase,
-  Workflow,
-  WorkflowMemoStatusNode,
-} from "src/data/types/workflowTypes.ts";
+import type { NodePhase } from "src/data/types/workflowTypes.ts";
 import { NodePhases } from "src/data/types/workflowTypes.ts";
 import {
   getDisplayCommit,
+  getRepoAuthorLink,
   getRepoCommitLink,
   getRepoPrLink,
+  getRepoTreeLink,
   trimBranchPrefix,
 } from "src/utils/gitUtil.ts";
+import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 import {
   getWorkflowRepo,
   getWorkflowRevision,
@@ -59,125 +59,134 @@ function FlowGraphNode({
   );
 }
 
-interface FlowGraphCommitProps {
+interface FlowGraphNodeInfoProps {
   isPrFlow: boolean;
-  workflow: Workflow;
+  workflowNode: WorkflowNode;
 }
-function FlowGraphCommit({ isPrFlow, workflow }: FlowGraphCommitProps) {
+function FlowGraphNodeInfo({ isPrFlow, workflowNode }: FlowGraphNodeInfoProps) {
+  const { workflow, node } = workflowNode;
   const { parameterMap } = workflow.memo;
 
   const repoUrl = getWorkflowRepo(parameterMap);
   const commitText = getWorkflowRevisionTitle(parameterMap);
   const commitAuthor = getWorkflowRevisionAuthor(parameterMap);
+  const commitSha = getWorkflowRevision(parameterMap);
+  const branchRef = getWorkflowRevisionRef(parameterMap);
 
-  let commitSha;
-  let prNumber;
-  let commitLink;
-  let branch;
-  if (isPrFlow) {
-    prNumber = getWorkflowRevisionNumber(parameterMap);
-    commitLink = getRepoPrLink(repoUrl, prNumber);
-  } else {
-    commitSha = getWorkflowRevision(parameterMap);
-    commitLink = getRepoCommitLink(repoUrl, commitSha);
-    commitSha = getDisplayCommit(commitSha);
-    branch = getWorkflowRevisionRef(parameterMap);
-    branch = trimBranchPrefix(branch);
-  }
+  const displayCommit = getDisplayCommit(commitSha);
+  const commitLink = getRepoCommitLink(repoUrl, commitSha);
+  const branch = trimBranchPrefix(branchRef);
+  const authorLink = getRepoAuthorLink(repoUrl, branch, commitAuthor);
+  const branchLink = getRepoTreeLink(repoUrl, branch);
+
   return (
     <>
-      <a
-        className={styles.nodeRowLink}
-        href={commitLink}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {commitSha && (
-          <>
-            <i className={`nf nf-fa-code ${styles.commitIcon}`} />
-            <span className={styles.nodeText}>{commitText}</span>
-          </>
-        )}
-        {prNumber && (
+      <div className={styles.nodeRowBlock}>
+        <CommitMessage
+          isPrFlow={isPrFlow}
+          commitLink={commitLink}
+          title={commitText}
+          repoUrl={repoUrl}
+        />
+      </div>
+      <div className={styles.nodeRowSub}>
+        <FlowGraphStatusIcon nodePhase={node.phase} />
+        <a
+          className={styles.codeText}
+          href={commitLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {displayCommit}
+        </a>
+        <i className={`nf nf-fa-user_o ${styles.userIcon}`} />
+        <a
+          className={styles.nodeLinkSub}
+          href={authorLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {commitAuthor}
+        </a>
+      </div>
+      <div className={styles.nodeRowSub}>
+        {isPrFlow && (
           <>
             <i className={`nf nf-md-source_pull ${styles.prIcon}`} />
-            <span className={styles.nodeText}>
-              {commitText} (#{prNumber})
-            </span>
+            <a
+              className={styles.prText}
+              href={getRepoPrLink(
+                repoUrl,
+                getWorkflowRevisionNumber(parameterMap),
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              #{getWorkflowRevisionNumber(parameterMap)}
+            </a>
           </>
         )}
-      </a>
-      <div className={styles.nodeRowText}>
-        {commitSha && (
-          <>
-            <i className={`nf nf-fa-code_commit ${styles.shaIcon}`} />
-            <span className={styles.codeText}>{commitSha}</span>
-          </>
-        )}
-        <i className={`nf nf-fa-user ${styles.userIcon}`} />
-        <span className={styles.codeText}>{commitAuthor}</span>
-        {branch && (
-          <>
-            <i className={`nf nf-fa-code_branch ${styles.branchIcon}`} />
-            <span className={styles.codeText}>{branch}</span>
-          </>
-        )}
+        <i className={`nf nf-fa-code_branch ${styles.branchIcon}`} />
+        <a
+          className={styles.nodeLinkSub}
+          href={branchLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {branch}
+        </a>
+      </div>
+      <div className={styles.nodeRowSub}>
+        <i className="nf nf-fa-calendar_o" />
+        <Timestamp className={styles.nodeTimeText} date={node.startedAt} />
       </div>
     </>
   );
 }
 
-interface FlowGraphTimestampProps {
-  node: WorkflowMemoStatusNode;
-}
-function FlowGraphTimestamp({ node }: FlowGraphTimestampProps) {
-  return (
-    <div className={styles.nodeRowSmall}>
-      <i className={`nf nf-fa-clock ${styles.timeIcon}`} />
-      <Timestamp className={styles.nodeTimeText} date={node.startedAt} />
-      <FlowGraphPhase phase={node.phase} />
-    </div>
-  );
+interface FlowGraphStatusIconProps {
+  nodePhase: NodePhase;
 }
 
-interface FlowGraphPhaseProps {
-  phase: NodePhase;
-}
-function FlowGraphPhase({ phase }: FlowGraphPhaseProps) {
-  switch (phase) {
+function FlowGraphStatusIcon({ nodePhase }: FlowGraphStatusIconProps) {
+  switch (nodePhase) {
     case NodePhases.Succeeded:
-      return null;
+      return <i className="nf nf-fa-code_commit" />;
     case NodePhases.Error:
-      return <i className={`nf nf-md-cancel ${styles.nodeDangerIcon}`} />;
+      return <i className={`nf nf-md-cancel ${styles.dangerIcon}`} />;
     case NodePhases.Failed:
-      return <i className={`nf nf-fa-warning ${styles.nodeDangerIcon}`} />;
+      return <i className={`nf nf-fa-circle_xmark ${styles.dangerIcon}`} />;
     case NodePhases.Running:
-      return <LoadIcon className={styles.nodeLoadIcon} />;
+      return <LoadIcon className={styles.loadingIcon} />;
     case NodePhases.Pending:
-      return <i className={`nf nf-fa-hourglass ${styles.nodePhaseIcon}`} />;
-    // The Omitted / Skipped phases are expected to be filtered out
-    case NodePhases.Omitted:
+      return <i className={`nf nf-fa-hourglass ${styles.pendingIcon}`} />;
     case NodePhases.Skipped:
-      return (
-        <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
+    case NodePhases.Omitted:
+      throw new FlowGraphNodeError(
+        `invalid node phase for status icon: ${nodePhase}`,
       );
     default:
-      phase satisfies never;
+      nodePhase satisfies never;
       console.log("unknown node phase:");
-      console.log(phase);
-      return (
-        <i className={`nf nf-fa-question_circle ${styles.nodePhaseIcon}`} />
-      );
+      console.log(nodePhase);
+      throw new FlowGraphNodeError("unknown node phase");
+  }
+}
+
+class FlowGraphNodeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
 
 function FlowGraphLoading() {
   return (
-    <div className={styles.nodeRowSmall}>
+    <div className={styles.nodeRowSub}>
       <LoadIcon className={styles.loadIcon} />
-      <span className={styles.nodeSmallText}>Waiting for workflow run</span>
+      <span className={styles.nodeTextSub}>Waiting for workflow run</span>
     </div>
   );
 }
 
-export { FlowGraphCommit, FlowGraphLoading, FlowGraphNode, FlowGraphTimestamp };
+export { FlowGraphLoading, FlowGraphNode, FlowGraphNodeInfo };

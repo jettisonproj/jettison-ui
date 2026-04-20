@@ -5,10 +5,10 @@ import type { Step, StepSource, Trigger } from "src/data/types/flowTypes.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
-const NODE_WIDTH = 268;
-const TRIGGER_NODE_HEIGHT = 115;
-const DOCKER_NODE_HEIGHT = 134;
-const ARGO_NODE_HEIGHT = 164;
+const NODE_WIDTH = 318;
+const TRIGGER_NODE_HEIGHT = 158;
+const DOCKER_NODE_HEIGHT = 198;
+const ARGO_NODE_HEIGHT = 242;
 
 function getFlowTriggerNode(
   repoOrg: string,

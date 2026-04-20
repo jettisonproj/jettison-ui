@@ -2,10 +2,9 @@ import { useContext } from "react";
 
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  FlowGraphCommit,
   FlowGraphLoading,
   FlowGraphNode,
-  FlowGraphTimestamp,
+  FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import {
   ArgoCDDriftBadge,
@@ -63,14 +62,9 @@ function FlowGraphArgoCDStep({
     >
       {workflowNode == null && <FlowGraphLoading />}
       {workflowNode != null && (
-        <>
-          <FlowGraphCommit
-            isPrFlow={isPrFlow}
-            workflow={workflowNode.workflow}
-          />
-          <FlowGraphTimestamp node={workflowNode.node} />
-        </>
+        <FlowGraphNodeInfo isPrFlow={isPrFlow} workflowNode={workflowNode} />
       )}
+      <div className={styles.nodeDivider} />
       <a
         className={styles.nodeRowLink}
         href={repoLink}
@@ -78,7 +72,7 @@ function FlowGraphArgoCDStep({
         rel="noreferrer"
       >
         <i className={`nf nf-fa-layer_group ${styles.infraIcon}`} />
-        <span className={styles.nodeText}>Infrastructure</span>
+        <span className={styles.nodeTextSub}>Infrastructure</span>
       </a>
       <FlowGraphArgoCDStepStatus step={step} workflowNode={workflowNode} />
     </FlowGraphNode>
@@ -117,7 +111,7 @@ function FlowGraphArgoCDStepStatus({
 
   if (applications == null || rollouts == null) {
     return (
-      <div className={styles.nodeRowText}>
+      <div className={styles.nodeRowBlock}>
         <LoadIcon />
       </div>
     );
@@ -126,7 +120,7 @@ function FlowGraphArgoCDStepStatus({
   const application = applications.get(repoUrl)?.get(repoPath);
   if (application == null) {
     return (
-      <div className={styles.nodeRowText}>
+      <div className={styles.nodeRowBlock}>
         <ArgoCDNotFoundBadge />
       </div>
     );
@@ -185,7 +179,7 @@ function FlowGraphArgoCDStepStatus({
   }
 
   return (
-    <div className={styles.nodeRowText}>
+    <div className={styles.nodeRowBlock}>
       <FlowGraphArgoCDHealthBadge
         applicationHealthError={applicationHealthError}
         rolloutHealthError={rolloutHealthError}

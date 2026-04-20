@@ -67,6 +67,9 @@
   --menu-shadow: 0 6px 12px -3px #25292e0a, 0 6px 18px 0 #25292e1f;
 
   --nav-header-notification-color: rgb(69 70 106);
+
+  --load-icon-height: 16px;
+  --load-block-width: 4px;
 }
 
 html {

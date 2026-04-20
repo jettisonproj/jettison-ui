@@ -1,9 +1,8 @@
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
-  FlowGraphCommit,
   FlowGraphLoading,
   FlowGraphNode,
-  FlowGraphTimestamp,
+  FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type {
   DockerBuildTestPublishStep,
@@ -81,16 +80,16 @@ function FlowGraphDockerNode({
   const repoLink = getRepoCommitPathLink(repoUrl, commitSha, dockerfilePath);
   return (
     <>
-      <FlowGraphCommit isPrFlow={isPrFlow} workflow={workflow} />
-      <FlowGraphTimestamp node={node} />
+      <FlowGraphNodeInfo isPrFlow={isPrFlow} workflowNode={workflowNode} />
+      <div className={styles.nodeDivider} />
       <a
         className={styles.nodeRowLink}
         href={repoLink}
         target="_blank"
         rel="noreferrer"
       >
-        <i className={`nf nf-fa-file_text_o ${styles.dockerfileIcon}`} />{" "}
-        <span className={styles.nodeText}>{dockerfilePath}</span>
+        <i className={`nf nf-fa-file_text_o ${styles.dockerfileIcon}`} />
+        <span className={styles.nodeTextSub}>{dockerfilePath}</span>
       </a>
     </>
   );
