@@ -72,7 +72,7 @@ function FlowGraphArgoCDStep({
         rel="noreferrer"
       >
         <i className={`nf nf-fa-layer_group ${styles.infraIcon}`} />
-        <span className={styles.nodeText}>Infrastructure</span>
+        <span className={styles.nodeTextSub}>Infrastructure</span>
       </a>
       <FlowGraphArgoCDStepStatus step={step} workflowNode={workflowNode} />
     </FlowGraphNode>
@@ -111,7 +111,7 @@ function FlowGraphArgoCDStepStatus({
 
   if (applications == null || rollouts == null) {
     return (
-      <div className={styles.nodeRowText}>
+      <div className={styles.nodeRowBlock}>
         <LoadIcon />
       </div>
     );
@@ -120,7 +120,7 @@ function FlowGraphArgoCDStepStatus({
   const application = applications.get(repoUrl)?.get(repoPath);
   if (application == null) {
     return (
-      <div className={styles.nodeRowText}>
+      <div className={styles.nodeRowBlock}>
         <ArgoCDNotFoundBadge />
       </div>
     );
@@ -179,7 +179,7 @@ function FlowGraphArgoCDStepStatus({
   }
 
   return (
-    <div className={styles.nodeRowText}>
+    <div className={styles.nodeRowBlock}>
       <FlowGraphArgoCDHealthBadge
         applicationHealthError={applicationHealthError}
         rolloutHealthError={rolloutHealthError}

@@ -1,7 +1,4 @@
 .loadIcon {
-  --load-icon-height: 16px;
-  --load-block-width: 4px;
-
   display: inline-flex;
   align-items: center;
   height: var(--load-icon-height);

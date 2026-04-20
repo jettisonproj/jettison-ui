@@ -1,22 +1,23 @@
-.nodeText {
+/**
+ * Node row using "block" display. Clips the end of the text on overflow
+ * Using "flex" does not support this the same way. e.g. ellipsis is not
+ * supported on child
+ */
+.nodeRowBlock {
+  display: block;
+  max-width: 100%;
+  text-align: center;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
 
-.nodeRow {
-  composes: nodeText;
-
-  max-width: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 0 20px;
+  margin-bottom: 5px;
 }
 
 .nodeRowHeader {
-  composes: nodeRow;
+  composes: nodeRowBlock;
 
   text-transform: uppercase;
   color: var(--graph-title-color);
@@ -52,11 +53,16 @@
   letter-spacing: 1.5px;
 }
 
+.nodeRowSub {
+  composes: nodeRowBlock;
+
+  color: var(--graph-text-color);
+}
+
 .nodeRowLink {
-  composes: nodeRow;
+  composes: nodeRowBlock;
 
   color: var(--graph-link-color);
-  font-weight: bolder;
 }
 
 .nodeRowLink:hover {
@@ -64,17 +70,46 @@
   color: var(--primary-color);
 }
 
-.nodeRowText {
-  composes: nodeRow;
+.codeText {
+  margin-left: 5px;
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--graph-text-color);
+}
+
+.codeText:hover {
+  text-decoration: underline;
+}
+
+.nodeTextSub {
+  margin-left: 5px;
+  font-weight: bolder;
+}
+
+.nodeLinkSub {
+  composes: nodeTextSub;
 
   color: var(--graph-text-color);
 }
 
-.nodeRowSmall {
-  composes: nodeRow;
+.nodeLinkSub:hover {
+  text-decoration: underline;
+}
 
-  color: var(--graph-text-color);
-  margin-top: 1px;
+.prText {
+  composes: nodeLinkSub;
+
+  margin-right: 7px;
+}
+
+.nodeTimeText {
+  composes: nodeTextSub;
+
+  cursor: pointer;
+}
+
+.nodeTimeText:hover {
+  text-decoration: underline;
 }
 
 .githubIcon {
@@ -89,48 +124,24 @@
   margin-right: 7px;
 }
 
+.prIcon {
+  font-size: 13px;
+  vertical-align: text-top;
+}
+
 .k8sIcon {
   color: #316ce6;
   font-size: 21px;
   margin-right: 7px;
 }
 
-.commitIcon {
-  font-size: 16px;
-  margin-right: 3px;
-  padding-bottom: 3px;
-}
-
-.prIcon {
-  font-size: 13px;
-  margin-right: 3px;
-  padding-bottom: 4px;
-}
-
-.codeText {
-  composes: nodeText;
-
-  font-size: 12px;
-  font-family: monospace;
-}
-
-.shaIcon {
-  margin-right: 5px;
-}
-
 .userIcon {
   font-size: 12px;
-  margin: 0 5px;
+  margin-left: 7px;
 }
 
 .branchIcon {
   font-size: 12px;
-  margin: 0 5px;
-}
-
-.timeIcon {
-  font-size: 12px;
-  margin-right: 5px;
 }
 
 .loadIcon {
@@ -138,55 +149,25 @@
   --load-color: var(--graph-link-color);
 }
 
-.nodeSmallText {
-  composes: nodeText;
-
-  font-weight: bolder;
-  font-size: 12px;
-}
-
-.nodeTimeText {
-  composes: nodeSmallText;
-
-  cursor: pointer;
-}
-
-.nodeTimeText:hover {
-  text-decoration: underline;
-}
-
 .dockerfileIcon {
-  font-size: 12px;
-  margin-right: 5px;
+  font-size: 13px;
+  vertical-align: text-top;
 }
 
 .infraIcon {
-  font-size: 11px;
-  margin-right: 5px;
-}
-
-.nodePhaseIcon {
-  margin-left: 5px;
-}
-
-.nodeLoadIcon {
-  composes: nodePhaseIcon;
-
-  --load-color: var(--graph-link-color);
-}
-
-.nodeDangerIcon {
-  composes: nodePhaseIcon;
-
-  color: var(--danger-color);
   font-size: 12px;
 }
 
-.commitLink {
-  color: #59636e;
+/* Status Icon */
+.dangerIcon {
+  color: var(--status-badge-danger-color);
 }
 
-.commitLink:hover {
-  text-decoration: underline;
-  color: var(--primary-color);
+.loadingIcon {
+  --load-color: var(--graph-link-color);
+  --load-icon-height: 14px;
+}
+
+.pendingIcon {
+  font-size: 12px;
 }
