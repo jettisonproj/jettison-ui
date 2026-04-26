@@ -1,4 +1,3 @@
-import styles from "src/components/flow/history/FlowHistory.module.css";
 import { FlowHistoryItem } from "src/components/flow/history/FlowHistoryItem.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -25,21 +24,17 @@ function FlowHistory({
     return <p>No flow history found</p>;
   }
 
-  return (
-    <div className={styles.historyItems}>
-      {workflows.map((workflow) => (
-        <FlowHistoryItem
-          key={workflow.metadata.name}
-          isPrFlow={isPrFlow}
-          flowSteps={flowSteps}
-          repoOrg={repoOrg}
-          workflow={workflow}
-          flowBaseUrl={flowBaseUrl}
-          isSelected={workflow.metadata.name === selectedWorkflow}
-          selectedNodeName={selectedNodeName}
-        />
-      ))}
-    </div>
-  );
+  return workflows.map((workflow) => (
+    <FlowHistoryItem
+      key={workflow.metadata.name}
+      isPrFlow={isPrFlow}
+      flowSteps={flowSteps}
+      repoOrg={repoOrg}
+      workflow={workflow}
+      flowBaseUrl={flowBaseUrl}
+      isSelected={workflow.metadata.name === selectedWorkflow}
+      selectedNodeName={selectedNodeName}
+    />
+  ));
 }
 export { FlowHistory };

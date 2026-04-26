@@ -25,10 +25,11 @@ interface NavHeaderFilter extends NavHeaderComponent {
 
 interface NavHeaderProps {
   components: NavHeaderComponent[];
+  showBorder: boolean;
   filters?: NavHeaderFilter[];
 }
 
-function NavHeader({ components, filters }: NavHeaderProps) {
+function NavHeader({ components, showBorder, filters }: NavHeaderProps) {
   if (components.length === 0) {
     return null;
   }
@@ -39,8 +40,11 @@ function NavHeader({ components, filters }: NavHeaderProps) {
     throw new NavHeaderError("unexpected NavHeaderProps components");
   }
 
+  const navHeaderClass = showBorder
+    ? styles.navHeaderBordered
+    : styles.navHeader;
   return (
-    <div className={styles.navHeader}>
+    <div className={navHeaderClass}>
       <h2>
         {/* The prefix components contain links */}
         {components.slice(0, -1).map(({ displayName, navLink }) => (
@@ -85,14 +89,14 @@ function NavHeader({ components, filters }: NavHeaderProps) {
 /* Home Nav Header */
 const homeNavComponent = { displayName: "Home", navLink: routes.home };
 function HomeNavHeader() {
-  return <NavHeader components={[homeNavComponent]} />;
+  return <NavHeader components={[homeNavComponent]} showBorder={true} />;
 }
 
 /* Namespaces Nav Header */
 const reposNavComponent = { displayName: "Repos", navLink: routes.flows };
 function ReposNavHeader() {
   const components = [homeNavComponent, reposNavComponent];
-  return <NavHeader components={components} />;
+  return <NavHeader components={components} showBorder={false} />;
 }
 
 /* Flow Nav Header */
@@ -143,7 +147,9 @@ function FlowNavHeader({
       numNotifications: isPrFlow ? 0 : numNotifications,
     },
   ];
-  return <NavHeader components={components} filters={filters} />;
+  return (
+    <NavHeader components={components} showBorder={true} filters={filters} />
+  );
 }
 
 /* NodeDetails Nav Header */
@@ -174,7 +180,7 @@ function NodeDetailsNavHeader({
     flowNavComponent(repoOrg, repoName, isPrFlow),
     nodeDetailsNavComponent(repoOrg, repoName, isPrFlow, nodeName),
   ];
-  return <NavHeader components={components} />;
+  return <NavHeader components={components} showBorder={true} />;
 }
 
 class NavHeaderError extends Error {

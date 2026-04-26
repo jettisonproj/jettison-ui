@@ -1,17 +1,12 @@
 import { useContext } from "react";
-import { Link } from "react-router";
 
 import { Header } from "src/components/header/Header.tsx";
 import { ReposNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import styles from "src/components/repos/Repos.module.css";
-import { FlowsContext } from "src/providers/provider.tsx";
-import { pushTriggerRoute, routes } from "src/routes.ts";
-import {
-  getRepoLink,
-  getRepoOrgAndName,
-  sortByRepoName,
-} from "src/utils/gitUtil.ts";
+import { Repo } from "src/components/repos/Repo.tsx";
+import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
+import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
+import { getRepoOrgAndName, sortByRepoName } from "src/utils/gitUtil.ts";
 
 function Repos() {
   return (
@@ -25,6 +20,7 @@ function Repos() {
 
 function ReposList() {
   const flows = useContext(FlowsContext);
+  const workflows = useContext(WorkflowsContext);
 
   if (flows == null) {
     return <LoadIcon />;
@@ -32,35 +28,25 @@ function ReposList() {
 
   return Array.from(flows.keys())
     .sort(sortByRepoName)
-    .map((repoOrgName, index) => (
-      <Repo key={repoOrgName} isFirst={index === 0} repoOrgName={repoOrgName} />
-    ));
-}
+    .map((repoOrgName) => {
+      const [repoOrg, repoName] = getRepoOrgAndName(repoOrgName);
+      const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+        flows,
+        workflows,
+        repoOrgName,
+        repoOrg,
+      );
 
-interface RepoProps {
-  repoOrgName: string;
-  isFirst: boolean;
-}
-function Repo({ repoOrgName, isFirst }: RepoProps) {
-  const repoClassName = isFirst ? styles.repoFirst : styles.repo;
-  const [repoOrg, repoName] = getRepoOrgAndName(repoOrgName);
-  return (
-    <div className={repoClassName}>
-      <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
-        className={styles.repoLink}
-      ></Link>
-      {repoName}
-      <a
-        className={styles.manifestLink}
-        href={getRepoLink(repoOrg, repoName)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i className="nf nf-fa-github" />
-      </a>
-    </div>
-  );
+      return (
+        <Repo
+          key={repoOrgName}
+          repoOrg={repoOrg}
+          repoName={repoName}
+          pushWorkflows={pushWorkflows}
+          prWorkflows={prWorkflows}
+        />
+      );
+    });
 }
 
 export { Repos };

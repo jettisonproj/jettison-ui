@@ -21,6 +21,11 @@
   border-top: 0;
 }
 
+.historyItemBase:last-child {
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--separator-color);
+}
+
 /* Title Row */
 .historyTitle {
   min-width: var(--content-width);

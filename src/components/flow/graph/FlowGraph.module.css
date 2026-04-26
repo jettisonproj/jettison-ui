@@ -8,6 +8,8 @@
   border: 1px var(--panel-color) solid;
   border-radius: 30px;
   padding: 30px 15px;
+  margin-top: 22px;
+  margin-bottom: 22px;
 }
 
 .node {

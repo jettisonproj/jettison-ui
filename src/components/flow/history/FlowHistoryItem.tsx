@@ -45,6 +45,7 @@ function FlowHistoryItem({
   const historyItemClassName = isSelected
     ? styles.historyItemBase
     : styles.historyItem;
+
   return (
     <div className={historyItemClassName}>
       <FlowHistoryTitle
