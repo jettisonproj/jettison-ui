@@ -10,7 +10,7 @@ import {
   pushTriggerRoute,
   routes,
 } from "src/routes.ts";
-import { isWorkflowActive } from "src/utils/workflowUtil.ts";
+import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
 
 /* NavHeader is under the Header and provides the navigation path */
 interface NavHeaderComponent {
@@ -119,18 +119,10 @@ function FlowNavHeader({
   isPrFlow,
   additionalWorkflows,
 }: FlowNavHeaderProps) {
-  const numNotifications = useMemo(() => {
-    if (additionalWorkflows == null) {
-      return 0;
-    }
-    let numActiveWorkflows = 0;
-    for (const workflow of additionalWorkflows.values()) {
-      if (isWorkflowActive(workflow.status.phase)) {
-        numActiveWorkflows += 1;
-      }
-    }
-    return numActiveWorkflows;
-  }, [additionalWorkflows]);
+  const numNotifications = useMemo(
+    () => getNumActiveWorkflows(additionalWorkflows),
+    [additionalWorkflows],
+  );
 
   const components = [
     homeNavComponent,

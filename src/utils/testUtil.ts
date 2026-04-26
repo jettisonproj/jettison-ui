@@ -3,6 +3,7 @@ import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
+  WorkflowPhase,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import {
@@ -45,10 +46,12 @@ function getTestNode({
 
 interface TestWorkflow {
   workflowName?: string;
+  workflowPhase?: WorkflowPhase;
   workflowNodes?: TestWorkflowStatusNode[];
 }
 function getTestWorkflow({
   workflowName = "test-workflow",
+  workflowPhase,
   workflowNodes = [],
 }: TestWorkflow): Workflow {
   const testWorkflowNodes = workflowNodes.reduce<
@@ -67,6 +70,7 @@ function getTestWorkflow({
     },
     spec: { arguments: { parameters: [] } },
     status: {
+      phase: workflowPhase,
       nodes: testWorkflowNodes,
     },
     memo: {

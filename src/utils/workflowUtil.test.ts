@@ -19,6 +19,7 @@ import {
   getNodeDockerfilePath,
   getNodeResourcePath,
   getNodeTriggerDisplayName,
+  getNumActiveWorkflows,
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
@@ -27,7 +28,6 @@ import {
   getWorkflowRevisionTitle,
   InvalidNodeError,
   isMemoizedNode,
-  isWorkflowActive,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 } from "src/utils/workflowUtil.ts";
@@ -526,20 +526,69 @@ describe("getLastWorkflowNodeForStep", () => {
   });
 });
 
-describe("isWorkflowActive", () => {
-  it("returns true for a pending workflow", () => {
-    assert.isTrue(isWorkflowActive(WorkflowPhases.Pending));
+describe("getNumActiveWorkflows", () => {
+  it("loading workflows are not counted", () => {
+    assert.strictEqual(getNumActiveWorkflows(null), 0);
   });
 
-  it("returns true for a running workflow", () => {
-    assert.isTrue(isWorkflowActive(WorkflowPhases.Running));
+  it("empty workflows are not counted", () => {
+    assert.strictEqual(getNumActiveWorkflows(undefined), 0);
   });
 
-  it("returns false when workflow phase is missing", () => {
-    assert.isFalse(isWorkflowActive(undefined));
+  it("not counted if 0 workflows", () => {
+    const testWorkflows = new Map();
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 0);
   });
 
-  it("returns false for a succeeded workflow", () => {
-    assert.isFalse(isWorkflowActive(WorkflowPhases.Succeeded));
+  it("pending workflows are counted", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowPhase: WorkflowPhases.Pending,
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
+
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 1);
+  });
+
+  it("running workflows are counted", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowPhase: WorkflowPhases.Running,
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
+
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 1);
+  });
+
+  it("unknown workflows are counted", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowPhase: WorkflowPhases.Unknown,
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
+
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 1);
+  });
+
+  it("counted when workflow phase is missing", () => {
+    const testWorkflow = getTestWorkflow({});
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
+
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 1);
+  });
+
+  it("succeeded workflow are not counted", () => {
+    const testWorkflow = getTestWorkflow({
+      workflowPhase: WorkflowPhases.Succeeded,
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
+
+    assert.strictEqual(getNumActiveWorkflows(testWorkflows), 0);
   });
 });
