@@ -61,10 +61,25 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
   );
 }
 
+function getNumActiveWorkflows(workflows: Map<string, Workflow> | undefined) {
+  if (workflows == null) {
+    return 0;
+  }
+  let numActiveWorkflows = 0;
+  for (const workflow of workflows.values()) {
+    if (isWorkflowActive(workflow.status.phase)) {
+      numActiveWorkflows += 1;
+    }
+  }
+  return numActiveWorkflows;
+}
+
 function isWorkflowActive(workflowPhase: WorkflowPhase | undefined) {
   return (
+    workflowPhase == null ||
     workflowPhase === WorkflowPhases.Pending ||
-    workflowPhase === WorkflowPhases.Running
+    workflowPhase === WorkflowPhases.Running ||
+    workflowPhase === WorkflowPhases.Unknown
   );
 }
 
@@ -215,6 +230,7 @@ export {
   getNodeDockerfilePath,
   getNodeResourcePath,
   getNodeTriggerDisplayName,
+  getNumActiveWorkflows,
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
@@ -223,7 +239,6 @@ export {
   getWorkflowRevisionTitle,
   InvalidNodeError,
   isMemoizedNode,
-  isWorkflowActive,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
 };
