@@ -48,11 +48,13 @@ interface TestWorkflow {
   workflowName?: string;
   workflowPhase?: WorkflowPhase;
   workflowNodes?: TestWorkflowStatusNode[];
+  workflowStartedAt?: string;
 }
 function getTestWorkflow({
   workflowName = "test-workflow",
   workflowPhase,
   workflowNodes = [],
+  workflowStartedAt,
 }: TestWorkflow): Workflow {
   const testWorkflowNodes = workflowNodes.reduce<
     Record<string, WorkflowStatusNode>
@@ -72,6 +74,7 @@ function getTestWorkflow({
     status: {
       phase: workflowPhase,
       nodes: testWorkflowNodes,
+      startedAt: workflowStartedAt,
     },
     memo: {
       parameterMap: {},

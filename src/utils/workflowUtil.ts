@@ -220,6 +220,21 @@ function getLastWorkflowNode(
   return null;
 }
 
+function workflowCompareFn(a: Workflow, b: Workflow) {
+  const bDate = b.memo.startedAt;
+  const aDate = a.memo.startedAt;
+  if (bDate == null && aDate == null) {
+    return 0;
+  }
+  if (bDate == null) {
+    return 1;
+  }
+  if (aDate == null) {
+    return -1;
+  }
+  return bDate.getTime() - aDate.getTime();
+}
+
 class InvalidNodeError extends Error {
   constructor(message: string) {
     super(message);
@@ -248,6 +263,7 @@ export {
   isMemoizedNode,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
+  workflowCompareFn,
 };
 
 export type { WorkflowNode };

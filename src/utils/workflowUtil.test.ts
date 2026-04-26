@@ -30,6 +30,7 @@ import {
   isMemoizedNode,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
+  workflowCompareFn,
 } from "src/utils/workflowUtil.ts";
 
 describe("isMemoizedNode", () => {
@@ -590,5 +591,35 @@ describe("getNumActiveWorkflows", () => {
     testWorkflows.set(testWorkflow.metadata.name, testWorkflow);
 
     assert.strictEqual(getNumActiveWorkflows(testWorkflows), 0);
+  });
+});
+
+describe("workflowCompareFn", () => {
+  it("workflows without a timestamp come first", () => {
+    const testWorkflow1 = getTestWorkflow({});
+    const testWorkflow2 = getTestWorkflow({
+      workflowStartedAt: "2026-01-01T00:00:00Z",
+    });
+
+    const testWorkflows = [testWorkflow2, testWorkflow1];
+    testWorkflows.sort(workflowCompareFn);
+
+    assert.strictEqual(testWorkflows[0], testWorkflow1);
+    assert.strictEqual(testWorkflows[1], testWorkflow2);
+  });
+
+  it("most recent workflows come first", () => {
+    const testWorkflow1 = getTestWorkflow({
+      workflowStartedAt: "2026-01-02T00:00:00Z",
+    });
+    const testWorkflow2 = getTestWorkflow({
+      workflowStartedAt: "2026-01-01T00:00:00Z",
+    });
+
+    const testWorkflows = [testWorkflow2, testWorkflow1];
+    testWorkflows.sort(workflowCompareFn);
+
+    assert.strictEqual(testWorkflows[0], testWorkflow1);
+    assert.strictEqual(testWorkflows[1], testWorkflow2);
   });
 });
