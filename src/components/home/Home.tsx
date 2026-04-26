@@ -5,6 +5,7 @@ import { Header } from "src/components/header/Header.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
+import { Repo } from "src/components/repos/Repo.tsx";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
@@ -16,8 +17,7 @@ import {
   RolloutsContext,
   WorkflowsContext,
 } from "src/providers/provider.tsx";
-import { pushTriggerRoute, routes } from "src/routes.ts";
-import { getRepoLink, getRepoOrgAndName } from "src/utils/gitUtil.ts";
+import { routes } from "src/routes.ts";
 
 function Home() {
   return (
@@ -89,41 +89,9 @@ function RecentRepos() {
     <>
       <h2 className={styles.sectionTitle}>Recent Repos</h2>
       {recentRepos.map((recentRepo, index) => (
-        <RecentRepo
-          key={recentRepo}
-          isFirst={index === 0}
-          recentRepo={recentRepo}
-        />
+        <Repo key={recentRepo} isFirst={index === 0} repoOrgName={recentRepo} />
       ))}
     </>
-  );
-}
-
-interface RecentRepoProps {
-  recentRepo: string;
-  isFirst: boolean;
-}
-function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
-  const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
-  const recentRepoClassName = isFirst
-    ? styles.recentRepoFirst
-    : styles.recentRepo;
-  return (
-    <div className={recentRepoClassName}>
-      <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
-        className={styles.recentRepoLink}
-      ></Link>
-      {repoName}
-      <a
-        className={styles.manifestLink}
-        href={getRepoLink(repoOrg, repoName)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i className="nf nf-fa-github" />
-      </a>
-    </div>
   );
 }
 
