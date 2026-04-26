@@ -1,0 +1,46 @@
+.repoStatusBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-weight: bolder;
+
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.repoBadgeSuccess {
+  background-color: var(--history-grid-success-bg);
+  border: 1px solid var(--history-grid-success-border);
+  color: var(--argocd-badge-success-color);
+}
+
+.repoBadgeDanger {
+  background-color: var(--history-grid-danger-bg);
+  border: 1px solid var(--history-grid-danger-border);
+  color: var(--history-grid-danger-color);
+}
+
+.repoBadgeRunning {
+  background-color: var(--history-grid-running-bg);
+  border: 1px solid var(--history-grid-running-border);
+  color: var(--history-grid-running-color);
+  --load-color: var(--history-grid-running-color);
+  --load-icon-height: 13px;
+}
+
+.repoBadgePending {
+  background-color: var(--history-grid-pending-bg);
+  border: 1px solid var(--history-grid-pending-border);
+  color: var(--history-grid-pending-color);
+}
+
+.repoBadgeIcon {
+  margin-right: 7px;
+}
+
+.repoBadgeText {
+  margin-top: 2px;
+}
