@@ -304,4 +304,11 @@ function FlowHistoryDetails({
   );
 }
 
-export { FlowHistoryItem };
+export {
+  FlowHistoryAuthor,
+  FlowHistoryBranch,
+  FlowHistoryDuration,
+  FlowHistoryItem,
+  FlowHistoryMessage,
+  FlowHistoryTimestamp,
+};
