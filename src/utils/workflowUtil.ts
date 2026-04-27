@@ -61,7 +61,9 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
   );
 }
 
-function getNumActiveWorkflows(workflows: Map<string, Workflow> | undefined) {
+function getNumActiveWorkflows(
+  workflows: Map<string, Workflow> | null | undefined,
+) {
   if (workflows == null) {
     return 0;
   }
