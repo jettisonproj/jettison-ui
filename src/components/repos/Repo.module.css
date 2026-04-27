@@ -1,3 +1,63 @@
+/* Repo Item */
+.repo {
+  border-top: 1px solid var(--separator-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.repo:hover {
+  background-color: var(--panel-color);
+  border-bottom: 1px solid var(--separator-color);
+  border-radius: 15px;
+}
+
+.repo:hover + .repo {
+  border-top: 0;
+}
+
+.repoFirst {
+  composes: repo;
+
+  margin-top: 8px;
+}
+
+/* Title Row */
+.repoTitle {
+  min-width: var(--content-width);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+}
+
+.repoLink {
+  font-size: 21px;
+  font-weight: bolder;
+  font-family: var(--gh-font-family);
+  font-family:
+    "Mona Sans VF",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans",
+    Helvetica,
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
+  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.31px;
+  color: var(--gh-text-color);
+  color: var(--gh-link-color);
+}
+
+.repoLink:hover {
+  text-decoration: underline;
+}
+
+/*
 .repo {
   min-width: var(--content-width);
   position: relative;
@@ -12,27 +72,7 @@
   margin-bottom: 20px;
 }
 
-.repoFirst {
-  composes: repo;
-
-  margin-top: 8px;
-}
-
 .repo:hover {
   background-color: var(--secondary-hover);
 }
-
-.repoLink {
-  position: absolute;
-  inset: 0;
-}
-
-.manifestLink {
-  position: relative;
-  float: right;
-  color: var(--text-color);
-}
-
-.manifestLink:hover {
-  text-shadow: var(--primary-shadow);
-}
+*/

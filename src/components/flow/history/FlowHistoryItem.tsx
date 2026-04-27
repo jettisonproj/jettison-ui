@@ -304,4 +304,4 @@ function FlowHistoryDetails({
   );
 }
 
-export { FlowHistoryItem };
+export { FlowHistoryItem, FlowHistorySubtitle, FlowHistoryTitle };

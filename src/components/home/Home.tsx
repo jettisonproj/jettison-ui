@@ -18,23 +18,29 @@ import {
   WorkflowsContext,
 } from "src/providers/provider.tsx";
 import { routes } from "src/routes.ts";
+import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
+import { getRepoOrgAndName } from "src/utils/gitUtil.ts";
 
 function Home() {
+  const flows = useContext(FlowsContext);
+  const workflows = useContext(WorkflowsContext);
   return (
     <>
       <Header />
       <HomeNavHeader />
-      <Overview />
-      <RecentRepos />
+      <Overview flows={flows} workflows={workflows} />
+      <RecentRepos flows={flows} workflows={workflows} />
     </>
   );
 }
 
-function Overview() {
-  const flows = useContext(FlowsContext);
+interface OverviewProps {
+  flows: Map<string, PushPrFlows> | null;
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
+}
+function Overview({ flows, workflows }: OverviewProps) {
   const applications = useContext(ApplicationsContext);
   const rollouts = useContext(RolloutsContext);
-  const workflows = useContext(WorkflowsContext);
   return (
     <>
       <h2 className={styles.firstSectionTitle}>Overview</h2>
@@ -75,7 +81,11 @@ function Overview() {
   );
 }
 
-function RecentRepos() {
+interface RecentRepoProps {
+  flows: Map<string, PushPrFlows> | null;
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
+}
+function RecentRepos({ flows, workflows }: RecentRepoProps) {
   const recentRepos = localState.getRecentRepos();
   if (recentRepos.length === 0) {
     return (
@@ -88,9 +98,26 @@ function RecentRepos() {
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Repos</h2>
-      {recentRepos.map((recentRepo, index) => (
-        <Repo key={recentRepo} isFirst={index === 0} repoOrgName={recentRepo} />
-      ))}
+      {recentRepos.map((recentRepo, index) => {
+        const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
+        const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+          flows,
+          workflows,
+          recentRepo,
+          repoOrg,
+        );
+
+        return (
+          <Repo
+            key={recentRepo}
+            isFirst={index === 0}
+            repoOrg={repoOrg}
+            repoName={repoName}
+            pushWorkflows={pushWorkflows}
+            prWorkflows={prWorkflows}
+          />
+        );
+      })}
     </>
   );
 }

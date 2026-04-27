@@ -1,12 +1,27 @@
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import styles from "src/components/repos/RepoStatusBadge.module.css";
-import type { WorkflowPhase } from "src/data/types/workflowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { WorkflowPhases } from "src/data/types/workflowTypes.ts";
 
 interface RepoStatusBadgeProps {
-  workflowPhase: WorkflowPhase;
+  workflow: Workflow | null | undefined;
 }
-function RepoStatusBadge({ workflowPhase }: RepoStatusBadgeProps) {
+function RepoStatusBadge({ workflow }: RepoStatusBadgeProps) {
+  if (workflow === null) {
+    return <LoadIcon />;
+  }
+  const workflowPhase = workflow?.status.phase;
+  if (workflowPhase == null) {
+    return (
+      <div className={`${styles.repoStatusBadge} ${styles.repoBadgePending}`}>
+        <div className={styles.repoBadgeText}>
+          <i className={`nf nf-fa-clock ${styles.repoBadgeIcon}`} />
+          {WorkflowPhases.Pending}
+        </div>
+      </div>
+    );
+  }
+
   switch (workflowPhase) {
     case WorkflowPhases.Succeeded:
       return (
