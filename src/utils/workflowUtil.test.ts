@@ -12,6 +12,7 @@ import { PR_DISPLAY_NAME, PUSH_DISPLAY_NAME } from "src/utils/flowUtil.ts";
 import { getTestNode, getTestWorkflow } from "src/utils/testUtil.ts";
 import {
   EXIT_NODE_SUFFIX,
+  getLastWorkflow,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
   getMemoResourcePath,
@@ -621,5 +622,46 @@ describe("workflowCompareFn", () => {
 
     assert.strictEqual(testWorkflows[0], testWorkflow1);
     assert.strictEqual(testWorkflows[1], testWorkflow2);
+  });
+});
+
+describe("getLastWorkflow", () => {
+  it("returns null when workflows are not yet loaded", () => {
+    assert.isNull(getLastWorkflow(null));
+  });
+
+  it("returns undefined when workflows are empty", () => {
+    assert.isUndefined(getLastWorkflow(undefined));
+  });
+
+  it("workflow without startedAt comes first", () => {
+    const testWorkflow1 = getTestWorkflow({ workflowName: "test-workflow1" });
+    const testWorkflow2 = getTestWorkflow({
+      workflowName: "test-workflow2",
+      workflowStartedAt: "2026-01-01T00:00:00Z",
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow2.metadata.name, testWorkflow2);
+    testWorkflows.set(testWorkflow1.metadata.name, testWorkflow1);
+
+    assert.strictEqual(getLastWorkflow(testWorkflows), testWorkflow1);
+  });
+
+  it("most recent workflow comes first", () => {
+    const testWorkflow1 = getTestWorkflow({
+      workflowName: "test-workflow1",
+      workflowStartedAt: "2026-01-02T00:00:00Z",
+    });
+    const testWorkflow2 = getTestWorkflow({
+      workflowName: "test-workflow2",
+      workflowStartedAt: "2026-01-01T00:00:00Z",
+    });
+
+    const testWorkflows = new Map();
+    testWorkflows.set(testWorkflow2.metadata.name, testWorkflow2);
+    testWorkflows.set(testWorkflow1.metadata.name, testWorkflow1);
+
+    assert.strictEqual(getLastWorkflow(testWorkflows), testWorkflow1);
   });
 });

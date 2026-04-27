@@ -184,6 +184,40 @@ function getTriggerDisplayNameFromEventType(eventType: string) {
   }
 }
 
+function getLastWorkflow(
+  workflows: Map<string, Workflow> | null | undefined,
+): Workflow | null | undefined {
+  if (workflows === null) {
+    return null;
+  }
+  if (workflows === undefined) {
+    return undefined;
+  }
+
+  const workflowValues = Array.from(workflows.values());
+  let lastWorkflow: Workflow | undefined = undefined;
+  for (const workflow of workflowValues) {
+    const { startedAt } = workflow.memo;
+    if (startedAt == null) {
+      return workflow;
+    }
+    if (lastWorkflow == null) {
+      lastWorkflow = workflow;
+    } else {
+      const lastWorkflowStartedAt = lastWorkflow.memo.startedAt;
+      if (lastWorkflowStartedAt == null) {
+        throw new InvalidLastWorkflowError(
+          "invalid state while getting last workflow: startedAt was undefined",
+        );
+      }
+      if (startedAt > lastWorkflowStartedAt) {
+        lastWorkflow = workflow;
+      }
+    }
+  }
+  return lastWorkflow;
+}
+
 function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {
   const stepName = flowDefaultStepName(step);
   return getLastWorkflowNode(stepName, workflows);
@@ -242,9 +276,17 @@ class InvalidNodeError extends Error {
   }
 }
 
+class InvalidLastWorkflowError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
 export {
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
+  getLastWorkflow,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
   getMemoResourcePath,
