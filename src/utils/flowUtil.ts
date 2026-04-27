@@ -1,6 +1,12 @@
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
-import type { Flow, Step, Trigger } from "src/data/types/flowTypes.ts";
+import type {
+  Flow,
+  PushPrFlows,
+  Step,
+  Trigger,
+} from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { getTriggerRoute, routes } from "src/routes.ts";
 
 const BUILD_DISPLAY_NAME = "BUILD";
@@ -75,6 +81,55 @@ function isPullRequestTrigger(trigger: Trigger) {
   }
 }
 
+function getPushPrWorkflows(
+  flows: Map<string, PushPrFlows> | null,
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null,
+  repoOrgName: string,
+  repoOrg: string,
+): [
+  Map<string, Workflow> | null | undefined,
+  Map<string, Workflow> | null | undefined,
+] {
+  if (flows == null || workflows == null) {
+    // The flows or workflows have not yet loaded
+    return [null, null];
+  }
+
+  const pushPrFlows = flows.get(repoOrgName);
+  if (pushPrFlows == null) {
+    throw new FlowUtilError(
+      `Unexpected flow repo when looking up workflows: ${repoOrgName}`,
+    );
+  }
+
+  const pushFlow = pushPrFlows.pushFlow;
+  const prFlow = pushPrFlows.prFlow;
+
+  if (pushFlow == null) {
+    throw new FlowUtilError(
+      `Empty push flow when looking up workflows: ${repoOrgName}`,
+    );
+  }
+
+  if (prFlow == null) {
+    throw new FlowUtilError(
+      `Empty PR flow when looking up workflows: ${repoOrgName}`,
+    );
+  }
+
+  // The repoOrg and namespace are expected to match
+  const repoOrgWorkflows = workflows.get(repoOrg);
+  if (repoOrgWorkflows == null) {
+    // There are no workflows
+    return [undefined, undefined];
+  }
+
+  const pushWorkflows = repoOrgWorkflows.get(pushFlow.metadata.name);
+  const prWorkflows = repoOrgWorkflows.get(prFlow.metadata.name);
+
+  return [pushWorkflows, prWorkflows];
+}
+
 class FlowUtilError extends Error {
   constructor(message: string) {
     super(message);
@@ -86,6 +141,7 @@ export {
   BUILD_DISPLAY_NAME,
   FlowUtilError,
   getFlowTrigger,
+  getPushPrWorkflows,
   getStepDetailsLink,
   getTriggerDetailsLink,
   getTriggerDisplayName,
