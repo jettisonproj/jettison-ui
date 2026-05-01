@@ -67,7 +67,7 @@ function RepoStatusBadge({ workflow }: RepoStatusBadgeProps) {
   if (workflow === null) {
     return <LoadIcon />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return <FlowHistoryPendingBadge />;
   }
   return <FlowHistoryStatusBadge workflow={workflow} isPrFlow={false} />;
@@ -80,7 +80,7 @@ function RepoMessage({ workflow }: RepoMessageProps) {
   if (workflow === null) {
     return <RepoMessageSkeleton />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return null;
   }
   return (
@@ -105,7 +105,7 @@ function RepoSubtitle({ workflow }: RepoSubtitleProps) {
   if (workflow === null) {
     return <RepoSubtitleSkeleton />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return (
       <div className={styles.repoSkeleton}>
         <div className={styles.repoWorkflowsEmpty}>
