@@ -133,6 +133,12 @@
   background-color: var(--panel-hover-color);
 }
 
+.historySubtitlePrText {
+  composes: historySubtitleText;
+
+  font-weight: bold;
+}
+
 /* Details Expander Row */
 .historyDetails {
   min-width: var(--content-width);
