@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 const REPO_ORG = "jettisonproj";
 const REPO_NAME = "jettison-ui";
-const REPO_URL = `https://github.com/${REPO_ORG}/${REPO_NAME}`;
 const YAML_URL_RE = new RegExp(
   `/api/v1/namespaces/${REPO_ORG}/workflows/${REPO_NAME}-`,
 );
@@ -25,12 +24,9 @@ test("test", async ({ page }) => {
   // Test Repos Page
   await expect(page.getByRole("heading", { name: "Home⧸Repos" })).toBeVisible();
 
-  const jettisonUiRepoDiv = page.getByText(REPO_NAME);
-
-  await expect(
-    jettisonUiRepoDiv.locator(`a[href="${REPO_URL}"]`),
-  ).toBeVisible();
-  await jettisonUiRepoDiv.click();
+  const jettisonUiRepoLink = page.getByRole("link", { name: "jettison-ui" });
+  await expect(jettisonUiRepoLink).toBeVisible();
+  await jettisonUiRepoLink.click();
 
   // Test Push Flow Page
   await expect(
