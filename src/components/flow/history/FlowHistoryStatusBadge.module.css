@@ -23,7 +23,7 @@
 }
 
 .historyCommitText {
-  margin-left: 5px;
+  margin-left: var(--status-badge-icon-gap);
   color: var(--status-badge-text-color);
   font-size: 12px;
   font-weight: 500;

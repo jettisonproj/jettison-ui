@@ -4,9 +4,13 @@
   justify-content: space-between;
 
   min-width: var(--content-width);
+  padding-bottom: 8px;
+}
+
+.navHeaderBordered {
+  composes: navHeader;
+
   border-bottom: 1px solid var(--separator-color);
-  margin-bottom: 17.43px;
-  padding-bottom: 7.57px;
 }
 
 .component {

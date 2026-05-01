@@ -4,6 +4,7 @@ import { StepSources, TriggerSources } from "src/data/types/flowTypes.ts";
 import {
   FlowUtilError,
   getFlowTrigger,
+  getPushPrWorkflows,
   getStepDetailsLink,
   getTriggerDetailsLink,
   getTriggerDisplayName,
@@ -11,7 +12,7 @@ import {
   PR_DISPLAY_NAME,
   PUSH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
-import { getTestFlow } from "src/utils/testUtil.ts";
+import { getTestFlow, getTestWorkflow } from "src/utils/testUtil.ts";
 
 describe("getTriggerDisplayName", () => {
   it("returns PR display name for PR flows", () => {
@@ -117,6 +118,7 @@ describe("getFlowTrigger", () => {
       "expected 1 Flow trigger but got: 2",
     );
   });
+
   it("returns the single trigger", () => {
     const flow = getTestFlow({
       triggers: [
@@ -147,5 +149,133 @@ describe("isPullRequestTrigger", () => {
       repoUrl: "https://github.com/org/repo",
     };
     assert.isTrue(isPullRequestTrigger(trigger));
+  });
+});
+
+describe("getPushPrWorkflows", () => {
+  it("returns null if flows are still loading", () => {
+    const flows = null;
+    const workflows = new Map();
+
+    const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+      flows,
+      workflows,
+      "repoOrg/repoName",
+      "repoOrg",
+    );
+
+    assert.isNull(pushWorkflows);
+    assert.isNull(prWorkflows);
+  });
+
+  it("returns null if workflows are still loading", () => {
+    const flows = new Map();
+    const workflows = null;
+
+    const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+      flows,
+      workflows,
+      "repoOrg/repoName",
+      "repoOrg",
+    );
+
+    assert.isNull(pushWorkflows);
+    assert.isNull(prWorkflows);
+  });
+
+  it("throws when the flow for the repo is not found", () => {
+    const flows = new Map();
+    const workflows = new Map();
+
+    assert.throws(
+      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
+      FlowUtilError,
+      "Unexpected flow repo when looking up workflows: repoOrg/repoName",
+    );
+  });
+
+  it("throws when the push flow for the repo is not found", () => {
+    const flows = new Map();
+    flows.set("repoOrg/repoName", {});
+
+    const workflows = new Map();
+
+    assert.throws(
+      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
+      FlowUtilError,
+      "Empty push flow when looking up workflows: repoOrg/repoName",
+    );
+  });
+
+  it("throws when the pr flow for the repo is not found", () => {
+    const flows = new Map();
+    flows.set("repoOrg/repoName", {
+      pushFlow: getTestFlow({}),
+    });
+
+    const workflows = new Map();
+
+    assert.throws(
+      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
+      FlowUtilError,
+      "Empty PR flow when looking up workflows: repoOrg/repoName",
+    );
+  });
+
+  it("returns undefined if workflows are empty", () => {
+    const flows = new Map();
+    flows.set("repoOrg/repoName", {
+      pushFlow: getTestFlow({ flowName: "test-push-flow" }),
+      prFlow: getTestFlow({ flowName: "test-pr-flow" }),
+    });
+
+    const workflows = new Map();
+
+    const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+      flows,
+      workflows,
+      "repoOrg/repoName",
+      "repoOrg",
+    );
+
+    assert.isUndefined(pushWorkflows);
+    assert.isUndefined(prWorkflows);
+  });
+
+  it("returns the workflows when available", () => {
+    const testFlows = new Map();
+    testFlows.set("repoOrg/repoName", {
+      pushFlow: getTestFlow({ flowName: "test-push-flow" }),
+      prFlow: getTestFlow({ flowName: "test-pr-flow" }),
+    });
+
+    const testPushWorkflow = getTestWorkflow({
+      workflowName: "test-push-workflow",
+    });
+    const testPrWorkflow = getTestWorkflow({
+      workflowName: "test-pr-workflow",
+    });
+
+    const testPushWorkflows = new Map();
+    testPushWorkflows.set("test-push-workflow", testPushWorkflow);
+    const testPrWorkflows = new Map();
+    testPrWorkflows.set("test-pr-workflow", testPrWorkflow);
+
+    const testOrgWorkflows = new Map();
+    testOrgWorkflows.set("test-push-flow", testPushWorkflows);
+    testOrgWorkflows.set("test-pr-flow", testPrWorkflows);
+
+    const testWorkflows = new Map();
+    testWorkflows.set("repoOrg", testOrgWorkflows);
+
+    const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+      testFlows,
+      testWorkflows,
+      "repoOrg/repoName",
+      "repoOrg",
+    );
+
+    assert.strictEqual(pushWorkflows, testPushWorkflows);
+    assert.strictEqual(prWorkflows, testPrWorkflows);
   });
 });

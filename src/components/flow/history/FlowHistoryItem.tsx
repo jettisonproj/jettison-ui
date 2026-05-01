@@ -45,6 +45,7 @@ function FlowHistoryItem({
   const historyItemClassName = isSelected
     ? styles.historyItemBase
     : styles.historyItem;
+
   return (
     <div className={historyItemClassName}>
       <FlowHistoryTitle
@@ -304,4 +305,11 @@ function FlowHistoryDetails({
   );
 }
 
-export { FlowHistoryItem };
+export {
+  FlowHistoryAuthor,
+  FlowHistoryBranch,
+  FlowHistoryDuration,
+  FlowHistoryItem,
+  FlowHistoryMessage,
+  FlowHistoryTimestamp,
+};

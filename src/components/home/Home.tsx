@@ -5,6 +5,7 @@ import { Header } from "src/components/header/Header.tsx";
 import { HomeNavHeader } from "src/components/header/NavHeader.tsx";
 import styles from "src/components/home/Home.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
+import { Repo } from "src/components/repos/Repo.tsx";
 import type { Application } from "src/data/types/applicationTypes.ts";
 import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
@@ -16,25 +17,30 @@ import {
   RolloutsContext,
   WorkflowsContext,
 } from "src/providers/provider.tsx";
-import { pushTriggerRoute, routes } from "src/routes.ts";
-import { getRepoLink, getRepoOrgAndName } from "src/utils/gitUtil.ts";
+import { routes } from "src/routes.ts";
+import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
+import { getRepoOrgAndName } from "src/utils/gitUtil.ts";
 
 function Home() {
+  const flows = useContext(FlowsContext);
+  const workflows = useContext(WorkflowsContext);
   return (
     <>
       <Header />
       <HomeNavHeader />
-      <Overview />
-      <RecentRepos />
+      <Overview flows={flows} workflows={workflows} />
+      <RecentRepos flows={flows} workflows={workflows} />
     </>
   );
 }
 
-function Overview() {
-  const flows = useContext(FlowsContext);
+interface OverviewProps {
+  flows: Map<string, PushPrFlows> | null;
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
+}
+function Overview({ flows, workflows }: OverviewProps) {
   const applications = useContext(ApplicationsContext);
   const rollouts = useContext(RolloutsContext);
-  const workflows = useContext(WorkflowsContext);
   return (
     <>
       <h2 className={styles.firstSectionTitle}>Overview</h2>
@@ -75,7 +81,11 @@ function Overview() {
   );
 }
 
-function RecentRepos() {
+interface RecentRepoProps {
+  flows: Map<string, PushPrFlows> | null;
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
+}
+function RecentRepos({ flows, workflows }: RecentRepoProps) {
   const recentRepos = localState.getRecentRepos();
   if (recentRepos.length === 0) {
     return (
@@ -88,42 +98,26 @@ function RecentRepos() {
   return (
     <>
       <h2 className={styles.sectionTitle}>Recent Repos</h2>
-      {recentRepos.map((recentRepo, index) => (
-        <RecentRepo
-          key={recentRepo}
-          isFirst={index === 0}
-          recentRepo={recentRepo}
-        />
-      ))}
-    </>
-  );
-}
+      {recentRepos.map((recentRepo) => {
+        const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
+        const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
+          flows,
+          workflows,
+          recentRepo,
+          repoOrg,
+        );
 
-interface RecentRepoProps {
-  recentRepo: string;
-  isFirst: boolean;
-}
-function RecentRepo({ recentRepo, isFirst }: RecentRepoProps) {
-  const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
-  const recentRepoClassName = isFirst
-    ? styles.recentRepoFirst
-    : styles.recentRepo;
-  return (
-    <div className={recentRepoClassName}>
-      <Link
-        to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
-        className={styles.recentRepoLink}
-      ></Link>
-      {repoName}
-      <a
-        className={styles.manifestLink}
-        href={getRepoLink(repoOrg, repoName)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i className="nf nf-fa-github" />
-      </a>
-    </div>
+        return (
+          <Repo
+            key={recentRepo}
+            repoOrg={repoOrg}
+            repoName={repoName}
+            pushWorkflows={pushWorkflows}
+            prWorkflows={prWorkflows}
+          />
+        );
+      })}
+    </>
   );
 }
 

@@ -1,6 +1,6 @@
 import styles from "src/components/flow/history/FlowHistoryStatusBadge.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { Workflow, WorkflowPhase } from "src/data/types/workflowTypes.ts";
 import { WorkflowPhases } from "src/data/types/workflowTypes.ts";
 import {
   getDisplayCommit,
@@ -29,19 +29,18 @@ function FlowHistoryStatusBadge({
       target="_blank"
       rel="noreferrer"
     >
-      <FlowHistoryStatusIcon workflow={workflow} />
+      <FlowHistoryStatusIcon workflowPhase={workflow.status.phase} />
       <span className={textClassName}>{title}</span>
     </a>
   );
 }
 
 interface FlowHistoryStatusIconProps {
-  workflow: Workflow;
+  workflowPhase?: WorkflowPhase;
 }
 
-function FlowHistoryStatusIcon({ workflow }: FlowHistoryStatusIconProps) {
-  const { phase } = workflow.status;
-  switch (phase) {
+function FlowHistoryStatusIcon({ workflowPhase }: FlowHistoryStatusIconProps) {
+  switch (workflowPhase) {
     case WorkflowPhases.Succeeded:
       return <i className={`nf nf-fa-circle_check ${styles.successIcon}`} />;
     case WorkflowPhases.Error:
@@ -56,9 +55,9 @@ function FlowHistoryStatusIcon({ workflow }: FlowHistoryStatusIconProps) {
     case undefined:
       return <i className={`nf nf-fa-clock ${styles.badgeIcon}`} />;
     default:
-      phase satisfies never;
+      workflowPhase satisfies never;
       console.log("unknown workflow phase:");
-      console.log(phase);
+      console.log(workflowPhase);
       throw new FlowHistoryStatusBadgeError("unknown workflow phase");
   }
 }
@@ -89,6 +88,20 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
   };
 }
 
+/**
+ * This can be used to signal that workflows are pending
+ * when they do not exist
+ */
+function FlowHistoryPendingBadge() {
+  const textClassName = styles.historyCommitText;
+  return (
+    <div className={styles.historyStatusBadge}>
+      <FlowHistoryStatusIcon workflowPhase={WorkflowPhases.Pending} />
+      <span className={textClassName}>Pending</span>
+    </div>
+  );
+}
+
 class FlowHistoryStatusBadgeError extends Error {
   constructor(message: string) {
     super(message);
@@ -96,4 +109,4 @@ class FlowHistoryStatusBadgeError extends Error {
   }
 }
 
-export { FlowHistoryStatusBadge };
+export { FlowHistoryPendingBadge, FlowHistoryStatusBadge };

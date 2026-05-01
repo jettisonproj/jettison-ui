@@ -61,10 +61,32 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
   );
 }
 
+/**
+ * Get the number of active workflows
+ * Return 0 when the workflows are still loading (null) or when
+ * the workflows are empty (undefined)
+ */
+function getNumActiveWorkflows(
+  workflows: Map<string, Workflow> | null | undefined,
+) {
+  if (workflows == null) {
+    return 0;
+  }
+  let numActiveWorkflows = 0;
+  for (const workflow of workflows.values()) {
+    if (isWorkflowActive(workflow.status.phase)) {
+      numActiveWorkflows += 1;
+    }
+  }
+  return numActiveWorkflows;
+}
+
 function isWorkflowActive(workflowPhase: WorkflowPhase | undefined) {
   return (
+    workflowPhase == null ||
     workflowPhase === WorkflowPhases.Pending ||
-    workflowPhase === WorkflowPhases.Running
+    workflowPhase === WorkflowPhases.Running ||
+    workflowPhase === WorkflowPhases.Unknown
   );
 }
 
@@ -162,6 +184,39 @@ function getTriggerDisplayNameFromEventType(eventType: string) {
   }
 }
 
+function getLastWorkflow(
+  workflows: Map<string, Workflow> | null | undefined,
+): Workflow | null | undefined {
+  if (workflows === null) {
+    return null;
+  }
+  if (workflows === undefined) {
+    return undefined;
+  }
+
+  let lastWorkflow: Workflow | undefined = undefined;
+  for (const workflow of workflows.values()) {
+    const { startedAt } = workflow.memo;
+    if (startedAt == null) {
+      return workflow;
+    }
+    if (lastWorkflow == null) {
+      lastWorkflow = workflow;
+    } else {
+      const lastWorkflowStartedAt = lastWorkflow.memo.startedAt;
+      if (lastWorkflowStartedAt == null) {
+        throw new InvalidLastWorkflowError(
+          "invalid state while getting last workflow: startedAt was undefined",
+        );
+      }
+      if (startedAt > lastWorkflowStartedAt) {
+        lastWorkflow = workflow;
+      }
+    }
+  }
+  return lastWorkflow;
+}
+
 function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {
   const stepName = flowDefaultStepName(step);
   return getLastWorkflowNode(stepName, workflows);
@@ -198,7 +253,29 @@ function getLastWorkflowNode(
   return null;
 }
 
+function workflowCompareFn(a: Workflow, b: Workflow) {
+  const bDate = b.memo.startedAt;
+  const aDate = a.memo.startedAt;
+  if (bDate == null && aDate == null) {
+    return 0;
+  }
+  if (bDate == null) {
+    return 1;
+  }
+  if (aDate == null) {
+    return -1;
+  }
+  return bDate.getTime() - aDate.getTime();
+}
+
 class InvalidNodeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+class InvalidLastWorkflowError extends Error {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
@@ -208,6 +285,7 @@ class InvalidNodeError extends Error {
 export {
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
+  getLastWorkflow,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
   getMemoResourcePath,
@@ -215,6 +293,7 @@ export {
   getNodeDockerfilePath,
   getNodeResourcePath,
   getNodeTriggerDisplayName,
+  getNumActiveWorkflows,
   getWorkflowRepo,
   getWorkflowRevision,
   getWorkflowRevisionAuthor,
@@ -223,9 +302,9 @@ export {
   getWorkflowRevisionTitle,
   InvalidNodeError,
   isMemoizedNode,
-  isWorkflowActive,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
+  workflowCompareFn,
 };
 
 export type { WorkflowNode };
