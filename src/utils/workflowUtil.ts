@@ -194,9 +194,8 @@ function getLastWorkflow(
     return undefined;
   }
 
-  const workflowValues = Array.from(workflows.values());
   let lastWorkflow: Workflow | undefined = undefined;
-  for (const workflow of workflowValues) {
+  for (const workflow of workflows.values()) {
     const { startedAt } = workflow.memo;
     if (startedAt == null) {
       return workflow;

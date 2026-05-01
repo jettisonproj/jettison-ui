@@ -242,7 +242,7 @@ describe("getPushPrWorkflows", () => {
     assert.isUndefined(prWorkflows);
   });
 
-  it("returns undefined if workflows are empty", () => {
+  it("returns the workflows when available", () => {
     const testFlows = new Map();
     testFlows.set("repoOrg/repoName", {
       pushFlow: getTestFlow({ flowName: "test-push-flow" }),
