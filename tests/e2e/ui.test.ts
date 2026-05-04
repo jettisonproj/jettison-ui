@@ -13,7 +13,7 @@ const VIEW_YAML_RE = /View YAML$/;
 const VIEW_IN_WORKFLOW_UI_RE = /View in Workflow UI$/;
 const SEE_WORKFLOW_DETAILS_RE = /See Details$/;
 
-// Shorthand variable for enabling extact matching
+// Shorthand variable for enabling exact matching
 const exact = true;
 
 test("test", async ({ page }) => {
