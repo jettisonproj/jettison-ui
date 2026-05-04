@@ -305,14 +305,14 @@ function FlowHistoryDetails({
   );
 }
 
-interface FlowHistoryActivePrWorkflows {
+interface FlowHistoryActivePrWorkflowsProps {
   prFlowLink: string;
   numActivePrWorkflows: number;
 }
 function FlowHistoryActivePrWorkflows({
   prFlowLink,
   numActivePrWorkflows,
-}: FlowHistoryActivePrWorkflows) {
+}: FlowHistoryActivePrWorkflowsProps) {
   if (numActivePrWorkflows <= 0) {
     return null;
   }
