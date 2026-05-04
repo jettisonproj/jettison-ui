@@ -83,7 +83,7 @@ test("test", async ({ page }) => {
     page.getByRole("link", { name: "summary", exact }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: PR_FLOW_RE }).click();
+  await page.getByRole("link", { name: PR_FLOW_RE }).first().click();
 
   // Test PR Flow Page
   await expect(
@@ -120,5 +120,5 @@ test("test", async ({ page }) => {
     page.getByRole("link", { name: "summary", exact }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: PR_FLOW_RE }).click();
+  await page.getByRole("link", { name: PR_FLOW_RE }).first().click();
 });
