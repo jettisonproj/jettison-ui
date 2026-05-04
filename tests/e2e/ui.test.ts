@@ -78,6 +78,9 @@ test("test", async ({ page }) => {
     WORKFLOW_UI_URL_RE,
   );
 
+  await viewWorkflowPushYamlLink.press("Escape");
+  await expect(viewWorkflowPushYamlLink).toBeHidden();
+
   await firstPushWorkflowDetails.click();
   await expect(
     page.getByRole("link", { name: "summary", exact }),
@@ -114,6 +117,9 @@ test("test", async ({ page }) => {
     "href",
     WORKFLOW_UI_URL_RE,
   );
+
+  await viewPrWorkflowYamlLink.press("Escape");
+  await expect(viewPrWorkflowYamlLink).toBeHidden();
 
   await firstPrWorkflowDetails.click();
   await expect(
