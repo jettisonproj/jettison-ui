@@ -46,7 +46,7 @@ function getTestNode({
     memo: {
       displayName,
       phase,
-      templateRef,
+      template: templateRef.template,
       startedAt: new Date(startedAt),
       parameterMap: {},
       outputMap: {},

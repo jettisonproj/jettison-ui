@@ -51,7 +51,8 @@ interface WorkflowStatusNode {
   displayName: string;
   phase: NodePhase;
   type: NodeType;
-  templateRef: NodeTemplateRef;
+  templateRef?: NodeTemplateRef;
+  templateName?: string;
   startedAt: string;
   finishedAt?: string;
   inputs?: WorkflowArguments;
@@ -67,7 +68,7 @@ interface NodeTemplateRef {
 interface WorkflowMemoStatusNode {
   displayName: string;
   phase: NodePhase;
-  templateRef: NodeTemplateRef;
+  template: TemplateName;
   startedAt: Date;
   finishedAt?: Date;
   duration?: string;
@@ -119,16 +120,25 @@ const NodeTypes = {
 type NodeType = (typeof NodeTypes)[keyof typeof NodeTypes];
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
+// Ensure longer strings come first since template overrides can append to this name
+// See sensor_trigger_tasks.go
 const TemplateNames = {
-  GitHubCheckStart: "deploy-step-github-check-start",
-  DockerBuildTest: "docker-build-test",
-  DockerBuildTestPublish: "docker-build-test-publish",
-  ArgoCD: "deploy-step-argocd",
   GitHubCheckComplete: "deploy-step-github-check-complete",
+  GitHubCheckStart: "deploy-step-github-check-start",
+  DockerBuildTestPublish: "docker-build-test-publish",
+  DockerBuildTest: "docker-build-test",
+  ArgoCD: "deploy-step-argocd",
 } as const;
 type TemplateName = (typeof TemplateNames)[keyof typeof TemplateNames];
+const TemplateNameValues: TemplateName[] = Object.values(TemplateNames);
 
-export { NodePhases, NodeTypes, TemplateNames, WorkflowPhases };
+export {
+  NodePhases,
+  NodeTypes,
+  TemplateNames,
+  TemplateNameValues,
+  WorkflowPhases,
+};
 export type {
   NodePhase,
   NodeType,
