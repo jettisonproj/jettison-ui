@@ -83,7 +83,7 @@ function FlowHistoryGrid({
 }
 
 function getNodeTitleName(node: WorkflowMemoStatusNode) {
-  const { template } = node.templateRef;
+  const { template } = node;
   switch (template) {
     case TemplateNames.GitHubCheckStart: {
       return getMemoTriggerDisplayName(node.parameterMap);

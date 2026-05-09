@@ -4,6 +4,7 @@ import type {
   WorkflowMemoStatusNode,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { TemplateNameValues } from "src/data/types/workflowTypes.ts";
 import { formatDurationFromMs } from "src/utils/dateUtil.ts";
 import { getFlowTrigger, isPullRequestTrigger } from "src/utils/flowUtil.ts";
 import {
@@ -80,15 +81,7 @@ function memoizeWorkflow(workflow: Workflow) {
 }
 
 function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
-  const {
-    displayName,
-    phase,
-    templateRef,
-    startedAt,
-    finishedAt,
-    inputs,
-    outputs,
-  } = node;
+  const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
 
   const parameterMap: Record<string, string> = {};
   inputs?.parameters.forEach((parameter) => {
@@ -106,7 +99,7 @@ function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
   const memoNode: WorkflowMemoStatusNode = {
     displayName: memoDisplayName,
     phase,
-    templateRef,
+    template: getMemoTemplateName(node),
     startedAt: startedAtDate,
     parameterMap,
     outputMap,
@@ -128,6 +121,42 @@ function getMemoDisplayName(displayName: string) {
     return EXIT_NODE_NAME;
   }
   return displayName;
+}
+
+function getMemoTemplateName(node: WorkflowStatusNode) {
+  const { templateRef, templateName } = node;
+  if (templateRef != null) {
+    return templateRef.template;
+  }
+
+  if (templateName == null) {
+    console.log("No template found for node");
+    console.log(node);
+    throw new ResourceEventMemoError(
+      `No template found for node: ${node.displayName}`,
+    );
+  }
+
+  const memoTemplateName = TemplateNameValues.find((templateNameValue) =>
+    templateName.startsWith(templateNameValue),
+  );
+
+  if (memoTemplateName == null) {
+    console.log(`Invalid template name ${templateName} for node`);
+    console.log(node);
+    throw new ResourceEventMemoError(
+      `Invalid template name ${templateName} found for node: ${node.displayName}`,
+    );
+  }
+
+  return memoTemplateName;
+}
+
+class ResourceEventMemoError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export {

@@ -17,7 +17,7 @@ function SelectedHistorySummaryTab({
         <span className={styles.summaryTabKey}>Name</span>
         <span>{selectedNode.displayName}</span>
         <span className={styles.summaryTabKey}>Template</span>
-        <span>{selectedNode.templateRef.template}</span>
+        <span>{selectedNode.memo.template}</span>
         <span className={styles.summaryTabKey}>Phase</span>
         <span>{selectedNode.phase}</span>
         <span className={styles.summaryTabKey}>Started At</span>

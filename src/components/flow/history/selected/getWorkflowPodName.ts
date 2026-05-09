@@ -24,9 +24,11 @@ function getWorkflowPodName(
     return workflowName;
   }
 
-  const templateName = node.templateRef.template;
+  const templateName = getTemplateNameFromNode(node);
   let prefix = workflowName;
-  prefix += `-${templateName}`;
+  if (templateName != null) {
+    prefix += `-${templateName}`;
+  }
   prefix = ensurePodNamePrefixLength(prefix);
 
   const hash = createFNVHash(podNodeName);
@@ -56,6 +58,11 @@ function createFNVHash(input: string): number {
   }
 
   return hashint >>> 0;
+}
+
+function getTemplateNameFromNode(node: WorkflowStatusNode): string | undefined {
+  // fall back to v1 pod names if no templateName or templateRef defined
+  return node.templateName ?? node.templateRef?.template;
 }
 
 export { getWorkflowPodName };
