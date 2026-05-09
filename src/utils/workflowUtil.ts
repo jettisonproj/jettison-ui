@@ -268,6 +268,21 @@ function workflowCompareFn(a: Workflow, b: Workflow) {
   return bDate.getTime() - aDate.getTime();
 }
 
+function workflowMemoNodeCompareFn(
+  a: WorkflowMemoStatusNode,
+  b: WorkflowMemoStatusNode,
+) {
+  // Ensure trigger nodes come first
+  if (a.displayName === TRIGGER_NODE_NAME) {
+    return -1;
+  }
+  if (b.displayName === TRIGGER_NODE_NAME) {
+    return 1;
+  }
+  // Then, order by time
+  return a.startedAt.getTime() - b.startedAt.getTime();
+}
+
 class InvalidNodeError extends Error {
   constructor(message: string) {
     super(message);
@@ -305,6 +320,7 @@ export {
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
   workflowCompareFn,
+  workflowMemoNodeCompareFn,
 };
 
 export type { WorkflowNode };

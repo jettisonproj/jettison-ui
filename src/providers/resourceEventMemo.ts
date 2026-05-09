@@ -2,14 +2,16 @@ import type { Flow } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
+  WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { TemplateNameValues } from "src/data/types/workflowTypes.ts";
 import { formatDurationFromMs } from "src/utils/dateUtil.ts";
 import { getFlowTrigger, isPullRequestTrigger } from "src/utils/flowUtil.ts";
 import {
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
   isMemoizedNode,
-  TRIGGER_NODE_NAME,
+  workflowMemoNodeCompareFn,
 } from "src/utils/workflowUtil.ts";
 
 function memoizeFlow(flow: Flow) {
@@ -26,51 +28,16 @@ function memoizeWorkflow(workflow: Workflow) {
   const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
     Object.values(workflow.status.nodes).forEach((node) => {
-      const {
-        displayName,
-        phase,
-        templateRef,
-        startedAt,
-        finishedAt,
-        inputs,
-        outputs,
-        type,
-      } = node;
+      const { type } = node;
 
       if (!isMemoizedNode(type)) {
         return;
       }
 
-      const parameterMap: Record<string, string> = {};
-      inputs?.parameters.forEach((parameter) => {
-        parameterMap[parameter.name] = parameter.value;
-      });
+      memoizeWorkflowStatusNode(node);
 
-      const outputMap: Record<string, string> = {};
-      outputs?.parameters?.forEach((parameter) => {
-        outputMap[parameter.name] = parameter.value;
-      });
-
-      const startedAtDate = new Date(startedAt);
-
-      const memoDisplayName = getMemoDisplayName(displayName);
-      const memoNode: WorkflowMemoStatusNode = {
-        displayName: memoDisplayName,
-        phase,
-        templateRef,
-        startedAt: startedAtDate,
-        parameterMap,
-        outputMap,
-      };
-      if (finishedAt != null) {
-        const finishedAtDate = new Date(finishedAt);
-
-        memoNode.finishedAt = finishedAtDate;
-        memoNode.duration = formatDurationFromMs(
-          finishedAtDate.getTime() - startedAtDate.getTime(),
-        );
-      }
-      nodes[memoDisplayName] = memoNode;
+      const memoNode = node.memo;
+      nodes[memoNode.displayName] = memoNode;
       sortedNodes.push(memoNode);
     });
   }
@@ -113,19 +80,40 @@ function memoizeWorkflow(workflow: Workflow) {
   }
 }
 
-function workflowMemoNodeCompareFn(
-  a: WorkflowMemoStatusNode,
-  b: WorkflowMemoStatusNode,
-) {
-  // Ensure trigger nodes come first
-  if (a.displayName === TRIGGER_NODE_NAME) {
-    return -1;
+function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
+  const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
+
+  const parameterMap: Record<string, string> = {};
+  inputs?.parameters.forEach((parameter) => {
+    parameterMap[parameter.name] = parameter.value;
+  });
+
+  const outputMap: Record<string, string> = {};
+  outputs?.parameters?.forEach((parameter) => {
+    outputMap[parameter.name] = parameter.value;
+  });
+
+  const startedAtDate = new Date(startedAt);
+
+  const memoDisplayName = getMemoDisplayName(displayName);
+  const memoNode: WorkflowMemoStatusNode = {
+    displayName: memoDisplayName,
+    phase,
+    template: getMemoTemplateName(node),
+    startedAt: startedAtDate,
+    parameterMap,
+    outputMap,
+  };
+
+  if (finishedAt != null) {
+    const finishedAtDate = new Date(finishedAt);
+
+    memoNode.finishedAt = finishedAtDate;
+    memoNode.duration = formatDurationFromMs(
+      finishedAtDate.getTime() - startedAtDate.getTime(),
+    );
   }
-  if (b.displayName === TRIGGER_NODE_NAME) {
-    return 1;
-  }
-  // Then, order by time
-  return a.startedAt.getTime() - b.startedAt.getTime();
+  node.memo = memoNode;
 }
 
 function getMemoDisplayName(displayName: string) {
@@ -135,9 +123,45 @@ function getMemoDisplayName(displayName: string) {
   return displayName;
 }
 
+function getMemoTemplateName(node: WorkflowStatusNode) {
+  const { templateRef, templateName } = node;
+  if (templateRef != null) {
+    return templateRef.template;
+  }
+
+  if (templateName == null) {
+    console.log("No template found for node");
+    console.log(node);
+    throw new ResourceEventMemoError(
+      `No template found for node: ${node.displayName}`,
+    );
+  }
+
+  const memoTemplateName = TemplateNameValues.find((templateNameValue) =>
+    templateName.startsWith(templateNameValue),
+  );
+
+  if (memoTemplateName == null) {
+    console.log(`Invalid template name ${templateName} for node`);
+    console.log(node);
+    throw new ResourceEventMemoError(
+      `Invalid template name ${templateName} found for node: ${node.displayName}`,
+    );
+  }
+
+  return memoTemplateName;
+}
+
+class ResourceEventMemoError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
 export {
   getMemoDisplayName,
   memoizeFlow,
   memoizeWorkflow,
-  workflowMemoNodeCompareFn,
+  memoizeWorkflowStatusNode,
 };

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 
 import {
+  FlowHistoryActivePrWorkflows,
   FlowHistoryAuthor,
   FlowHistoryBranch,
   FlowHistoryDuration,
@@ -15,17 +16,11 @@ import {
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import styles from "src/components/repos/Repo.module.css";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import { pushTriggerRoute, routes } from "src/routes.ts";
-import { getLastWorkflow } from "src/utils/workflowUtil.ts";
-
-// todos
-// - add num active pr notifications
-// - verify loading states (skeletons)
-// - possibly add more visualizations
-// const numActivePrWorkflows = useMemo(
-//   () => getNumActiveWorkflows(prWorkflows),
-//   [prWorkflows],
-// );
+import { prTriggerRoute, pushTriggerRoute, routes } from "src/routes.ts";
+import {
+  getLastWorkflow,
+  getNumActiveWorkflows,
+} from "src/utils/workflowUtil.ts";
 
 interface RepoProps {
   repoOrg: string;
@@ -33,29 +28,31 @@ interface RepoProps {
   pushWorkflows: Map<string, Workflow> | null | undefined;
   prWorkflows: Map<string, Workflow> | null | undefined;
 }
-function Repo({
-  repoOrg,
-  repoName,
-  pushWorkflows,
-  // prWorkflows,
-}: RepoProps) {
+function Repo({ repoOrg, repoName, pushWorkflows, prWorkflows }: RepoProps) {
   const pushWorkflow = useMemo(
     () => getLastWorkflow(pushWorkflows),
     [pushWorkflows],
   );
+  const numActivePrWorkflows = useMemo(
+    () => getNumActiveWorkflows(prWorkflows),
+    [prWorkflows],
+  );
+  const pushFlowLink = `${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`;
+  const prFlowLink = `${routes.flows}/${repoOrg}/${repoName}/${prTriggerRoute}`;
   return (
     <div className={styles.repo}>
       <div className={styles.repoTitle}>
-        <Link
-          to={`${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`}
-          className={styles.repoLink}
-        >
+        <Link to={pushFlowLink} className={styles.repoLink}>
           {repoName}
         </Link>
         <RepoStatusBadge workflow={pushWorkflow} />
       </div>
       <RepoMessage workflow={pushWorkflow} />
-      <RepoSubtitle workflow={pushWorkflow} />
+      <RepoSubtitle
+        workflow={pushWorkflow}
+        prFlowLink={prFlowLink}
+        numActivePrWorkflows={numActivePrWorkflows}
+      />
     </div>
   );
 }
@@ -67,7 +64,7 @@ function RepoStatusBadge({ workflow }: RepoStatusBadgeProps) {
   if (workflow === null) {
     return <LoadIcon />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return <FlowHistoryPendingBadge />;
   }
   return <FlowHistoryStatusBadge workflow={workflow} isPrFlow={false} />;
@@ -80,7 +77,7 @@ function RepoMessage({ workflow }: RepoMessageProps) {
   if (workflow === null) {
     return <RepoMessageSkeleton />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return null;
   }
   return (
@@ -100,12 +97,18 @@ function RepoMessageSkeleton() {
 
 interface RepoSubtitleProps {
   workflow: Workflow | null | undefined;
+  prFlowLink: string;
+  numActivePrWorkflows: number;
 }
-function RepoSubtitle({ workflow }: RepoSubtitleProps) {
+function RepoSubtitle({
+  workflow,
+  prFlowLink,
+  numActivePrWorkflows,
+}: RepoSubtitleProps) {
   if (workflow === null) {
     return <RepoSubtitleSkeleton />;
   }
-  if (workflow == undefined) {
+  if (workflow === undefined) {
     return (
       <div className={styles.repoSkeleton}>
         <div className={styles.repoWorkflowsEmpty}>
@@ -120,6 +123,10 @@ function RepoSubtitle({ workflow }: RepoSubtitleProps) {
       <FlowHistoryTimestamp workflow={workflow} />
       <FlowHistoryDuration workflow={workflow} />
       <FlowHistoryBranch workflow={workflow} />
+      <FlowHistoryActivePrWorkflows
+        prFlowLink={prFlowLink}
+        numActivePrWorkflows={numActivePrWorkflows}
+      />
     </div>
   );
 }

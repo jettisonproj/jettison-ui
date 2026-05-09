@@ -11,7 +11,10 @@ import {
   NodeTypes,
   TemplateNames,
 } from "src/data/types/workflowTypes.ts";
-import { memoizeWorkflow } from "src/providers/resourceEventMemo.ts";
+import {
+  memoizeWorkflow,
+  memoizeWorkflowStatusNode,
+} from "src/providers/resourceEventMemo.ts";
 
 /**
  * Type for creating a test WorkflowStatusNode.
@@ -32,7 +35,7 @@ function getTestNode({
   startedAt = "2026-01-01T00:00:00Z",
   ...rest
 }: TestWorkflowStatusNode): WorkflowStatusNode {
-  return {
+  const testWorkflowStatusNode: WorkflowStatusNode = {
     id,
     name,
     displayName,
@@ -40,8 +43,18 @@ function getTestNode({
     type,
     templateRef,
     startedAt,
+    memo: {
+      displayName,
+      phase,
+      template: templateRef.template,
+      startedAt: new Date(startedAt),
+      parameterMap: {},
+      outputMap: {},
+    },
     ...rest,
   };
+  memoizeWorkflowStatusNode(testWorkflowStatusNode);
+  return testWorkflowStatusNode;
 }
 
 interface TestWorkflow {

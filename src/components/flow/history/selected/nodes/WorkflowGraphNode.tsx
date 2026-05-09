@@ -17,7 +17,7 @@ function WorkflowGraphNode({
   workflowBaseUrl,
   isSelected,
 }: WorkflowGraphNodeProps) {
-  const { template } = node.templateRef;
+  const { template } = node.memo;
   const className = isSelected
     ? styles.nodeRowHeaderSelected
     : styles.nodeRowHeaderOnly;

@@ -32,6 +32,7 @@ import {
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
   workflowCompareFn,
+  workflowMemoNodeCompareFn,
 } from "src/utils/workflowUtil.ts";
 
 describe("isMemoizedNode", () => {
@@ -622,6 +623,46 @@ describe("workflowCompareFn", () => {
 
     assert.strictEqual(testWorkflows[0], testWorkflow1);
     assert.strictEqual(testWorkflows[1], testWorkflow2);
+  });
+});
+
+describe("workflowMemoNodeCompareFn", () => {
+  it("trigger nodes come first", () => {
+    const testNode1 = getTestNode({
+      displayName: TRIGGER_NODE_NAME,
+    });
+    const testNode2 = getTestNode({
+      displayName: "DockerBuildTest",
+    });
+
+    const testMemoNode1 = testNode1.memo;
+    const testMemoNode2 = testNode2.memo;
+
+    const testMemoNodes = [testMemoNode2, testMemoNode1];
+    testMemoNodes.sort(workflowMemoNodeCompareFn);
+
+    assert.strictEqual(testMemoNodes[0], testMemoNode1);
+    assert.strictEqual(testMemoNodes[1], testMemoNode2);
+  });
+
+  it("older nodes come first", () => {
+    const testNode1 = getTestNode({
+      displayName: "DockerBuildTest",
+      startedAt: "2026-01-01T00:00:00Z",
+    });
+    const testNode2 = getTestNode({
+      displayName: "DeployToProd",
+      startedAt: "2026-01-01T00:05:00Z",
+    });
+
+    const testMemoNode1 = testNode1.memo;
+    const testMemoNode2 = testNode2.memo;
+
+    const testMemoNodes = [testMemoNode2, testMemoNode1];
+    testMemoNodes.sort(workflowMemoNodeCompareFn);
+
+    assert.strictEqual(testMemoNodes[0], testMemoNode1);
+    assert.strictEqual(testMemoNodes[1], testMemoNode2);
   });
 });
 

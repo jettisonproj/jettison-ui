@@ -305,7 +305,29 @@ function FlowHistoryDetails({
   );
 }
 
+interface FlowHistoryActivePrWorkflowsProps {
+  prFlowLink: string;
+  numActivePrWorkflows: number;
+}
+function FlowHistoryActivePrWorkflows({
+  prFlowLink,
+  numActivePrWorkflows,
+}: FlowHistoryActivePrWorkflowsProps) {
+  if (numActivePrWorkflows <= 0) {
+    return null;
+  }
+  return (
+    <Link to={prFlowLink} className={styles.historySubtitleLink}>
+      <i className="nf nf-md-source_pull" />
+      <span className={styles.historySubtitlePrText}>
+        {numActivePrWorkflows}
+      </span>
+    </Link>
+  );
+}
+
 export {
+  FlowHistoryActivePrWorkflows,
   FlowHistoryAuthor,
   FlowHistoryBranch,
   FlowHistoryDuration,
