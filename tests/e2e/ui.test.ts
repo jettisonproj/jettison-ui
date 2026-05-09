@@ -8,7 +8,7 @@ const YAML_URL_RE = new RegExp(
 const WORKFLOW_UI_URL_RE = new RegExp(
   `https://argo\\.osoriano\\.com/workflows/${REPO_ORG}/${REPO_NAME}-`,
 );
-const PR_FLOW_RE = /PR Flow/;
+const PR_FLOW_RE = /PR Flow$/;
 const VIEW_YAML_RE = /View YAML$/;
 const VIEW_IN_WORKFLOW_UI_RE = /View in Workflow UI$/;
 const SEE_WORKFLOW_DETAILS_RE = /See Details$/;
@@ -125,4 +125,6 @@ test("test", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "summary", exact }),
   ).toBeVisible();
+
+  await page.getByRole("link", { name: PR_FLOW_RE }).first().click();
 });
