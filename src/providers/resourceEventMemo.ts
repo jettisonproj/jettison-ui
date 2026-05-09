@@ -2,6 +2,7 @@ import type { Flow } from "src/data/types/flowTypes.ts";
 import type {
   Workflow,
   WorkflowMemoStatusNode,
+  WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
 import { formatDurationFromMs } from "src/utils/dateUtil.ts";
 import { getFlowTrigger, isPullRequestTrigger } from "src/utils/flowUtil.ts";
@@ -26,51 +27,16 @@ function memoizeWorkflow(workflow: Workflow) {
   const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
     Object.values(workflow.status.nodes).forEach((node) => {
-      const {
-        displayName,
-        phase,
-        templateRef,
-        startedAt,
-        finishedAt,
-        inputs,
-        outputs,
-        type,
-      } = node;
+      const { type } = node;
 
       if (!isMemoizedNode(type)) {
         return;
       }
 
-      const parameterMap: Record<string, string> = {};
-      inputs?.parameters.forEach((parameter) => {
-        parameterMap[parameter.name] = parameter.value;
-      });
+      memoizeWorkflowStatusNode(node);
 
-      const outputMap: Record<string, string> = {};
-      outputs?.parameters?.forEach((parameter) => {
-        outputMap[parameter.name] = parameter.value;
-      });
-
-      const startedAtDate = new Date(startedAt);
-
-      const memoDisplayName = getMemoDisplayName(displayName);
-      const memoNode: WorkflowMemoStatusNode = {
-        displayName: memoDisplayName,
-        phase,
-        templateRef,
-        startedAt: startedAtDate,
-        parameterMap,
-        outputMap,
-      };
-      if (finishedAt != null) {
-        const finishedAtDate = new Date(finishedAt);
-
-        memoNode.finishedAt = finishedAtDate;
-        memoNode.duration = formatDurationFromMs(
-          finishedAtDate.getTime() - startedAtDate.getTime(),
-        );
-      }
-      nodes[memoDisplayName] = memoNode;
+      const memoNode = node.memo;
+      nodes[memoNode.displayName] = memoNode;
       sortedNodes.push(memoNode);
     });
   }
@@ -113,6 +79,50 @@ function memoizeWorkflow(workflow: Workflow) {
   }
 }
 
+function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
+  const {
+    displayName,
+    phase,
+    templateRef,
+    startedAt,
+    finishedAt,
+    inputs,
+    outputs,
+  } = node;
+
+  const parameterMap: Record<string, string> = {};
+  inputs?.parameters.forEach((parameter) => {
+    parameterMap[parameter.name] = parameter.value;
+  });
+
+  const outputMap: Record<string, string> = {};
+  outputs?.parameters?.forEach((parameter) => {
+    outputMap[parameter.name] = parameter.value;
+  });
+
+  const startedAtDate = new Date(startedAt);
+
+  const memoDisplayName = getMemoDisplayName(displayName);
+  const memoNode: WorkflowMemoStatusNode = {
+    displayName: memoDisplayName,
+    phase,
+    templateRef,
+    startedAt: startedAtDate,
+    parameterMap,
+    outputMap,
+  };
+
+  if (finishedAt != null) {
+    const finishedAtDate = new Date(finishedAt);
+
+    memoNode.finishedAt = finishedAtDate;
+    memoNode.duration = formatDurationFromMs(
+      finishedAtDate.getTime() - startedAtDate.getTime(),
+    );
+  }
+  node.memo = memoNode;
+}
+
 function workflowMemoNodeCompareFn(
   a: WorkflowMemoStatusNode,
   b: WorkflowMemoStatusNode,
@@ -139,5 +149,6 @@ export {
   getMemoDisplayName,
   memoizeFlow,
   memoizeWorkflow,
+  memoizeWorkflowStatusNode,
   workflowMemoNodeCompareFn,
 };

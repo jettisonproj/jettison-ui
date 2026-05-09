@@ -57,6 +57,7 @@ interface WorkflowStatusNode {
   inputs?: WorkflowArguments;
   outputs?: WorkflowOptionalArguments;
   children?: string[];
+  memo: WorkflowMemoStatusNode;
 }
 
 interface NodeTemplateRef {
