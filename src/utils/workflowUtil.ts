@@ -273,12 +273,18 @@ function workflowMemoNodeCompareFn(
   b: WorkflowMemoStatusNode,
 ) {
   // Ensure trigger nodes come first
-  if (a.displayName === TRIGGER_NODE_NAME) {
+  const isTriggerNodeA = a.displayName === TRIGGER_NODE_NAME;
+  const isTriggerNodeB = b.displayName === TRIGGER_NODE_NAME;
+  if (isTriggerNodeA && isTriggerNodeB) {
+    return 0;
+  }
+  if (isTriggerNodeA) {
     return -1;
   }
-  if (b.displayName === TRIGGER_NODE_NAME) {
+  if (isTriggerNodeB) {
     return 1;
   }
+
   // Then, order by time
   return a.startedAt.getTime() - b.startedAt.getTime();
 }
