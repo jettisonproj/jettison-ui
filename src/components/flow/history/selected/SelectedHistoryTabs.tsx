@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Link } from "react-router";
 
+import { SelectedHistoryArtifactsTab } from "src/components/flow/history/selected/SelectedHistoryArtifactsTab.tsx";
 import { SelectedHistorySummaryTab } from "src/components/flow/history/selected/SelectedHistorySummaryTab.tsx";
 import styles from "src/components/flow/history/selected/SelectedHistoryTabs.module.css";
 import { getWorkflowPodName } from "src/components/flow/history/selected/getWorkflowPodName.ts";
@@ -11,6 +12,7 @@ import type {
   Workflow,
   WorkflowStatusNode,
 } from "src/data/types/workflowTypes.ts";
+import { hasUserDefinedArtifacts } from "src/utils/workflowUtil.ts";
 
 const SelectedHistoryLogTab = lazy(() =>
   import("src/components/flow/history/selected/SelectedHistoryLogTab.tsx").then(
@@ -37,6 +39,7 @@ function SelectedHistoryTabs({
   return (
     <div className={styles.selectedHistoryTabs}>
       <SelectedHistoryTabSelector
+        selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
       />
@@ -51,32 +54,45 @@ function SelectedHistoryTabs({
 }
 
 interface SelectedHistoryTabSelectorProps {
+  selectedNode?: WorkflowStatusNode;
   nodeBaseUrl: string;
   selectedTab: Tab;
 }
 function SelectedHistoryTabSelector({
+  selectedNode,
   nodeBaseUrl,
   selectedTab,
 }: SelectedHistoryTabSelectorProps) {
   return (
     <div>
-      {Object.values(Tabs).map((tab) => {
-        const tabClassName =
-          tab === selectedTab
-            ? styles.selectedHistoryActiveTab
-            : styles.selectedHistoryTab;
-        return (
-          <Link
-            key={tab}
-            to={`${nodeBaseUrl}&tab=${tab}`}
-            className={tabClassName}
-          >
-            {tab}
-          </Link>
-        );
-      })}
+      {Object.values(Tabs)
+        .filter((tab) => isTabEnabled(tab, selectedNode))
+        .map((tab) => {
+          const tabClassName =
+            tab === selectedTab
+              ? styles.selectedHistoryActiveTab
+              : styles.selectedHistoryTab;
+          return (
+            <Link
+              key={tab}
+              to={`${nodeBaseUrl}&tab=${tab}`}
+              className={tabClassName}
+            >
+              {tab}
+            </Link>
+          );
+        })}
     </div>
   );
+}
+
+function isTabEnabled(tab: Tab, selectedNode?: WorkflowStatusNode) {
+  if (tab !== Tabs.artifacts) {
+    return true;
+  }
+
+  // For artifacts, only show if there are user-defined artifacts
+  return hasUserDefinedArtifacts(selectedNode);
 }
 
 interface SelectedHistoryTabProps {
@@ -99,6 +115,8 @@ function SelectedHistoryTab({
       </div>
     );
   }
+
+  const workflowNamespace = workflow.metadata.namespace;
   switch (selectedTab) {
     case Tabs.summary:
       return <SelectedHistorySummaryTab selectedNode={selectedNode} />;
@@ -106,11 +124,19 @@ function SelectedHistoryTab({
       return (
         <Suspense fallback={<LoadIcon />}>
           <SelectedHistoryLogTab
-            workflowNamespace={workflow.metadata.namespace}
+            workflowNamespace={workflowNamespace}
             podName={getWorkflowPodName(workflow.metadata.name, selectedNode)}
             nodePhase={selectedNode.phase}
           />
         </Suspense>
+      );
+    case Tabs.artifacts:
+      return (
+        <SelectedHistoryArtifactsTab
+          workflowNamespace={workflowNamespace}
+          workflowUid={workflow.metadata.uid}
+          selectedNode={selectedNode}
+        />
       );
     default:
       selectedTab satisfies never;

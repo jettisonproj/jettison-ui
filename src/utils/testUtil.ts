@@ -59,12 +59,14 @@ function getTestNode({
 
 interface TestWorkflow {
   workflowName?: string;
+  workflowUid?: string;
   workflowPhase?: WorkflowPhase;
   workflowNodes?: TestWorkflowStatusNode[];
   workflowStartedAt?: string;
 }
 function getTestWorkflow({
   workflowName = "test-workflow",
+  workflowUid = "test-uid",
   workflowPhase,
   workflowNodes = [],
   workflowStartedAt,
@@ -82,6 +84,7 @@ function getTestWorkflow({
     metadata: {
       namespace: "default",
       name: workflowName,
+      uid: workflowUid,
     },
     spec: { arguments: { parameters: [] } },
     status: {

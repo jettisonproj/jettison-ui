@@ -1,8 +1,12 @@
-import type { NamespacedResource } from "src/data/types/baseResourceTypes.ts";
+import type {
+  NamespacedMetadata,
+  NamespacedResource,
+} from "src/data/types/baseResourceTypes.ts";
 import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 
 interface Workflow extends NamespacedResource {
   kind: typeof ResourceKinds.Workflow;
+  metadata: WorkflowMetadata;
   spec: WorkflowSpec;
   status: WorkflowStatus;
   // The memo field is not actually sent by the server
@@ -10,21 +14,36 @@ interface Workflow extends NamespacedResource {
   memo: WorkflowMemo;
 }
 
+interface WorkflowMetadata extends NamespacedMetadata {
+  uid: string;
+}
+
 interface WorkflowSpec {
   arguments: WorkflowArguments;
 }
 
 interface WorkflowArguments {
-  parameters: WorkflowSpecParameter[];
+  parameters: WorkflowParameter[];
 }
 
-interface WorkflowOptionalArguments {
-  parameters?: WorkflowSpecParameter[];
+interface WorkflowOutputs {
+  parameters?: WorkflowParameter[];
+  artifacts?: WorkflowArtifact[];
 }
 
-interface WorkflowSpecParameter {
+interface WorkflowParameter {
   name: string;
   value: string;
+}
+
+interface WorkflowArtifact {
+  name: string;
+  path: string;
+  s3: WorkflowS3Artifact;
+}
+
+interface WorkflowS3Artifact {
+  key: string;
 }
 
 // These values are not sent by the server, but instead
@@ -56,7 +75,7 @@ interface WorkflowStatusNode {
   startedAt: string;
   finishedAt?: string;
   inputs?: WorkflowArguments;
-  outputs?: WorkflowOptionalArguments;
+  outputs?: WorkflowOutputs;
   children?: string[];
   memo: WorkflowMemoStatusNode;
 }
@@ -144,8 +163,9 @@ export type {
   NodeType,
   TemplateName,
   Workflow,
+  WorkflowArtifact,
   WorkflowMemoStatusNode,
+  WorkflowParameter,
   WorkflowPhase,
-  WorkflowSpecParameter,
   WorkflowStatusNode,
 };

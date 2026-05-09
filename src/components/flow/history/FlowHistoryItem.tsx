@@ -21,6 +21,7 @@ import {
   getWorkflowRevisionAuthor,
   getWorkflowRevisionRef,
   getWorkflowRevisionTitle,
+  getWorkflowUiUrl,
 } from "src/utils/workflowUtil.ts";
 
 interface FlowHistoryItemProps {
@@ -163,7 +164,7 @@ function FlowHistoryMenu({
           </a>
           <a
             className={styles.historyMenuItem}
-            href={`https://argo.osoriano.com/workflows/${namespace}/${workflowName}`}
+            href={getWorkflowUiUrl(repoOrg, workflowName)}
             target="_blank"
             rel="noreferrer"
           >
