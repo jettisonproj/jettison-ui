@@ -1,0 +1,58 @@
+.artifactsTab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 12px;
+  column-gap: 14px;
+}
+
+.artifactsTabKey {
+  font-weight: bold;
+  justify-self: end;
+}
+
+.downloadLink {
+  justify-self: start;
+  font-weight: bolder;
+  background-color: var(--panel-hover-color);
+  color: var(--graph-text-color);
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.downloadLinkLeft {
+  composes: downloadLink;
+
+  justify-self: end;
+}
+
+.downloadLink:hover {
+  opacity: 0.8;
+}
+
+.downloadLinkIcon {
+  margin-right: 8px;
+}
+
+.artifactItem {
+  font-weight: bold;
+
+  text-transform: uppercase;
+
+  font-size: 14px;
+  margin-top: 5px;
+
+  font-weight: bold;
+  letter-spacing: 1.2px;
+
+  padding: 8px;
+  padding-bottom: 4px;
+  margin-bottom: 13px;
+
+  color: var(--graph-text-color);
+  border-bottom: 2px solid var(--graph-text-color);
+}
+
+.artifactItem:not(:nth-child(1 of .artifactItem)) {
+  margin-top: 20px;
+}

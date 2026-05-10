@@ -28,4 +28,9 @@ interface NamespacedResource extends BaseResource {
 }
 
 export { ResourceKinds };
-export type { BaseResource, NamespacedResource, ResourceKind };
+export type {
+  BaseResource,
+  NamespacedMetadata,
+  NamespacedResource,
+  ResourceKind,
+};
