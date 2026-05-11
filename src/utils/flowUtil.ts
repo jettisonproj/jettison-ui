@@ -28,7 +28,7 @@ function getTriggerDetailsLink(
   trigger: Trigger,
 ) {
   const triggerName = flowDefaultTriggerName(trigger);
-  return getNodeDetailsLink(repoOrg, repoName, isPrFlow, triggerName);
+  return getFlowNodeDetailsLink(repoOrg, repoName, isPrFlow, triggerName);
 }
 
 function getStepDetailsLink(
@@ -38,10 +38,10 @@ function getStepDetailsLink(
   step: Step,
 ) {
   const stepName = flowDefaultStepName(step);
-  return getNodeDetailsLink(repoOrg, repoName, isPrFlow, stepName);
+  return getFlowNodeDetailsLink(repoOrg, repoName, isPrFlow, stepName);
 }
 
-function getNodeDetailsLink(
+function getFlowNodeDetailsLink(
   repoOrg: string,
   repoName: string,
   isPrFlow: boolean,

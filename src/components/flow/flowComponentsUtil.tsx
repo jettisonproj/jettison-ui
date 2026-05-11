@@ -75,6 +75,6 @@ function getFlowStepNode(
   };
 }
 
-// todo move out when removing NodeDetails
+// todo move out when removing FlowNodeDetails
 // eslint-disable-next-line react-refresh/only-export-components
 export { getFlowStepNode, getFlowTriggerNode, NODE_WIDTH };
