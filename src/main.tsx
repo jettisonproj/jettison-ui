@@ -29,6 +29,10 @@ createRoot(document.getElementById("root") as Element).render(
             path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute/:nodeName`}
             element={<FlowNodeDetails />}
           />
+          <Route
+            path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute/:nodeName/workflows/:selectedWorkflow`}
+            element={<FlowNodeDetails />}
+          />
         </Routes>
       </BrowserRouter>
     </Provider>

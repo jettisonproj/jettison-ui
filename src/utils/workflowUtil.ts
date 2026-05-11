@@ -246,18 +246,31 @@ function getLastWorkflowNode(
   }
   for (const workflow of workflows) {
     const node = workflow.memo.nodes[nodeName];
-    // todo improve check
-    if (
-      node != null &&
-      node.phase !== NodePhases.Skipped &&
-      node.phase !== NodePhases.Omitted &&
-      node.outputMap["docker-build-pr-status"] !== "Skipped" &&
-      node.outputMap["docker-build-commit-status"] !== "Skipped"
-    ) {
+    if (node != null && isNodeExecution(node)) {
       return { workflow, node };
     }
   }
   return null;
+}
+
+function isNodeExecution(node: WorkflowMemoStatusNode) {
+  // todo improve check
+  return (
+    node.phase !== NodePhases.Skipped &&
+    node.phase !== NodePhases.Omitted &&
+    node.outputMap["docker-build-pr-status"] !== "Skipped" &&
+    node.outputMap["docker-build-commit-status"] !== "Skipped"
+  );
+}
+
+function doesWorkflowExecuteNode(workflow: Workflow, nodeName: string) {
+  const node = workflow.memo.nodes[nodeName];
+  return node != null && isNodeExecution(node);
+}
+
+function doesWorkflowExecuteTriggerNode(workflow: Workflow) {
+  const node = workflow.memo.nodes[TRIGGER_NODE_NAME];
+  return node != null && isNodeExecution(node);
 }
 
 function workflowCompareFn(a: Workflow, b: Workflow) {
@@ -363,6 +376,8 @@ class InvalidLastWorkflowError extends Error {
 }
 
 export {
+  doesWorkflowExecuteNode,
+  doesWorkflowExecuteTriggerNode,
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
   getArtifactDownloadUrl,

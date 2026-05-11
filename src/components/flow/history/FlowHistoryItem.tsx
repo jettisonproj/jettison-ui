@@ -331,8 +331,11 @@ export {
   FlowHistoryActivePrWorkflows,
   FlowHistoryAuthor,
   FlowHistoryBranch,
+  FlowHistoryDetails,
   FlowHistoryDuration,
   FlowHistoryItem,
   FlowHistoryMessage,
+  FlowHistorySubtitle,
   FlowHistoryTimestamp,
+  FlowHistoryTitle,
 };
