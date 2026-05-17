@@ -1,0 +1,11 @@
+.firstSectionTitle {
+  min-width: var(--content-width);
+  margin: 0;
+  margin-top: 18px;
+}
+
+.sectionTitle {
+  min-width: var(--content-width);
+  margin-top: 33px;
+  margin-bottom: 26px;
+}

@@ -1,4 +1,9 @@
 import { useContext } from "react";
+import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
+import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 import type {
   Application,
@@ -10,6 +15,44 @@ import { ApplicationsContext } from "src/providers/provider.tsx";
 import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
 
 const ARGOCD_UI_URL = "https://argocd.osoriano.com";
+
+interface ArgoCDFlowNodeDetailsProps {
+  repoOrg: string;
+  nodeName: string;
+  isPrFlow: boolean;
+  flowNodeBaseUrl: string;
+  selectedWorkflow?: string;
+  stepNode: FlowNode;
+  sortedWorkflows: Workflow[];
+  step: ArgoCDStep;
+}
+function ArgoCDFlowNodeDetails({
+  repoOrg,
+  nodeName,
+  isPrFlow,
+  flowNodeBaseUrl,
+  selectedWorkflow,
+  stepNode,
+  sortedWorkflows,
+  step,
+}: ArgoCDFlowNodeDetailsProps) {
+  return (
+    <>
+      <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
+      <h2 className={styles.firstSectionTitle}>Resource Details</h2>
+      <ArgoCDStepLinks step={step} />
+      <h2 className={styles.sectionTitle}>Resource History</h2>
+      <FlowNodeHistory
+        isPrFlow={isPrFlow}
+        flowNodeBaseUrl={flowNodeBaseUrl}
+        repoOrg={repoOrg}
+        workflows={sortedWorkflows}
+        selectedWorkflow={selectedWorkflow}
+        nodeName={nodeName}
+      />
+    </>
+  );
+}
 
 interface ArgoCDStepLinksProps {
   step: ArgoCDStep;
@@ -102,7 +145,7 @@ function getRolloutResource(application?: Application) {
   }
   if (rolloutResources.length !== 1) {
     const { namespace, name } = application.metadata;
-    throw new ArgoCDStepLinksError(
+    throw new ArgoCDFlowNodeDetailsError(
       "Expected a single rollout in application " +
         `namespace=${namespace} name=${name}`,
     );
@@ -110,7 +153,7 @@ function getRolloutResource(application?: Application) {
   const rolloutResource = rolloutResources[0];
   if (rolloutResource == null) {
     const { namespace, name } = application.metadata;
-    throw new ArgoCDStepLinksError(
+    throw new ArgoCDFlowNodeDetailsError(
       "Expected a single rollout in application " +
         `namespace=${namespace} name=${name}`,
     );
@@ -147,11 +190,11 @@ function getKubernetesApplicationLink(application?: Application) {
   return `/api/v1/namespaces/${namespace}/applications/${name}`;
 }
 
-class ArgoCDStepLinksError extends Error {
+class ArgoCDFlowNodeDetailsError extends Error {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
   }
 }
 
-export { ArgoCDStepLinks };
+export { ArgoCDFlowNodeDetails };
