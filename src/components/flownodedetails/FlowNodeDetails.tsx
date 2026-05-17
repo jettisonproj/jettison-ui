@@ -6,12 +6,14 @@ import {
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { ArgoCDFlowNodeDetails } from "src/components/flownodedetails/ArgoCDFlowNodeDetails.tsx";
 import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
+import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { localState } from "src/localState.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
@@ -204,6 +206,20 @@ function FlowNodeWorkflowDetails({
       isPrFlow,
       sortedWorkflows,
     );
+    if (step.stepSource === StepSources.ArgoCD) {
+      return (
+        <ArgoCDFlowNodeDetails
+          repoOrg={repoOrg}
+          nodeName={nodeName}
+          isPrFlow={isPrFlow}
+          flowNodeBaseUrl={flowNodeBaseUrl}
+          selectedWorkflow={selectedWorkflow}
+          stepNode={stepNode}
+          sortedWorkflows={sortedWorkflows}
+          step={step}
+        />
+      );
+    }
     return (
       <>
         <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
