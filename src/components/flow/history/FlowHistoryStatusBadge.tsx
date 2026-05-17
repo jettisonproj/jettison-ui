@@ -93,11 +93,10 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
  * when they do not exist
  */
 function FlowHistoryPendingBadge() {
-  const textClassName = styles.historyCommitText;
   return (
     <div className={styles.historyStatusBadge}>
       <FlowHistoryStatusIcon workflowPhase={WorkflowPhases.Pending} />
-      <span className={textClassName}>Pending</span>
+      <span className={styles.historyCommitText}>Pending</span>
     </div>
   );
 }
