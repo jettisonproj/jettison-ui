@@ -116,6 +116,7 @@ function SelectedHistoryItem({
         selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
+        queryPrefix="&"
       />
     </div>
   );

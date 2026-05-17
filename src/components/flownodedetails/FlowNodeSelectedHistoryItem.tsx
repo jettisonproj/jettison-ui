@@ -40,6 +40,7 @@ function FlowNodeSelectedHistoryItem({
         selectedNode={selectedNode}
         nodeBaseUrl={workflowBaseUrl}
         selectedTab={selectedTab}
+        queryPrefix="?"
       />
     </div>
   );
