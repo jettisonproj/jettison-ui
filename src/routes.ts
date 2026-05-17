@@ -1,10 +1,13 @@
+import type { Params } from "react-router";
+
 const routes = {
   flows: "/flows",
   home: "/",
-};
+} as const;
 
-const pushTriggerRoute = "push";
-const prTriggerRoute = "pr";
+type TriggerRoute = "push" | "pr";
+const pushTriggerRoute: TriggerRoute = "push";
+const prTriggerRoute: TriggerRoute = "pr";
 
 function getTriggerRoute(isPrFlow: boolean) {
   if (isPrFlow) {
@@ -13,4 +16,44 @@ function getTriggerRoute(isPrFlow: boolean) {
   return pushTriggerRoute;
 }
 
-export { getTriggerRoute, prTriggerRoute, pushTriggerRoute, routes };
+function isTriggerRouteForPrFlow(triggerRoute: TriggerRoute) {
+  return triggerRoute === prTriggerRoute;
+}
+
+function getRequiredParam(
+  routerParams: Readonly<Params<string>>,
+  paramName: string,
+) {
+  const requiredParam = routerParams[paramName];
+  if (requiredParam == null) {
+    throw new RoutesError(`Route parameter cannot be empty: ${paramName}`);
+  }
+  return requiredParam;
+}
+
+function getTriggerRouteParam(routerParams: Readonly<Params<string>>) {
+  const triggerRoute = getRequiredParam(routerParams, "triggerRoute");
+  if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
+    throw new RoutesError(
+      `invalid path parameter triggerRoute=${triggerRoute}`,
+    );
+  }
+  return triggerRoute;
+}
+
+class RoutesError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+export {
+  getRequiredParam,
+  getTriggerRoute,
+  getTriggerRouteParam,
+  isTriggerRouteForPrFlow,
+  prTriggerRoute,
+  pushTriggerRoute,
+  routes,
+};

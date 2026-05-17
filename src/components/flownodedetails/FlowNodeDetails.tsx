@@ -17,7 +17,12 @@ import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { localState } from "src/localState.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
-import { prTriggerRoute, pushTriggerRoute, routes } from "src/routes.ts";
+import {
+  getRequiredParam,
+  getTriggerRouteParam,
+  isTriggerRouteForPrFlow,
+  routes,
+} from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 import {
   doesWorkflowExecuteNode,
@@ -27,23 +32,15 @@ import {
 } from "src/utils/workflowUtil.ts";
 
 function FlowNodeDetails() {
-  const { repoOrg, repoName, triggerRoute, nodeName, selectedWorkflow } =
-    useParams();
-  if (!repoOrg || !repoName || !triggerRoute || !nodeName) {
-    throw new FlowNodeDetailsError(
-      "path parameters cannot be empty: " +
-        `repoOrg=${repoOrg} repoName=${repoName} triggerRoute=${triggerRoute} nodeName=${nodeName}`,
-    );
-  }
-
-  if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
-    throw new FlowNodeDetailsError(
-      `invalid path parameter triggerRoute=${triggerRoute}`,
-    );
-  }
+  const routerParams = useParams();
+  const repoOrg = getRequiredParam(routerParams, "repoOrg ");
+  const repoName = getRequiredParam(routerParams, "repoName ");
+  const triggerRoute = getTriggerRouteParam(routerParams);
+  const nodeName = getRequiredParam(routerParams, "nodeName ");
+  const { selectedWorkflow } = routerParams;
 
   const flowNodeBaseUrl = `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`;
-  const isPrFlow = triggerRoute === prTriggerRoute;
+  const isPrFlow = isTriggerRouteForPrFlow(triggerRoute);
   return (
     <>
       <Header />
@@ -244,13 +241,6 @@ function FlowNodeWorkflowDetails({
       </strong>
     </p>
   );
-}
-
-class FlowNodeDetailsError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { FlowNodeDetails };
