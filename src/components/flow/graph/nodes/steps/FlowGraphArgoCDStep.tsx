@@ -74,17 +74,23 @@ function FlowGraphArgoCDStep({
         <i className={`nf nf-fa-layer_group ${styles.infraIcon}`} />
         <span className={styles.nodeTextSub}>Infrastructure</span>
       </a>
-      <FlowGraphArgoCDStepStatus step={step} workflowNode={workflowNode} />
+      <FlowGraphArgoCDStepStatus
+        step={step}
+        stepDetailsLink={stepDetailsLink}
+        workflowNode={workflowNode}
+      />
     </FlowGraphNode>
   );
 }
 
 interface FlowGraphArgoCDStepStatusProps {
   step: ArgoCDStep;
+  stepDetailsLink: string;
   workflowNode: WorkflowNode | null;
 }
 function FlowGraphArgoCDStepStatus({
   step,
+  stepDetailsLink,
   workflowNode,
 }: FlowGraphArgoCDStepStatusProps) {
   //
@@ -121,7 +127,7 @@ function FlowGraphArgoCDStepStatus({
   if (application == null) {
     return (
       <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge />
+        <ArgoCDNotFoundBadge stepDetailsLink={stepDetailsLink} />
       </div>
     );
   }
@@ -181,11 +187,13 @@ function FlowGraphArgoCDStepStatus({
   return (
     <div className={styles.nodeRowBlock}>
       <FlowGraphArgoCDHealthBadge
+        stepDetailsLink={stepDetailsLink}
         applicationHealthError={applicationHealthError}
         rolloutHealthError={rolloutHealthError}
         rolloutMissing={rolloutMissing}
       />
       <FlowGraphArgoCDSyncBadge
+        stepDetailsLink={stepDetailsLink}
         applicationSyncError={applicationSyncError}
         rolloutSyncError={rolloutSyncError}
         pausedReason={step.pausedReason}
@@ -196,47 +204,76 @@ function FlowGraphArgoCDStepStatus({
 }
 
 interface FlowGraphArgoCDHealthBadgeProps {
+  stepDetailsLink: string;
   applicationHealthError?: string;
   rolloutHealthError?: string;
   rolloutMissing: boolean;
 }
 function FlowGraphArgoCDHealthBadge({
+  stepDetailsLink,
   applicationHealthError,
   rolloutHealthError,
   rolloutMissing,
 }: FlowGraphArgoCDHealthBadgeProps) {
   if (rolloutHealthError != null) {
-    return <ArgoCDFailingBadge title={rolloutHealthError} />;
+    return (
+      <ArgoCDFailingBadge
+        stepDetailsLink={stepDetailsLink}
+        title={rolloutHealthError}
+      />
+    );
   }
   if (applicationHealthError != null) {
-    return <ArgoCDFailingBadge title={applicationHealthError} />;
+    return (
+      <ArgoCDFailingBadge
+        stepDetailsLink={stepDetailsLink}
+        title={applicationHealthError}
+      />
+    );
   }
   if (rolloutMissing) {
-    return <ArgoCDNotFoundBadge />;
+    return <ArgoCDNotFoundBadge stepDetailsLink={stepDetailsLink} />;
   }
-  return <ArgoCDLiveBadge />;
+  return <ArgoCDLiveBadge stepDetailsLink={stepDetailsLink} />;
 }
 
 interface FlowGraphArgoCDSyncBadgeProps {
+  stepDetailsLink: string;
   applicationSyncError?: string;
   rolloutSyncError?: string;
   pausedReason?: string;
   autoSyncEnabled: boolean;
 }
 function FlowGraphArgoCDSyncBadge({
+  stepDetailsLink,
   applicationSyncError,
   rolloutSyncError,
   pausedReason,
   autoSyncEnabled,
 }: FlowGraphArgoCDSyncBadgeProps) {
   if (!autoSyncEnabled) {
-    return <ArgoCDPausedBadge title={pausedReason} />;
+    return (
+      <ArgoCDPausedBadge
+        stepDetailsLink={stepDetailsLink}
+        title={pausedReason}
+      />
+    );
   }
   if (applicationSyncError != null) {
-    return <ArgoCDDriftBadge title={applicationSyncError} />;
+    return (
+      <ArgoCDDriftBadge
+        stepDetailsLink={stepDetailsLink}
+        title={applicationSyncError}
+      />
+    );
   }
   if (rolloutSyncError != null) {
-    return <ArgoCDDriftBadge title={rolloutSyncError} />;
+    return (
+      <ArgoCDDriftBadge
+        stepDetailsLink={stepDetailsLink}
+        title={rolloutSyncError}
+      />
+    );
   }
   return null;
 }

@@ -1,55 +1,58 @@
+import { Link } from "react-router";
+
 import styles from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.module.css";
 
 interface ArgoCDBadgeProps {
-  title: string | undefined;
+  stepDetailsLink: string;
+  title?: string;
 }
 
-function ArgoCDNotFoundBadge() {
+function ArgoCDNotFoundBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.failingBadge}>
+    <Link className={styles.failingBadge} to={stepDetailsLink}>
       <i className={`nf nf-fa-circle_xmark ${styles.notFoundIcon}`} />
       <div className={styles.notFoundBadgeText}>Resource Not Found</div>
-    </div>
+    </Link>
   );
 }
 
-function ArgoCDFailingBadge({ title }: ArgoCDBadgeProps) {
+function ArgoCDFailingBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.failingBadge} title={title}>
+    <Link className={styles.failingBadge} to={stepDetailsLink} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.failingDotIcon}></div>
       <div className={styles.badgeText}>Failing</div>
-    </div>
+    </Link>
   );
 }
 
-function ArgoCDLiveBadge() {
+function ArgoCDLiveBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.liveBadge}>
+    <Link to={stepDetailsLink} className={styles.liveBadge}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.liveDotIcon}></div>
       <div className={styles.badgeText}>Healthy</div>
-    </div>
+    </Link>
   );
 }
 
-function ArgoCDPausedBadge({ title }: ArgoCDBadgeProps) {
+function ArgoCDPausedBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.pausedBadge} title={title}>
+    <Link to={stepDetailsLink} className={styles.pausedBadge} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.pausedDotIcon}></div>
       <div className={styles.badgeText}>Paused</div>
-    </div>
+    </Link>
   );
 }
 
-function ArgoCDDriftBadge({ title }: ArgoCDBadgeProps) {
+function ArgoCDDriftBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
   return (
-    <div className={styles.driftBadge} title={title}>
+    <Link to={stepDetailsLink} className={styles.driftBadge} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.driftDotIcon}></div>
       <div className={styles.badgeText}>Resource Drifted</div>
-    </div>
+    </Link>
   );
 }
 
