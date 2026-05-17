@@ -7,8 +7,6 @@ import {
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
-import { StepLinks } from "src/components/flownodedetails/nodelinks/StepLinks.tsx";
-import { TriggerLinks } from "src/components/flownodedetails/nodelinks/TriggerLinks.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
@@ -191,7 +189,6 @@ function FlowNodeWorkflowDetails({
           selectedWorkflow={selectedWorkflow}
           nodeName={TRIGGER_NODE_NAME}
         />
-        <TriggerLinks trigger={trigger} />
       </>
     );
   }
@@ -199,7 +196,7 @@ function FlowNodeWorkflowDetails({
     (step) => flowDefaultStepName(step) === nodeName,
   );
   if (step != null) {
-    const { trigger, isPrFlow } = flow.memo;
+    const { isPrFlow } = flow.memo;
     const stepNode = getFlowStepNode(
       repoOrg,
       repoName,
@@ -218,7 +215,6 @@ function FlowNodeWorkflowDetails({
           selectedWorkflow={selectedWorkflow}
           nodeName={nodeName}
         />
-        <StepLinks step={step} trigger={trigger} />
       </>
     );
   }
