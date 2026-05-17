@@ -20,10 +20,7 @@ function isTriggerRouteForPrFlow(triggerRoute: TriggerRoute) {
   return triggerRoute === prTriggerRoute;
 }
 
-function getRequiredParam(
-  routerParams: Readonly<Params<string>>,
-  paramName: string,
-) {
+function getRequiredParam(routerParams: Readonly<Params>, paramName: string) {
   const requiredParam = routerParams[paramName];
   if (requiredParam == null) {
     throw new RoutesError(`Route parameter cannot be empty: ${paramName}`);
@@ -31,7 +28,7 @@ function getRequiredParam(
   return requiredParam;
 }
 
-function getTriggerRouteParam(routerParams: Readonly<Params<string>>) {
+function getTriggerRouteParam(routerParams: Readonly<Params>) {
   const triggerRoute = getRequiredParam(routerParams, "triggerRoute");
   if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
     throw new RoutesError(

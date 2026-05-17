@@ -250,14 +250,14 @@ function getFlowEdges(flow: FlowType, trigger: Trigger): FlowEdge[] {
   const triggerEdges = steps
     .filter((step) => !step.dependsOn || step.dependsOn.length === 0)
     .map((step) => ({
-      label: `e${++edgeIndex}`,
+      label: `e${(++edgeIndex).toString()}`,
       v: flowDefaultTriggerName(trigger),
       w: flowDefaultStepName(step),
     }));
 
   const nodeEdges = steps.flatMap((step) =>
     (step.dependsOn ?? []).map((dep) => ({
-      label: `e${++edgeIndex}`,
+      label: `e${(++edgeIndex).toString()}`,
       v: dep,
       w: flowDefaultStepName(step),
     })),

@@ -14,7 +14,7 @@ class FlowWebSocket {
 
     websocket.onclose = (ev) => {
       console.log("Websocket closed");
-      console.log(`Code: ${ev.code}`);
+      console.log(`Code: ${ev.code.toString()}`);
       console.log(`Reason: ${ev.reason}`);
     };
 
