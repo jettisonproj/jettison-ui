@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import { Flow } from "src/components/flow/Flow.tsx";
+import { FlowNodeDetails } from "src/components/flownodedetails/FlowNodeDetails.tsx";
 import { Home } from "src/components/home/Home.tsx";
-import { NodeDetails } from "src/components/nodedetails/NodeDetails.tsx";
 import { Repos } from "src/components/repos/Repos.tsx";
 import "src/main.css";
 import { Provider } from "src/providers/provider.tsx";
@@ -27,7 +27,11 @@ createRoot(document.getElementById("root") as Element).render(
           />
           <Route
             path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute/:nodeName`}
-            element={<NodeDetails />}
+            element={<FlowNodeDetails />}
+          />
+          <Route
+            path={`${routes.flows}/:repoOrg/:repoName/:triggerRoute/:nodeName/workflows/:selectedWorkflow`}
+            element={<FlowNodeDetails />}
           />
         </Routes>
       </BrowserRouter>

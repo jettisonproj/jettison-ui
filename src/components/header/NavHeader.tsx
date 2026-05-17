@@ -152,7 +152,7 @@ function FlowNavHeader({
   );
 }
 
-/* NodeDetails Nav Header */
+/* FlowNodeDetails Nav Header */
 function nodeDetailsNavComponent(
   repoOrg: string,
   repoName: string,
@@ -165,15 +165,15 @@ function nodeDetailsNavComponent(
     navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`,
   };
 }
-interface NodeDetailsNavHeaderProps extends FlowNavHeaderProps {
+interface FlowNodeDetailsNavHeaderProps extends FlowNavHeaderProps {
   nodeName: string;
 }
-function NodeDetailsNavHeader({
+function FlowNodeDetailsNavHeader({
   repoOrg,
   repoName,
   isPrFlow,
   nodeName,
-}: NodeDetailsNavHeaderProps) {
+}: FlowNodeDetailsNavHeaderProps) {
   const components = [
     homeNavComponent,
     reposNavComponent,
@@ -190,4 +190,9 @@ class NavHeaderError extends Error {
   }
 }
 
-export { FlowNavHeader, HomeNavHeader, NodeDetailsNavHeader, ReposNavHeader };
+export {
+  FlowNavHeader,
+  FlowNodeDetailsNavHeader,
+  HomeNavHeader,
+  ReposNavHeader,
+};

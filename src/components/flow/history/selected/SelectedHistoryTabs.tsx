@@ -28,6 +28,7 @@ interface SelectedHistoryTabsProps {
   selectedNode?: WorkflowStatusNode;
   nodeBaseUrl: string;
   selectedTab: Tab;
+  queryPrefix: string;
 }
 function SelectedHistoryTabs({
   workflow,
@@ -35,6 +36,7 @@ function SelectedHistoryTabs({
   selectedNode,
   nodeBaseUrl,
   selectedTab,
+  queryPrefix,
 }: SelectedHistoryTabsProps) {
   return (
     <div className={styles.selectedHistoryTabs}>
@@ -42,6 +44,7 @@ function SelectedHistoryTabs({
         selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
+        queryPrefix={queryPrefix}
       />
       <SelectedHistoryTab
         workflow={workflow}
@@ -57,11 +60,13 @@ interface SelectedHistoryTabSelectorProps {
   selectedNode?: WorkflowStatusNode;
   nodeBaseUrl: string;
   selectedTab: Tab;
+  queryPrefix: string;
 }
 function SelectedHistoryTabSelector({
   selectedNode,
   nodeBaseUrl,
   selectedTab,
+  queryPrefix,
 }: SelectedHistoryTabSelectorProps) {
   return (
     <div>
@@ -75,7 +80,7 @@ function SelectedHistoryTabSelector({
           return (
             <Link
               key={tab}
-              to={`${nodeBaseUrl}&tab=${tab}`}
+              to={`${nodeBaseUrl}${queryPrefix}tab=${tab}`}
               className={tabClassName}
             >
               {tab}

@@ -1,4 +1,4 @@
-import { GitHubTriggerLinks } from "src/components/nodedetails/nodelinks/triggers/GitHubTriggerLinks.tsx";
+import { GitHubTriggerLinks } from "src/components/flownodedetails/nodelinks/triggers/GitHubTriggerLinks.tsx";
 import type { Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
 

@@ -10,8 +10,7 @@ import styles from "src/components/flow/history/selected/SelectedHistoryItem.mod
 import { SelectedHistoryTabs } from "src/components/flow/history/selected/SelectedHistoryTabs.tsx";
 import { WorkflowGraphNode } from "src/components/flow/history/selected/nodes/WorkflowGraphNode.tsx";
 import { WorkflowPendingGraphNode } from "src/components/flow/history/selected/nodes/WorkflowPendingGraphNode.tsx";
-import type { Tab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
-import { DEFAULT_TAB } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
+import { getSelectedTab } from "src/components/flow/history/selected/selectedHistoryTabData.ts";
 import { flowDefaultStepName } from "src/data/data.ts";
 import type { Step } from "src/data/types/flowTypes.ts";
 import type {
@@ -40,7 +39,7 @@ function SelectedHistoryItem({
 }: SelectedHistoryItemProps) {
   const [searchParams] = useSearchParams();
   const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
-  const selectedTab = parseTab(searchParams.get("tab"));
+  const selectedTab = getSelectedTab(searchParams.get("tab"));
 
   // This component is rendered on the fly, so no need to memoize data for this
   // component. Instead, use the raw data to compute the derived data here.
@@ -117,6 +116,7 @@ function SelectedHistoryItem({
         selectedNode={selectedNode}
         nodeBaseUrl={nodeBaseUrl}
         selectedTab={selectedTab}
+        queryPrefix="&"
       />
     </div>
   );
@@ -313,13 +313,6 @@ class SelectedHistoryItemError extends Error {
     super(message);
     this.name = this.constructor.name;
   }
-}
-
-function parseTab(tabValue: string | null) {
-  if (tabValue == null) {
-    return DEFAULT_TAB;
-  }
-  return tabValue as Tab;
 }
 
 export { SelectedHistoryItem };

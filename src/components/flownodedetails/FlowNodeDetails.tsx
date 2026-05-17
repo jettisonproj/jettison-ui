@@ -6,67 +6,81 @@ import {
   getFlowTriggerNode,
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
+import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
+import { StepLinks } from "src/components/flownodedetails/nodelinks/StepLinks.tsx";
+import { TriggerLinks } from "src/components/flownodedetails/nodelinks/TriggerLinks.tsx";
 import { Header } from "src/components/header/Header.tsx";
-import { NodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
+import { FlowNodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { StepLinks } from "src/components/nodedetails/nodelinks/StepLinks.tsx";
-import { TriggerLinks } from "src/components/nodedetails/nodelinks/TriggerLinks.tsx";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { localState } from "src/localState.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
-import { prTriggerRoute, pushTriggerRoute } from "src/routes.ts";
+import { prTriggerRoute, pushTriggerRoute, routes } from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
-import { workflowCompareFn } from "src/utils/workflowUtil.ts";
+import {
+  doesWorkflowExecuteNode,
+  doesWorkflowExecuteTriggerNode,
+  TRIGGER_NODE_NAME,
+  workflowCompareFn,
+} from "src/utils/workflowUtil.ts";
 
-function NodeDetails() {
-  const { repoOrg, repoName, triggerRoute, nodeName } = useParams();
+function FlowNodeDetails() {
+  const { repoOrg, repoName, triggerRoute, nodeName, selectedWorkflow } =
+    useParams();
   if (!repoOrg || !repoName || !triggerRoute || !nodeName) {
-    throw new NodeDetailsError(
+    throw new FlowNodeDetailsError(
       "path parameters cannot be empty: " +
         `repoOrg=${repoOrg} repoName=${repoName} triggerRoute=${triggerRoute} nodeName=${nodeName}`,
     );
   }
 
   if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
-    throw new NodeDetailsError(
+    throw new FlowNodeDetailsError(
       `invalid path parameter triggerRoute=${triggerRoute}`,
     );
   }
 
+  const flowNodeBaseUrl = `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`;
   const isPrFlow = triggerRoute === prTriggerRoute;
   return (
     <>
       <Header />
-      <NodeDetailsNavHeader
+      <FlowNodeDetailsNavHeader
         repoOrg={repoOrg}
         repoName={repoName}
         isPrFlow={isPrFlow}
         nodeName={nodeName}
       />
-      <NodeDetailsItem
+      <FlowNodeDetailsItem
         repoOrg={repoOrg}
         repoName={repoName}
         isPrFlow={isPrFlow}
+        flowNodeBaseUrl={flowNodeBaseUrl}
+        selectedWorkflow={selectedWorkflow}
         nodeName={nodeName}
       />
     </>
   );
 }
 
-interface NodeDetailsItemProps {
+interface FlowNodeDetailsItemProps {
   repoOrg: string;
   repoName: string;
   isPrFlow: boolean;
+  flowNodeBaseUrl: string;
+  selectedWorkflow?: string;
   nodeName: string;
 }
-function NodeDetailsItem({
+function FlowNodeDetailsItem({
   repoOrg,
   repoName,
   isPrFlow,
+  flowNodeBaseUrl,
+  selectedWorkflow,
   nodeName,
-}: NodeDetailsItemProps) {
+}: FlowNodeDetailsItemProps) {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
@@ -109,43 +123,56 @@ function NodeDetailsItem({
   const { name: flowName } = flow.metadata;
   const workflows = allWorkflows.get(repoOrg)?.get(flowName);
   return (
-    <NodeWorkflowDetails
+    <FlowNodeWorkflowDetails
       repoOrg={repoOrg}
       repoName={repoName}
       nodeName={nodeName}
       isPrFlow={isPrFlow}
+      flowNodeBaseUrl={flowNodeBaseUrl}
+      selectedWorkflow={selectedWorkflow}
       flow={flow}
       workflows={workflows}
     />
   );
 }
 
-interface NodeWorkflowDetailsProps {
+interface FlowNodeWorkflowDetailsProps {
   repoOrg: string;
   repoName: string;
   nodeName: string;
   isPrFlow: boolean;
+  flowNodeBaseUrl: string;
+  selectedWorkflow?: string;
   flow: Flow;
   workflows: Map<string, Workflow> | undefined;
 }
-function NodeWorkflowDetails({
+function FlowNodeWorkflowDetails({
   repoOrg,
   repoName,
   nodeName,
   isPrFlow,
+  flowNodeBaseUrl,
+  selectedWorkflow,
   flow,
   workflows,
-}: NodeWorkflowDetailsProps) {
+}: FlowNodeWorkflowDetailsProps) {
+  const trigger = flow.spec.triggers.find(
+    (trigger) => flowDefaultTriggerName(trigger) === nodeName,
+  );
   const sortedWorkflows = useMemo(() => {
     if (workflows == null) {
       return [];
     }
-    return Array.from(workflows.values()).sort(workflowCompareFn);
-  }, [workflows]);
-  const trigger = flow.spec.triggers.find(
-    (trigger) => flowDefaultTriggerName(trigger) === nodeName,
-  );
-  if (trigger) {
+    return Array.from(workflows.values())
+      .filter((workflow) => {
+        if (trigger != null) {
+          return doesWorkflowExecuteTriggerNode(workflow);
+        }
+        return doesWorkflowExecuteNode(workflow, nodeName);
+      })
+      .sort(workflowCompareFn);
+  }, [workflows, nodeName, trigger]);
+  if (trigger != null) {
     const triggerNode = getFlowTriggerNode(
       repoOrg,
       repoName,
@@ -156,6 +183,14 @@ function NodeWorkflowDetails({
     return (
       <>
         <FlowGraph flowNodes={[triggerNode]} flowEdges={[]} />
+        <FlowNodeHistory
+          isPrFlow={isPrFlow}
+          flowNodeBaseUrl={flowNodeBaseUrl}
+          repoOrg={repoOrg}
+          workflows={sortedWorkflows}
+          selectedWorkflow={selectedWorkflow}
+          nodeName={TRIGGER_NODE_NAME}
+        />
         <TriggerLinks trigger={trigger} />
       </>
     );
@@ -163,7 +198,7 @@ function NodeWorkflowDetails({
   const step = flow.spec.steps.find(
     (step) => flowDefaultStepName(step) === nodeName,
   );
-  if (step) {
+  if (step != null) {
     const { trigger, isPrFlow } = flow.memo;
     const stepNode = getFlowStepNode(
       repoOrg,
@@ -175,6 +210,14 @@ function NodeWorkflowDetails({
     return (
       <>
         <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
+        <FlowNodeHistory
+          isPrFlow={isPrFlow}
+          flowNodeBaseUrl={flowNodeBaseUrl}
+          repoOrg={repoOrg}
+          workflows={sortedWorkflows}
+          selectedWorkflow={selectedWorkflow}
+          nodeName={nodeName}
+        />
         <StepLinks step={step} trigger={trigger} />
       </>
     );
@@ -191,11 +234,11 @@ function NodeWorkflowDetails({
   );
 }
 
-class NodeDetailsError extends Error {
+class FlowNodeDetailsError extends Error {
   constructor(message: string) {
     super(message);
     this.name = this.constructor.name;
   }
 }
 
-export { NodeDetails };
+export { FlowNodeDetails };
