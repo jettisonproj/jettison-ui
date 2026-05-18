@@ -25,12 +25,12 @@ function formatDurationFromSeconds(totalSeconds: number) {
   seconds -= minutes * MINUTE;
 
   if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
+    return `${hours.toString()}h ${minutes.toString()}m ${seconds.toString()}s`;
   }
   if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
+    return `${minutes.toString()}m ${seconds.toString()}s`;
   }
-  return `${seconds}s`;
+  return `${seconds.toString()}s`;
 }
 
 /**

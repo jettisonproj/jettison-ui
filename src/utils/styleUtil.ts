@@ -1,19 +1,12 @@
-function concatStyles(
-  baseClass: string | undefined,
+function concatOptionalStyle(
+  baseClass: string,
   additionalClass: string | undefined,
 ) {
-  if (baseClass == null || additionalClass == null) {
-    throw new StyleUtilError("style class was unexpectedly null");
+  if (additionalClass == null) {
+    return baseClass;
   }
 
   return `${baseClass} ${additionalClass}`;
 }
 
-class StyleUtilError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export { StyleUtilError, concatStyles };
+export { concatOptionalStyle };

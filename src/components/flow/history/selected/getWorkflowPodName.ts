@@ -31,7 +31,7 @@ function getWorkflowPodName(
   }
   prefix = ensurePodNamePrefixLength(prefix);
 
-  const hash = createFNVHash(podNodeName);
+  const hash = createFNVHash(podNodeName).toString();
   return `${prefix}-${hash}`;
 }
 

@@ -19,7 +19,12 @@ import type { Flow as FlowType, Trigger } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { localState } from "src/localState.ts";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
-import { prTriggerRoute, pushTriggerRoute, routes } from "src/routes.ts";
+import {
+  getRequiredParam,
+  getTriggerRouteParam,
+  isTriggerRouteForPrFlow,
+  routes,
+} from "src/routes.ts";
 import { getTriggerDisplayName } from "src/utils/flowUtil.ts";
 import {
   TRIGGER_NODE_NAME,
@@ -27,23 +32,17 @@ import {
 } from "src/utils/workflowUtil.ts";
 
 function Flow() {
-  const { repoOrg, repoName, triggerRoute, selectedWorkflow } = useParams();
+  const routerParams = useParams();
+  const repoOrg = getRequiredParam(routerParams, "repoOrg");
+  const repoName = getRequiredParam(routerParams, "repoName");
+  const triggerRoute = getTriggerRouteParam(routerParams);
+  const { selectedWorkflow } = routerParams;
+
   const [searchParams] = useSearchParams();
-
-  if (!repoOrg || !repoName || !triggerRoute) {
-    throw new FlowError(
-      "path parameters cannot be empty: " +
-        `repoOrg=${repoOrg} repoName=${repoName} triggerRoute=${triggerRoute}`,
-    );
-  }
-
-  if (triggerRoute !== pushTriggerRoute && triggerRoute !== prTriggerRoute) {
-    throw new FlowError(`invalid path parameter triggerRoute=${triggerRoute}`);
-  }
 
   const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
   const flowBaseUrl = `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`;
-  const isPrFlow = triggerRoute === prTriggerRoute;
+  const isPrFlow = isTriggerRouteForPrFlow(triggerRoute);
   return (
     <>
       <Header />
@@ -251,27 +250,20 @@ function getFlowEdges(flow: FlowType, trigger: Trigger): FlowEdge[] {
   const triggerEdges = steps
     .filter((step) => !step.dependsOn || step.dependsOn.length === 0)
     .map((step) => ({
-      label: `e${++edgeIndex}`,
+      label: `e${(++edgeIndex).toString()}`,
       v: flowDefaultTriggerName(trigger),
       w: flowDefaultStepName(step),
     }));
 
   const nodeEdges = steps.flatMap((step) =>
     (step.dependsOn ?? []).map((dep) => ({
-      label: `e${++edgeIndex}`,
+      label: `e${(++edgeIndex).toString()}`,
       v: dep,
       w: flowDefaultStepName(step),
     })),
   );
 
   return triggerEdges.concat(nodeEdges);
-}
-
-class FlowError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { Flow };

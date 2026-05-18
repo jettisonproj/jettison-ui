@@ -67,10 +67,11 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
     .map((edgeId) => dagreGraph.edge(edgeId));
 
   const { width, height } = graphLabels;
-  if (width == null || height == null) {
-    throw new FlowGraphError(
-      `invalid dagre graph: width=${width} or height=${height}`,
-    );
+  if (width == null) {
+    throw new FlowGraphError(`invalid dagre graph: width is not defined`);
+  }
+  if (height == null) {
+    throw new FlowGraphError(`invalid dagre graph: height is undefined`);
   }
 
   /* Since the graph may overflow slightly (e.g. from using stroke-width),
@@ -84,11 +85,13 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
       <svg
         width={totalWidth}
         height={totalHeight}
-        viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+        viewBox={`0 0 ${totalWidth.toString()} ${totalHeight.toString()}`}
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g transform={`translate(${padding}, ${padding})`}>
+        <g
+          transform={`translate(${padding.toString()}, ${padding.toString()})`}
+        >
           {nodeLabels.map((nodeLabel) => (
             <FlowGraphNode key={nodeLabel.label} nodeLabel={nodeLabel} />
           ))}
@@ -148,7 +151,7 @@ function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps) {
   const { x: ex, y: ey } = endPoint;
   return (
     <path
-      d={`M ${sx},${sy} L ${cx},${cy} L ${ex},${ey}`}
+      d={`M ${sx.toString()},${sy.toString()} L ${cx.toString()},${cy.toString()} L ${ex.toString()},${ey.toString()}`}
       className={styles.edge}
     />
   );

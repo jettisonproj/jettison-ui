@@ -45,12 +45,6 @@ export default defineConfig([
           message: "Please use named exports instead.",
         },
       ],
-      "@typescript-eslint/restrict-template-expressions": [
-        "error",
-        {
-          allowNumber: true,
-        },
-      ],
     },
   },
   eslintConfigPrettier,

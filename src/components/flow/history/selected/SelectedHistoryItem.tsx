@@ -172,7 +172,7 @@ function getWorkflowGraphEdges(
   const workflowGraphEdges = workflowNodesToRender.flatMap((node) =>
     getEdgeDestinations(node.children, workflowNodesById, workflowName).map(
       (edgeDestination) => ({
-        label: `e${++edgeIndex}`,
+        label: `e${(++edgeIndex).toString()}`,
         v: node.displayName,
         w: edgeDestination,
       }),
@@ -202,7 +202,7 @@ function getWorkflowGraphEdges(
   // Add edges from trigger node to nodes without dependencies
   workflowNodesWithoutDeps.forEach((workflowNodeWithoutDeps) => {
     workflowGraphEdges.push({
-      label: `e${++edgeIndex}`,
+      label: `e${(++edgeIndex).toString()}`,
       v: triggerNode.displayName,
       w: workflowNodeWithoutDeps,
     });
@@ -216,14 +216,14 @@ function getWorkflowGraphEdges(
       ) {
         return [
           {
-            label: `e${++edgeIndex}`,
+            label: `e${(++edgeIndex).toString()}`,
             v: triggerNode.displayName,
             w: flowDefaultStepName(nodePendingCreation),
           },
         ];
       }
       return nodePendingCreation.dependsOn.map((dep) => ({
-        label: `e${++edgeIndex}`,
+        label: `e${(++edgeIndex).toString()}`,
         v: dep,
         w: flowDefaultStepName(nodePendingCreation),
       }));

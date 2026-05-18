@@ -56,12 +56,12 @@ function getFlowTrigger(flow: Flow): Trigger {
   const { triggers } = flow.spec;
   if (triggers.length !== 1) {
     throw new FlowUtilError(
-      `expected 1 Flow trigger but got: ${triggers.length}`,
+      `expected 1 Flow trigger but got: ${triggers.length.toString()}`,
     );
   }
   const trigger = triggers[0];
-  if (!trigger) {
-    throw new FlowUtilError(`expected Flow trigger but got: ${trigger}`);
+  if (trigger == null) {
+    throw new FlowUtilError(`expected Flow trigger but got empty trigger`);
   }
   return trigger;
 }
