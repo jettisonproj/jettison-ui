@@ -17,7 +17,6 @@ import {
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
-import { concatStyles } from "src/utils/styleUtil.ts";
 import {
   EXIT_NODE_NAME,
   getMemoResourcePath,
@@ -158,36 +157,36 @@ function FlowHistoryGridItem({
 
   switch (nodePhase) {
     case NodePhases.Succeeded:
-      itemClassName = concatStyles(itemClassName, styles.historyGridSuccess);
+      itemClassName = `${itemClassName} ${styles.historyGridSuccess}`;
       iconComponent = (
         <i className={`nf nf-fa-circle_check ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Error:
-      itemClassName = concatStyles(itemClassName, styles.historyGridDanger);
+      itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Failed:
-      itemClassName = concatStyles(itemClassName, styles.historyGridDanger);
+      itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
       iconComponent = (
         <i className={`nf nf-fa-circle_xmark ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Running:
-      itemClassName = concatStyles(itemClassName, styles.historyGridRunning);
+      itemClassName = `${itemClassName} ${styles.historyGridRunning}`;
       iconComponent = <LoadIcon className={styles.historyGridIcon} />;
       break;
     case NodePhases.Pending:
-      itemClassName = concatStyles(itemClassName, styles.historyGridPending);
+      itemClassName = `${itemClassName} ${styles.historyGridPending}`;
       iconComponent = (
         <i className={`nf nf-fa-clock ${styles.historyGridIcon}`} />
       );
       break;
     case NodePhases.Skipped:
     case NodePhases.Omitted:
-      itemClassName = concatStyles(itemClassName, styles.historyGridPending);
+      itemClassName = `${itemClassName} ${styles.historyGridPending}`;
       iconComponent = (
         <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
       );
