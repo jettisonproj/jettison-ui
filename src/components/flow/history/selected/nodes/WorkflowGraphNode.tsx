@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
@@ -16,7 +18,7 @@ function WorkflowGraphNode({
   node,
   workflowBaseUrl,
   isSelected,
-}: WorkflowGraphNodeProps) {
+}: WorkflowGraphNodeProps): JSX.Element {
   const { template } = node.memo;
   const className = isSelected
     ? styles.nodeRowHeaderSelected

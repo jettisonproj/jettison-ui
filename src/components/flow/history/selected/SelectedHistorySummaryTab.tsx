@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Fragment } from "react";
 
 import styles from "src/components/flow/history/selected/SelectedHistorySummaryTab.module.css";
@@ -9,7 +10,7 @@ interface SelectedHistorySummaryTabProps {
 }
 function SelectedHistorySummaryTab({
   selectedNode,
-}: SelectedHistorySummaryTabProps) {
+}: SelectedHistorySummaryTabProps): JSX.Element {
   const startedAt = new Date(selectedNode.startedAt);
   return (
     <>

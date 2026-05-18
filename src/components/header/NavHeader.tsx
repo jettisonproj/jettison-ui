@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Fragment, useMemo } from "react";
 import { Link, NavLink } from "react-router";
 
@@ -29,7 +30,11 @@ interface NavHeaderProps {
   filters?: NavHeaderFilter[];
 }
 
-function NavHeader({ components, showBorder, filters }: NavHeaderProps) {
+function NavHeader({
+  components,
+  showBorder,
+  filters,
+}: NavHeaderProps): JSX.Element | null {
   if (components.length === 0) {
     return null;
   }
@@ -88,13 +93,13 @@ function NavHeader({ components, showBorder, filters }: NavHeaderProps) {
 
 /* Home Nav Header */
 const homeNavComponent = { displayName: "Home", navLink: routes.home };
-function HomeNavHeader() {
+function HomeNavHeader(): JSX.Element {
   return <NavHeader components={[homeNavComponent]} showBorder={true} />;
 }
 
 /* Namespaces Nav Header */
 const reposNavComponent = { displayName: "Repos", navLink: routes.flows };
-function ReposNavHeader() {
+function ReposNavHeader(): JSX.Element {
   const components = [homeNavComponent, reposNavComponent];
   return <NavHeader components={components} showBorder={false} />;
 }
@@ -104,7 +109,7 @@ function flowNavComponent(
   repoOrg: string,
   repoName: string,
   isPrFlow: boolean,
-) {
+): NavHeaderComponent {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return {
     displayName: repoName,
@@ -122,7 +127,7 @@ function FlowNavHeader({
   repoName,
   isPrFlow,
   additionalWorkflows,
-}: FlowNavHeaderProps) {
+}: FlowNavHeaderProps): JSX.Element {
   const numNotifications = useMemo(
     () => getNumActiveWorkflows(additionalWorkflows),
     [additionalWorkflows],
@@ -158,7 +163,7 @@ function nodeDetailsNavComponent(
   repoName: string,
   isPrFlow: boolean,
   nodeName: string,
-) {
+): NavHeaderComponent {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return {
     displayName: nodeName,
@@ -173,7 +178,7 @@ function FlowNodeDetailsNavHeader({
   repoName,
   isPrFlow,
   nodeName,
-}: FlowNodeDetailsNavHeaderProps) {
+}: FlowNodeDetailsNavHeaderProps): JSX.Element {
   const components = [
     homeNavComponent,
     reposNavComponent,

@@ -14,7 +14,7 @@ const PUBLISH_DISPLAY_NAME = "PUBLISH";
 const PR_DISPLAY_NAME = "PR";
 const PUSH_DISPLAY_NAME = "PUSH";
 
-function getTriggerDisplayName(isPrFlow: boolean) {
+function getTriggerDisplayName(isPrFlow: boolean): string {
   if (isPrFlow) {
     return PR_DISPLAY_NAME;
   }
@@ -26,7 +26,7 @@ function getTriggerDetailsLink(
   repoName: string,
   isPrFlow: boolean,
   trigger: Trigger,
-) {
+): string {
   const triggerName = flowDefaultTriggerName(trigger);
   return getFlowNodeDetailsLink(repoOrg, repoName, isPrFlow, triggerName);
 }
@@ -36,7 +36,7 @@ function getStepDetailsLink(
   repoName: string,
   isPrFlow: boolean,
   step: Step,
-) {
+): string {
   const stepName = flowDefaultStepName(step);
   return getFlowNodeDetailsLink(repoOrg, repoName, isPrFlow, stepName);
 }
@@ -46,7 +46,7 @@ function getFlowNodeDetailsLink(
   repoName: string,
   isPrFlow: boolean,
   nodeName: string,
-) {
+): string {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`;
 }
@@ -67,7 +67,7 @@ function getFlowTrigger(flow: Flow): Trigger {
 }
 
 /* Get whether the flow is a PR flow, based on the trigger type */
-function isPullRequestTrigger(trigger: Trigger) {
+function isPullRequestTrigger(trigger: Trigger): boolean {
   switch (trigger.triggerSource) {
     case TriggerSources.GitHubPush:
       return false;

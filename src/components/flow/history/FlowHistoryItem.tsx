@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Link } from "react-router";
 
 import { CommitMessage } from "src/components/commitmessage/CommitMessage.tsx";
@@ -41,7 +42,7 @@ function FlowHistoryItem({
   flowBaseUrl,
   isSelected,
   selectedNodeName,
-}: FlowHistoryItemProps) {
+}: FlowHistoryItemProps): JSX.Element {
   const workflowBaseUrl = `${flowBaseUrl}/workflows/${workflow.metadata.name}`;
   const historyItemClassName = isSelected
     ? styles.historyItemBase
@@ -90,7 +91,7 @@ function FlowHistoryTitle({
   workflow,
   repoOrg,
   isSelected,
-}: FlowHistoryTitleProps) {
+}: FlowHistoryTitleProps): JSX.Element {
   return (
     <div className={styles.historyTitle}>
       <div className={styles.historyTitleHeading}>
@@ -110,7 +111,10 @@ interface FlowHistoryMessageProps {
   isPrFlow: boolean;
   workflow: Workflow;
 }
-function FlowHistoryMessage({ isPrFlow, workflow }: FlowHistoryMessageProps) {
+function FlowHistoryMessage({
+  isPrFlow,
+  workflow,
+}: FlowHistoryMessageProps): JSX.Element {
   const { parameterMap } = workflow.memo;
   const commit = getWorkflowRevision(parameterMap);
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -136,7 +140,7 @@ function FlowHistoryMenu({
   workflow,
   repoOrg,
   isSelected,
-}: FlowHistoryMenuProps) {
+}: FlowHistoryMenuProps): JSX.Element {
   const { name: workflowName } = workflow.metadata;
   // The repoOrg and namespace are expected to match
   const namespace = repoOrg;
@@ -183,7 +187,7 @@ interface FlowHistoryFieldProps {
   workflow: Workflow;
 }
 
-function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
+function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps): JSX.Element {
   return (
     <div className={styles.historySubtitle}>
       <FlowHistoryAuthor workflow={workflow} />
@@ -194,7 +198,7 @@ function FlowHistorySubtitle({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
+function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps): JSX.Element {
   const { parameterMap } = workflow.memo;
   const author = getWorkflowRevisionAuthor(parameterMap);
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -214,7 +218,9 @@ function FlowHistoryAuthor({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
+function FlowHistoryTimestamp({
+  workflow,
+}: FlowHistoryFieldProps): JSX.Element | null {
   const { duration, startedAt } = workflow.memo;
   if (duration == null || startedAt == null) {
     // Hide if in progress (e.g. FlowHistoryDuration is active)
@@ -228,7 +234,7 @@ function FlowHistoryTimestamp({ workflow }: FlowHistoryFieldProps) {
   );
 }
 
-function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps) {
+function FlowHistoryDuration({ workflow }: FlowHistoryFieldProps): JSX.Element {
   const { duration, startedAt } = workflow.memo;
   return (
     <div className={styles.historySubtitleItem}>
@@ -247,7 +253,7 @@ interface FlowHistoryDurationTextProps {
 function FlowHistoryDurationText({
   duration,
   startedAt,
-}: FlowHistoryDurationTextProps) {
+}: FlowHistoryDurationTextProps): JSX.Element | string {
   if (duration != null) {
     return duration;
   }
@@ -257,7 +263,7 @@ function FlowHistoryDurationText({
   return "-";
 }
 
-function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps) {
+function FlowHistoryBranch({ workflow }: FlowHistoryFieldProps): JSX.Element {
   const { parameterMap } = workflow.memo;
   const revisionRef = getWorkflowRevisionRef(parameterMap);
   const branch = trimBranchPrefix(revisionRef);
@@ -285,7 +291,7 @@ function FlowHistoryDetails({
   workflow,
   flowBaseUrl,
   isSelected,
-}: FlowHistoryDetailsProps) {
+}: FlowHistoryDetailsProps): JSX.Element {
   let detailsUrl;
   let detailsIcon;
   if (isSelected) {
@@ -313,7 +319,7 @@ interface FlowHistoryActivePrWorkflowsProps {
 function FlowHistoryActivePrWorkflows({
   prFlowLink,
   numActivePrWorkflows,
-}: FlowHistoryActivePrWorkflowsProps) {
+}: FlowHistoryActivePrWorkflowsProps): JSX.Element | null {
   if (numActivePrWorkflows <= 0) {
     return null;
   }

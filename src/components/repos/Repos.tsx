@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useContext } from "react";
 
 import { Header } from "src/components/header/Header.tsx";
@@ -8,7 +9,7 @@ import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
 import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
 import { getRepoOrgAndName, sortByRepoName } from "src/utils/gitUtil.ts";
 
-function Repos() {
+function Repos(): JSX.Element {
   return (
     <>
       <Header />
@@ -18,7 +19,7 @@ function Repos() {
   );
 }
 
-function ReposList() {
+function ReposList(): JSX.Element | JSX.Element[] {
   const flows = useContext(FlowsContext);
   const workflows = useContext(WorkflowsContext);
 

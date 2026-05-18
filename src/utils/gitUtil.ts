@@ -5,42 +5,42 @@ const BRANCH_PREFIX = "refs/heads/";
 const GIT_SUFFIX = ".git";
 const GIT_PREFIX = "https://github.com/";
 
-function appendGitSuffix(s: string) {
+function appendGitSuffix(s: string): string {
   if (s.endsWith(GIT_SUFFIX)) {
     return s;
   }
   return `${s}${GIT_SUFFIX}`;
 }
 
-function trimGitSuffix(s: string) {
+function trimGitSuffix(s: string): string {
   if (s.endsWith(GIT_SUFFIX)) {
     return s.slice(0, -1 * GIT_SUFFIX.length);
   }
   return s;
 }
 
-function trimGitPrefix(s: string) {
+function trimGitPrefix(s: string): string {
   if (s.startsWith(GIT_PREFIX)) {
     return s.slice(GIT_PREFIX.length);
   }
   return s;
 }
 
-function trimBranchPrefix(branch: string) {
+function trimBranchPrefix(branch: string): string {
   if (branch.startsWith(BRANCH_PREFIX)) {
     return branch.slice(BRANCH_PREFIX.length);
   }
   return branch;
 }
 
-function getDisplayCommit(commit: string) {
+function getDisplayCommit(commit: string): string {
   return commit.slice(0, COMMIT_DISPLAY_LEN);
 }
 
 /**
  * Get the link url to the root of the repo and baseRef
  */
-function getRepoTreeLink(repoUrl: string, baseRef: string | undefined) {
+function getRepoTreeLink(repoUrl: string, baseRef: string | undefined): string {
   repoUrl = trimGitSuffix(repoUrl);
   baseRef = baseRef ?? flowDefaults.baseRef;
   return `${repoUrl}/tree/${baseRef}`;
@@ -53,7 +53,7 @@ function getRepoPathLink(
   repoUrl: string,
   baseRef: string | undefined,
   path: string,
-) {
+): string {
   const repoTreeLink = getRepoTreeLink(repoUrl, baseRef);
   return `${repoTreeLink}/${path}`;
 }
@@ -62,7 +62,11 @@ function getRepoPathLink(
  * Get the link url to the author using the repo and baseRef
  * https://github.com/kubernetes/kubernetes/commits/release-1.36?author=richabanker
  */
-function getRepoAuthorLink(repoUrl: string, baseRef: string, author: string) {
+function getRepoAuthorLink(
+  repoUrl: string,
+  baseRef: string,
+  author: string,
+): string {
   repoUrl = trimGitSuffix(repoUrl);
   return `${repoUrl}/commits/${baseRef}?author=${author}`;
 }
@@ -70,7 +74,11 @@ function getRepoAuthorLink(repoUrl: string, baseRef: string, author: string) {
 /*
  * Get the link to the path using the repo and commit
  */
-function getRepoCommitPathLink(repoUrl: string, commit: string, path: string) {
+function getRepoCommitPathLink(
+  repoUrl: string,
+  commit: string,
+  path: string,
+): string {
   repoUrl = trimGitSuffix(repoUrl);
   return `${repoUrl}/blob/${commit}/${path}`;
 }
@@ -78,7 +86,7 @@ function getRepoCommitPathLink(repoUrl: string, commit: string, path: string) {
 /**
  * Get the link url to the commit in the repo
  */
-function getRepoCommitLink(repoUrl: string, commit: string) {
+function getRepoCommitLink(repoUrl: string, commit: string): string {
   repoUrl = trimGitSuffix(repoUrl);
   return `${repoUrl}/commit/${commit}`;
 }
@@ -86,7 +94,7 @@ function getRepoCommitLink(repoUrl: string, commit: string) {
 /**
  * Get the link url to the PR in the repo
  */
-function getRepoPrLink(repoUrl: string, prNumber: string) {
+function getRepoPrLink(repoUrl: string, prNumber: string): string {
   repoUrl = trimGitSuffix(repoUrl);
   return `${repoUrl}/pull/${prNumber}`;
 }
@@ -94,7 +102,7 @@ function getRepoPrLink(repoUrl: string, prNumber: string) {
 /**
  * Get the repo org and repo name in format `${repoOrg}/${repoName}`
  */
-function getRepoOrgName(repoUrl: string) {
+function getRepoOrgName(repoUrl: string): string {
   return trimGitPrefix(trimGitSuffix(repoUrl));
 }
 
@@ -118,13 +126,13 @@ function getRepoOrgAndName(repoOrgName: string): [string, string] {
  * Given the two repo orgs and names in format `${repoOrg}/${repoName}`,
  * return the comparison result of sorting by repo name
  */
-function sortByRepoName(repoOrgNameA: string, repoOrgNameB: string) {
+function sortByRepoName(repoOrgNameA: string, repoOrgNameB: string): number {
   const [, repoNameA] = getRepoOrgAndName(repoOrgNameA);
   const [, repoNameB] = getRepoOrgAndName(repoOrgNameB);
   return repoNameA.localeCompare(repoNameB);
 }
 
-function getRepoLink(repoOrg: string, repoName: string) {
+function getRepoLink(repoOrg: string, repoName: string): string {
   return `${GIT_PREFIX}${repoOrg}/${repoName}`;
 }
 
@@ -132,7 +140,7 @@ function getRepoLink(repoOrg: string, repoName: string) {
  * Return the last path component as a shorthand for
  * displaying the repo name
  */
-function getDisplayRepoPath(pathname: string, defaultValue: string) {
+function getDisplayRepoPath(pathname: string, defaultValue: string): string {
   const pathnameParts = pathname.split("/");
 
   let lastPathnamePart = pathnameParts.pop();

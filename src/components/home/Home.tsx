@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useContext } from "react";
 import { Link } from "react-router";
 
@@ -21,7 +22,7 @@ import { routes } from "src/routes.ts";
 import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
 import { getRepoOrgAndName } from "src/utils/gitUtil.ts";
 
-function Home() {
+function Home(): JSX.Element {
   const flows = useContext(FlowsContext);
   const workflows = useContext(WorkflowsContext);
   return (
@@ -38,7 +39,7 @@ interface OverviewProps {
   flows: Map<string, PushPrFlows> | null;
   workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
 }
-function Overview({ flows, workflows }: OverviewProps) {
+function Overview({ flows, workflows }: OverviewProps): JSX.Element {
   const applications = useContext(ApplicationsContext);
   const rollouts = useContext(RolloutsContext);
   return (
@@ -85,7 +86,7 @@ interface RecentRepoProps {
   flows: Map<string, PushPrFlows> | null;
   workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
 }
-function RecentRepos({ flows, workflows }: RecentRepoProps) {
+function RecentRepos({ flows, workflows }: RecentRepoProps): JSX.Element {
   const recentRepos = localState.getRecentRepos();
   if (recentRepos.length === 0) {
     return (
@@ -124,28 +125,28 @@ function RecentRepos({ flows, workflows }: RecentRepoProps) {
 interface FlowsProp {
   flows: Map<string, PushPrFlows> | null;
 }
-function NumRepos({ flows }: FlowsProp) {
+function NumRepos({ flows }: FlowsProp): JSX.Element | number {
   if (flows == null) {
     return <LoadIcon />;
   }
   return flows.size;
 }
 
-function NumFlows({ flows }: FlowsProp) {
+function NumFlows({ flows }: FlowsProp): JSX.Element | number {
   if (flows == null) {
     return <LoadIcon />;
   }
   return flows.size * 2;
 }
 
-function NumTriggers({ flows }: FlowsProp) {
+function NumTriggers({ flows }: FlowsProp): JSX.Element | number {
   if (flows == null) {
     return <LoadIcon />;
   }
   return flows.size * 2;
 }
 
-function NumSteps({ flows }: FlowsProp) {
+function NumSteps({ flows }: FlowsProp): JSX.Element | number {
   if (flows == null) {
     return <LoadIcon />;
   }
@@ -165,7 +166,9 @@ function NumSteps({ flows }: FlowsProp) {
 interface ApplicationsProp {
   applications: Map<string, Map<string, Application>> | null;
 }
-function NumApplications({ applications }: ApplicationsProp) {
+function NumApplications({
+  applications,
+}: ApplicationsProp): JSX.Element | number {
   if (applications == null) {
     return <LoadIcon />;
   }
@@ -179,7 +182,7 @@ function NumApplications({ applications }: ApplicationsProp) {
 interface RolloutsProp {
   rollouts: Map<string, Map<string, Rollout>> | null;
 }
-function NumRollouts({ rollouts }: RolloutsProp) {
+function NumRollouts({ rollouts }: RolloutsProp): JSX.Element | number {
   if (rollouts == null) {
     return <LoadIcon />;
   }
@@ -193,7 +196,7 @@ function NumRollouts({ rollouts }: RolloutsProp) {
 interface WorkflowsProp {
   workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
 }
-function NumWorkflows({ workflows }: WorkflowsProp) {
+function NumWorkflows({ workflows }: WorkflowsProp): JSX.Element | number {
   if (workflows == null) {
     return <LoadIcon />;
   }

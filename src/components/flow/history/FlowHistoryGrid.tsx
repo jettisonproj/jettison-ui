@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Link } from "react-router";
 
 import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
@@ -36,7 +37,7 @@ function FlowHistoryGrid({
   workflowBaseUrl,
   isSelected,
   selectedNodeName,
-}: FlowHistoryGridProps) {
+}: FlowHistoryGridProps): JSX.Element {
   const nodesPendingCreation = flowSteps.filter(
     (flowStep) => workflow.memo.nodes[flowDefaultStepName(flowStep)] == null,
   );
@@ -81,7 +82,7 @@ function FlowHistoryGrid({
   );
 }
 
-function getNodeTitleName(node: WorkflowMemoStatusNode) {
+function getNodeTitleName(node: WorkflowMemoStatusNode): string {
   const { template } = node;
   switch (template) {
     case TemplateNames.GitHubCheckStart: {
@@ -109,7 +110,7 @@ function getNodeTitleName(node: WorkflowMemoStatusNode) {
   }
 }
 
-function getNodePendingCreationTitleName(nodePendingCreation: Step) {
+function getNodePendingCreationTitleName(nodePendingCreation: Step): string {
   switch (nodePendingCreation.stepSource) {
     case StepSources.DockerBuildTest: {
       return BUILD_DISPLAY_NAME;
@@ -149,7 +150,7 @@ function FlowHistoryGridItem({
   nodeStartedAt,
   workflowBaseUrl,
   isSelected,
-}: FlowHistoryGridItemProps) {
+}: FlowHistoryGridItemProps): JSX.Element {
   let itemClassName = isSelected
     ? styles.historyGridItemSelected
     : styles.historyGridItem;
@@ -228,7 +229,7 @@ function NodeDuration({
   nodePhase,
   nodeDuration,
   nodeStartedAt,
-}: NodeDurationProps) {
+}: NodeDurationProps): JSX.Element | null {
   if (nodeDuration == null) {
     if (nodePhase === NodePhases.Running && nodeStartedAt != null) {
       return (

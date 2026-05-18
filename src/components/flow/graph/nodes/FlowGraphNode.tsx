@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 import { Link } from "react-router";
 
 import { CommitMessage } from "src/components/commitmessage/CommitMessage.tsx";
@@ -42,7 +42,7 @@ function FlowGraphNode({
   titleIcon,
   titleText,
   children,
-}: FlowGraphNodeProps) {
+}: FlowGraphNodeProps): JSX.Element {
   return (
     <div
       // @ts-expect-error Since this is the root html element inside the svg, xmlns
@@ -63,7 +63,10 @@ interface FlowGraphNodeInfoProps {
   isPrFlow: boolean;
   workflowNode: WorkflowNode;
 }
-function FlowGraphNodeInfo({ isPrFlow, workflowNode }: FlowGraphNodeInfoProps) {
+function FlowGraphNodeInfo({
+  isPrFlow,
+  workflowNode,
+}: FlowGraphNodeInfoProps): JSX.Element {
   const { workflow, node } = workflowNode;
   const { parameterMap } = workflow.memo;
 
@@ -148,7 +151,9 @@ interface FlowGraphStatusIconProps {
   nodePhase: NodePhase;
 }
 
-function FlowGraphStatusIcon({ nodePhase }: FlowGraphStatusIconProps) {
+function FlowGraphStatusIcon({
+  nodePhase,
+}: FlowGraphStatusIconProps): JSX.Element {
   switch (nodePhase) {
     case NodePhases.Succeeded:
       return <i className="nf nf-fa-code_commit" />;
@@ -180,7 +185,7 @@ class FlowGraphNodeError extends Error {
   }
 }
 
-function FlowGraphLoading() {
+function FlowGraphLoading(): JSX.Element {
   return (
     <div className={styles.nodeRowSub}>
       <LoadIcon className={styles.loadIcon} />

@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Link } from "react-router";
 
 import styles from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.module.css";
@@ -7,7 +8,9 @@ interface ArgoCDBadgeProps {
   title?: string;
 }
 
-function ArgoCDNotFoundBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
+function ArgoCDNotFoundBadge({
+  stepDetailsLink,
+}: ArgoCDBadgeProps): JSX.Element {
   return (
     <Link className={styles.failingBadge} to={stepDetailsLink}>
       <i className={`nf nf-fa-circle_xmark ${styles.notFoundIcon}`} />
@@ -16,7 +19,10 @@ function ArgoCDNotFoundBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
   );
 }
 
-function ArgoCDFailingBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
+function ArgoCDFailingBadge({
+  stepDetailsLink,
+  title,
+}: ArgoCDBadgeProps): JSX.Element {
   return (
     <Link className={styles.failingBadge} to={stepDetailsLink} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
@@ -26,7 +32,7 @@ function ArgoCDFailingBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
   );
 }
 
-function ArgoCDLiveBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
+function ArgoCDLiveBadge({ stepDetailsLink }: ArgoCDBadgeProps): JSX.Element {
   return (
     <Link to={stepDetailsLink} className={styles.liveBadge}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
@@ -36,7 +42,10 @@ function ArgoCDLiveBadge({ stepDetailsLink }: ArgoCDBadgeProps) {
   );
 }
 
-function ArgoCDPausedBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
+function ArgoCDPausedBadge({
+  stepDetailsLink,
+  title,
+}: ArgoCDBadgeProps): JSX.Element {
   return (
     <Link to={stepDetailsLink} className={styles.pausedBadge} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
@@ -46,7 +55,10 @@ function ArgoCDPausedBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
   );
 }
 
-function ArgoCDDriftBadge({ stepDetailsLink, title }: ArgoCDBadgeProps) {
+function ArgoCDDriftBadge({
+  stepDetailsLink,
+  title,
+}: ArgoCDBadgeProps): JSX.Element {
   return (
     <Link to={stepDetailsLink} className={styles.driftBadge} title={title}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />

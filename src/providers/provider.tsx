@@ -1,4 +1,4 @@
-import type { Dispatch, ReactNode, SetStateAction } from "react";
+import type { Dispatch, JSX, ReactNode, SetStateAction } from "react";
 import { createContext, useEffect, useRef, useState } from "react";
 
 import type { Application } from "src/data/types/applicationTypes.ts";
@@ -42,7 +42,7 @@ const ContainerLogsContext = createContext(
 interface ProviderProps {
   children: ReactNode;
 }
-function Provider({ children }: ProviderProps) {
+function Provider({ children }: ProviderProps): JSX.Element {
   const [flows, setFlows] = useState(null as Map<string, PushPrFlows> | null);
   const [applications, setApplications] = useState(
     null as Map<string, Map<string, Application>> | null,

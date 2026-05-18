@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
   FlowGraphLoading,
@@ -28,7 +30,7 @@ function FlowGraphGitHubTrigger({
   trigger,
   isPrFlow,
   workflows,
-}: FlowGraphGitHubTriggerProps) {
+}: FlowGraphGitHubTriggerProps): JSX.Element {
   const displayEvent = getTriggerDisplayName(isPrFlow);
   const triggerDetailsLink = getTriggerDetailsLink(
     repoOrg,
@@ -55,7 +57,7 @@ interface FlowGraphGitHubNodeProps {
 function FlowGraphGitHubNode({
   isPrFlow,
   workflows,
-}: FlowGraphGitHubNodeProps) {
+}: FlowGraphGitHubNodeProps): JSX.Element {
   const workflowNode = getLastWorkflowNodeForTrigger(workflows);
   if (workflowNode == null) {
     return <FlowGraphLoading />;

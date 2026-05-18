@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, JSX } from "react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { Terminal } from "@xterm/xterm";
@@ -27,10 +27,10 @@ function SelectedHistoryLogTab({
   workflowNamespace,
   podName,
   nodePhase,
-}: SelectedHistoryLogTabProps) {
+}: SelectedHistoryLogTabProps): JSX.Element {
   const [containerName, setContainerName] = useState(defaultContainerName);
 
-  const onContainerNameChange = (ev: ChangeEvent<HTMLSelectElement>) => {
+  const onContainerNameChange = (ev: ChangeEvent<HTMLSelectElement>): void => {
     setContainerName(ev.target.value);
   };
 
@@ -83,7 +83,7 @@ function SelectedHistoryContainerSelector({
   podName,
   containerName,
   onContainerNameChange,
-}: SelectedHistoryContainerSelectorProps) {
+}: SelectedHistoryContainerSelectorProps): JSX.Element {
   const pods = useContext(PodsContext);
   const pod = pods?.get(workflowNamespace)?.get(podName);
 
@@ -124,7 +124,7 @@ function SelectedHistoryContainerSelector({
   );
 }
 
-function getContainerNames(containers: Container[]) {
+function getContainerNames(containers: Container[]): string[] {
   return containers.map((container) => container.name);
 }
 
@@ -136,7 +136,7 @@ function SelectedHistoryLog({
   podName,
   nodePhase,
   containerName,
-}: SelectedHistoryLogProps) {
+}: SelectedHistoryLogProps): JSX.Element {
   const containerLogs = useContext(ContainerLogsContext);
   const flowWebSocket = useContext(FlowWebSocketContext);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -159,7 +159,7 @@ function SelectedHistoryLog({
     term.open(currentElement);
     xtermRef.current = term;
 
-    return () => {
+    return (): void => {
       term.dispose();
     };
   }, []);
@@ -201,7 +201,7 @@ function SelectedHistoryLog({
   return <div className={styles.containerXterm} ref={elementRef} />;
 }
 
-function nodeLogsUnavailable(nodePhase: NodePhase) {
+function nodeLogsUnavailable(nodePhase: NodePhase): boolean {
   return (
     nodePhase === NodePhases.Pending ||
     nodePhase === NodePhases.Skipped ||

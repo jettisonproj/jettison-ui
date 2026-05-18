@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import { FlowGraphNode } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import type { WorkflowPendingGraphNodeProps } from "src/components/flow/history/selected/nodes/WorkflowGraphNodeBase.ts";
@@ -13,7 +15,7 @@ function WorkflowPendingGraphNode({
   nodePendingCreation,
   workflowBaseUrl,
   isSelected,
-}: WorkflowPendingGraphNodeProps) {
+}: WorkflowPendingGraphNodeProps): JSX.Element {
   const className = isSelected
     ? styles.nodeRowHeaderSelected
     : styles.nodeRowHeaderOnly;

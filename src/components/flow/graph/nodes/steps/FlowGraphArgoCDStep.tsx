@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useContext } from "react";
 
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
@@ -47,7 +48,7 @@ function FlowGraphArgoCDStep({
   step,
   isPrFlow,
   workflows,
-}: FlowGraphArgoCDStepProps) {
+}: FlowGraphArgoCDStepProps): JSX.Element {
   const { repoUrl, repoPath, baseRef } = step;
   const displayRepoPath = getDisplayRepoPath(repoPath, repoPath);
   const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, isPrFlow, step);
@@ -92,7 +93,7 @@ function FlowGraphArgoCDStepStatus({
   step,
   stepDetailsLink,
   workflowNode,
-}: FlowGraphArgoCDStepStatusProps) {
+}: FlowGraphArgoCDStepStatusProps): JSX.Element {
   //
   // The UI will present the rollout and sync state separately
   // Here are the different cases:
@@ -214,7 +215,7 @@ function FlowGraphArgoCDHealthBadge({
   applicationHealthError,
   rolloutHealthError,
   rolloutMissing,
-}: FlowGraphArgoCDHealthBadgeProps) {
+}: FlowGraphArgoCDHealthBadgeProps): JSX.Element {
   if (rolloutHealthError != null) {
     return (
       <ArgoCDFailingBadge
@@ -250,7 +251,7 @@ function FlowGraphArgoCDSyncBadge({
   rolloutSyncError,
   pausedReason,
   autoSyncEnabled,
-}: FlowGraphArgoCDSyncBadgeProps) {
+}: FlowGraphArgoCDSyncBadgeProps): JSX.Element | null {
   if (!autoSyncEnabled) {
     return (
       <ArgoCDPausedBadge

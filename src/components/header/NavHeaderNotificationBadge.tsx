@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/header/NavHeaderNotificationBadge.module.css";
 
 interface NavHeaderNotificationBadgeProps {
@@ -5,7 +7,7 @@ interface NavHeaderNotificationBadgeProps {
 }
 function NavHeaderNotificationBadge({
   numNotifications,
-}: NavHeaderNotificationBadgeProps) {
+}: NavHeaderNotificationBadgeProps): JSX.Element | null {
   if (numNotifications <= 0) {
     return null;
   }

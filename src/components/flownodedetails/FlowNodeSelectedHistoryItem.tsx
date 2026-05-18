@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useSearchParams } from "react-router";
 
 import styles from "src/components/flow/history/selected/SelectedHistoryItem.module.css";
@@ -15,7 +16,7 @@ function FlowNodeSelectedHistoryItem({
   workflow,
   workflowBaseUrl,
   nodeName,
-}: FlowNodeSelectedHistoryItemProps) {
+}: FlowNodeSelectedHistoryItemProps): JSX.Element {
   const [searchParams] = useSearchParams();
   const selectedTab = getSelectedTab(searchParams.get("tab"));
 

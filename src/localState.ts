@@ -33,20 +33,20 @@ class LocalState {
     }
   }
 
-  getTimestampFormat() {
+  getTimestampFormat(): TimestampFormat {
     return this.#localState.timestampFormat ?? defaultTimestampFormat;
   }
 
-  setTimestampFormat(timestampFormat: TimestampFormat) {
+  setTimestampFormat(timestampFormat: TimestampFormat): void {
     this.#localState.timestampFormat = timestampFormat;
     this.#saveToLocalStorage();
   }
 
-  getRecentRepos() {
+  getRecentRepos(): string[] {
     return this.#localState.recentRepos ?? defaultRecentRepos;
   }
 
-  addRecentRepo(repoOrg: string, repoName: string) {
+  addRecentRepo(repoOrg: string, repoName: string): void {
     const repoOrgName = `${repoOrg}/${repoName}`;
     const recentRepos = this.getRecentRepos();
     if (recentRepos.length > 0 && recentRepos[0] == repoOrgName) {
@@ -61,7 +61,7 @@ class LocalState {
     this.#saveToLocalStorage();
   }
 
-  deleteRecentRepo(repoOrg: string, repoName: string) {
+  deleteRecentRepo(repoOrg: string, repoName: string): void {
     const repoOrgName = `${repoOrg}/${repoName}`;
     const recentRepos = this.getRecentRepos();
 
@@ -77,7 +77,7 @@ class LocalState {
     }
   }
 
-  #saveToLocalStorage() {
+  #saveToLocalStorage(): void {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(this.#localState));
   }
 }

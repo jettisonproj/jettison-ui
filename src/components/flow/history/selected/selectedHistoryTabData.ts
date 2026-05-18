@@ -7,7 +7,7 @@ type Tab = (typeof Tabs)[keyof typeof Tabs];
 
 const DEFAULT_TAB = Tabs.summary;
 
-function getSelectedTab(tabValue: string | null) {
+function getSelectedTab(tabValue: string | null): Tab {
   if (tabValue == null) {
     return DEFAULT_TAB;
   }
