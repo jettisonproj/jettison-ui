@@ -1,3 +1,5 @@
+import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
+
 import { FlowGraphStep } from "src/components/flow/graph/nodes/FlowGraphStep.tsx";
 import { FlowGraphTrigger } from "src/components/flow/graph/nodes/FlowGraphTrigger.tsx";
 import { flowDefaultStepName, flowDefaultTriggerName } from "src/data/data.ts";
@@ -16,7 +18,7 @@ function getFlowTriggerNode(
   trigger: Trigger,
   isPrFlow: boolean,
   workflows: Workflow[],
-) {
+): FlowNode {
   return {
     label: flowDefaultTriggerName(trigger),
     width: NODE_WIDTH,
@@ -33,7 +35,7 @@ function getFlowTriggerNode(
   };
 }
 
-function getStepHeight(stepSource: StepSource) {
+function getStepHeight(stepSource: StepSource): number {
   switch (stepSource) {
     case StepSources.DockerBuildTest:
     case StepSources.DockerBuildTestPublish:
@@ -54,7 +56,7 @@ function getFlowStepNode(
   step: Step,
   isPrFlow: boolean,
   workflows: Workflow[],
-) {
+): FlowNode {
   /* The default dimentions */
   const width = NODE_WIDTH;
   const height = getStepHeight(step.stepSource);

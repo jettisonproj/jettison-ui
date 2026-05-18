@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useContext, useMemo } from "react";
 import { useParams } from "react-router";
 
@@ -31,7 +32,7 @@ import {
   workflowCompareFn,
 } from "src/utils/workflowUtil.ts";
 
-function FlowNodeDetails() {
+function FlowNodeDetails(): JSX.Element {
   const routerParams = useParams();
   const repoOrg = getRequiredParam(routerParams, "repoOrg");
   const repoName = getRequiredParam(routerParams, "repoName");
@@ -77,7 +78,7 @@ function FlowNodeDetailsItem({
   flowNodeBaseUrl,
   selectedWorkflow,
   nodeName,
-}: FlowNodeDetailsItemProps) {
+}: FlowNodeDetailsItemProps): JSX.Element {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
@@ -152,7 +153,7 @@ function FlowNodeWorkflowDetails({
   selectedWorkflow,
   flow,
   workflows,
-}: FlowNodeWorkflowDetailsProps) {
+}: FlowNodeWorkflowDetailsProps): JSX.Element {
   const trigger = flow.spec.triggers.find(
     (trigger) => flowDefaultTriggerName(trigger) === nodeName,
   );

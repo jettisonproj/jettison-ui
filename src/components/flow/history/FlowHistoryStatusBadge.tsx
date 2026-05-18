@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/history/FlowHistoryStatusBadge.module.css";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import type { Workflow, WorkflowPhase } from "src/data/types/workflowTypes.ts";
@@ -20,7 +22,7 @@ interface FlowHistoryStatusBadgeProps {
 function FlowHistoryStatusBadge({
   isPrFlow,
   workflow,
-}: FlowHistoryStatusBadgeProps) {
+}: FlowHistoryStatusBadgeProps): JSX.Element {
   const { title, href, textClassName } = getStatusLinkData(isPrFlow, workflow);
   return (
     <a
@@ -39,7 +41,9 @@ interface FlowHistoryStatusIconProps {
   workflowPhase?: WorkflowPhase;
 }
 
-function FlowHistoryStatusIcon({ workflowPhase }: FlowHistoryStatusIconProps) {
+function FlowHistoryStatusIcon({
+  workflowPhase,
+}: FlowHistoryStatusIconProps): JSX.Element {
   switch (workflowPhase) {
     case WorkflowPhases.Succeeded:
       return <i className={`nf nf-fa-circle_check ${styles.successIcon}`} />;
@@ -62,7 +66,15 @@ function FlowHistoryStatusIcon({ workflowPhase }: FlowHistoryStatusIconProps) {
   }
 }
 
-function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
+interface StatusLinkData {
+  title: string;
+  href: string;
+  textClassName: string;
+}
+function getStatusLinkData(
+  isPrFlow: boolean,
+  workflow: Workflow,
+): StatusLinkData {
   const { parameterMap } = workflow.memo;
 
   const repoUrl = getWorkflowRepo(parameterMap);
@@ -92,7 +104,7 @@ function getStatusLinkData(isPrFlow: boolean, workflow: Workflow) {
  * This can be used to signal that workflows are pending
  * when they do not exist
  */
-function FlowHistoryPendingBadge() {
+function FlowHistoryPendingBadge(): JSX.Element {
   return (
     <div className={styles.historyStatusBadge}>
       <FlowHistoryStatusIcon workflowPhase={WorkflowPhases.Pending} />

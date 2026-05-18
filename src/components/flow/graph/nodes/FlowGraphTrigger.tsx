@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import { FlowGraphGitHubTrigger } from "src/components/flow/graph/nodes/triggers/FlowGraphGitHubTrigger.tsx";
 import type { Trigger } from "src/data/types/flowTypes.ts";
 import { TriggerSources } from "src/data/types/flowTypes.ts";
@@ -16,7 +18,7 @@ function FlowGraphTrigger({
   trigger,
   isPrFlow,
   workflows,
-}: FlowGraphTriggerProps) {
+}: FlowGraphTriggerProps): JSX.Element {
   switch (trigger.triggerSource) {
     case TriggerSources.GitHubPullRequest:
     case TriggerSources.GitHubPush:
@@ -33,6 +35,15 @@ function FlowGraphTrigger({
       trigger satisfies never;
       console.log("unknown trigger");
       console.log(trigger);
+      throw new FlowGraphTriggerError("invalid trigger source");
   }
 }
+
+class FlowGraphTriggerError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
 export { FlowGraphTrigger };

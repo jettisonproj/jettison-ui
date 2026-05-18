@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { lazy, Suspense } from "react";
 import { Link } from "react-router";
 
@@ -37,7 +38,7 @@ function SelectedHistoryTabs({
   nodeBaseUrl,
   selectedTab,
   queryPrefix,
-}: SelectedHistoryTabsProps) {
+}: SelectedHistoryTabsProps): JSX.Element {
   return (
     <div className={styles.selectedHistoryTabs}>
       <SelectedHistoryTabSelector
@@ -67,7 +68,7 @@ function SelectedHistoryTabSelector({
   nodeBaseUrl,
   selectedTab,
   queryPrefix,
-}: SelectedHistoryTabSelectorProps) {
+}: SelectedHistoryTabSelectorProps): JSX.Element {
   return (
     <div>
       {Object.values(Tabs)
@@ -91,7 +92,7 @@ function SelectedHistoryTabSelector({
   );
 }
 
-function isTabEnabled(tab: Tab, selectedNode?: WorkflowStatusNode) {
+function isTabEnabled(tab: Tab, selectedNode?: WorkflowStatusNode): boolean {
   if (tab !== Tabs.artifacts) {
     return true;
   }
@@ -111,7 +112,7 @@ function SelectedHistoryTab({
   selectedNodeName,
   selectedNode,
   selectedTab,
-}: SelectedHistoryTabProps) {
+}: SelectedHistoryTabProps): JSX.Element {
   if (selectedNode == null) {
     return (
       <div className={styles.historyNodeNotFound}>

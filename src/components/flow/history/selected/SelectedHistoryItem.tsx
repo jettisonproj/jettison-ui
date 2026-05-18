@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useSearchParams } from "react-router";
 
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
@@ -36,7 +37,7 @@ function SelectedHistoryItem({
   flowSteps,
   workflow,
   workflowBaseUrl,
-}: SelectedHistoryItemProps) {
+}: SelectedHistoryItemProps): JSX.Element {
   const [searchParams] = useSearchParams();
   const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
   const selectedTab = getSelectedTab(searchParams.get("tab"));
@@ -242,7 +243,7 @@ function getEdgeDestinations(
   initialChildren: string[] | undefined,
   workflowNodesById: Record<string, WorkflowStatusNode>,
   workflowName: string,
-) {
+): string[] {
   const edgeDestinations: string[] = [];
   if (initialChildren == null) {
     return edgeDestinations;
@@ -301,7 +302,7 @@ function getEdgeDestinations(
 function isSelectedNodePendingCreation(
   selectedNodeName: string,
   nodesPendingCreation: Step[],
-) {
+): boolean {
   return nodesPendingCreation.some(
     (nodePendingCreation) =>
       flowDefaultStepName(nodePendingCreation) === selectedNodeName,

@@ -5,7 +5,7 @@ import { formatDurationFromSeconds } from "src/utils/dateUtil.ts";
 interface ElapsedTimeProps {
   startedAt: Date;
 }
-function ElapsedTime({ startedAt }: ElapsedTimeProps) {
+function ElapsedTime({ startedAt }: ElapsedTimeProps): string {
   const [secondsElapsed, setSecondsElapsed] = useState(() =>
     Math.trunc((Date.now() - startedAt.getTime()) / 1000),
   );
@@ -21,7 +21,7 @@ function ElapsedTime({ startedAt }: ElapsedTimeProps) {
 
   useEffect(() => {
     timeoutRef.current = setTimeout(stopWatchTick, 1_000);
-    return () => {
+    return (): void => {
       if (timeoutRef.current != null) {
         clearTimeout(timeoutRef.current);
       }

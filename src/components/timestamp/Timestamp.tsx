@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import type { TimestampFormat } from "src/localState.ts";
@@ -8,7 +9,9 @@ import {
 } from "src/providers/provider.tsx";
 import { formatTimestamp, getNextTickSeconds } from "src/utils/dateUtil.ts";
 
-function getNextTimestampFormat(timestampFormat: TimestampFormat) {
+function getNextTimestampFormat(
+  timestampFormat: TimestampFormat,
+): TimestampFormat {
   switch (timestampFormat) {
     case TimestampFormats.Relative:
       return TimestampFormats.Locale;
@@ -30,7 +33,7 @@ interface TimestampProps {
   date: Date;
   className?: string;
 }
-function Timestamp({ date, className }: TimestampProps) {
+function Timestamp({ date, className }: TimestampProps): JSX.Element {
   const timestampFormat = useContext(TimestampFormatContext);
   const setTimestampFormat = useContext(SetTimestampFormatContext);
 
@@ -67,7 +70,7 @@ function Timestamp({ date, className }: TimestampProps) {
 interface RelativeTimestampProps {
   date: Date;
 }
-function RelativeTimestamp({ date }: RelativeTimestampProps) {
+function RelativeTimestamp({ date }: RelativeTimestampProps): string {
   const [secondsElapsed, setSecondsElapsed] = useState(() =>
     Math.trunc((Date.now() - date.getTime()) / 1000),
   );
@@ -101,7 +104,7 @@ function RelativeTimestamp({ date }: RelativeTimestampProps) {
     secondsElapsedRef.current += nextTickSeconds;
     timeoutRef.current = setTimeout(stopWatchTick, nextTickSeconds * 1_000);
 
-    return () => {
+    return (): void => {
       if (timeoutRef.current != null) {
         clearTimeout(timeoutRef.current);
       }

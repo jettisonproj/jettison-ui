@@ -1,10 +1,12 @@
+import type { JSX } from "react";
+
 import styles from "src/components/icons/LoadIcon.module.css";
 import { concatOptionalStyle } from "src/utils/styleUtil.ts";
 
 interface LoadIconProps {
   className?: string;
 }
-function LoadIcon({ className }: LoadIconProps) {
+function LoadIcon({ className }: LoadIconProps): JSX.Element {
   return (
     <div className={concatOptionalStyle(styles.loadIcon, className)}>
       <div className={styles.loadIcon1}></div>

@@ -1,6 +1,6 @@
 import type { GraphEdge, Node } from "@dagrejs/dagre";
 import dagre from "@dagrejs/dagre";
-import type { ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 import styles from "src/components/flow/graph/FlowGraph.module.css";
 
@@ -23,7 +23,10 @@ interface FlowEdge {
  * Return a new Dagre Graph with layout details
  * for the specfied nodes and edges
  */
-function getDagreGraph(nodes: FlowNode[], edges: FlowEdge[]) {
+function getDagreGraph(
+  nodes: FlowNode[],
+  edges: FlowEdge[],
+): dagre.graphlib.Graph<FlowNode> {
   // Create a new directed graph
   const dagreGraph = new dagre.graphlib.Graph<FlowNode>();
 
@@ -53,7 +56,7 @@ interface FlowGraphProps {
   flowNodes: FlowNode[];
   flowEdges: FlowEdge[];
 }
-function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
+function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps): JSX.Element {
   // Create a new dagre graph with layout details (e.g positions, width)
   const dagreGraph = getDagreGraph(flowNodes, flowEdges);
 
@@ -112,7 +115,7 @@ function FlowGraph({ flowNodes, flowEdges }: FlowGraphProps) {
 interface FlowGraphNodeProps {
   nodeLabel: Node<FlowNode>;
 }
-function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
+function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps): JSX.Element {
   const { width, height, x, y, children } = nodeLabel;
   // Since (x, y) is at the center of the node, calculate the left x (lx)
   // and top y (ty) for use with rect
@@ -140,7 +143,7 @@ function FlowGraphNode({ nodeLabel }: FlowGraphNodeProps) {
 interface FlowGraphEdgeProps {
   edgeLabel: GraphEdge;
 }
-function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps) {
+function FlowGraphEdge({ edgeLabel }: FlowGraphEdgeProps): JSX.Element {
   const { points } = edgeLabel;
   const [startPoint, centerPoint, endPoint] = points;
   if (startPoint == null || centerPoint == null || endPoint == null) {

@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/graph/nodes/FlowGraphNode.module.css";
 import {
   FlowGraphLoading,
@@ -36,7 +38,7 @@ function FlowGraphDockerStep({
   step,
   isPrFlow,
   workflows,
-}: FlowGraphDockerStepProps) {
+}: FlowGraphDockerStepProps): JSX.Element {
   const displayEvent = getDisplayEvent(step);
   const stepDetailsLink = getStepDetailsLink(repoOrg, repoName, isPrFlow, step);
 
@@ -65,7 +67,7 @@ function FlowGraphDockerNode({
   step,
   isPrFlow,
   workflows,
-}: FlowGraphDockerNodeProps) {
+}: FlowGraphDockerNodeProps): JSX.Element {
   const workflowNode = getLastWorkflowNodeForStep(step, workflows);
   if (workflowNode == null) {
     return <FlowGraphLoading />;
@@ -97,7 +99,7 @@ function FlowGraphDockerNode({
 
 function getDisplayEvent(
   step: DockerBuildTestStep | DockerBuildTestPublishStep,
-) {
+): string {
   switch (step.stepSource) {
     case StepSources.DockerBuildTest:
       return BUILD_DISPLAY_NAME;

@@ -11,11 +11,11 @@ const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
  * Format the milliseconds into "Xh Ym Zs", omitting units if unnecessary.
  * Examples: "5s", "3m 5s", "2h 40m 33s"
  */
-function formatDurationFromMs(totalMilliseconds: number) {
+function formatDurationFromMs(totalMilliseconds: number): string {
   return formatDurationFromSeconds(totalMilliseconds / 1000);
 }
 
-function formatDurationFromSeconds(totalSeconds: number) {
+function formatDurationFromSeconds(totalSeconds: number): string {
   let seconds = totalSeconds;
 
   const hours = Math.trunc(seconds / HOUR);
@@ -37,7 +37,7 @@ function formatDurationFromSeconds(totalSeconds: number) {
  * Format the seconds into a relative timestamp.
  * Examples: "4 hours ago", "5 days ago", "last month"
  */
-function formatTimestamp(secondsElapsed: number) {
+function formatTimestamp(secondsElapsed: number): string {
   if (secondsElapsed >= YEAR) {
     return rtf.format(-Math.round(secondsElapsed / YEAR), "year");
   }
@@ -60,7 +60,7 @@ function formatTimestamp(secondsElapsed: number) {
  * Returns the next duration which a tick operation should be performed in
  * order to update the formatted timestamp, or -1 if no tick is needed.
  */
-function getNextTickSeconds(secondsElapsed: number) {
+function getNextTickSeconds(secondsElapsed: number): number {
   if (secondsElapsed < MINUTE) {
     return 1;
   }

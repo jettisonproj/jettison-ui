@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import { FlowNodeHistoryItem } from "src/components/flownodedetails/FlowNodeHistoryItem.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
@@ -16,7 +18,7 @@ function FlowNodeHistory({
   workflows,
   selectedWorkflow,
   nodeName,
-}: FlowNodeHistoryProps) {
+}: FlowNodeHistoryProps): JSX.Element | JSX.Element[] {
   if (workflows.length === 0) {
     return <p>No flow history found</p>;
   }

@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { Fragment } from "react";
 
 import styles from "src/components/flow/history/selected/SelectedHistoryArtifactsTab.module.css";
@@ -18,7 +19,7 @@ function SelectedHistoryArtifactsTab({
   workflowNamespace,
   workflowUid,
   selectedNode,
-}: SelectedHistoryArtifactsTabProps) {
+}: SelectedHistoryArtifactsTabProps): JSX.Element[] {
   return getUserDefinedArtifacts(selectedNode).map(
     (nodeArtifact, nodeArtifactIndex) => (
       <Fragment key={nodeArtifact.s3.key}>

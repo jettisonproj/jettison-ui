@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useMemo } from "react";
 import { Link } from "react-router";
 
@@ -28,7 +29,12 @@ interface RepoProps {
   pushWorkflows: Map<string, Workflow> | null | undefined;
   prWorkflows: Map<string, Workflow> | null | undefined;
 }
-function Repo({ repoOrg, repoName, pushWorkflows, prWorkflows }: RepoProps) {
+function Repo({
+  repoOrg,
+  repoName,
+  pushWorkflows,
+  prWorkflows,
+}: RepoProps): JSX.Element {
   const pushWorkflow = useMemo(
     () => getLastWorkflow(pushWorkflows),
     [pushWorkflows],
@@ -60,7 +66,7 @@ function Repo({ repoOrg, repoName, pushWorkflows, prWorkflows }: RepoProps) {
 interface RepoStatusBadgeProps {
   workflow: Workflow | null | undefined;
 }
-function RepoStatusBadge({ workflow }: RepoStatusBadgeProps) {
+function RepoStatusBadge({ workflow }: RepoStatusBadgeProps): JSX.Element {
   if (workflow === null) {
     return <LoadIcon />;
   }
@@ -73,7 +79,7 @@ function RepoStatusBadge({ workflow }: RepoStatusBadgeProps) {
 interface RepoMessageProps {
   workflow: Workflow | null | undefined;
 }
-function RepoMessage({ workflow }: RepoMessageProps) {
+function RepoMessage({ workflow }: RepoMessageProps): JSX.Element | null {
   if (workflow === null) {
     return <RepoMessageSkeleton />;
   }
@@ -87,7 +93,7 @@ function RepoMessage({ workflow }: RepoMessageProps) {
   );
 }
 
-function RepoMessageSkeleton() {
+function RepoMessageSkeleton(): JSX.Element {
   return (
     <div className={styles.repoSkeleton}>
       <div className={styles.repoMessageSkeleton} />
@@ -104,7 +110,7 @@ function RepoSubtitle({
   workflow,
   prFlowLink,
   numActivePrWorkflows,
-}: RepoSubtitleProps) {
+}: RepoSubtitleProps): JSX.Element {
   if (workflow === null) {
     return <RepoSubtitleSkeleton />;
   }
@@ -131,7 +137,7 @@ function RepoSubtitle({
   );
 }
 
-function RepoSubtitleSkeleton() {
+function RepoSubtitleSkeleton(): JSX.Element {
   return (
     <div className={styles.repoSkeleton}>
       <div className={styles.repoSubtitleSkeleton} />

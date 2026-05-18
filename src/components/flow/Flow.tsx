@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { useContext, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router";
 
@@ -31,7 +32,7 @@ import {
   workflowCompareFn,
 } from "src/utils/workflowUtil.ts";
 
-function Flow() {
+function Flow(): JSX.Element {
   const routerParams = useParams();
   const repoOrg = getRequiredParam(routerParams, "repoOrg");
   const repoName = getRequiredParam(routerParams, "repoName");
@@ -74,7 +75,7 @@ function FlowItem({
   flowBaseUrl,
   selectedWorkflow,
   selectedNodeName,
-}: FlowItemProps) {
+}: FlowItemProps): JSX.Element {
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
@@ -185,7 +186,7 @@ function FlowWorkflowsItem({
   flowBaseUrl,
   selectedWorkflow,
   selectedNodeName,
-}: FlowWorkflowsItemProps) {
+}: FlowWorkflowsItemProps): JSX.Element {
   const sortedWorkflows = useMemo(() => {
     if (workflows == null) {
       return [];

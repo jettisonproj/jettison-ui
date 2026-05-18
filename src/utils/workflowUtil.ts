@@ -35,7 +35,7 @@ const LOG_ARTIFACT_SUFFIX = "-logs";
  * Not all workflow nodes need to be memoized, since some nodes are
  * only used on demand
  */
-function isMemoizedNode(nodeType: NodeType) {
+function isMemoizedNode(nodeType: NodeType): boolean {
   switch (nodeType) {
     // Pods are either a Flow step/trigger or github status check
     case NodeTypes.Pod:
@@ -62,7 +62,7 @@ function isMemoizedNode(nodeType: NodeType) {
  *
  * Excludes the "onExit" node which is not rendered in the flow graph
  */
-function isWorkflowGraphNode(node: WorkflowStatusNode) {
+function isWorkflowGraphNode(node: WorkflowStatusNode): boolean {
   return (
     isMemoizedNode(node.type) && !node.displayName.endsWith(EXIT_NODE_SUFFIX)
   );
@@ -75,7 +75,7 @@ function isWorkflowGraphNode(node: WorkflowStatusNode) {
  */
 function getNumActiveWorkflows(
   workflows: Map<string, Workflow> | null | undefined,
-) {
+): number {
   if (workflows == null) {
     return 0;
   }
@@ -88,7 +88,7 @@ function getNumActiveWorkflows(
   return numActiveWorkflows;
 }
 
-function isWorkflowActive(workflowPhase: WorkflowPhase | undefined) {
+function isWorkflowActive(workflowPhase: WorkflowPhase | undefined): boolean {
   return (
     workflowPhase == null ||
     workflowPhase === WorkflowPhases.Pending ||
@@ -103,53 +103,63 @@ function isWorkflowActive(workflowPhase: WorkflowPhase | undefined) {
 // - https://github.com/jettisonproj/jettison-controller/blob/main/internal/controller/sensor/sensor_trigger_parameters.go
 // - https://github.com/jettisonproj/jettison-controller/blob/main/internal/workflowtemplates/workflowtemplates.go
 //
-function getWorkflowRepo(parameterMap: Record<string, string>) {
+function getWorkflowRepo(parameterMap: Record<string, string>): string {
   return getFromParameterMap(parameterMap, "repo");
 }
 
-function getWorkflowRevision(parameterMap: Record<string, string>) {
+function getWorkflowRevision(parameterMap: Record<string, string>): string {
   return getFromParameterMap(parameterMap, "revision");
 }
 
-function getWorkflowRevisionRef(parameterMap: Record<string, string>) {
+function getWorkflowRevisionRef(parameterMap: Record<string, string>): string {
   return getFromParameterMap(parameterMap, "revision-ref");
 }
 
-function getWorkflowRevisionTitle(parameterMap: Record<string, string>) {
+function getWorkflowRevisionTitle(
+  parameterMap: Record<string, string>,
+): string {
   return getFromParameterMap(parameterMap, "revision-title");
 }
 
-function getWorkflowRevisionAuthor(parameterMap: Record<string, string>) {
+function getWorkflowRevisionAuthor(
+  parameterMap: Record<string, string>,
+): string {
   return getFromParameterMap(parameterMap, "revision-author");
 }
 
 // PR parameter
-function getWorkflowRevisionNumber(parameterMap: Record<string, string>) {
+function getWorkflowRevisionNumber(
+  parameterMap: Record<string, string>,
+): string {
   return getFromParameterMap(parameterMap, "revision-number");
 }
 
 // Workflow memo node parameters
-function getNodeDockerfilePath(parameterMap: Record<string, string>) {
+function getNodeDockerfilePath(parameterMap: Record<string, string>): string {
   return getFromParameterMap(parameterMap, "dockerfile-path");
 }
 
-function getMemoResourcePath(parameterMap: Record<string, string>) {
+function getMemoResourcePath(parameterMap: Record<string, string>): string {
   return getFromParameterMap(parameterMap, NODE_PARAM_RESOURCE_PATH);
 }
 
-function getMemoTriggerDisplayName(parameterMap: Record<string, string>) {
+function getMemoTriggerDisplayName(
+  parameterMap: Record<string, string>,
+): string {
   const eventType = getFromParameterMap(parameterMap, NODE_PARAM_EVENT_TYPE);
   return getTriggerDisplayNameFromEventType(eventType);
 }
 
 // Workflow node parameters
-function getNodeResourcePath(parameters: WorkflowParameter[] | undefined) {
+function getNodeResourcePath(
+  parameters: WorkflowParameter[] | undefined,
+): string {
   return getFromParameterArray(parameters, NODE_PARAM_RESOURCE_PATH);
 }
 
 function getNodeTriggerDisplayName(
   parameters: WorkflowParameter[] | undefined,
-) {
+): string {
   const eventType = getFromParameterArray(parameters, NODE_PARAM_EVENT_TYPE);
   return getTriggerDisplayNameFromEventType(eventType);
 }
@@ -157,7 +167,7 @@ function getNodeTriggerDisplayName(
 function getFromParameterMap(
   parameterMap: Record<string, string>,
   parameterKey: string,
-) {
+): string {
   const parameterValue = parameterMap[parameterKey];
   if (parameterValue == null) {
     throw new InvalidNodeError(
@@ -170,7 +180,7 @@ function getFromParameterMap(
 function getFromParameterArray(
   parameters: WorkflowParameter[] | undefined,
   parameterKey: string,
-) {
+): string {
   const parameter = parameters?.find((param) => param.name === parameterKey);
   if (parameter == null) {
     throw new InvalidNodeError(
@@ -180,7 +190,7 @@ function getFromParameterArray(
   return parameter.value;
 }
 
-function getTriggerDisplayNameFromEventType(eventType: string) {
+function getTriggerDisplayNameFromEventType(eventType: string): string {
   switch (eventType) {
     case "PR":
       return PR_DISPLAY_NAME;
@@ -224,12 +234,17 @@ function getLastWorkflow(
   return lastWorkflow;
 }
 
-function getLastWorkflowNodeForStep(step: Step, workflows: Workflow[]) {
+function getLastWorkflowNodeForStep(
+  step: Step,
+  workflows: Workflow[],
+): WorkflowNode | null {
   const stepName = flowDefaultStepName(step);
   return getLastWorkflowNode(stepName, workflows);
 }
 
-function getLastWorkflowNodeForTrigger(workflows: Workflow[]) {
+function getLastWorkflowNodeForTrigger(
+  workflows: Workflow[],
+): WorkflowNode | null {
   return getLastWorkflowNode(TRIGGER_NODE_NAME, workflows);
 }
 
@@ -253,7 +268,7 @@ function getLastWorkflowNode(
   return null;
 }
 
-function isNodeExecution(node: WorkflowMemoStatusNode) {
+function isNodeExecution(node: WorkflowMemoStatusNode): boolean {
   // todo improve check
   return (
     node.phase !== NodePhases.Skipped &&
@@ -263,17 +278,20 @@ function isNodeExecution(node: WorkflowMemoStatusNode) {
   );
 }
 
-function doesWorkflowExecuteNode(workflow: Workflow, nodeName: string) {
+function doesWorkflowExecuteNode(
+  workflow: Workflow,
+  nodeName: string,
+): boolean {
   const node = workflow.memo.nodes[nodeName];
   return node != null && isNodeExecution(node);
 }
 
-function doesWorkflowExecuteTriggerNode(workflow: Workflow) {
+function doesWorkflowExecuteTriggerNode(workflow: Workflow): boolean {
   const node = workflow.memo.nodes[TRIGGER_NODE_NAME];
   return node != null && isNodeExecution(node);
 }
 
-function workflowCompareFn(a: Workflow, b: Workflow) {
+function workflowCompareFn(a: Workflow, b: Workflow): number {
   const bDate = b.memo.startedAt;
   const aDate = a.memo.startedAt;
   if (bDate == null && aDate == null) {
@@ -291,7 +309,7 @@ function workflowCompareFn(a: Workflow, b: Workflow) {
 function workflowMemoNodeCompareFn(
   a: WorkflowMemoStatusNode,
   b: WorkflowMemoStatusNode,
-) {
+): number {
   // Ensure trigger nodes come first
   const isTriggerNodeA = a.displayName === TRIGGER_NODE_NAME;
   const isTriggerNodeB = b.displayName === TRIGGER_NODE_NAME;
@@ -312,11 +330,11 @@ function workflowMemoNodeCompareFn(
 // Exclude log artifacts generated by the workflow.
 // See the `saveContainerLogs` function:
 // https://github.com/argoproj/argo-workflows/blob/main/workflow/executor/executor.go
-function isUserDefinedArtifact(nodeArtifact: WorkflowArtifact) {
+function isUserDefinedArtifact(nodeArtifact: WorkflowArtifact): boolean {
   return !nodeArtifact.name.endsWith(LOG_ARTIFACT_SUFFIX);
 }
 
-function hasUserDefinedArtifacts(node?: WorkflowStatusNode) {
+function hasUserDefinedArtifacts(node?: WorkflowStatusNode): boolean {
   const nodeArtifacts = node?.outputs?.artifacts;
   if (nodeArtifacts == null) {
     return false;
@@ -325,7 +343,7 @@ function hasUserDefinedArtifacts(node?: WorkflowStatusNode) {
   return nodeArtifacts.some(isUserDefinedArtifact);
 }
 
-function getUserDefinedArtifacts(node: WorkflowStatusNode) {
+function getUserDefinedArtifacts(node: WorkflowStatusNode): WorkflowArtifact[] {
   const nodeArtifacts = node.outputs?.artifacts;
   if (nodeArtifacts == null) {
     return [];
@@ -333,7 +351,7 @@ function getUserDefinedArtifacts(node: WorkflowStatusNode) {
   return nodeArtifacts.filter(isUserDefinedArtifact);
 }
 
-function getWorkflowUiUrl(namespace: string, workflowName: string) {
+function getWorkflowUiUrl(namespace: string, workflowName: string): string {
   return `${WORKFLOW_UI_URL}/workflows/${namespace}/${workflowName}`;
 }
 
@@ -344,11 +362,11 @@ function getWorkflowUiUrl(namespace: string, workflowName: string) {
  *
  * Strip out the prefix and keep the user-defined part
  */
-function getNodeArtifactDisplayKeyName(keyName: string) {
+function getNodeArtifactDisplayKeyName(keyName: string): string {
   return keyName.split("/").slice(3).join("/");
 }
 
-function getArtifactUiUrl(artifactKey: string) {
+function getArtifactUiUrl(artifactKey: string): string {
   return `${ARTIFACT_UI_URL}&prefix=${artifactKey}`;
 }
 
@@ -357,7 +375,7 @@ function getArtifactDownloadUrl(
   workflowUid: string,
   nodeId: string,
   artifactName: string,
-) {
+): string {
   return `${WORKFLOW_UI_URL}/artifact-files/${workflowNamespace}/archived-workflows/${workflowUid}/${nodeId}/outputs/${artifactName}`;
 }
 

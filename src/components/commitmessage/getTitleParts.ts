@@ -3,7 +3,11 @@
  * by PR numbers. Each part contains the segment text
  * and whether it is a PR number
  */
-function getTitleParts(title: string) {
+interface TitlePart {
+  titlePart: string;
+  isPrNumber: boolean;
+}
+function getTitleParts(title: string): TitlePart[] {
   // This regex matches PR numbers in a commit title and captures the group
   // Example of captured group: "(#53)"
   const prNumberRegex = /(\(#\d+\))/;
@@ -12,7 +16,7 @@ function getTitleParts(title: string) {
   const prNumberExactRegex = /^\(#\d+\)$/;
 
   const titleParts = title.split(prNumberRegex);
-  const titlePartsWithMetadata = [];
+  const titlePartsWithMetadata: TitlePart[] = [];
 
   for (const titlePart of titleParts) {
     const prevTitlePart = titlePartsWithMetadata.at(-1);

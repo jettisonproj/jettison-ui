@@ -1,5 +1,6 @@
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type {
+  TemplateName,
   Workflow,
   WorkflowMemoStatusNode,
   WorkflowStatusNode,
@@ -14,14 +15,14 @@ import {
   workflowMemoNodeCompareFn,
 } from "src/utils/workflowUtil.ts";
 
-function memoizeFlow(flow: Flow) {
+function memoizeFlow(flow: Flow): void {
   const trigger = getFlowTrigger(flow);
   const isPrFlow = isPullRequestTrigger(trigger);
 
   flow.memo = { trigger, isPrFlow };
 }
 
-function memoizeWorkflow(workflow: Workflow) {
+function memoizeWorkflow(workflow: Workflow): void {
   // Memoize or re-key the node status using the displayName
   // Also convert dates to Date type and add duration
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
@@ -80,7 +81,7 @@ function memoizeWorkflow(workflow: Workflow) {
   }
 }
 
-function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
+function memoizeWorkflowStatusNode(node: WorkflowStatusNode): void {
   const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
 
   const parameterMap: Record<string, string> = {};
@@ -116,14 +117,14 @@ function memoizeWorkflowStatusNode(node: WorkflowStatusNode) {
   node.memo = memoNode;
 }
 
-function getMemoDisplayName(displayName: string) {
+function getMemoDisplayName(displayName: string): string {
   if (displayName.endsWith(EXIT_NODE_SUFFIX)) {
     return EXIT_NODE_NAME;
   }
   return displayName;
 }
 
-function getMemoTemplateName(node: WorkflowStatusNode) {
+function getMemoTemplateName(node: WorkflowStatusNode): TemplateName {
   const { templateRef, templateName } = node;
   if (templateRef != null) {
     return templateRef.template;

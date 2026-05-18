@@ -10,7 +10,7 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   globalIgnores(["coverage", "dist"]),
   {
-    settings: { react: { version: "18.3" } },
+    settings: { react: { version: "19.2" } },
     extends: [
       js.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
@@ -45,6 +45,7 @@ export default defineConfig([
           message: "Please use named exports instead.",
         },
       ],
+      "@typescript-eslint/explicit-function-return-type": "error",
     },
   },
   eslintConfigPrettier,

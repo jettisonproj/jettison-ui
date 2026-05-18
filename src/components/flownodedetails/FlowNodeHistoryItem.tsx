@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/flow/history/FlowHistoryItem.module.css";
 import {
   FlowHistoryDetails,
@@ -22,7 +24,7 @@ function FlowNodeHistoryItem({
   workflow,
   isSelected,
   nodeName,
-}: FlowNodeHistoryItemProps) {
+}: FlowNodeHistoryItemProps): JSX.Element {
   const workflowBaseUrl = `${flowNodeBaseUrl}/workflows/${workflow.metadata.name}`;
   const historyItemClassName = isSelected
     ? styles.historyItemBase

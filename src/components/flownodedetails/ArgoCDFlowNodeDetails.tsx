@@ -1,4 +1,6 @@
+import type { JSX } from "react";
 import { useContext } from "react";
+
 import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
@@ -35,7 +37,7 @@ function ArgoCDFlowNodeDetails({
   stepNode,
   sortedWorkflows,
   step,
-}: ArgoCDFlowNodeDetailsProps) {
+}: ArgoCDFlowNodeDetailsProps): JSX.Element {
   return (
     <>
       <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
@@ -57,7 +59,7 @@ function ArgoCDFlowNodeDetails({
 interface ArgoCDStepLinksProps {
   step: ArgoCDStep;
 }
-function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
+function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps): JSX.Element {
   const { repoUrl, baseRef, repoPath } = step;
 
   const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
@@ -118,7 +120,7 @@ function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps) {
   );
 }
 
-function getApplicationLink(application?: Application) {
+function getApplicationLink(application?: Application): string | null {
   if (application == null) {
     return null;
   }
@@ -126,14 +128,19 @@ function getApplicationLink(application?: Application) {
   return `${ARGOCD_UI_URL}/applications/${namespace}/${name}`;
 }
 
-function getCommitLink(repoUrl: string, application?: Application) {
+function getCommitLink(
+  repoUrl: string,
+  application?: Application,
+): string | null {
   if (application == null) {
     return null;
   }
   return getRepoCommitLink(repoUrl, application.status.sync.revision);
 }
 
-function getRolloutResource(application?: Application) {
+function getRolloutResource(
+  application?: Application,
+): ApplicationStatusResource | null {
   if (application == null) {
     return null;
   }
@@ -164,7 +171,7 @@ function getRolloutResource(application?: Application) {
 function getRolloutLink(
   applicationLink: string | null,
   rolloutResource: ApplicationStatusResource | null,
-) {
+): string | null {
   if (applicationLink == null || rolloutResource == null) {
     return null;
   }
@@ -174,7 +181,7 @@ function getRolloutLink(
 
 function getKubernetesRolloutLink(
   rolloutResource: ApplicationStatusResource | null,
-) {
+): string | null {
   if (rolloutResource == null) {
     return null;
   }
@@ -182,7 +189,9 @@ function getKubernetesRolloutLink(
   return `/api/v1/namespaces/${namespace}/rollouts/${name}`;
 }
 
-function getKubernetesApplicationLink(application?: Application) {
+function getKubernetesApplicationLink(
+  application?: Application,
+): string | null {
   if (application == null) {
     return null;
   }

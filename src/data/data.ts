@@ -6,12 +6,12 @@ const flowDefaults = {
 };
 
 // todo need to get defaults from backend, or bake default into types
-function flowDefaultStepName(step: Step) {
+function flowDefaultStepName(step: Step): string {
   return step.stepName ?? step.stepSource;
 }
 
 // todo need to get defaults from backend, or bake default into types
-function flowDefaultTriggerName(trigger: Trigger) {
+function flowDefaultTriggerName(trigger: Trigger): string {
   return trigger.triggerName ?? trigger.triggerSource;
 }
 

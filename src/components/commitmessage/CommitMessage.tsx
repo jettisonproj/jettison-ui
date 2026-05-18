@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import styles from "src/components/commitmessage/CommitMessage.module.css";
 import { getTitleParts } from "src/components/commitmessage/getTitleParts.ts";
 import { getRepoPrLink } from "src/utils/gitUtil.ts";
@@ -13,7 +15,7 @@ function CommitMessage({
   commitLink,
   title,
   repoUrl,
-}: CommitMessageProps) {
+}: CommitMessageProps): JSX.Element | JSX.Element[] {
   if (isPrFlow) {
     // No transformation of pr commit message link
     return (
@@ -51,7 +53,7 @@ function CommitMessagePart({
   titlePart,
   commitLink,
   isPrNumber,
-}: CommitMessagePartProps) {
+}: CommitMessagePartProps): JSX.Element {
   if (isPrNumber) {
     const prNumber = titlePart.substring(1);
     const prLink = getRepoPrLink(repoUrl, prNumber);

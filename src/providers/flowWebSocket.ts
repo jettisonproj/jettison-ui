@@ -8,17 +8,17 @@ class FlowWebSocket {
     const websocket = new WebSocket("/ws");
     this.#websocket = websocket;
 
-    websocket.onopen = () => {
+    websocket.onopen = (): void => {
       console.log("Websocket opened");
     };
 
-    websocket.onclose = (ev) => {
+    websocket.onclose = (ev): void => {
       console.log("Websocket closed");
       console.log(`Code: ${ev.code.toString()}`);
       console.log(`Reason: ${ev.reason}`);
     };
 
-    websocket.onerror = (err) => {
+    websocket.onerror = (err): void => {
       if (!(err instanceof Error)) {
         console.log("unknown error from websocket");
         console.log(err);
@@ -29,11 +29,11 @@ class FlowWebSocket {
     };
   }
 
-  setOnMessage(onMessage: (ev: MessageEvent<string>) => void) {
+  setOnMessage(onMessage: (ev: MessageEvent<string>) => void): void {
     this.#websocket.onmessage = onMessage;
   }
 
-  send(flowMessage: FlowMessage) {
+  send(flowMessage: FlowMessage): void {
     this.#websocket.send(JSON.stringify(flowMessage));
   }
 }

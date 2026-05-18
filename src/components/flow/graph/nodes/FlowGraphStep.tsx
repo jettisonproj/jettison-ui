@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
@@ -17,7 +19,7 @@ function FlowGraphStep({
   step,
   isPrFlow,
   workflows,
-}: FlowGraphStepProps) {
+}: FlowGraphStepProps): JSX.Element {
   switch (step.stepSource) {
     case StepSources.DockerBuildTest:
     case StepSources.DockerBuildTestPublish:
@@ -44,6 +46,14 @@ function FlowGraphStep({
       step satisfies never;
       console.log("unknown step");
       console.log(step);
+      throw new FlowGraphStepError("invalid step source");
+  }
+}
+
+class FlowGraphStepError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
 
