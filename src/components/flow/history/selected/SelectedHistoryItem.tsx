@@ -1,4 +1,8 @@
-import { useSearchParams } from "react-router";
+import { getRouteApi } from "@tanstack/react-router";
+
+const flowWorkflowRouteApi = getRouteApi(
+  "/flows/$repoOrg/$repoName/$triggerRoute/workflows/$selectedWorkflow",
+);
 
 import { NODE_WIDTH } from "src/components/flow/flowComponentsUtil.tsx";
 import type {
@@ -37,9 +41,9 @@ function SelectedHistoryItem({
   workflow,
   workflowBaseUrl,
 }: SelectedHistoryItemProps) {
-  const [searchParams] = useSearchParams();
-  const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
-  const selectedTab = getSelectedTab(searchParams.get("tab"));
+  const { node, tab } = flowWorkflowRouteApi.useSearch();
+  const selectedNodeName = node ?? TRIGGER_NODE_NAME;
+  const selectedTab = getSelectedTab(tab ?? null);
 
   // This component is rendered on the fly, so no need to memoize data for this
   // component. Instead, use the raw data to compute the derived data here.
@@ -102,7 +106,7 @@ function SelectedHistoryItem({
     nodesPendingCreation,
   );
 
-  const nodeBaseUrl = `${workflowBaseUrl}?node=${selectedNodeName}`;
+  const nodeBaseUrl: string = `${workflowBaseUrl}?node=${selectedNodeName}`;
 
   return (
     <div className={styles.selectedHistoryItem}>

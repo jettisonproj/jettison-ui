@@ -1,5 +1,4 @@
 import { useContext, useMemo } from "react";
-import { useParams, useSearchParams } from "react-router";
 
 import {
   getFlowStepNode,
@@ -26,10 +25,15 @@ import {
   workflowCompareFn,
 } from "src/utils/workflowUtil.ts";
 
-function Flow() {
-  const { repoOrg, repoName, triggerRoute, selectedWorkflow } = useParams();
-  const [searchParams] = useSearchParams();
+interface FlowProps {
+  repoOrg: string;
+  repoName: string;
+  triggerRoute: string;
+  selectedWorkflow?: string;
+  node?: string;
+}
 
+function Flow({ repoOrg, repoName, triggerRoute, selectedWorkflow, node }: FlowProps) {
   if (!repoOrg || !repoName || !triggerRoute) {
     throw new FlowError(
       "path parameters cannot be empty: " +
@@ -41,7 +45,8 @@ function Flow() {
     throw new FlowError(`invalid path parameter triggerRoute=${triggerRoute}`);
   }
 
-  const selectedNodeName = searchParams.get("node") ?? TRIGGER_NODE_NAME;
+  const selectedNodeName = node ?? TRIGGER_NODE_NAME;
+
   const flowBaseUrl = `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`;
   const isPrFlow = triggerRoute === prTriggerRoute;
   return (

@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { Link, NavLink } from "react-router";
+import { Link } from "@tanstack/react-router";
 
 import styles from "src/components/header/NavHeader.module.css";
 import { NavHeaderNotificationBadge } from "src/components/header/NavHeaderNotificationBadge.tsx";
@@ -63,19 +63,18 @@ function NavHeader({ components, showBorder, filters }: NavHeaderProps) {
         <div className={styles.navFilter}>
           {filters.map(
             ({ displayName, navLink, iconClassName, numNotifications }) => (
-              <NavLink
+              <Link
                 key={displayName}
                 to={navLink}
-                className={({ isActive }) =>
-                  isActive ? styles.navFilterSelected : styles.navFilterItem
-                }
+                className={styles.navFilterItem}
+                activeProps={{ className: styles.navFilterSelected }}
               >
                 <i className={iconClassName} />
                 {displayName}
                 <NavHeaderNotificationBadge
                   numNotifications={numNotifications}
                 />
-              </NavLink>
+              </Link>
             ),
           )}
         </div>

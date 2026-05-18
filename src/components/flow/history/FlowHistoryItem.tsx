@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "@tanstack/react-router";
 
 import { CommitMessage } from "src/components/commitmessage/CommitMessage.tsx";
 import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
@@ -59,7 +59,6 @@ function FlowHistoryItem({
       <FlowHistoryGrid
         flowSteps={flowSteps}
         workflow={workflow}
-        workflowBaseUrl={workflowBaseUrl}
         isSelected={isSelected}
         selectedNodeName={selectedNodeName}
       />

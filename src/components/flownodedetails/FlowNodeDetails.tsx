@@ -1,5 +1,4 @@
 import { useContext, useMemo } from "react";
-import { useParams } from "react-router";
 
 import {
   getFlowStepNode,
@@ -26,9 +25,21 @@ import {
   workflowCompareFn,
 } from "src/utils/workflowUtil.ts";
 
-function FlowNodeDetails() {
-  const { repoOrg, repoName, triggerRoute, nodeName, selectedWorkflow } =
-    useParams();
+interface FlowNodeDetailsProps {
+  repoOrg: string;
+  repoName: string;
+  triggerRoute: string;
+  nodeName: string;
+  selectedWorkflow?: string;
+}
+
+function FlowNodeDetails({
+  repoOrg,
+  repoName,
+  triggerRoute,
+  nodeName,
+  selectedWorkflow,
+}: FlowNodeDetailsProps) {
   if (!repoOrg || !repoName || !triggerRoute || !nodeName) {
     throw new FlowNodeDetailsError(
       "path parameters cannot be empty: " +

@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "@tanstack/react-router";
 
 import styles from "src/components/header/Header.module.css";
 import { routes } from "src/routes.ts";

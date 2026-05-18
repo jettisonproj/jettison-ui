@@ -1,4 +1,8 @@
-import { Link } from "react-router";
+import { getRouteApi, Link } from "@tanstack/react-router";
+
+const flowWorkflowRouteApi = getRouteApi(
+  "/flows/$repoOrg/$repoName/$triggerRoute/workflows/$selectedWorkflow",
+);
 
 import { ElapsedTime } from "src/components/elapsedtime/ElapsedTime.tsx";
 import styles from "src/components/flow/history/FlowHistoryGrid.module.css";
@@ -27,14 +31,12 @@ import {
 interface FlowHistoryGridProps {
   flowSteps: Step[];
   workflow: Workflow;
-  workflowBaseUrl: string;
   isSelected: boolean;
   selectedNodeName: string;
 }
 function FlowHistoryGrid({
   flowSteps,
   workflow,
-  workflowBaseUrl,
   isSelected,
   selectedNodeName,
 }: FlowHistoryGridProps) {
@@ -59,7 +61,6 @@ function FlowHistoryGrid({
             nodePhase={node.phase}
             nodeDuration={node.duration}
             nodeStartedAt={node.startedAt}
-            workflowBaseUrl={workflowBaseUrl}
             isSelected={isSelected && selectedNodeName === node.displayName}
           />
         ))}
@@ -71,7 +72,6 @@ function FlowHistoryGrid({
           nodePhase={NodePhases.Pending}
           nodeDuration={undefined}
           nodeStartedAt={undefined}
-          workflowBaseUrl={workflowBaseUrl}
           isSelected={
             isSelected &&
             selectedNodeName === flowDefaultStepName(nodePendingCreation)
@@ -139,7 +139,6 @@ interface FlowHistoryGridItemProps {
   nodePhase: NodePhase;
   nodeDuration: string | undefined;
   nodeStartedAt: Date | undefined;
-  workflowBaseUrl: string;
   isSelected: boolean;
 }
 function FlowHistoryGridItem({
@@ -148,9 +147,9 @@ function FlowHistoryGridItem({
   nodePhase,
   nodeDuration,
   nodeStartedAt,
-  workflowBaseUrl,
   isSelected,
 }: FlowHistoryGridItemProps) {
+  const params = flowWorkflowRouteApi.useParams();
   let itemClassName = isSelected
     ? styles.historyGridItemSelected
     : styles.historyGridItem;
@@ -203,7 +202,9 @@ function FlowHistoryGridItem({
 
   return (
     <Link
-      to={`${workflowBaseUrl}?node=${nodeDisplayName}`}
+      to="/flows/$repoOrg/$repoName/$triggerRoute/workflows/$selectedWorkflow"
+      params={params}
+      search={(prev) => ({ node: nodeDisplayName, tab: prev.tab })}
       className={itemClassName}
       title={nodeDisplayName}
     >

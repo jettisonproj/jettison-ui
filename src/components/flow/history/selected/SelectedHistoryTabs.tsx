@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Link } from "react-router";
+import { Link } from "@tanstack/react-router";
 
 import { SelectedHistoryArtifactsTab } from "src/components/flow/history/selected/SelectedHistoryArtifactsTab.tsx";
 import { SelectedHistorySummaryTab } from "src/components/flow/history/selected/SelectedHistorySummaryTab.tsx";
@@ -77,12 +77,9 @@ function SelectedHistoryTabSelector({
             tab === selectedTab
               ? styles.selectedHistoryActiveTab
               : styles.selectedHistoryTab;
+          const tabUrl: string = `${nodeBaseUrl}${queryPrefix}tab=${tab}`;
           return (
-            <Link
-              key={tab}
-              to={`${nodeBaseUrl}${queryPrefix}tab=${tab}`}
-              className={tabClassName}
-            >
+            <Link key={tab} to={tabUrl} className={tabClassName}>
               {tab}
             </Link>
           );
