@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { FlowNodeHistoryItem } from "src/components/flownodedetails/FlowNodeHistoryItem.tsx";
+import { FlowNodeHistoryItem } from "src/components/flownodedetails/history/FlowNodeHistoryItem.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowNodeHistoryProps {

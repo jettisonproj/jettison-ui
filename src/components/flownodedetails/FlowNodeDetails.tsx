@@ -8,7 +8,7 @@ import {
 } from "src/components/flow/flowComponentsUtil.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import { ArgoCDFlowNodeDetails } from "src/components/flownodedetails/ArgoCDFlowNodeDetails.tsx";
-import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
+import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
 import { Header } from "src/components/header/Header.tsx";
 import { FlowNodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";

@@ -4,7 +4,7 @@ import { useContext } from "react";
 import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
-import { FlowNodeHistory } from "src/components/flownodedetails/FlowNodeHistory.tsx";
+import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 import type {
