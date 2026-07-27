@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 
+import { ArgoCDPodGrid } from "src/components/flownodedetails/podresources/ArgoCDPodGrid.tsx";
 import styles from "src/components/flownodedetails/podresources/ArgoCDPodResources.module.css";
 import { ArgoCDResourceLinks } from "src/components/flownodedetails/podresources/ArgoCDResourceLinks.tsx";
 import type {
@@ -28,6 +29,7 @@ function ArgoCDPodResources({
           rolloutResource={rolloutResource}
         />
       </h2>
+      <ArgoCDPodGrid rolloutResource={rolloutResource} />
     </>
   );
 }

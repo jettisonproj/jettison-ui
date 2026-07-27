@@ -1,0 +1,63 @@
+.podGridSkeleton {
+  width: var(--content-width);
+  height: 16px;
+  border-radius: 15px;
+  background-color: var(--panel-hover-color);
+}
+
+/**
+ * This grid was based on the code below and could possibly be refactored.
+ * See: src/components/flow/history/FlowHistoryGrid.module.css
+ */
+.podGrid {
+  width: var(--content-width);
+  display: grid;
+  margin-top: 9px;
+  gap: var(--history-grid-item-gap);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--history-grid-item-width), 1fr)
+  );
+}
+
+.podGridText {
+  margin-top: 1px;
+}
+
+.podGridItem {
+  height: 25px;
+  line-height: 23px;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.podGridItem:hover {
+  opacity: 0.8;
+}
+
+.podGridSuccess {
+  background-color: var(--history-grid-success-bg);
+  border: 1px solid var(--history-grid-success-border);
+  color: var(--history-grid-success-color);
+}
+
+.podGridDanger {
+  background-color: var(--history-grid-danger-bg);
+  border: 1px solid var(--history-grid-danger-border);
+  color: var(--history-grid-danger-color);
+}
+
+.podGridPending {
+  background-color: var(--history-grid-pending-bg);
+  border: 1px solid var(--history-grid-pending-border);
+  color: var(--history-grid-pending-color);
+}
+
+.podGridIcon {
+  margin-right: 5px;
+}
+
+.podGridNodeTitle {
+  margin-right: 5px;
+}
