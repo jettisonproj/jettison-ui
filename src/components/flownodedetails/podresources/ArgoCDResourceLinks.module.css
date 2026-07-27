@@ -1,0 +1,49 @@
+/**
+ * This menu is based on the code below and could possibly be refactored.
+ * See: src/components/flow/history/FlowHistoryItem.module.css
+ */
+.linksMenuIcon {
+  font-size: 21px;
+  padding: 8px 10px;
+  margin-right: -10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.linksMenuIcon:hover {
+  background-color: var(--panel-hover-color);
+}
+
+.linksMenu {
+  font-size: 16px;
+  font-weight: bolder;
+  font-family: Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  inset: auto;
+  position-area: bottom left;
+  border: 1px solid var(--menu-border-color);
+  border-radius: 8px;
+  box-shadow: var(--menu-shadow);
+}
+
+.linksMenuItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.linksMenuItem {
+  color: var(--menu-text-color);
+  padding: 10px 14px;
+}
+
+.linksMenuItem:hover {
+  background-color: var(--panel-hover-color);
+  opacity: 0.8;
+}
+
+.linksMenuItemIcon {
+  margin-right: 8px;
+}
