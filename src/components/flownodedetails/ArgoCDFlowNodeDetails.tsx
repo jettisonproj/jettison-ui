@@ -5,7 +5,7 @@ import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
 import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
-import { ArgoCDStepLinks } from "src/components/flownodedetails/resourcelinks/ArgoCDResourceLinks.tsx";
+import { ArgoCDPodResources } from "src/components/flownodedetails/podresources/ArgoCDPodResources.tsx";
 import type {
   Application,
   ApplicationStatusResource,
@@ -66,8 +66,7 @@ function ArgoCDRolloutDetails({
 
   return (
     <>
-      <h2 className={styles.firstSectionTitle}>Links</h2>
-      <ArgoCDStepLinks
+      <ArgoCDPodResources
         step={step}
         application={application}
         rolloutResource={rolloutResource}
