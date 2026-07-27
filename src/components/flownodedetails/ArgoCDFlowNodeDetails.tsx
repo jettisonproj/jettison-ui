@@ -5,18 +5,15 @@ import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
 import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
-import type { Workflow } from "src/data/types/workflowTypes.ts";
-
+import { ArgoCDStepLinks } from "src/components/flownodedetails/resourcelinks/ArgoCDResourceLinks.tsx";
 import type {
   Application,
   ApplicationStatusResource,
 } from "src/data/types/applicationTypes.ts";
 import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { ApplicationsContext } from "src/providers/provider.tsx";
-import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
-
-const ARGOCD_UI_URL = "https://argocd.osoriano.com";
 
 interface ArgoCDFlowNodeDetailsProps {
   repoOrg: string;
@@ -41,9 +38,8 @@ function ArgoCDFlowNodeDetails({
   return (
     <>
       <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
-      <h2 className={styles.firstSectionTitle}>Resource Details</h2>
-      <ArgoCDStepLinks step={step} />
-      <h2 className={styles.sectionTitle}>Resource History</h2>
+      <ArgoCDRolloutDetails step={step} />
+      <h2 className={styles.sectionTitle}>Deployment History</h2>
       <FlowNodeHistory
         isPrFlow={isPrFlow}
         flowNodeBaseUrl={flowNodeBaseUrl}
@@ -56,86 +52,28 @@ function ArgoCDFlowNodeDetails({
   );
 }
 
-interface ArgoCDStepLinksProps {
+interface ArgoCDRolloutDetailsProps {
   step: ArgoCDStep;
 }
-function ArgoCDStepLinks({ step }: ArgoCDStepLinksProps): JSX.Element {
-  const { repoUrl, baseRef, repoPath } = step;
-
-  const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
-
+function ArgoCDRolloutDetails({
+  step,
+}: ArgoCDRolloutDetailsProps): JSX.Element {
   const applications = useContext(ApplicationsContext);
+
+  const { repoUrl, repoPath } = step;
   const application = applications?.get(repoUrl)?.get(repoPath);
-  const applicationLink = getApplicationLink(application);
-  const commitLink = getCommitLink(repoUrl, application);
   const rolloutResource = getRolloutResource(application);
-  const rolloutLink = getRolloutLink(applicationLink, rolloutResource);
-  const kubernetesApplicationLink = getKubernetesApplicationLink(application);
-  const kubernetesRolloutLink = getKubernetesRolloutLink(rolloutResource);
 
   return (
-    <ul>
-      {applicationLink && (
-        <li>
-          <a href={applicationLink} target="_blank" rel="noreferrer">
-            Argo CD Application UI
-          </a>
-        </li>
-      )}
-      <li>
-        <a href={repoLink} target="_blank" rel="noreferrer">
-          Argo CD Resource Definitions
-        </a>
-      </li>
-      {commitLink && (
-        <li>
-          <a href={commitLink} target="_blank" rel="noreferrer">
-            Argo CD Resources Commit
-          </a>
-        </li>
-      )}
-      {rolloutLink && (
-        <li>
-          <a href={rolloutLink} target="_blank" rel="noreferrer">
-            Argo Rollouts UI
-          </a>
-        </li>
-      )}
-      {kubernetesApplicationLink && (
-        <li>
-          <a href={kubernetesApplicationLink} target="_blank" rel="noreferrer">
-            Kubernetes Application Definition{" "}
-            <i className="nf nf-fa-file_text_o" />
-          </a>
-        </li>
-      )}
-      {kubernetesRolloutLink && (
-        <li>
-          <a href={kubernetesRolloutLink} target="_blank" rel="noreferrer">
-            Kubernetes Rollout Definition <i className="nf nf-fa-file_text_o" />
-          </a>
-        </li>
-      )}
-    </ul>
+    <>
+      <h2 className={styles.firstSectionTitle}>Links</h2>
+      <ArgoCDStepLinks
+        step={step}
+        application={application}
+        rolloutResource={rolloutResource}
+      />
+    </>
   );
-}
-
-function getApplicationLink(application?: Application): string | null {
-  if (application == null) {
-    return null;
-  }
-  const { namespace, name } = application.metadata;
-  return `${ARGOCD_UI_URL}/applications/${namespace}/${name}`;
-}
-
-function getCommitLink(
-  repoUrl: string,
-  application?: Application,
-): string | null {
-  if (application == null) {
-    return null;
-  }
-  return getRepoCommitLink(repoUrl, application.status.sync.revision);
 }
 
 function getRolloutResource(
@@ -166,37 +104,6 @@ function getRolloutResource(
     );
   }
   return rolloutResource;
-}
-
-function getRolloutLink(
-  applicationLink: string | null,
-  rolloutResource: ApplicationStatusResource | null,
-): string | null {
-  if (applicationLink == null || rolloutResource == null) {
-    return null;
-  }
-  const { namespace, name } = rolloutResource;
-  return `${applicationLink}?node=argoproj.io%2FRollout%2F${namespace}%2F${name}%2F0&resource=&tab=extension-0`;
-}
-
-function getKubernetesRolloutLink(
-  rolloutResource: ApplicationStatusResource | null,
-): string | null {
-  if (rolloutResource == null) {
-    return null;
-  }
-  const { namespace, name } = rolloutResource;
-  return `/api/v1/namespaces/${namespace}/rollouts/${name}`;
-}
-
-function getKubernetesApplicationLink(
-  application?: Application,
-): string | null {
-  if (application == null) {
-    return null;
-  }
-  const { namespace, name } = application.metadata;
-  return `/api/v1/namespaces/${namespace}/applications/${name}`;
 }
 
 class ArgoCDFlowNodeDetailsError extends Error {
