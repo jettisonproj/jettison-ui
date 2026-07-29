@@ -6,7 +6,7 @@ import {
   FlowHistorySubtitle,
   FlowHistoryTitle,
 } from "src/components/flow/history/FlowHistoryItem.tsx";
-import { FlowNodeSelectedHistoryItem } from "src/components/flownodedetails/FlowNodeSelectedHistoryItem.tsx";
+import { FlowNodeSelectedHistoryItem } from "src/components/flownodedetails/history/FlowNodeSelectedHistoryItem.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface FlowNodeHistoryItemProps {

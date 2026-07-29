@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -10,11 +11,19 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   globalIgnores(["coverage", "dist"]),
   {
-    settings: { react: { version: "19.2" } },
+    settings: {
+      react: { version: "19.2" },
+      "import/resolver": {
+        typescript: true,
+        node: true,
+      },
+    },
     extends: [
       js.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
     ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
@@ -46,6 +55,8 @@ export default defineConfig([
         },
       ],
       "@typescript-eslint/explicit-function-return-type": "error",
+      "import/no-unresolved": ["error", { ignore: ["\\.svg$"] }],
+      "import/exports-last": "error",
     },
   },
   eslintConfigPrettier,
