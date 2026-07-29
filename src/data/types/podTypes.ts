@@ -19,7 +19,7 @@ interface Container {
 // SOT: https://pkg.go.dev/k8s.io/api/core/v1#PodStatus
 interface PodStatus {
   phase: PodPhase;
-  containerStatuses: ContainerStatus[];
+  containerStatuses?: ContainerStatus[];
 }
 
 // SOT: https://pkg.go.dev/k8s.io/api/core/v1#ContainerStatus
