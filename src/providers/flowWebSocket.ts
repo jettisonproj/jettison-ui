@@ -41,6 +41,7 @@ class FlowWebSocket {
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
 const FlowMessageTypes = {
   containerLog: "containerLog",
+  resourceSubscription: "resourceSubscription",
 } as const;
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
@@ -53,8 +54,25 @@ interface ContainerLogMessage {
   };
 }
 
-type FlowMessage = ContainerLogMessage;
+// SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/resource_subscription_message_handler.go
+const ResourceSubscriptionTypes = {
+  pod: "pod",
+} as const;
+type ResourceSubscriptionType =
+  (typeof ResourceSubscriptionTypes)[keyof typeof ResourceSubscriptionTypes];
+
+// SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
+interface ResourceSubscriptionMessage {
+  messageType: typeof FlowMessageTypes.resourceSubscription;
+  messageData: {
+    subscriptionType: ResourceSubscriptionType;
+    namespace: string;
+    name: string;
+  };
+}
+
+type FlowMessage = ContainerLogMessage | ResourceSubscriptionMessage;
 
 const flowWebSocket = new FlowWebSocket();
 
-export { FlowMessageTypes, flowWebSocket };
+export { FlowMessageTypes, ResourceSubscriptionTypes, flowWebSocket };
