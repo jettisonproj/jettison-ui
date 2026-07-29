@@ -4,6 +4,7 @@ import { useContext } from "react";
 import type { FlowNode } from "src/components/flow/graph/FlowGraph.tsx";
 import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
+import { ArgoCDDeploySteps } from "src/components/flownodedetails/deploysteps/ArgoCDDeploySteps.tsx";
 import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
 import { ArgoCDPodResources } from "src/components/flownodedetails/podresources/ArgoCDPodResources.tsx";
 import type {
@@ -66,6 +67,7 @@ function ArgoCDRolloutDetails({
 
   return (
     <>
+      <ArgoCDDeploySteps rolloutResource={rolloutResource} />
       <ArgoCDPodResources
         step={step}
         application={application}
