@@ -1,0 +1,93 @@
+/* todo revisit section once other sections are implemented */
+.deployStepsHeader {
+  cursor: pointer;
+  margin: 0;
+  margin-bottom: 26px;
+  margin-top: 18px;
+}
+
+.deployStepsHeader:hover {
+  opacity: 0.8;
+}
+
+.deployStepsTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 33px;
+  padding-bottom: 0;
+  margin-bottom: 10px;
+}
+
+.deployProgressText {
+  color: var(--graph-text-color);
+  font-weight: bolder;
+  margin-bottom: 5px;
+}
+
+.deployProgressIcon {
+  margin-right: 5px;
+  font-size: 16px;
+  display: inline-block;
+}
+
+.deployProgressIconSuccess {
+  composes: deployProgressIcon;
+
+  color: var(--argocd-badge-health-color);
+}
+
+@keyframes deployProgressIconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.deployProgressIconRunning {
+  composes: deployProgressIcon;
+
+  color: var(--status-badge-loading-color);
+  animation: deployProgressIconSpin 2s linear infinite;
+}
+
+.deployProgressBarBase {
+  height: 10px;
+  border-radius: 5px;
+}
+
+.deployProgressBar {
+  composes: deployProgressBarBase;
+
+  background-color: var(--separator-color);
+  width: var(--content-width);
+}
+
+.deployProgressBarSuccess {
+  composes: deployProgressBarBase;
+
+  background-color: var(--argocd-badge-health-color);
+}
+
+.deployProgressBarRunning {
+  composes: deployProgressBarBase;
+
+  background-color: var(--status-badge-loading-color);
+}
+
+.deployProgressBarSkeleton {
+  composes: deployProgressBarBase;
+
+  margin-top: 20px;
+  background-color: var(--panel-hover-color);
+}
+
+.canaryStepSkeleton {
+  width: var(--content-width);
+  height: 16px;
+  border-radius: 15px;
+  background-color: var(--panel-hover-color);
+  margin: 12px 0;
+}
