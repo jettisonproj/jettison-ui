@@ -88,11 +88,12 @@ interface ArgoCDPodProps {
 function ArgoCDPod({ pod }: ArgoCDPodProps): JSX.Element {
   const { namespace, name: podName } = pod.metadata;
   const { phase: podPhase, containerStatuses } = pod.status;
-  const numContainers = containerStatuses.length;
-  const readyContainers = containerStatuses.reduce(
-    (acc, containerStatus) => acc + (containerStatus.ready ? 1 : 0),
-    0,
-  );
+  const numContainers = containerStatuses?.length ?? "-";
+  const readyContainers =
+    containerStatuses?.reduce(
+      (acc, containerStatus) => acc + (containerStatus.ready ? 1 : 0),
+      0,
+    ) ?? "-";
 
   let itemClassName;
   let iconComponent;
