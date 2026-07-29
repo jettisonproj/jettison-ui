@@ -15,6 +15,7 @@ import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { ApplicationsContext } from "src/providers/provider.tsx";
+import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 
 interface ArgoCDFlowNodeDetailsProps {
   repoOrg: string;
@@ -36,10 +37,16 @@ function ArgoCDFlowNodeDetails({
   sortedWorkflows,
   step,
 }: ArgoCDFlowNodeDetailsProps): JSX.Element {
+  const lastWorkflow = sortedWorkflows[0];
+  const lastWorkflowRevision =
+    lastWorkflow && getWorkflowRevision(lastWorkflow.memo.parameterMap);
   return (
     <>
       <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
-      <ArgoCDRolloutDetails step={step} />
+      <ArgoCDRolloutDetails
+        step={step}
+        lastWorkflowRevision={lastWorkflowRevision}
+      />
       <h2 className={styles.sectionTitle}>Deployment History</h2>
       <FlowNodeHistory
         isPrFlow={isPrFlow}
@@ -55,9 +62,11 @@ function ArgoCDFlowNodeDetails({
 
 interface ArgoCDRolloutDetailsProps {
   step: ArgoCDStep;
+  lastWorkflowRevision: string | undefined;
 }
 function ArgoCDRolloutDetails({
   step,
+  lastWorkflowRevision,
 }: ArgoCDRolloutDetailsProps): JSX.Element {
   const applications = useContext(ApplicationsContext);
 
@@ -72,6 +81,7 @@ function ArgoCDRolloutDetails({
         step={step}
         application={application}
         rolloutResource={rolloutResource}
+        lastWorkflowRevision={lastWorkflowRevision}
       />
     </>
   );

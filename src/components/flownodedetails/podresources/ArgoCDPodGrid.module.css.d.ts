@@ -7,6 +7,7 @@ declare const styles: {
   readonly podGridIcon: string;
   readonly podGridNodeTitle: string;
   readonly podGridSuccess: string;
+  readonly podGridDrift: string;
   readonly podGridDanger: string;
   readonly podGridPending: string;
 };
