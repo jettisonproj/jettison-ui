@@ -1,0 +1,83 @@
+.canaryStep {
+  display: flex;
+  width: var(--content-width);
+  margin-bottom: 20px;
+}
+
+.canaryStepStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.canaryStepIcon {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+@keyframes canaryStepIconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.canaryStepIconSuccess {
+  composes: canaryStepIcon;
+
+  color: var(--argocd-badge-health-color);
+}
+
+.canaryStepIconPending {
+  composes: canaryStepIcon;
+
+  color: var(--separator-color);
+}
+
+.canaryStepIconRunning {
+  composes: canaryStepIcon;
+
+  color: var(--status-badge-loading-color);
+  animation: canaryStepIconSpin 2s linear infinite;
+}
+
+.canaryStepLine {
+  height: 40px;
+  width: 4px;
+  background-color: var(--separator-color);
+  border-radius: 5px;
+}
+
+.canaryStepContent {
+  margin-left: 12px;
+  margin-top: 4px;
+}
+
+.canaryStepNumber {
+  font-weight: bolder;
+  letter-spacing: 1.5px;
+}
+
+.canaryStepNumberSuccess {
+  composes: canaryStepNumber;
+
+  color: var(--argocd-badge-health-color);
+}
+
+.canaryStepNumberRunning {
+  composes: canaryStepNumber;
+
+  color: var(--status-badge-loading-color);
+}
+
+.canaryStepTitle {
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.canaryStepSubText {
+  color: var(--graph-text-color);
+  font-weight: bolder;
+}
