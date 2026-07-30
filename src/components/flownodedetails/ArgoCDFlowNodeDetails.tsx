@@ -7,14 +7,10 @@ import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.
 import { ArgoCDDeploySteps } from "src/components/flownodedetails/deploysteps/ArgoCDDeploySteps.tsx";
 import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
 import { ArgoCDPodResources } from "src/components/flownodedetails/podresources/ArgoCDPodResources.tsx";
-import type {
-  Application,
-  ApplicationStatusResource,
-} from "src/data/types/applicationTypes.ts";
-import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { ApplicationsContext } from "src/providers/provider.tsx";
+import { getRolloutResource } from "src/utils/applicationUtil.ts";
 import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 
 interface ArgoCDFlowNodeDetailsProps {
@@ -85,43 +81,6 @@ function ArgoCDRolloutDetails({
       />
     </>
   );
-}
-
-function getRolloutResource(
-  application?: Application,
-): ApplicationStatusResource | null {
-  if (application == null) {
-    return null;
-  }
-  const rolloutResources = [];
-  for (const resource of application.status.resources) {
-    if (resource.kind === ResourceKinds.Rollout) {
-      rolloutResources.push(resource);
-    }
-  }
-  if (rolloutResources.length !== 1) {
-    const { namespace, name } = application.metadata;
-    throw new ArgoCDFlowNodeDetailsError(
-      "Expected a single rollout in application " +
-        `namespace=${namespace} name=${name}`,
-    );
-  }
-  const rolloutResource = rolloutResources[0];
-  if (rolloutResource == null) {
-    const { namespace, name } = application.metadata;
-    throw new ArgoCDFlowNodeDetailsError(
-      "Expected a single rollout in application " +
-        `namespace=${namespace} name=${name}`,
-    );
-  }
-  return rolloutResource;
-}
-
-class ArgoCDFlowNodeDetailsError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
 }
 
 export { ArgoCDFlowNodeDetails };
