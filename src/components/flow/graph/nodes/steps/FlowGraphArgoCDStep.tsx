@@ -31,13 +31,12 @@ import {
 import { getRolloutResource } from "src/utils/applicationUtil.ts";
 import { getStepDetailsLink } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath, getRepoPathLink } from "src/utils/gitUtil.ts";
+import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
 import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 import {
   getLastWorkflowNodeForStep,
   getWorkflowRevision,
 } from "src/utils/workflowUtil.ts";
-
-const APP_VERSION_LABEL = "app.kubernetes.io/version";
 
 interface FlowGraphArgoCDStepProps {
   repoOrg: string;
