@@ -13,11 +13,13 @@ interface ArgoCDPodResourcesProps {
   step: ArgoCDStep;
   application: Application | undefined;
   rolloutResource: ApplicationStatusResource | null;
+  lastWorkflowRevision: string | undefined;
 }
 function ArgoCDPodResources({
   step,
   application,
   rolloutResource,
+  lastWorkflowRevision,
 }: ArgoCDPodResourcesProps): JSX.Element {
   return (
     <>
@@ -29,7 +31,10 @@ function ArgoCDPodResources({
           rolloutResource={rolloutResource}
         />
       </h2>
-      <ArgoCDPodGrid rolloutResource={rolloutResource} />
+      <ArgoCDPodGrid
+        rolloutResource={rolloutResource}
+        lastWorkflowRevision={lastWorkflowRevision}
+      />
     </>
   );
 }

@@ -42,6 +42,12 @@
   color: var(--history-grid-success-color);
 }
 
+.podGridDrift {
+  background-color: var(--argocd-badge-drift-bg);
+  border: 1px solid var(--argocd-badge-drift-border);
+  color: var(--argocd-badge-drift-color);
+}
+
 .podGridDanger {
   background-color: var(--history-grid-danger-bg);
   border: 1px solid var(--history-grid-danger-border);

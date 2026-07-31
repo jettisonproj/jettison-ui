@@ -12,11 +12,16 @@ import {
 import { FlowWebSocketContext, PodsContext } from "src/providers/provider.tsx";
 
 const POD_APP_LABEL_KEY = "app";
+const POD_VERSION_LABEL_KEY = "app.kubernetes.io/version";
 
 interface ArgoCDPodGridProps {
   rolloutResource: ApplicationStatusResource | null;
+  lastWorkflowRevision: string | undefined;
 }
-function ArgoCDPodGrid({ rolloutResource }: ArgoCDPodGridProps): JSX.Element {
+function ArgoCDPodGrid({
+  rolloutResource,
+  lastWorkflowRevision,
+}: ArgoCDPodGridProps): JSX.Element {
   const pods = useContext(PodsContext);
   const flowWebSocket = useContext(FlowWebSocketContext);
 
@@ -42,6 +47,7 @@ function ArgoCDPodGrid({ rolloutResource }: ArgoCDPodGridProps): JSX.Element {
     <ArgoCDNamespacePodGrid
       rolloutResource={rolloutResource}
       namespacePods={pods.get(rolloutResource.namespace)}
+      lastWorkflowRevision={lastWorkflowRevision}
     />
   );
 }
@@ -49,10 +55,12 @@ function ArgoCDPodGrid({ rolloutResource }: ArgoCDPodGridProps): JSX.Element {
 interface ArgoCDNamespacePodGridProps {
   rolloutResource: ApplicationStatusResource;
   namespacePods: Map<string, Pod> | undefined;
+  lastWorkflowRevision: string | undefined;
 }
 function ArgoCDNamespacePodGrid({
   rolloutResource,
   namespacePods,
+  lastWorkflowRevision,
 }: ArgoCDNamespacePodGridProps): JSX.Element {
   const rolloutPods = useMemo(() => {
     if (namespacePods == null) {
@@ -76,7 +84,11 @@ function ArgoCDNamespacePodGrid({
   return (
     <div className={styles.podGrid}>
       {rolloutPods.map((pod) => (
-        <ArgoCDPod key={pod.metadata.name} pod={pod} />
+        <ArgoCDPod
+          key={pod.metadata.name}
+          pod={pod}
+          lastWorkflowRevision={lastWorkflowRevision}
+        />
       ))}
     </div>
   );
@@ -84,8 +96,9 @@ function ArgoCDNamespacePodGrid({
 
 interface ArgoCDPodProps {
   pod: Pod;
+  lastWorkflowRevision: string | undefined;
 }
-function ArgoCDPod({ pod }: ArgoCDPodProps): JSX.Element {
+function ArgoCDPod({ pod, lastWorkflowRevision }: ArgoCDPodProps): JSX.Element {
   const { namespace, name: podName } = pod.metadata;
   const { phase: podPhase, containerStatuses } = pod.status;
   const numContainers = containerStatuses?.length ?? "-";
@@ -101,10 +114,20 @@ function ArgoCDPod({ pod }: ArgoCDPodProps): JSX.Element {
   switch (podPhase) {
     case PodPhases.Succeeded:
     case PodPhases.Running:
-      itemClassName = `${styles.podGridItem} ${styles.podGridSuccess}`;
-      iconComponent = (
-        <i className={`nf nf-fa-circle_check ${styles.podGridIcon}`} />
-      );
+      if (
+        lastWorkflowRevision == null ||
+        lastWorkflowRevision === pod.metadata.labels?.[POD_VERSION_LABEL_KEY]
+      ) {
+        itemClassName = `${styles.podGridItem} ${styles.podGridSuccess}`;
+        iconComponent = (
+          <i className={`nf nf-fa-circle_check ${styles.podGridIcon}`} />
+        );
+      } else {
+        itemClassName = `${styles.podGridItem} ${styles.podGridDrift}`;
+        iconComponent = (
+          <i className={`nf nf-fa-recycle ${styles.podGridIcon}`} />
+        );
+      }
       break;
     case PodPhases.Failed:
       itemClassName = `${styles.podGridItem} ${styles.podGridDanger}`;
