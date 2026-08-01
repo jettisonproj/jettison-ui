@@ -10,12 +10,10 @@ function getRolloutResource(
   if (application == null) {
     return null;
   }
-  const rolloutResources = [];
-  for (const resource of application.status.resources) {
-    if (resource.kind === ResourceKinds.Rollout) {
-      rolloutResources.push(resource);
-    }
-  }
+
+  const rolloutResources = application.status.resources.filter(
+    (resource) => resource.kind === ResourceKinds.Rollout,
+  );
   if (rolloutResources.length !== 1) {
     const { namespace, name } = application.metadata;
     throw new ApplicationUtilError(
