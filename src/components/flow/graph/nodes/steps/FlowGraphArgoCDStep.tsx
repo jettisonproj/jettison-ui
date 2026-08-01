@@ -8,14 +8,19 @@ import {
   FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
 import {
+  ArgoCDDeployingBadge,
   ArgoCDDriftBadge,
   ArgoCDFailingBadge,
   ArgoCDLiveBadge,
   ArgoCDNotFoundBadge,
   ArgoCDPausedBadge,
+  ArgoCDUnknownBadge,
 } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import { ResourceKinds } from "src/data/types/baseResourceTypes.ts";
+import {
+  HealthStatusCodes,
+  SyncStatusCodes,
+} from "src/data/types/applicationTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import { RolloutPhases } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -23,17 +28,15 @@ import {
   ApplicationsContext,
   RolloutsContext,
 } from "src/providers/provider.tsx";
+import { getRolloutResource } from "src/utils/applicationUtil.ts";
 import { getStepDetailsLink } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath, getRepoPathLink } from "src/utils/gitUtil.ts";
+import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
 import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 import {
   getLastWorkflowNodeForStep,
   getWorkflowRevision,
 } from "src/utils/workflowUtil.ts";
-
-const SYNCED_STATUS = "Synced";
-const HEALTHY_STATUS = "Healthy";
-const APP_VERSION_LABEL = "app.kubernetes.io/version";
 
 interface FlowGraphArgoCDStepProps {
   repoOrg: string;
@@ -95,22 +98,29 @@ function FlowGraphArgoCDStepStatus({
   workflowNode,
 }: FlowGraphArgoCDStepStatusProps): JSX.Element {
   //
-  // The UI will present the rollout and sync state separately
+  // The UI presents a combined status, surfacing the most relevant status
+  // across different resources (e.g. Rollout and Application) and fields
+  // (e.g. sync and health statuses)
+  //
   // Here are the different cases:
   //
-  // Case                                    | Rollout State | Sync State
+  // Case                                    | Final State
   // -----------------------------------------------------------
-  // application not loaded                  | Loading       | None
-  // rollout not loaded                      | Loading       | None
-  // application does not exist              | Not Found     | None
-  // rollout does not exist                  | Not Found     | None
-  //
-  // application health status bad           | Failing       | None
-  // rollout status bad                      | Failing       | None
-  // flow step is paused                     | None          | Paused
-  // application sync status bad             | None          | Drift
-  // multiple rollouts different versions    | None          | Drift
-  // rollout version doesn't match workflow  | None          | Drift
+  // application or rollout not loaded       | Loading
+  // application not found                   | Not Found
+  // application rollout not found           | Not Found
+  // rollout does not exist                  | Not Found
+  // application resource missing            | Not Found
+  // rollout status degraded                 | Failing
+  // application health status degraded      | Failing
+  // application out of sync                 | Drift
+  // rollout version missing                 | Drift
+  // rollout version mismatch                | Drift
+  // application sync disabled               | Paused
+  // application health status unknown       | Unknown
+  // application sync status unknown         | Unknown
+  // application and rollout healthy         | Live
+  // application and rollout deploying       | Deploying
   //
   const { repoUrl, repoPath } = step;
   const applications = useContext(ApplicationsContext);
@@ -128,155 +138,211 @@ function FlowGraphArgoCDStepStatus({
   if (application == null) {
     return (
       <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge stepDetailsLink={stepDetailsLink} />
+        <ArgoCDNotFoundBadge
+          stepDetailsLink={stepDetailsLink}
+          title={"Application not found"}
+        />
       </div>
     );
   }
 
-  let applicationHealthError;
-  let applicationSyncError;
-
-  let rolloutHealthError;
-  let rolloutSyncError;
-
-  let expectedRolloutVersion;
-  let rolloutMissing = false;
-
-  if (workflowNode != null) {
-    expectedRolloutVersion = getWorkflowRevision(
-      workflowNode.workflow.memo.parameterMap,
+  const rolloutResource = getRolloutResource(application);
+  if (rolloutResource == null) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDNotFoundBadge
+          stepDetailsLink={stepDetailsLink}
+          title={"Application rollout not found"}
+        />
+      </div>
     );
   }
 
-  const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
-  const { status: healthStatus } = application.status.health;
-  const { status: syncStatus } = application.status.sync;
-  if (healthStatus !== HEALTHY_STATUS) {
-    applicationHealthError = `ArgoCD health status is ${healthStatus}`;
-  } else if (syncStatus !== SYNCED_STATUS) {
-    applicationSyncError = `ArgoCD sync status is ${syncStatus}`;
+  const rollout = rollouts
+    .get(rolloutResource.namespace)
+    ?.get(rolloutResource.name);
+  if (rollout == null) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDNotFoundBadge
+          stepDetailsLink={stepDetailsLink}
+          title={"Rollout not found"}
+        />
+      </div>
+    );
   }
 
-  for (const resource of application.status.resources) {
-    if (resource.kind === ResourceKinds.Rollout) {
-      const { namespace, name } = resource;
-      const rollout = rollouts.get(namespace)?.get(name);
-      if (rollout == null) {
-        rolloutMissing = true;
-        continue;
-      }
-      if (
-        rollout.status.phase !== RolloutPhases.Healthy &&
-        rollout.status.phase !== RolloutPhases.Paused
-      ) {
-        rolloutHealthError = `Rollout status is ${rollout.status.phase}`;
-      }
-      const rolloutVersion = rollout.metadata.labels?.[APP_VERSION_LABEL];
-      if (!rolloutVersion) {
-        rolloutSyncError = "Rollout is missing version label";
-      } else if (
-        expectedRolloutVersion != null &&
-        expectedRolloutVersion !== rolloutVersion
-      ) {
-        rolloutSyncError = "Rollout versions are inconsistent";
-      }
+  const applicationHealthStatus = application.status.health.status;
+  if (applicationHealthStatus === HealthStatusCodes.Missing) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDNotFoundBadge
+          stepDetailsLink={stepDetailsLink}
+          title={"Application resource is missing"}
+        />
+      </div>
+    );
+  }
 
-      expectedRolloutVersion ??= rolloutVersion;
+  const rolloutPhase = rollout.status.phase;
+  if (rolloutPhase === RolloutPhases.Degraded) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDFailingBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Rollout is ${RolloutPhases.Degraded}`}
+        />
+      </div>
+    );
+  }
+
+  if (applicationHealthStatus === HealthStatusCodes.Degraded) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDFailingBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Application health status is ${HealthStatusCodes.Degraded}`}
+        />
+      </div>
+    );
+  }
+
+  const applicationSyncStatus = application.status.sync.status;
+  if (applicationSyncStatus === SyncStatusCodes.OutOfSync) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDDriftBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Application sync status is ${SyncStatusCodes.OutOfSync}`}
+        />
+      </div>
+    );
+  }
+
+  const rolloutVersion = rollout.metadata.labels?.[APP_VERSION_LABEL];
+  if (rolloutVersion == null) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDDriftBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Rollout version label is missing: ${APP_VERSION_LABEL}`}
+        />
+      </div>
+    );
+  }
+
+  if (workflowNode != null) {
+    const expectedRolloutVersion = getWorkflowRevision(
+      workflowNode.workflow.memo.parameterMap,
+    );
+    if (expectedRolloutVersion !== rolloutVersion) {
+      return (
+        <div className={styles.nodeRowBlock}>
+          <ArgoCDDriftBadge
+            stepDetailsLink={stepDetailsLink}
+            title={`Expected version ${expectedRolloutVersion} but got ${rolloutVersion}`}
+          />
+        </div>
+      );
     }
+  }
+
+  const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
+  if (!autoSyncEnabled) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDPausedBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Pause Reason: ${String(step.pausedReason)}`}
+        />
+      </div>
+    );
+  }
+
+  if (applicationHealthStatus === HealthStatusCodes.Unknown) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDUnknownBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Application health status is ${HealthStatusCodes.Unknown}`}
+        />
+      </div>
+    );
+  }
+
+  if (applicationSyncStatus === SyncStatusCodes.Unknown) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDUnknownBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Application sync status is ${SyncStatusCodes.Unknown}`}
+        />
+      </div>
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (applicationSyncStatus !== SyncStatusCodes.Synced) {
+    applicationSyncStatus satisfies never;
+    console.log("unknown sync status");
+    console.log(applicationSyncStatus);
+    throw new FlowGraphArgoCDStepError("invalid sync status");
+  }
+
+  if (
+    rolloutPhase === RolloutPhases.Healthy &&
+    applicationHealthStatus === HealthStatusCodes.Healthy
+  ) {
+    return (
+      <div className={styles.nodeRowBlock}>
+        <ArgoCDLiveBadge stepDetailsLink={stepDetailsLink} />
+      </div>
+    );
+  }
+
+  if (
+    rolloutPhase !== RolloutPhases.Healthy &&
+    rolloutPhase !== RolloutPhases.Progressing &&
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    rolloutPhase !== RolloutPhases.Paused
+  ) {
+    // The "Paused" / "Suspended" statuses are currently expected to be temporary,
+    // so it is still considered to be deploying
+    rolloutPhase satisfies never;
+    console.log("unknown rollout phase");
+    console.log(rolloutPhase);
+    throw new FlowGraphArgoCDStepError("invalid rollout phase");
+  }
+
+  if (
+    applicationHealthStatus !== HealthStatusCodes.Healthy &&
+    applicationHealthStatus !== HealthStatusCodes.Progressing &&
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    applicationHealthStatus !== HealthStatusCodes.Suspended
+  ) {
+    // The "Paused" / "Suspended" statuses are currently expected to be temporary,
+    // so it is still considered to be deploying
+    applicationHealthStatus satisfies never;
+    console.log("unknown application health status");
+    console.log(applicationHealthStatus);
+    throw new FlowGraphArgoCDStepError("invalid application health status");
   }
 
   return (
     <div className={styles.nodeRowBlock}>
-      <FlowGraphArgoCDHealthBadge
+      <ArgoCDDeployingBadge
         stepDetailsLink={stepDetailsLink}
-        applicationHealthError={applicationHealthError}
-        rolloutHealthError={rolloutHealthError}
-        rolloutMissing={rolloutMissing}
-      />
-      <FlowGraphArgoCDSyncBadge
-        stepDetailsLink={stepDetailsLink}
-        applicationSyncError={applicationSyncError}
-        rolloutSyncError={rolloutSyncError}
-        pausedReason={step.pausedReason}
-        autoSyncEnabled={autoSyncEnabled}
+        title={`Rollout ${rolloutPhase}, Application ${applicationHealthStatus}`}
       />
     </div>
   );
 }
 
-interface FlowGraphArgoCDHealthBadgeProps {
-  stepDetailsLink: string;
-  applicationHealthError?: string;
-  rolloutHealthError?: string;
-  rolloutMissing: boolean;
-}
-function FlowGraphArgoCDHealthBadge({
-  stepDetailsLink,
-  applicationHealthError,
-  rolloutHealthError,
-  rolloutMissing,
-}: FlowGraphArgoCDHealthBadgeProps): JSX.Element {
-  if (rolloutHealthError != null) {
-    return (
-      <ArgoCDFailingBadge
-        stepDetailsLink={stepDetailsLink}
-        title={rolloutHealthError}
-      />
-    );
+class FlowGraphArgoCDStepError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
-  if (applicationHealthError != null) {
-    return (
-      <ArgoCDFailingBadge
-        stepDetailsLink={stepDetailsLink}
-        title={applicationHealthError}
-      />
-    );
-  }
-  if (rolloutMissing) {
-    return <ArgoCDNotFoundBadge stepDetailsLink={stepDetailsLink} />;
-  }
-  return <ArgoCDLiveBadge stepDetailsLink={stepDetailsLink} />;
-}
-
-interface FlowGraphArgoCDSyncBadgeProps {
-  stepDetailsLink: string;
-  applicationSyncError?: string;
-  rolloutSyncError?: string;
-  pausedReason?: string;
-  autoSyncEnabled: boolean;
-}
-function FlowGraphArgoCDSyncBadge({
-  stepDetailsLink,
-  applicationSyncError,
-  rolloutSyncError,
-  pausedReason,
-  autoSyncEnabled,
-}: FlowGraphArgoCDSyncBadgeProps): JSX.Element | null {
-  if (!autoSyncEnabled) {
-    return (
-      <ArgoCDPausedBadge
-        stepDetailsLink={stepDetailsLink}
-        title={pausedReason}
-      />
-    );
-  }
-  if (applicationSyncError != null) {
-    return (
-      <ArgoCDDriftBadge
-        stepDetailsLink={stepDetailsLink}
-        title={applicationSyncError}
-      />
-    );
-  }
-  if (rolloutSyncError != null) {
-    return (
-      <ArgoCDDriftBadge
-        stepDetailsLink={stepDetailsLink}
-        title={rolloutSyncError}
-      />
-    );
-  }
-  return null;
 }
 
 export { FlowGraphArgoCDStep };

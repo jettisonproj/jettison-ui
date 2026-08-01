@@ -5,14 +5,15 @@ import styles from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.m
 
 interface ArgoCDBadgeProps {
   stepDetailsLink: string;
-  title?: string;
+  title: string;
 }
 
 function ArgoCDNotFoundBadge({
   stepDetailsLink,
+  title,
 }: ArgoCDBadgeProps): JSX.Element {
   return (
-    <Link className={styles.failingBadge} to={stepDetailsLink}>
+    <Link className={styles.failingBadge} to={stepDetailsLink} title={title}>
       <i className={`nf nf-fa-circle_xmark ${styles.notFoundIcon}`} />
       <div className={styles.notFoundBadgeText}>Resource Not Found</div>
     </Link>
@@ -32,7 +33,12 @@ function ArgoCDFailingBadge({
   );
 }
 
-function ArgoCDLiveBadge({ stepDetailsLink }: ArgoCDBadgeProps): JSX.Element {
+interface ArgoCDLiveBadgeProps {
+  stepDetailsLink: string;
+}
+function ArgoCDLiveBadge({
+  stepDetailsLink,
+}: ArgoCDLiveBadgeProps): JSX.Element {
   return (
     <Link to={stepDetailsLink} className={styles.liveBadge}>
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
@@ -55,6 +61,18 @@ function ArgoCDPausedBadge({
   );
 }
 
+function ArgoCDUnknownBadge({
+  stepDetailsLink,
+  title,
+}: ArgoCDBadgeProps): JSX.Element {
+  return (
+    <Link to={stepDetailsLink} className={styles.pausedBadge} title={title}>
+      <i className={`nf nf-fa-question_circle_o ${styles.notFoundIcon}`} />
+      <div className={styles.badgeText}>Unknown</div>
+    </Link>
+  );
+}
+
 function ArgoCDDriftBadge({
   stepDetailsLink,
   title,
@@ -68,10 +86,25 @@ function ArgoCDDriftBadge({
   );
 }
 
+function ArgoCDDeployingBadge({
+  stepDetailsLink,
+  title,
+}: ArgoCDBadgeProps): JSX.Element {
+  return (
+    <Link to={stepDetailsLink} className={styles.deployingBadge} title={title}>
+      <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
+      <div className={styles.deployingDotIcon}></div>
+      <div className={styles.badgeText}>Deploying</div>
+    </Link>
+  );
+}
+
 export {
+  ArgoCDDeployingBadge,
   ArgoCDDriftBadge,
   ArgoCDFailingBadge,
   ArgoCDLiveBadge,
   ArgoCDNotFoundBadge,
   ArgoCDPausedBadge,
+  ArgoCDUnknownBadge,
 };
