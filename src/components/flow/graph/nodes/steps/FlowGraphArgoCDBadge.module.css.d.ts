@@ -2,6 +2,8 @@ declare const styles: {
   readonly argocdBadge: string;
   readonly badgeText: string;
   readonly dotIcon: string;
+  readonly deployingBadge: string;
+  readonly deployingDotIcon: string;
   readonly driftBadge: string;
   readonly driftDotIcon: string;
   readonly failingBadge: string;

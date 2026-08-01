@@ -10,9 +10,9 @@ import {
   ResourceSubscriptionTypes,
 } from "src/providers/flowWebSocket.ts";
 import { FlowWebSocketContext, PodsContext } from "src/providers/provider.tsx";
+import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
 
-const POD_APP_LABEL_KEY = "app";
-const POD_VERSION_LABEL_KEY = "app.kubernetes.io/version";
+const POD_APP_LABEL = "app";
 
 interface ArgoCDPodGridProps {
   rolloutResource: ApplicationStatusResource | null;
@@ -67,8 +67,7 @@ function ArgoCDNamespacePodGrid({
       return null;
     }
     return Array.from(namespacePods.values()).filter(
-      (pod) =>
-        pod.metadata.labels?.[POD_APP_LABEL_KEY] === rolloutResource.name,
+      (pod) => pod.metadata.labels?.[POD_APP_LABEL] === rolloutResource.name,
     );
   }, [namespacePods, rolloutResource.name]);
 
@@ -116,7 +115,7 @@ function ArgoCDPod({ pod, lastWorkflowRevision }: ArgoCDPodProps): JSX.Element {
     case PodPhases.Running:
       if (
         lastWorkflowRevision == null ||
-        lastWorkflowRevision === pod.metadata.labels?.[POD_VERSION_LABEL_KEY]
+        lastWorkflowRevision === pod.metadata.labels?.[APP_VERSION_LABEL]
       ) {
         itemClassName = `${styles.podGridItem} ${styles.podGridSuccess}`;
         iconComponent = (

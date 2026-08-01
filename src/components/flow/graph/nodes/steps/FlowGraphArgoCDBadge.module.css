@@ -76,6 +76,20 @@
   background-color: var(--argocd-badge-health-color);
 }
 
+.deployingBadge {
+  composes: argocdBadge;
+
+  background-color: var(--history-grid-running-bg);
+  border: 1px solid var(--history-grid-running-border);
+  color: var(--history-grid-running-color);
+}
+
+.deployingDotIcon {
+  composes: dotIcon;
+
+  background-color: var(--history-grid-selection-border);
+}
+
 .driftBadge {
   composes: argocdBadge;
 
