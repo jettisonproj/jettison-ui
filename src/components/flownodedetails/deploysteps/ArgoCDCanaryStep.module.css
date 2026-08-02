@@ -44,8 +44,8 @@
 }
 
 .canaryStepLine {
-  height: 40px;
   width: 4px;
+  flex: 1 1 40px;
   background-color: var(--separator-color);
   border-radius: 5px;
 }
