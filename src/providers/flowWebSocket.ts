@@ -34,6 +34,8 @@ class FlowWebSocket {
   }
 
   send(flowMessage: FlowMessage): void {
+    console.log("--> send flowWebSocket message");
+    console.log(flowMessage);
     this.#websocket.send(JSON.stringify(flowMessage));
   }
 }

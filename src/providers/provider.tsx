@@ -81,9 +81,9 @@ function Provider({ children }: ProviderProps): JSX.Element {
   useEffect(() => {
     flowWebSocket.setOnMessage((ev: MessageEvent<string>) => {
       try {
-        console.log("got flowWebSocket resource list");
+        console.log("<-- recv flowWebSocket resource items");
         const resourceList = JSON.parse(ev.data) as ResourceList;
-        console.log(resourceList);
+        console.log(resourceList.items);
 
         const resourceEventHandler = new ResourceEventHandler(resourceList);
 
