@@ -80,6 +80,6 @@ interface ApplicationStatusHealth {
   status: HealthStatusCode;
 }
 
-export type { Application, ApplicationStatusResource };
+export type { Application, ApplicationStatusResource, HealthStatusCode };
 
 export { HealthStatusCodes, SyncStatusCodes };
