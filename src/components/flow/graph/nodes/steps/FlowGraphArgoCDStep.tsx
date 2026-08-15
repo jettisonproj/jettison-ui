@@ -78,11 +78,13 @@ function FlowGraphArgoCDStep({
         <i className={`nf nf-fa-layer_group ${styles.infraIcon}`} />
         <span className={styles.nodeTextSub}>Infrastructure</span>
       </a>
-      <FlowGraphArgoCDStepStatus
-        step={step}
-        stepDetailsLink={stepDetailsLink}
-        workflowNode={workflowNode}
-      />
+      <div className={styles.nodeRowBlock}>
+        <FlowGraphArgoCDStepStatus
+          step={step}
+          stepDetailsLink={stepDetailsLink}
+          workflowNode={workflowNode}
+        />
+      </div>
     </FlowGraphNode>
   );
 }
@@ -127,34 +129,26 @@ function FlowGraphArgoCDStepStatus({
   const rollouts = useContext(RolloutsContext);
 
   if (applications == null || rollouts == null) {
-    return (
-      <div className={styles.nodeRowBlock}>
-        <LoadIcon />
-      </div>
-    );
+    return <LoadIcon />;
   }
 
   const application = applications.get(repoUrl)?.get(repoPath);
   if (application == null) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge
-          stepDetailsLink={stepDetailsLink}
-          title={"Application not found"}
-        />
-      </div>
+      <ArgoCDNotFoundBadge
+        stepDetailsLink={stepDetailsLink}
+        title={"Application not found"}
+      />
     );
   }
 
   const rolloutResource = getRolloutResource(application);
   if (rolloutResource == null) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge
-          stepDetailsLink={stepDetailsLink}
-          title={"Application rollout not found"}
-        />
-      </div>
+      <ArgoCDNotFoundBadge
+        stepDetailsLink={stepDetailsLink}
+        title={"Application rollout not found"}
+      />
     );
   }
 
@@ -163,71 +157,59 @@ function FlowGraphArgoCDStepStatus({
     ?.get(rolloutResource.name);
   if (rollout == null) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge
-          stepDetailsLink={stepDetailsLink}
-          title={"Rollout not found"}
-        />
-      </div>
+      <ArgoCDNotFoundBadge
+        stepDetailsLink={stepDetailsLink}
+        title={"Rollout not found"}
+      />
     );
   }
 
   const applicationHealthStatus = application.status.health.status;
   if (applicationHealthStatus === HealthStatusCodes.Missing) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDNotFoundBadge
-          stepDetailsLink={stepDetailsLink}
-          title={"Application resource is missing"}
-        />
-      </div>
+      <ArgoCDNotFoundBadge
+        stepDetailsLink={stepDetailsLink}
+        title={"Application resource is missing"}
+      />
     );
   }
 
   const rolloutPhase = rollout.status.phase;
   if (rolloutPhase === RolloutPhases.Degraded) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDFailingBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Rollout is ${RolloutPhases.Degraded}`}
-        />
-      </div>
+      <ArgoCDFailingBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Rollout is ${RolloutPhases.Degraded}`}
+      />
     );
   }
 
   if (applicationHealthStatus === HealthStatusCodes.Degraded) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDFailingBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Application health status is ${HealthStatusCodes.Degraded}`}
-        />
-      </div>
+      <ArgoCDFailingBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Application health status is ${HealthStatusCodes.Degraded}`}
+      />
     );
   }
 
   const applicationSyncStatus = application.status.sync.status;
   if (applicationSyncStatus === SyncStatusCodes.OutOfSync) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDDriftBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Application sync status is ${SyncStatusCodes.OutOfSync}`}
-        />
-      </div>
+      <ArgoCDDriftBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Application sync status is ${SyncStatusCodes.OutOfSync}`}
+      />
     );
   }
 
   const rolloutVersion = rollout.metadata.labels?.[APP_VERSION_LABEL];
   if (rolloutVersion == null) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDDriftBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Rollout version label is missing: ${APP_VERSION_LABEL}`}
-        />
-      </div>
+      <ArgoCDDriftBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Rollout version label is missing: ${APP_VERSION_LABEL}`}
+      />
     );
   }
 
@@ -237,12 +219,10 @@ function FlowGraphArgoCDStepStatus({
     );
     if (expectedRolloutVersion !== rolloutVersion) {
       return (
-        <div className={styles.nodeRowBlock}>
-          <ArgoCDDriftBadge
-            stepDetailsLink={stepDetailsLink}
-            title={`Expected version ${expectedRolloutVersion} but got ${rolloutVersion}`}
-          />
-        </div>
+        <ArgoCDDriftBadge
+          stepDetailsLink={stepDetailsLink}
+          title={`Expected version ${expectedRolloutVersion} but got ${rolloutVersion}`}
+        />
       );
     }
   }
@@ -250,34 +230,28 @@ function FlowGraphArgoCDStepStatus({
   const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
   if (!autoSyncEnabled) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDPausedBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Pause Reason: ${String(step.pausedReason)}`}
-        />
-      </div>
+      <ArgoCDPausedBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Pause Reason: ${String(step.pausedReason)}`}
+      />
     );
   }
 
   if (applicationHealthStatus === HealthStatusCodes.Unknown) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDUnknownBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Application health status is ${HealthStatusCodes.Unknown}`}
-        />
-      </div>
+      <ArgoCDUnknownBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Application health status is ${HealthStatusCodes.Unknown}`}
+      />
     );
   }
 
   if (applicationSyncStatus === SyncStatusCodes.Unknown) {
     return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDUnknownBadge
-          stepDetailsLink={stepDetailsLink}
-          title={`Application sync status is ${SyncStatusCodes.Unknown}`}
-        />
-      </div>
+      <ArgoCDUnknownBadge
+        stepDetailsLink={stepDetailsLink}
+        title={`Application sync status is ${SyncStatusCodes.Unknown}`}
+      />
     );
   }
 
@@ -293,11 +267,7 @@ function FlowGraphArgoCDStepStatus({
     rolloutPhase === RolloutPhases.Healthy &&
     applicationHealthStatus === HealthStatusCodes.Healthy
   ) {
-    return (
-      <div className={styles.nodeRowBlock}>
-        <ArgoCDLiveBadge stepDetailsLink={stepDetailsLink} />
-      </div>
-    );
+    return <ArgoCDLiveBadge stepDetailsLink={stepDetailsLink} />;
   }
 
   if (
@@ -329,12 +299,10 @@ function FlowGraphArgoCDStepStatus({
   }
 
   return (
-    <div className={styles.nodeRowBlock}>
-      <ArgoCDDeployingBadge
-        stepDetailsLink={stepDetailsLink}
-        title={`Rollout ${rolloutPhase}, Application ${applicationHealthStatus}`}
-      />
-    </div>
+    <ArgoCDDeployingBadge
+      stepDetailsLink={stepDetailsLink}
+      title={`Rollout ${rolloutPhase}, Application ${applicationHealthStatus}`}
+    />
   );
 }
 
