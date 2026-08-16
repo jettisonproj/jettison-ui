@@ -40,6 +40,10 @@
   align-items: center;
 }
 
+.historyItemBadge {
+  margin-right: 8px;
+}
+
 .historyMenuIcon {
   color: var(--graph-text-color);
   font-size: 16px;

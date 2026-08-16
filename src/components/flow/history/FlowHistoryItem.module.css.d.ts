@@ -15,6 +15,7 @@ declare const styles: {
   readonly historySubtitleText: string;
   readonly historyTitle: string;
   readonly historyTitleHeading: string;
+  readonly historyItemBadge: string;
 };
 
 export = styles;
