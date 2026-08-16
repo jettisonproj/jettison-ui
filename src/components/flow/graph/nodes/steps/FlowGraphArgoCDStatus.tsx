@@ -1,10 +1,7 @@
 import type { JSX } from "react";
-import { useContext } from "react";
 
-import {
-  ArgoCDStatuses,
-  getArgoCDStatus,
-} from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import type { ArgoCDStatusResponse } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import { ArgoCDStatuses } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
 import {
   ArgoCDDeployingBadge,
   ArgoCDDriftBadge,
@@ -15,33 +12,15 @@ import {
   ArgoCDUnknownBadge,
 } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDBadge.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
-import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
-import {
-  ApplicationsContext,
-  RolloutsContext,
-} from "src/providers/provider.tsx";
-import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 
 interface FlowGraphArgoCDStatusProps {
-  step: ArgoCDStep;
   stepDetailsLink: string;
-  workflowNode: WorkflowNode | null;
+  argocdStatusResponse: ArgoCDStatusResponse;
 }
 function FlowGraphArgoCDStatus({
-  step,
   stepDetailsLink,
-  workflowNode,
+  argocdStatusResponse,
 }: FlowGraphArgoCDStatusProps): JSX.Element {
-  const applications = useContext(ApplicationsContext);
-  const rollouts = useContext(RolloutsContext);
-
-  const argocdStatusResponse = getArgoCDStatus(
-    step,
-    workflowNode,
-    applications,
-    rollouts,
-  );
-
   const { argocdStatus, argocdTitle } = argocdStatusResponse;
 
   switch (argocdStatus) {
