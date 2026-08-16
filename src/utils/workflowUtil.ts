@@ -201,39 +201,6 @@ function getTriggerDisplayNameFromEventType(eventType: string): string {
   }
 }
 
-function getLastWorkflow(
-  workflows: Map<string, Workflow> | null | undefined,
-): Workflow | null | undefined {
-  if (workflows === null) {
-    return null;
-  }
-  if (workflows === undefined) {
-    return undefined;
-  }
-
-  let lastWorkflow: Workflow | undefined = undefined;
-  for (const workflow of workflows.values()) {
-    const { startedAt } = workflow.memo;
-    if (startedAt == null) {
-      return workflow;
-    }
-    if (lastWorkflow == null) {
-      lastWorkflow = workflow;
-    } else {
-      const lastWorkflowStartedAt = lastWorkflow.memo.startedAt;
-      if (lastWorkflowStartedAt == null) {
-        throw new InvalidLastWorkflowError(
-          "invalid state while getting last workflow: startedAt was undefined",
-        );
-      }
-      if (startedAt > lastWorkflowStartedAt) {
-        lastWorkflow = workflow;
-      }
-    }
-  }
-  return lastWorkflow;
-}
-
 function getLastWorkflowNodeForStep(
   step: Step,
   workflows: Workflow[],
@@ -386,13 +353,6 @@ class InvalidNodeError extends Error {
   }
 }
 
-class InvalidLastWorkflowError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
 export {
   doesWorkflowExecuteNode,
   doesWorkflowExecuteTriggerNode,
@@ -400,7 +360,6 @@ export {
   EXIT_NODE_SUFFIX,
   getArtifactDownloadUrl,
   getArtifactUiUrl,
-  getLastWorkflow,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
   getMemoResourcePath,
