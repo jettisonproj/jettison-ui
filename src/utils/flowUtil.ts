@@ -81,24 +81,19 @@ function isPullRequestTrigger(trigger: Trigger): boolean {
   }
 }
 
-function getPushPrWorkflows(
+function getPushPrFlows(
   flows: Map<string, PushPrFlows> | null,
-  workflows: Map<string, Map<string, Map<string, Workflow>>> | null,
   repoOrgName: string,
-  repoOrg: string,
-): [
-  Map<string, Workflow> | null | undefined,
-  Map<string, Workflow> | null | undefined,
-] {
-  if (flows == null || workflows == null) {
-    // The flows or workflows have not yet loaded
-    return [null, null];
+): [Flow, Flow] | null {
+  if (flows == null) {
+    // The flows have not yet loaded
+    return null;
   }
 
   const pushPrFlows = flows.get(repoOrgName);
   if (pushPrFlows == null) {
     throw new FlowUtilError(
-      `Unexpected flow repo when looking up workflows: ${repoOrgName}`,
+      `Unexpected repo when looking up flows: ${repoOrgName}`,
     );
   }
 
@@ -107,15 +102,33 @@ function getPushPrWorkflows(
 
   if (pushFlow == null) {
     throw new FlowUtilError(
-      `Empty push flow when looking up workflows: ${repoOrgName}`,
+      `Empty push flow when looking up repo: ${repoOrgName}`,
     );
   }
 
   if (prFlow == null) {
     throw new FlowUtilError(
-      `Empty PR flow when looking up workflows: ${repoOrgName}`,
+      `Empty PR flow when looking up repo: ${repoOrgName}`,
     );
   }
+
+  return [pushFlow, prFlow];
+}
+
+function getPushPrWorkflows(
+  pushPrFlows: [Flow, Flow] | null,
+  workflows: Map<string, Map<string, Map<string, Workflow>>> | null,
+  repoOrg: string,
+): [
+  Map<string, Workflow> | null | undefined,
+  Map<string, Workflow> | null | undefined,
+] {
+  if (pushPrFlows == null || workflows == null) {
+    // The flows or workflows have not yet loaded
+    return [null, null];
+  }
+
+  const [pushFlow, prFlow] = pushPrFlows;
 
   // The repoOrg and namespace are expected to match
   const repoOrgWorkflows = workflows.get(repoOrg);
@@ -141,6 +154,7 @@ export {
   BUILD_DISPLAY_NAME,
   FlowUtilError,
   getFlowTrigger,
+  getPushPrFlows,
   getPushPrWorkflows,
   getStepDetailsLink,
   getTriggerDetailsLink,

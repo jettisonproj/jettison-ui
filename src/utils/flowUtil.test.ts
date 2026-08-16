@@ -1,5 +1,6 @@
 import { assert, describe, it } from "vitest";
 
+import type { Flow } from "src/data/types/flowTypes.ts";
 import { StepSources, TriggerSources } from "src/data/types/flowTypes.ts";
 import {
   FlowUtilError,
@@ -160,7 +161,6 @@ describe("getPushPrWorkflows", () => {
     const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
       flows,
       workflows,
-      "repoOrg/repoName",
       "repoOrg",
     );
 
@@ -169,13 +169,12 @@ describe("getPushPrWorkflows", () => {
   });
 
   it("returns null if workflows are still loading", () => {
-    const flows = new Map();
+    const flow = getTestFlow({});
     const workflows = null;
 
     const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
-      flows,
+      [flow, flow],
       workflows,
-      "repoOrg/repoName",
       "repoOrg",
     );
 
@@ -183,58 +182,17 @@ describe("getPushPrWorkflows", () => {
     assert.isNull(prWorkflows);
   });
 
-  it("throws when the flow for the repo is not found", () => {
-    const flows = new Map();
-    const workflows = new Map();
-
-    assert.throws(
-      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
-      FlowUtilError,
-      "Unexpected flow repo when looking up workflows: repoOrg/repoName",
-    );
-  });
-
-  it("throws when the push flow for the repo is not found", () => {
-    const flows = new Map();
-    flows.set("repoOrg/repoName", {});
-
-    const workflows = new Map();
-
-    assert.throws(
-      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
-      FlowUtilError,
-      "Empty push flow when looking up workflows: repoOrg/repoName",
-    );
-  });
-
-  it("throws when the pr flow for the repo is not found", () => {
-    const flows = new Map();
-    flows.set("repoOrg/repoName", {
-      pushFlow: getTestFlow({}),
-    });
-
-    const workflows = new Map();
-
-    assert.throws(
-      () => getPushPrWorkflows(flows, workflows, "repoOrg/repoName", "repoOrg"),
-      FlowUtilError,
-      "Empty PR flow when looking up workflows: repoOrg/repoName",
-    );
-  });
-
   it("returns undefined if workflows are empty", () => {
-    const flows = new Map();
-    flows.set("repoOrg/repoName", {
-      pushFlow: getTestFlow({ flowName: "test-push-flow" }),
-      prFlow: getTestFlow({ flowName: "test-pr-flow" }),
-    });
+    const flows: [Flow, Flow] = [
+      getTestFlow({ flowName: "test-push-flow" }),
+      getTestFlow({ flowName: "test-pr-flow" }),
+    ];
 
     const workflows = new Map();
 
     const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
       flows,
       workflows,
-      "repoOrg/repoName",
       "repoOrg",
     );
 
@@ -243,11 +201,10 @@ describe("getPushPrWorkflows", () => {
   });
 
   it("returns the workflows when available", () => {
-    const testFlows = new Map();
-    testFlows.set("repoOrg/repoName", {
-      pushFlow: getTestFlow({ flowName: "test-push-flow" }),
-      prFlow: getTestFlow({ flowName: "test-pr-flow" }),
-    });
+    const testFlows: [Flow, Flow] = [
+      getTestFlow({ flowName: "test-push-flow" }),
+      getTestFlow({ flowName: "test-pr-flow" }),
+    ];
 
     const testPushWorkflow = getTestWorkflow({
       workflowName: "test-push-workflow",
@@ -271,7 +228,6 @@ describe("getPushPrWorkflows", () => {
     const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
       testFlows,
       testWorkflows,
-      "repoOrg/repoName",
       "repoOrg",
     );
 
