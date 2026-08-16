@@ -7,9 +7,9 @@ import {
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import { RolloutPhases } from "src/data/types/rolloutTypes.ts";
+import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { getRolloutResource } from "src/utils/applicationUtil.ts";
 import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
-import type { WorkflowNode } from "src/utils/workflowUtil.ts";
 import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 
 //
@@ -64,7 +64,7 @@ interface ArgoCDStatusResponse {
 
 function getArgoCDStatus(
   step: ArgoCDStep,
-  workflowNode: WorkflowNode | null,
+  workflow: Workflow | undefined,
   applications: Map<string, Map<string, Application>> | null,
   rollouts: Map<string, Map<string, Rollout>> | null,
 ): ArgoCDStatusResponse {
@@ -142,9 +142,9 @@ function getArgoCDStatus(
     };
   }
 
-  if (workflowNode != null) {
+  if (workflow != null) {
     const expectedRolloutVersion = getWorkflowRevision(
-      workflowNode.workflow.memo.parameterMap,
+      workflow.memo.parameterMap,
     );
     if (expectedRolloutVersion !== rolloutVersion) {
       return {
@@ -236,3 +236,4 @@ class ArgoCDStatusUtilError extends Error {
 }
 
 export { ArgoCDStatuses, getArgoCDStatus };
+export type { ArgoCDStatusResponse };
