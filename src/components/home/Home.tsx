@@ -19,7 +19,7 @@ import {
   WorkflowsContext,
 } from "src/providers/provider.tsx";
 import { routes } from "src/routes.ts";
-import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
+import { getPushPrFlows, getPushPrWorkflows } from "src/utils/flowUtil.ts";
 import { getRepoOrgAndName } from "src/utils/gitUtil.ts";
 
 function Home(): JSX.Element {
@@ -101,10 +101,11 @@ function RecentRepos({ flows, workflows }: RecentRepoProps): JSX.Element {
       <h2 className={styles.sectionTitle}>Recent Repos</h2>
       {recentRepos.map((recentRepo) => {
         const [repoOrg, repoName] = getRepoOrgAndName(recentRepo);
+
+        const pushPrFlows = getPushPrFlows(flows, recentRepo);
         const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
-          flows,
+          pushPrFlows,
           workflows,
-          recentRepo,
           repoOrg,
         );
 
@@ -113,6 +114,7 @@ function RecentRepos({ flows, workflows }: RecentRepoProps): JSX.Element {
             key={recentRepo}
             repoOrg={repoOrg}
             repoName={repoName}
+            pushFlow={pushPrFlows ? pushPrFlows[0] : pushPrFlows}
             pushWorkflows={pushWorkflows}
             prWorkflows={prWorkflows}
           />

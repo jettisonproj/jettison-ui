@@ -6,7 +6,7 @@ import { ReposNavHeader } from "src/components/header/NavHeader.tsx";
 import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 import { Repo } from "src/components/repos/Repo.tsx";
 import { FlowsContext, WorkflowsContext } from "src/providers/provider.tsx";
-import { getPushPrWorkflows } from "src/utils/flowUtil.ts";
+import { getPushPrFlows, getPushPrWorkflows } from "src/utils/flowUtil.ts";
 import { getRepoOrgAndName, sortByRepoName } from "src/utils/gitUtil.ts";
 
 function Repos(): JSX.Element {
@@ -31,10 +31,10 @@ function ReposList(): JSX.Element | JSX.Element[] {
     .sort(sortByRepoName)
     .map((repoOrgName) => {
       const [repoOrg, repoName] = getRepoOrgAndName(repoOrgName);
+      const pushPrFlows = getPushPrFlows(flows, repoOrgName);
       const [pushWorkflows, prWorkflows] = getPushPrWorkflows(
-        flows,
+        pushPrFlows,
         workflows,
-        repoOrgName,
         repoOrg,
       );
 
@@ -43,6 +43,7 @@ function ReposList(): JSX.Element | JSX.Element[] {
           key={repoOrgName}
           repoOrg={repoOrg}
           repoName={repoName}
+          pushFlow={pushPrFlows ? pushPrFlows[0] : pushPrFlows}
           pushWorkflows={pushWorkflows}
           prWorkflows={prWorkflows}
         />
