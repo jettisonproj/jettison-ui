@@ -90,6 +90,7 @@ function FlowGraphArgoCDStatusRow({
   return (
     <div className={styles.nodeRowBlock}>
       <FlowGraphArgoCDStatus
+        className={styles.argocdStepBadge}
         stepDetailsLink={stepDetailsLink}
         argocdStatusResponse={argocdStatusResponse}
       />

@@ -1,5 +1,4 @@
 .argocdBadge {
-  margin-top: 5px;
   padding: 3px 10px;
   display: flex;
   align-items: center;
@@ -8,7 +7,6 @@
   font-weight: bolder;
   font-size: 12px;
   letter-spacing: 0.5px;
-  border-radius: 5px;
 }
 
 .argocdBadge:hover {

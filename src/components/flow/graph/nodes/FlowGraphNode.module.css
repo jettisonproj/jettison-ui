@@ -171,3 +171,8 @@
 .pendingIcon {
   font-size: 12px;
 }
+
+.argocdStepBadge {
+  margin-top: 5px;
+  border-radius: 5px;
+}
