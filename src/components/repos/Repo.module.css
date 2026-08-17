@@ -45,6 +45,26 @@
   text-decoration: underline;
 }
 
+.repoBadges {
+  display: flex;
+}
+
+.repoHistoryStatusBadge {
+  margin-left: 8px;
+}
+
+.repoResourceStatusBadge {
+  /* For the repo page, align the the workflow status theme */
+  border-radius: 8px;
+  background-color: var(--status-badge-bg-color);
+  border: 1px solid var(--status-badge-border-color);
+}
+
+.repoResourceStatusBadgeText {
+  /* For the repo page, align the the workflow status theme */
+  color: var(--status-badge-text-color);
+}
+
 /* Message Row */
 .repoMessage {
   min-width: var(--content-width);
