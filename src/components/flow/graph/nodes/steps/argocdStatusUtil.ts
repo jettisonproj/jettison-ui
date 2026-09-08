@@ -158,7 +158,7 @@ function getArgoCDStatusResult(
   if (!autoSyncEnabled) {
     return {
       argocdStatus: ArgoCDStatuses.ApplicationSyncDisabled,
-      argocdTitle: `Pause Reason: ${String(step.pausedReason)}`,
+      argocdTitle: `Pause Reason: ${String(step.pauseReason)}`,
     };
   }
 
