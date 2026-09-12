@@ -142,7 +142,7 @@ function ArgoCDDriftBadge({
     >
       <i className={`nf nf-oct-pulse ${styles.pulseIcon}`} />
       <div className={styles.driftDotIcon}></div>
-      <div className={badgeTextClassName}>Resource Drifted</div>
+      <div className={badgeTextClassName}>Drifted</div>
     </Link>
   );
 }
