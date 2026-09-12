@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import type { ArgoCDStatusResponse } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import type { ArgoCDStatusResult } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
 import { ArgoCDStatuses } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
 import {
   ArgoCDDeployingBadge,
@@ -16,16 +16,16 @@ import { LoadIcon } from "src/components/icons/LoadIcon.tsx";
 interface FlowGraphArgoCDStatusProps {
   className: string;
   stepDetailsLink: string;
-  argocdStatusResponse: ArgoCDStatusResponse;
+  argocdStatusResult: ArgoCDStatusResult;
   textClassName?: string;
 }
 function FlowGraphArgoCDStatus({
   className,
   stepDetailsLink,
-  argocdStatusResponse,
+  argocdStatusResult,
   textClassName,
 }: FlowGraphArgoCDStatusProps): JSX.Element {
-  const { argocdStatus, argocdTitle } = argocdStatusResponse;
+  const { argocdStatus, argocdTitle } = argocdStatusResult;
 
   switch (argocdStatus) {
     case ArgoCDStatuses.Loading:

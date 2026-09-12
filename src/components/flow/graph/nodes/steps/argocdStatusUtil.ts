@@ -57,17 +57,17 @@ const ArgoCDStatuses = {
 
 type ArgoCDStatus = (typeof ArgoCDStatuses)[keyof typeof ArgoCDStatuses];
 
-interface ArgoCDStatusResponse {
+interface ArgoCDStatusResult {
   argocdStatus: ArgoCDStatus;
   argocdTitle: string;
 }
 
-function getArgoCDStatus(
+function getArgoCDStatusResult(
   step: ArgoCDStep,
   workflow: Workflow | undefined,
   applications: Map<string, Map<string, Application>> | null,
   rollouts: Map<string, Map<string, Rollout>> | null,
-): ArgoCDStatusResponse {
+): ArgoCDStatusResult {
   const { repoUrl, repoPath } = step;
 
   if (applications == null || rollouts == null) {
@@ -235,5 +235,5 @@ class ArgoCDStatusUtilError extends Error {
   }
 }
 
-export { ArgoCDStatuses, getArgoCDStatus };
-export type { ArgoCDStatusResponse };
+export { ArgoCDStatuses, getArgoCDStatusResult };
+export type { ArgoCDStatusResult };

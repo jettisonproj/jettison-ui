@@ -2,8 +2,8 @@ import type { JSX } from "react";
 import { useContext, useMemo } from "react";
 import { Link } from "react-router";
 
-import type { ArgoCDStatusResponse } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
-import { getArgoCDStatus } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import type { ArgoCDStatusResult } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import { getArgoCDStatusResult } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
 import { FlowGraphArgoCDStatus } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStatus.tsx";
 import {
   FlowHistoryActivePrWorkflows,
@@ -216,7 +216,7 @@ function RepoResourceStatus({
       false,
       argocdStep,
     );
-    const argocdStatusResponse = getArgoCDStatus(
+    const argocdStatusResult = getArgoCDStatusResult(
       argocdStep,
       getLastWorkflowNodeForStep(argocdStep, workflows)?.workflow,
       applications,
@@ -227,32 +227,33 @@ function RepoResourceStatus({
       <FlowGraphArgoCDStatus
         className={styles.repoResourceStatusBadge}
         stepDetailsLink={stepDetailsLink}
-        argocdStatusResponse={argocdStatusResponse}
+        argocdStatusResult={argocdStatusResult}
         textClassName={styles.repoResourceStatusBadgeText}
       />
     );
   }
 
   // If the flow contains multiple resources, link to the flow
-  const argocdStatusResponse = argocdSteps.reduce<
-    ArgoCDStatusResponse | undefined
-  >((prevStatus, currStep) => {
-    const currStatus = getArgoCDStatus(
-      currStep,
-      getLastWorkflowNodeForStep(currStep, workflows)?.workflow,
-      applications,
-      rollouts,
-    );
-    if (prevStatus == null) {
-      return currStatus;
-    }
-    if (currStatus.argocdStatus < prevStatus.argocdStatus) {
-      return currStatus;
-    }
-    return prevStatus;
-  }, undefined);
+  const argocdStatusResult = argocdSteps.reduce<ArgoCDStatusResult | undefined>(
+    (prevStatus, currStep) => {
+      const currStatus = getArgoCDStatusResult(
+        currStep,
+        getLastWorkflowNodeForStep(currStep, workflows)?.workflow,
+        applications,
+        rollouts,
+      );
+      if (prevStatus == null) {
+        return currStatus;
+      }
+      if (currStatus.argocdStatus < prevStatus.argocdStatus) {
+        return currStatus;
+      }
+      return prevStatus;
+    },
+    undefined,
+  );
 
-  if (argocdStatusResponse == null) {
+  if (argocdStatusResult == null) {
     throw new RepoError("failed to find argocd status for flow");
   }
 
@@ -260,7 +261,7 @@ function RepoResourceStatus({
     <FlowGraphArgoCDStatus
       className={styles.repoResourceStatusBadge}
       stepDetailsLink={pushFlowLink}
-      argocdStatusResponse={argocdStatusResponse}
+      argocdStatusResult={argocdStatusResult}
       textClassName={styles.repoResourceStatusBadgeText}
     />
   );

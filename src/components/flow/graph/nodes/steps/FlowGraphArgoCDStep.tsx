@@ -7,7 +7,7 @@ import {
   FlowGraphNode,
   FlowGraphNodeInfo,
 } from "src/components/flow/graph/nodes/FlowGraphNode.tsx";
-import { getArgoCDStatus } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
+import { getArgoCDStatusResult } from "src/components/flow/graph/nodes/steps/argocdStatusUtil.ts";
 import { FlowGraphArgoCDStatus } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStatus.tsx";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -81,7 +81,7 @@ function FlowGraphArgoCDStatusRow({
   const applications = useContext(ApplicationsContext);
   const rollouts = useContext(RolloutsContext);
 
-  const argocdStatusResponse = getArgoCDStatus(
+  const argocdStatusResult = getArgoCDStatusResult(
     step,
     workflow,
     applications,
@@ -92,7 +92,7 @@ function FlowGraphArgoCDStatusRow({
       <FlowGraphArgoCDStatus
         className={styles.argocdStepBadge}
         stepDetailsLink={stepDetailsLink}
-        argocdStatusResponse={argocdStatusResponse}
+        argocdStatusResult={argocdStatusResult}
       />
     </div>
   );
