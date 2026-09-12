@@ -54,14 +54,14 @@
 }
 
 .repoResourceStatusBadge {
-  /* For the repo page, align the the workflow status theme */
+  /* For the repo page, align the workflow status theme */
   border-radius: 8px;
   background-color: var(--status-badge-bg-color);
   border: 1px solid var(--status-badge-border-color);
 }
 
 .repoResourceStatusBadgeText {
-  /* For the repo page, align the the workflow status theme */
+  /* For the repo page, align the workflow status theme */
   color: var(--status-badge-text-color);
 }
 

@@ -34,8 +34,8 @@ import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 // application sync disabled               | 10            | Paused
 // application health status unknown       | 11            | Unknown
 // application sync status unknown         | 12            | Unknown
-// application and rollout healthy         | 13            | Live
-// application and rollout deploying       | 14            | Deploying
+// application and rollout deploying       | 13            | Deploying
+// application and rollout healthy         | 14            | Live
 //
 const ArgoCDStatuses = {
   Loading: 0,
@@ -51,8 +51,8 @@ const ArgoCDStatuses = {
   ApplicationSyncDisabled: 10,
   ApplicationHealthUnknown: 11,
   ApplicationSyncUnknown: 12,
-  Healthy: 13,
-  Deploying: 14,
+  Deploying: 13,
+  Healthy: 14,
 } as const;
 
 type ArgoCDStatus = (typeof ArgoCDStatuses)[keyof typeof ArgoCDStatuses];

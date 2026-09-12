@@ -53,7 +53,7 @@ function Repo({
       return null;
     }
     if (pushWorkflows === undefined) {
-      return null;
+      return undefined;
     }
     return Array.from(pushWorkflows.values()).sort(workflowCompareFn);
   }, [pushWorkflows]);
