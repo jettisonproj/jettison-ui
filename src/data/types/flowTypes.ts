@@ -51,7 +51,7 @@ interface ArgoCDStep extends BaseStep {
   repoUrl: string;
   repoPath: string;
   baseRef?: string;
-  pausedReason?: string;
+  pauseReason?: string;
 }
 
 type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
