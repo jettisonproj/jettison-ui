@@ -18,15 +18,17 @@ import {
 interface FlowHistoryStatusBadgeProps {
   isPrFlow: boolean;
   workflow: Workflow;
+  className: string;
 }
 function FlowHistoryStatusBadge({
   isPrFlow,
   workflow,
+  className,
 }: FlowHistoryStatusBadgeProps): JSX.Element {
   const { title, href, textClassName } = getStatusLinkData(isPrFlow, workflow);
   return (
     <a
-      className={styles.historyStatusBadge}
+      className={`${styles.historyStatusBadge} ${className}`}
       href={href}
       target="_blank"
       rel="noreferrer"

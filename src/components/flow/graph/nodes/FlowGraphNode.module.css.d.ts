@@ -24,6 +24,7 @@ declare const styles: {
   readonly prIcon: string;
   readonly prText: string;
   readonly userIcon: string;
+  readonly argocdStepBadge: string;
 };
 
 export = styles;

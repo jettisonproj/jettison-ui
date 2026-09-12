@@ -95,7 +95,11 @@ function FlowHistoryTitle({
   return (
     <div className={styles.historyTitle}>
       <div className={styles.historyTitleHeading}>
-        <FlowHistoryStatusBadge isPrFlow={isPrFlow} workflow={workflow} />
+        <FlowHistoryStatusBadge
+          isPrFlow={isPrFlow}
+          workflow={workflow}
+          className={styles.historyItemBadge}
+        />
         <FlowHistoryMessage isPrFlow={isPrFlow} workflow={workflow} />
       </div>
       <FlowHistoryMenu
