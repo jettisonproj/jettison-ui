@@ -19,6 +19,22 @@ interface WorkflowMetadata extends NamespacedMetadata {
 }
 
 interface WorkflowSpec {
+  templates: WorkflowTemplate[];
+  entrypoint: string;
+  arguments: WorkflowArguments;
+}
+
+interface WorkflowTemplate {
+  name: string;
+  dag?: WorkflowDagTemplate;
+}
+
+interface WorkflowDagTemplate {
+  tasks: WorkflowDagTask[];
+}
+
+interface WorkflowDagTask {
+  name: string;
   arguments: WorkflowArguments;
 }
 
@@ -93,6 +109,7 @@ interface WorkflowMemoStatusNode {
   duration?: string;
   parameterMap: Record<string, string>;
   outputMap: Record<string, string>;
+  templateParameterMap: Record<string, string>;
 }
 
 // SOT: https://pkg.go.dev/github.com/argoproj/argo-workflows/v3@v3.7.0/pkg/apis/workflow/v1alpha1#WorkflowPhase

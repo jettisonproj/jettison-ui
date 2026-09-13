@@ -11,6 +11,7 @@ import { getFlowTrigger, isPullRequestTrigger } from "src/utils/flowUtil.ts";
 import {
   EXIT_NODE_NAME,
   EXIT_NODE_SUFFIX,
+  getTemplateParameterMaps,
   isMemoizedNode,
   workflowMemoNodeCompareFn,
 } from "src/utils/workflowUtil.ts";
@@ -28,6 +29,11 @@ function memoizeWorkflow(workflow: Workflow): void {
   const nodes: Record<string, WorkflowMemoStatusNode> = {};
   const sortedNodes: WorkflowMemoStatusNode[] = [];
   if (workflow.status.nodes != null) {
+    // In case a node is skipped, the parameterMap may not be available
+    // Use templateParameterMap as a fallback in case the parameters
+    // still need to be rendered (e.g. resource-path for argocd graph node)
+    const templateParameterMaps = getTemplateParameterMaps(workflow);
+
     Object.values(workflow.status.nodes).forEach((node) => {
       const { type } = node;
 
@@ -35,7 +41,10 @@ function memoizeWorkflow(workflow: Workflow): void {
         return;
       }
 
-      memoizeWorkflowStatusNode(node);
+      memoizeWorkflowStatusNode(
+        node,
+        templateParameterMaps[node.displayName] ?? {},
+      );
 
       const memoNode = node.memo;
       nodes[memoNode.displayName] = memoNode;
@@ -81,7 +90,10 @@ function memoizeWorkflow(workflow: Workflow): void {
   }
 }
 
-function memoizeWorkflowStatusNode(node: WorkflowStatusNode): void {
+function memoizeWorkflowStatusNode(
+  node: WorkflowStatusNode,
+  templateParameterMap: Record<string, string>,
+): void {
   const { displayName, phase, startedAt, finishedAt, inputs, outputs } = node;
 
   const parameterMap: Record<string, string> = {};
@@ -104,6 +116,7 @@ function memoizeWorkflowStatusNode(node: WorkflowStatusNode): void {
     startedAt: startedAtDate,
     parameterMap,
     outputMap,
+    templateParameterMap,
   };
 
   if (finishedAt != null) {

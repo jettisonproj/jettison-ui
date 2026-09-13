@@ -27,6 +27,7 @@ function WorkflowGraphNode({
     case TemplateNames.GitHubCheckStart: {
       const triggerDisplayName = getNodeTriggerDisplayName(
         node.inputs?.parameters,
+        node.memo.templateParameterMap,
       );
       return (
         <FlowGraphNode
@@ -58,7 +59,10 @@ function WorkflowGraphNode({
       );
     }
     case TemplateNames.ArgoCD: {
-      const resourcePath = getNodeResourcePath(node.inputs?.parameters);
+      const resourcePath = getNodeResourcePath(
+        node.inputs?.parameters,
+        node.memo.templateParameterMap,
+      );
       return (
         <FlowGraphNode
           headerClass={className}

@@ -86,7 +86,10 @@ function getNodeTitleName(node: WorkflowMemoStatusNode): string {
   const { template } = node;
   switch (template) {
     case TemplateNames.GitHubCheckStart: {
-      return getMemoTriggerDisplayName(node.parameterMap);
+      return getMemoTriggerDisplayName(
+        node.parameterMap,
+        node.templateParameterMap,
+      );
     }
     case TemplateNames.DockerBuildTest: {
       return BUILD_DISPLAY_NAME;
@@ -95,7 +98,10 @@ function getNodeTitleName(node: WorkflowMemoStatusNode): string {
       return PUBLISH_DISPLAY_NAME;
     }
     case TemplateNames.ArgoCD: {
-      const resourcePath = getMemoResourcePath(node.parameterMap);
+      const resourcePath = getMemoResourcePath(
+        node.parameterMap,
+        node.templateParameterMap,
+      );
       return getDisplayRepoPath(resourcePath, resourcePath);
     }
     case TemplateNames.GitHubCheckComplete: {
