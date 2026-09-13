@@ -50,10 +50,11 @@ function getTestNode({
       startedAt: new Date(startedAt),
       parameterMap: {},
       outputMap: {},
+      templateParameterMap: {},
     },
     ...rest,
   };
-  memoizeWorkflowStatusNode(testWorkflowStatusNode);
+  memoizeWorkflowStatusNode(testWorkflowStatusNode, {});
   return testWorkflowStatusNode;
 }
 
@@ -86,7 +87,7 @@ function getTestWorkflow({
       name: workflowName,
       uid: workflowUid,
     },
-    spec: { arguments: { parameters: [] } },
+    spec: { entrypoint: "main", templates: [], arguments: { parameters: [] } },
     status: {
       phase: workflowPhase,
       nodes: testWorkflowNodes,

@@ -196,14 +196,14 @@ describe("getWorkflowRevisionNumber", () => {
 describe("getNodeDockerfilePath", () => {
   it("returns the dockerfile-path value from the parameter map", () => {
     assert.strictEqual(
-      getNodeDockerfilePath({ "dockerfile-path": "app/Dockerfile" }),
+      getNodeDockerfilePath({ "dockerfile-path": "app/Dockerfile" }, {}),
       "app/Dockerfile",
     );
   });
 
   it("throws when dockerfile-path is missing", () => {
     assert.throws(
-      () => getNodeDockerfilePath({}),
+      () => getNodeDockerfilePath({}, {}),
       InvalidNodeError,
       "did not find dockerfile-path in workflow parameter map",
     );
@@ -213,14 +213,14 @@ describe("getNodeDockerfilePath", () => {
 describe("getMemoResourcePath", () => {
   it("returns the resource-path value from the parameter map", () => {
     assert.strictEqual(
-      getMemoResourcePath({ "resource-path": "/deploy/app" }),
+      getMemoResourcePath({ "resource-path": "/deploy/app" }, {}),
       "/deploy/app",
     );
   });
 
   it("throws when resource-path is missing", () => {
     assert.throws(
-      () => getMemoResourcePath({}),
+      () => getMemoResourcePath({}, {}),
       InvalidNodeError,
       "did not find resource-path in workflow parameter map",
     );
@@ -230,21 +230,21 @@ describe("getMemoResourcePath", () => {
 describe("getMemoTriggerDisplayName", () => {
   it("returns PR display name for PR event type", () => {
     assert.strictEqual(
-      getMemoTriggerDisplayName({ "event-type": "PR" }),
+      getMemoTriggerDisplayName({ "event-type": "PR" }, {}),
       PR_DISPLAY_NAME,
     );
   });
 
   it("returns PUSH display name for commit event type", () => {
     assert.strictEqual(
-      getMemoTriggerDisplayName({ "event-type": "commit" }),
+      getMemoTriggerDisplayName({ "event-type": "commit" }, {}),
       PUSH_DISPLAY_NAME,
     );
   });
 
   it("throws for an unknown event type", () => {
     assert.throws(
-      () => getMemoTriggerDisplayName({ "event-type": "unknown" }),
+      () => getMemoTriggerDisplayName({ "event-type": "unknown" }, {}),
       InvalidNodeError,
       "invalid event type for node: unknown",
     );
@@ -252,7 +252,7 @@ describe("getMemoTriggerDisplayName", () => {
 
   it("throws when event-type is missing", () => {
     assert.throws(
-      () => getMemoTriggerDisplayName({}),
+      () => getMemoTriggerDisplayName({}, {}),
       InvalidNodeError,
       "did not find event-type in workflow parameter map",
     );
@@ -262,14 +262,17 @@ describe("getMemoTriggerDisplayName", () => {
 describe("getNodeResourcePath", () => {
   it("returns the resource-path value from the parameter array", () => {
     assert.strictEqual(
-      getNodeResourcePath([{ name: "resource-path", value: "/deploy/app" }]),
+      getNodeResourcePath(
+        [{ name: "resource-path", value: "/deploy/app" }],
+        {},
+      ),
       "/deploy/app",
     );
   });
 
   it("throws when the parameter is missing from the array", () => {
     assert.throws(
-      () => getNodeResourcePath([]),
+      () => getNodeResourcePath([], {}),
       InvalidNodeError,
       "did not find resource-path in parameter array",
     );
@@ -277,7 +280,7 @@ describe("getNodeResourcePath", () => {
 
   it("throws when the parameter array is undefined", () => {
     assert.throws(
-      () => getNodeResourcePath(undefined),
+      () => getNodeResourcePath(undefined, {}),
       InvalidNodeError,
       "did not find resource-path in parameter array",
     );
@@ -287,14 +290,14 @@ describe("getNodeResourcePath", () => {
 describe("getNodeTriggerDisplayName", () => {
   it("returns PR display name for PR event type", () => {
     assert.strictEqual(
-      getNodeTriggerDisplayName([{ name: "event-type", value: "PR" }]),
+      getNodeTriggerDisplayName([{ name: "event-type", value: "PR" }], {}),
       PR_DISPLAY_NAME,
     );
   });
 
   it("returns PUSH display name for commit event type", () => {
     assert.strictEqual(
-      getNodeTriggerDisplayName([{ name: "event-type", value: "commit" }]),
+      getNodeTriggerDisplayName([{ name: "event-type", value: "commit" }], {}),
       PUSH_DISPLAY_NAME,
     );
   });
@@ -302,7 +305,10 @@ describe("getNodeTriggerDisplayName", () => {
   it("throws for an unknown event type", () => {
     assert.throws(
       () =>
-        getNodeTriggerDisplayName([{ name: "event-type", value: "unknown" }]),
+        getNodeTriggerDisplayName(
+          [{ name: "event-type", value: "unknown" }],
+          {},
+        ),
       InvalidNodeError,
       "invalid event type for node: unknown",
     );
@@ -310,7 +316,7 @@ describe("getNodeTriggerDisplayName", () => {
 
   it("throws when the parameter array is undefined", () => {
     assert.throws(
-      () => getNodeTriggerDisplayName(undefined),
+      () => getNodeTriggerDisplayName(undefined, {}),
       InvalidNodeError,
       "did not find event-type in parameter array",
     );

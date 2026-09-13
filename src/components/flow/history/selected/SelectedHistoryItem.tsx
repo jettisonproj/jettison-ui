@@ -43,7 +43,8 @@ function SelectedHistoryItem({
   const selectedTab = getSelectedTab(searchParams.get("tab"));
 
   // This component is rendered on the fly, so no need to memoize data for this
-  // component. Instead, use the raw data to compute the derived data here.
+  // component. Instead, use the raw data (including memoized data if available)
+  // to compute the derived data here.
   const { nodes: workflowNodesMap } = workflow.status;
   const { name: workflowName } = workflow.metadata;
   if (workflowNodesMap == null) {
@@ -55,6 +56,8 @@ function SelectedHistoryItem({
   const workflowNodesById: Record<string, WorkflowStatusNode> = {};
   const workflowNodesValues = Object.values(workflowNodesMap);
   workflowNodesValues.forEach((workflowNode) => {
+    // Not all workflow nodes are memoized (e.g. sub-nodes such as containers)
+    // Use the memo function here instead. See `isMemoizedNode`
     const memoDisplayName = getMemoDisplayName(workflowNode.displayName);
     const workflowMemoNode = {
       ...workflowNode,
