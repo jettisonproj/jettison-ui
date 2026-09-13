@@ -27,6 +27,8 @@ function WorkflowGraphNode({
     case TemplateNames.GitHubCheckStart: {
       const triggerDisplayName = getNodeTriggerDisplayName(
         node.inputs?.parameters,
+        // WorkflowGraphNodes are memoized. It is safe to access the memo value here
+        node.memo.templateParameterMap,
       );
       return (
         <FlowGraphNode
@@ -58,7 +60,11 @@ function WorkflowGraphNode({
       );
     }
     case TemplateNames.ArgoCD: {
-      const resourcePath = getNodeResourcePath(node.inputs?.parameters);
+      const resourcePath = getNodeResourcePath(
+        node.inputs?.parameters,
+        // WorkflowGraphNodes are memoized. It is safe to access the memo value here
+        node.memo.templateParameterMap,
+      );
       return (
         <FlowGraphNode
           headerClass={className}

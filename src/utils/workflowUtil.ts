@@ -135,32 +135,61 @@ function getWorkflowRevisionNumber(
 }
 
 // Workflow memo node parameters
-function getNodeDockerfilePath(parameterMap: Record<string, string>): string {
-  return getFromParameterMap(parameterMap, "dockerfile-path");
+function getNodeDockerfilePath(
+  parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
+): string {
+  return getFromParameterMapWithFallback(
+    parameterMap,
+    templateParameterMap,
+    "dockerfile-path",
+  );
 }
 
-function getMemoResourcePath(parameterMap: Record<string, string>): string {
-  return getFromParameterMap(parameterMap, NODE_PARAM_RESOURCE_PATH);
+function getMemoResourcePath(
+  parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
+): string {
+  return getFromParameterMapWithFallback(
+    parameterMap,
+    templateParameterMap,
+    NODE_PARAM_RESOURCE_PATH,
+  );
 }
 
 function getMemoTriggerDisplayName(
   parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
 ): string {
-  const eventType = getFromParameterMap(parameterMap, NODE_PARAM_EVENT_TYPE);
+  const eventType = getFromParameterMapWithFallback(
+    parameterMap,
+    templateParameterMap,
+    NODE_PARAM_EVENT_TYPE,
+  );
   return getTriggerDisplayNameFromEventType(eventType);
 }
 
 // Workflow node parameters
 function getNodeResourcePath(
   parameters: WorkflowParameter[] | undefined,
+  templateParameterMap: Record<string, string>,
 ): string {
-  return getFromParameterArray(parameters, NODE_PARAM_RESOURCE_PATH);
+  return getFromParameterArray(
+    parameters,
+    templateParameterMap,
+    NODE_PARAM_RESOURCE_PATH,
+  );
 }
 
 function getNodeTriggerDisplayName(
   parameters: WorkflowParameter[] | undefined,
+  templateParameterMap: Record<string, string>,
 ): string {
-  const eventType = getFromParameterArray(parameters, NODE_PARAM_EVENT_TYPE);
+  const eventType = getFromParameterArray(
+    parameters,
+    templateParameterMap,
+    NODE_PARAM_EVENT_TYPE,
+  );
   return getTriggerDisplayNameFromEventType(eventType);
 }
 
@@ -177,17 +206,40 @@ function getFromParameterMap(
   return parameterValue;
 }
 
+function getFromParameterMapWithFallback(
+  parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
+  parameterKey: string,
+): string {
+  const parameterValue =
+    parameterMap[parameterKey] ?? templateParameterMap[parameterKey];
+  if (parameterValue == null) {
+    throw new InvalidNodeError(
+      `did not find ${parameterKey} in workflow parameter map`,
+    );
+  }
+  return parameterValue;
+}
+
 function getFromParameterArray(
   parameters: WorkflowParameter[] | undefined,
+  templateParameterMap: Record<string, string>,
   parameterKey: string,
 ): string {
   const parameter = parameters?.find((param) => param.name === parameterKey);
-  if (parameter == null) {
+  if (parameter != null) {
+    return parameter.value;
+  }
+
+  // Fall back to template parameters. In case nodes are skipped,
+  // the node status parameters may be empty
+  const templateParameterValue = templateParameterMap[parameterKey];
+  if (templateParameterValue == null) {
     throw new InvalidNodeError(
       `did not find ${parameterKey} in parameter array`,
     );
   }
-  return parameter.value;
+  return templateParameterValue;
 }
 
 function getTriggerDisplayNameFromEventType(eventType: string): string {
@@ -346,6 +398,29 @@ function getArtifactDownloadUrl(
   return `${WORKFLOW_UI_URL}/artifact-files/${workflowNamespace}/archived-workflows/${workflowUid}/${nodeId}/outputs/${artifactName}`;
 }
 
+/**
+ * Return the template parameter names for the DAG tasks by name
+ *
+ * This can be used as a fallback for node status parameters, since
+ * if the node is skipped, the node status parameters may be missing
+ */
+function getTemplateParameterMaps(
+  workflow: Workflow,
+): Record<string, Record<string, string>> {
+  const { entrypoint, templates } = workflow.spec;
+  const templateParameterMaps: Record<string, Record<string, string>> = {};
+  templates
+    .find((template) => template.name === entrypoint)
+    ?.dag?.tasks.forEach((dagTask) => {
+      const templateParameterMap: Record<string, string> = {};
+      dagTask.arguments.parameters.forEach((parameter) => {
+        templateParameterMap[parameter.name] = parameter.value;
+      });
+      templateParameterMaps[dagTask.name] = templateParameterMap;
+    });
+  return templateParameterMaps;
+}
+
 class InvalidNodeError extends Error {
   constructor(message: string) {
     super(message);
@@ -369,6 +444,7 @@ export {
   getNodeResourcePath,
   getNodeTriggerDisplayName,
   getNumActiveWorkflows,
+  getTemplateParameterMaps,
   getUserDefinedArtifacts,
   getWorkflowRepo,
   getWorkflowRevision,

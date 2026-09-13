@@ -74,11 +74,14 @@ function FlowGraphDockerNode({
   }
   const { workflow, node } = workflowNode;
   const { parameterMap: workflowParameters } = workflow.memo;
-  const { parameterMap: nodeParameters } = node;
+  const { parameterMap: nodeParameters, templateParameterMap } = node;
 
   const repoUrl = getWorkflowRepo(workflowParameters);
   const commitSha = getWorkflowRevision(workflowParameters);
-  const dockerfilePath = getNodeDockerfilePath(nodeParameters);
+  const dockerfilePath = getNodeDockerfilePath(
+    nodeParameters,
+    templateParameterMap,
+  );
   const repoLink = getRepoCommitPathLink(repoUrl, commitSha, dockerfilePath);
   return (
     <>
