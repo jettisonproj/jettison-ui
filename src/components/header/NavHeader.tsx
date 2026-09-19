@@ -14,9 +14,15 @@ import {
 import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
 
 /* NavHeader is under the Header and provides the navigation path */
+interface NavHeaderComponentMenuItem {
+  navMenuItemName: string;
+  navMenuItemLink: string;
+}
+
 interface NavHeaderComponent {
   displayName: string;
   navLink: string;
+  navMenuItems?: NavHeaderComponentMenuItem[];
 }
 
 interface NavHeaderFilter extends NavHeaderComponent {
@@ -69,8 +75,11 @@ function NavHeader({
           </Fragment>
         ))}
 
-        {/* The last component has no link */}
-        <NavHeaderLastComponent displayName={lastComponent.displayName} />
+        {/* The last component has no link but optional navMenuItems */}
+        <NavHeaderLastComponent
+          displayName={lastComponent.displayName}
+          navMenuItems={lastComponent.navMenuItems}
+        />
       </h2>
       {filters && (
         <div className={styles.navFilter}>
@@ -99,6 +108,7 @@ function NavHeader({
 
 interface NavHeaderLastComponentProps {
   displayName: string;
+  navMenuItems?: NavHeaderComponentMenuItem[];
 }
 
 /**
@@ -110,8 +120,17 @@ interface NavHeaderLastComponentProps {
  */
 function NavHeaderLastComponent({
   displayName,
+  navMenuItems,
 }: NavHeaderLastComponentProps): JSX.Element {
-  return <strong>{displayName}</strong>;
+  if (navMenuItems == null) {
+    return <strong>{displayName}</strong>;
+  }
+
+  return (
+    <strong>
+      {displayName} <i className="nf nf-cod-chevron_down" />
+    </strong>
+  );
 }
 
 /* Create individual NavHeaders for the various pages */
@@ -134,11 +153,13 @@ function flowNavComponent(
   repoOrg: string,
   repoName: string,
   isPrFlow: boolean,
+  navMenuItems?: NavHeaderComponentMenuItem[],
 ): NavHeaderComponent {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return {
     displayName: repoName,
     navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`,
+    navMenuItems,
   };
 }
 interface FlowNavHeaderProps {
@@ -146,22 +167,35 @@ interface FlowNavHeaderProps {
   repoName: string;
   isPrFlow: boolean;
   additionalWorkflows?: Map<string, Workflow>;
+  flowName?: string;
 }
 function FlowNavHeader({
   repoOrg,
   repoName,
   isPrFlow,
   additionalWorkflows,
+  flowName,
 }: FlowNavHeaderProps): JSX.Element {
   const numNotifications = useMemo(
     () => getNumActiveWorkflows(additionalWorkflows),
     [additionalWorkflows],
   );
 
+  const navMenuItems =
+    flowName == null
+      ? undefined
+      : [
+          {
+            navMenuItemName: flowName,
+            // The repoOrg and namespace are expected to match
+            navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
+          },
+        ];
+
   const components = [
     homeNavComponent,
     reposNavComponent,
-    flowNavComponent(repoOrg, repoName, isPrFlow),
+    flowNavComponent(repoOrg, repoName, isPrFlow, navMenuItems),
   ];
   const filters = [
     {

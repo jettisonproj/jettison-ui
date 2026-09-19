@@ -155,6 +155,7 @@ function FlowItem({
         repoName={repoName}
         isPrFlow={isPrFlow}
         additionalWorkflows={additionalWorkflows}
+        flowName={flowName}
       />
       <FlowWorkflowsItem
         repoOrg={repoOrg}
