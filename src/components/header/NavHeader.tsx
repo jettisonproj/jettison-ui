@@ -25,8 +25,16 @@ interface NavHeaderFilter extends NavHeaderComponent {
 }
 
 interface NavHeaderProps {
+  /* Breadcrumb components */
   components: NavHeaderComponent[];
+
+  /**
+   * Whether to show the bottom border of the nav header.
+   * In some cases (e.g. table with top border rendered below), it is not needed
+   */
   showBorder: boolean;
+
+  /* Filters to the right of the breadcrumbs */
   filters?: NavHeaderFilter[];
 }
 
