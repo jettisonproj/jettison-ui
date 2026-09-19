@@ -70,7 +70,7 @@ function NavHeader({
         ))}
 
         {/* The last component has no link */}
-        <strong>{lastComponent.displayName}</strong>
+        <NavHeaderLastComponent displayName={lastComponent.displayName} />
       </h2>
       {filters && (
         <div className={styles.navFilter}>
@@ -95,6 +95,23 @@ function NavHeader({
       )}
     </div>
   );
+}
+
+interface NavHeaderLastComponentProps {
+  displayName: string;
+}
+
+/**
+ * For the last NavHeaderComponent, no navLink is shown, since it
+ * should already match the current page.
+ *
+ * Optionally, a navMenuItems can be shown instead to display other links
+ * or actions for the component
+ */
+function NavHeaderLastComponent({
+  displayName,
+}: NavHeaderLastComponentProps): JSX.Element {
+  return <strong>{displayName}</strong>;
 }
 
 /* Create individual NavHeaders for the various pages */
