@@ -13,10 +13,19 @@ import {
 } from "src/routes.ts";
 import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
 
+const FLOW_NAV_HEADER_POPOVER_ID = "flowNavHeaderPopoverId";
+
 /* NavHeader is under the Header and provides the navigation path */
+interface NavHeaderComponentMenuItem {
+  navMenuItemName: string;
+  navMenuItemLink: string;
+  navMenuItemIcon: string;
+}
+
 interface NavHeaderComponent {
   displayName: string;
   navLink: string;
+  navMenuItems?: NavHeaderComponentMenuItem[];
 }
 
 interface NavHeaderFilter extends NavHeaderComponent {
@@ -25,8 +34,16 @@ interface NavHeaderFilter extends NavHeaderComponent {
 }
 
 interface NavHeaderProps {
+  /* Breadcrumb components */
   components: NavHeaderComponent[];
+
+  /**
+   * Whether to show the bottom border of the nav header.
+   * In some cases (e.g. table with top border rendered below), it is not needed
+   */
   showBorder: boolean;
+
+  /* Filters to the right of the breadcrumbs */
   filters?: NavHeaderFilter[];
 }
 
@@ -61,8 +78,11 @@ function NavHeader({
           </Fragment>
         ))}
 
-        {/* The last component has no link */}
-        <strong>{lastComponent.displayName}</strong>
+        {/* The last component has no link but optional navMenuItems */}
+        <NavHeaderLastComponent
+          displayName={lastComponent.displayName}
+          navMenuItems={lastComponent.navMenuItems}
+        />
       </h2>
       {filters && (
         <div className={styles.navFilter}>
@@ -89,6 +109,65 @@ function NavHeader({
   );
 }
 
+interface NavHeaderLastComponentProps {
+  displayName: string;
+  navMenuItems?: NavHeaderComponentMenuItem[];
+}
+
+/**
+ * For the last NavHeaderComponent, no navLink is shown, since it
+ * should already match the current page.
+ *
+ * Optionally, a navMenuItems can be shown instead to display other links
+ * or actions for the component
+ */
+function NavHeaderLastComponent({
+  displayName,
+  navMenuItems,
+}: NavHeaderLastComponentProps): JSX.Element {
+  if (navMenuItems == null) {
+    return <strong>{displayName}</strong>;
+  }
+
+  return (
+    <>
+      <button
+        popoverTarget={FLOW_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenuTitle}
+      >
+        <strong>
+          {displayName} &nbsp;
+          <i className={`nf nf-cod-chevron_down ${styles.navMenuIcon}`} />
+        </strong>
+      </button>
+      <div
+        id={FLOW_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenu}
+        popover="auto"
+      >
+        <div className={styles.navMenuItems}>
+          {navMenuItems.map(
+            ({ navMenuItemName, navMenuItemLink, navMenuItemIcon }) => (
+              <a
+                key={navMenuItemName}
+                className={styles.navMenuItem}
+                href={navMenuItemLink}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i
+                  className={`nf ${navMenuItemIcon} ${styles.navMenuItemIcon}`}
+                />{" "}
+                {navMenuItemName}
+              </a>
+            ),
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
 /* Create individual NavHeaders for the various pages */
 
 /* Home Nav Header */
@@ -109,11 +188,13 @@ function flowNavComponent(
   repoOrg: string,
   repoName: string,
   isPrFlow: boolean,
+  navMenuItems?: NavHeaderComponentMenuItem[],
 ): NavHeaderComponent {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return {
     displayName: repoName,
     navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`,
+    navMenuItems,
   };
 }
 interface FlowNavHeaderProps {
@@ -121,22 +202,36 @@ interface FlowNavHeaderProps {
   repoName: string;
   isPrFlow: boolean;
   additionalWorkflows?: Map<string, Workflow>;
+  flowName?: string;
 }
 function FlowNavHeader({
   repoOrg,
   repoName,
   isPrFlow,
   additionalWorkflows,
+  flowName,
 }: FlowNavHeaderProps): JSX.Element {
   const numNotifications = useMemo(
     () => getNumActiveWorkflows(additionalWorkflows),
     [additionalWorkflows],
   );
 
+  const navMenuItems =
+    flowName == null
+      ? undefined
+      : [
+          {
+            navMenuItemName: "View YAML",
+            // The repoOrg and namespace are expected to match
+            navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
+            navMenuItemIcon: "nf-fa-file_text_o",
+          },
+        ];
+
   const components = [
     homeNavComponent,
     reposNavComponent,
-    flowNavComponent(repoOrg, repoName, isPrFlow),
+    flowNavComponent(repoOrg, repoName, isPrFlow, navMenuItems),
   ];
   const filters = [
     {

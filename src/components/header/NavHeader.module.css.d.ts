@@ -8,6 +8,13 @@ declare const styles: {
   readonly navFilterSelected: string;
   readonly navHeader: string;
   readonly navHeaderBordered: string;
+
+  readonly navMenuTitle: string;
+  readonly navMenuIcon: string;
+  readonly navMenu: string;
+  readonly navMenuItems: string;
+  readonly navMenuItem: string;
+  readonly navMenuItemIcon: string;
 };
 
 export = styles;

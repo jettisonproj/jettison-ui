@@ -64,3 +64,52 @@
   position: relative;
   top: -2px;
 }
+
+/**
+ * This menu is based on the code below and could possibly be refactored.
+ * See: src/components/flow/history/FlowHistoryItem.module.css
+ */
+.navMenuTitle {
+  composes: component;
+
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navMenuIcon {
+  font-size: 18px;
+}
+
+.navMenu {
+  margin: 0;
+  padding: 0;
+  inset: auto;
+  position-area: bottom;
+  border: 1px solid var(--menu-border-color);
+  border-radius: 8px;
+  box-shadow: var(--menu-shadow);
+}
+
+.navMenuItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.navMenuItem {
+  color: var(--menu-text-color);
+  padding: 10px 14px;
+}
+
+.navMenuItem:hover {
+  background-color: var(--panel-hover-color);
+  opacity: 0.8;
+}
+
+.navMenuItemIcon {
+  margin-right: 8px;
+}
