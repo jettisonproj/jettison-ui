@@ -13,10 +13,13 @@ import {
 } from "src/routes.ts";
 import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
 
+const FLOW_NAV_HEADER_POPOVER_ID = "flowNavHeaderPopoverId";
+
 /* NavHeader is under the Header and provides the navigation path */
 interface NavHeaderComponentMenuItem {
   navMenuItemName: string;
   navMenuItemLink: string;
+  navMenuItemIcon: string;
 }
 
 interface NavHeaderComponent {
@@ -127,9 +130,41 @@ function NavHeaderLastComponent({
   }
 
   return (
-    <strong>
-      {displayName} <i className="nf nf-cod-chevron_down" />
-    </strong>
+    <>
+      <button
+        popoverTarget={FLOW_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenuTitle}
+      >
+        <strong>
+          {displayName} &nbsp;
+          <i className={`nf nf-cod-chevron_down ${styles.navMenuIcon}`} />
+        </strong>
+      </button>
+      <div
+        id={FLOW_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenu}
+        popover="auto"
+      >
+        <div className={styles.navMenuItems}>
+          {navMenuItems.map(
+            ({ navMenuItemName, navMenuItemLink, navMenuItemIcon }) => (
+              <a
+                key={navMenuItemName}
+                className={styles.navMenuItem}
+                href={navMenuItemLink}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i
+                  className={`nf ${navMenuItemIcon} ${styles.navMenuItemIcon}`}
+                />{" "}
+                {navMenuItemName}
+              </a>
+            ),
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -186,9 +221,10 @@ function FlowNavHeader({
       ? undefined
       : [
           {
-            navMenuItemName: flowName,
+            navMenuItemName: "View YAML",
             // The repoOrg and namespace are expected to match
             navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
+            navMenuItemIcon: "nf-fa-file_text_o",
           },
         ];
 
