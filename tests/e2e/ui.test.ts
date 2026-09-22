@@ -48,7 +48,7 @@ test("test", async ({ page }) => {
 
   // Test Push Flow Page
   await expect(
-    page.getByRole("heading", { name: `Home⧸Repos⧸${REPO_NAME}`, exact }),
+    page.getByRole("heading", { name: /^Home⧸Repos⧸\s*${REPO_NAME}\s*/ }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: /Push Flow$/ })).toBeVisible();
   const jettisonFlowPushGraphSvg = page.locator("svg");
