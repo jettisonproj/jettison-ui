@@ -48,7 +48,9 @@ test("test", async ({ page }) => {
 
   // Test Push Flow Page
   await expect(
-    page.getByRole("heading", { name: `Home⧸Repos⧸${REPO_NAME}`, exact }),
+    page.getByRole("heading", {
+      name: new RegExp(`^Home⧸Repos⧸\\s*${REPO_NAME}\\s*`),
+    }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: /Push Flow$/ })).toBeVisible();
   const jettisonFlowPushGraphSvg = page.locator("svg");
@@ -61,7 +63,7 @@ test("test", async ({ page }) => {
     .first();
   await expect(firstPushWorkflowDetails).toBeVisible();
   await firstPushWorkflowDetails.hover();
-  await page.getByRole("button").click();
+  await page.getByRole("button").filter({ hasText: /^$/ }).click();
 
   const viewWorkflowPushYamlLink = page.getByRole("link", {
     name: VIEW_YAML_RE,
@@ -90,7 +92,9 @@ test("test", async ({ page }) => {
 
   // Test PR Flow Page
   await expect(
-    page.getByRole("heading", { name: `Home⧸Repos⧸${REPO_NAME}`, exact }),
+    page.getByRole("heading", {
+      name: new RegExp(`^Home⧸Repos⧸\\s*${REPO_NAME}\\s*`),
+    }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: PR_FLOW_RE })).toBeVisible();
   const jettisonPrFlowGraphSvg = page.locator("svg");
@@ -103,7 +107,7 @@ test("test", async ({ page }) => {
     .first();
   await expect(firstPrWorkflowDetails).toBeVisible();
   await firstPrWorkflowDetails.hover();
-  await page.getByRole("button").click();
+  await page.getByRole("button").filter({ hasText: /^$/ }).click();
 
   const viewPrWorkflowYamlLink = page.getByRole("link", { name: VIEW_YAML_RE });
   await expect(viewPrWorkflowYamlLink).toBeVisible();
