@@ -22,6 +22,7 @@ import {
   EXIT_NODE_NAME,
   getMemoResourcePath,
   getMemoTriggerDisplayName,
+  isDeployStepSkipped,
 } from "src/utils/workflowUtil.ts";
 
 interface FlowHistoryGridProps {
@@ -57,6 +58,7 @@ function FlowHistoryGrid({
             nodeTitleName={getNodeTitleName(node)}
             nodeDisplayName={node.displayName}
             nodePhase={node.phase}
+            nodeOutputMap={node.outputMap}
             nodeDuration={node.duration}
             nodeStartedAt={node.startedAt}
             workflowBaseUrl={workflowBaseUrl}
@@ -69,6 +71,7 @@ function FlowHistoryGrid({
           nodeTitleName={getNodePendingCreationTitleName(nodePendingCreation)}
           nodeDisplayName={flowDefaultStepName(nodePendingCreation)}
           nodePhase={NodePhases.Pending}
+          nodeOutputMap={{}}
           nodeDuration={undefined}
           nodeStartedAt={undefined}
           workflowBaseUrl={workflowBaseUrl}
@@ -143,6 +146,7 @@ interface FlowHistoryGridItemProps {
   nodeTitleName: string;
   nodeDisplayName: string;
   nodePhase: NodePhase;
+  nodeOutputMap: Record<string, string>;
   nodeDuration: string | undefined;
   nodeStartedAt: Date | undefined;
   workflowBaseUrl: string;
@@ -152,6 +156,7 @@ function FlowHistoryGridItem({
   nodeTitleName,
   nodeDisplayName,
   nodePhase,
+  nodeOutputMap,
   nodeDuration,
   nodeStartedAt,
   workflowBaseUrl,
@@ -162,49 +167,56 @@ function FlowHistoryGridItem({
     : styles.historyGridItem;
   let iconComponent;
 
-  switch (nodePhase) {
-    case NodePhases.Succeeded:
-      itemClassName = `${itemClassName} ${styles.historyGridSuccess}`;
-      iconComponent = (
-        <i className={`nf nf-fa-circle_check ${styles.historyGridIcon}`} />
-      );
-      break;
-    case NodePhases.Error:
-      itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
-      iconComponent = (
-        <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
-      );
-      break;
-    case NodePhases.Failed:
-      itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
-      iconComponent = (
-        <i className={`nf nf-fa-circle_xmark ${styles.historyGridIcon}`} />
-      );
-      break;
-    case NodePhases.Running:
-      itemClassName = `${itemClassName} ${styles.historyGridRunning}`;
-      iconComponent = <LoadIcon className={styles.historyGridIcon} />;
-      break;
-    case NodePhases.Pending:
-      itemClassName = `${itemClassName} ${styles.historyGridPending}`;
-      iconComponent = (
-        <i className={`nf nf-fa-clock ${styles.historyGridIcon}`} />
-      );
-      break;
-    case NodePhases.Skipped:
-    case NodePhases.Omitted:
-      itemClassName = `${itemClassName} ${styles.historyGridPending}`;
-      iconComponent = (
-        <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
-      );
-      break;
-    default:
-      nodePhase satisfies never;
-      console.log("unknown node phase:");
-      console.log(nodePhase);
-      throw new FlowHistoryGridError(
-        `unknown phase for node: ${nodeDisplayName}`,
-      );
+  if (isDeployStepSkipped(nodeOutputMap)) {
+    itemClassName = `${itemClassName} ${styles.historyGridPending}`;
+    iconComponent = (
+      <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
+    );
+  } else {
+    switch (nodePhase) {
+      case NodePhases.Succeeded:
+        itemClassName = `${itemClassName} ${styles.historyGridSuccess}`;
+        iconComponent = (
+          <i className={`nf nf-fa-circle_check ${styles.historyGridIcon}`} />
+        );
+        break;
+      case NodePhases.Error:
+        itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
+        iconComponent = (
+          <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
+        );
+        break;
+      case NodePhases.Failed:
+        itemClassName = `${itemClassName} ${styles.historyGridDanger}`;
+        iconComponent = (
+          <i className={`nf nf-fa-circle_xmark ${styles.historyGridIcon}`} />
+        );
+        break;
+      case NodePhases.Running:
+        itemClassName = `${itemClassName} ${styles.historyGridRunning}`;
+        iconComponent = <LoadIcon className={styles.historyGridIcon} />;
+        break;
+      case NodePhases.Pending:
+        itemClassName = `${itemClassName} ${styles.historyGridPending}`;
+        iconComponent = (
+          <i className={`nf nf-fa-clock ${styles.historyGridIcon}`} />
+        );
+        break;
+      case NodePhases.Skipped:
+      case NodePhases.Omitted:
+        itemClassName = `${itemClassName} ${styles.historyGridPending}`;
+        iconComponent = (
+          <i className={`nf nf-md-cancel ${styles.historyGridIcon}`} />
+        );
+        break;
+      default:
+        nodePhase satisfies never;
+        console.log("unknown node phase:");
+        console.log(nodePhase);
+        throw new FlowHistoryGridError(
+          `unknown phase for node: ${nodeDisplayName}`,
+        );
+    }
   }
 
   return (

@@ -288,12 +288,18 @@ function getLastWorkflowNode(
 }
 
 function isNodeExecution(node: WorkflowMemoStatusNode): boolean {
-  // todo improve check
   return (
     node.phase !== NodePhases.Skipped &&
     node.phase !== NodePhases.Omitted &&
-    node.outputMap["docker-build-pr-status"] !== "Skipped" &&
-    node.outputMap["docker-build-commit-status"] !== "Skipped"
+    !isDeployStepSkipped(node.outputMap)
+  );
+}
+
+// todo improve check (e.g. standardize the output name)
+function isDeployStepSkipped(nodeOutputMap: Record<string, string>): boolean {
+  return (
+    nodeOutputMap["docker-build-pr-status"] === "Skipped" ||
+    nodeOutputMap["docker-build-commit-status"] === "Skipped"
   );
 }
 
@@ -455,6 +461,7 @@ export {
   getWorkflowUiUrl,
   hasUserDefinedArtifacts,
   InvalidNodeError,
+  isDeployStepSkipped,
   isMemoizedNode,
   isWorkflowGraphNode,
   TRIGGER_NODE_NAME,
