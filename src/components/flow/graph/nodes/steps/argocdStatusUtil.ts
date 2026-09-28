@@ -28,10 +28,10 @@ import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 // application resource not found          | 04            | Not Found
 // rollout status degraded                 | 05            | Failing
 // application health status degraded      | 06            | Failing
-// application out of sync                 | 07            | Drift
-// rollout version not found               | 08            | Drift
-// rollout version mismatch                | 09            | Drift
-// application sync disabled               | 10            | Paused
+// application sync disabled               | 07            | Paused
+// application out of sync                 | 08            | Drift
+// rollout version not found               | 09            | Drift
+// rollout version mismatch                | 10            | Drift
 // application health status unknown       | 11            | Unknown
 // application sync status unknown         | 12            | Unknown
 // application and rollout deploying       | 13            | Deploying
@@ -45,10 +45,10 @@ const ArgoCDStatuses = {
   ApplicationResourceNotFound: 4,
   RolloutStatusDegraded: 5,
   ApplicationHealthDegraded: 6,
-  ApplicationOutOfSync: 7,
-  RolloutVersionNotFound: 8,
-  RolloutVersionMismatch: 9,
-  ApplicationSyncDisabled: 10,
+  ApplicationSyncDisabled: 7,
+  ApplicationOutOfSync: 8,
+  RolloutVersionNotFound: 9,
+  RolloutVersionMismatch: 10,
   ApplicationHealthUnknown: 11,
   ApplicationSyncUnknown: 12,
   Deploying: 13,
@@ -126,6 +126,14 @@ function getArgoCDStatusResult(
     };
   }
 
+  const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
+  if (!autoSyncEnabled) {
+    return {
+      argocdStatus: ArgoCDStatuses.ApplicationSyncDisabled,
+      argocdTitle: `Pause Reason: ${String(step.pauseReason)}`,
+    };
+  }
+
   const applicationSyncStatus = application.status.sync.status;
   if (applicationSyncStatus === SyncStatusCodes.OutOfSync) {
     return {
@@ -152,14 +160,6 @@ function getArgoCDStatusResult(
         argocdTitle: `Expected version ${expectedRolloutVersion} but got ${rolloutVersion}`,
       };
     }
-  }
-
-  const { enabled: autoSyncEnabled } = application.spec.syncPolicy.automated;
-  if (!autoSyncEnabled) {
-    return {
-      argocdStatus: ArgoCDStatuses.ApplicationSyncDisabled,
-      argocdTitle: `Pause Reason: ${String(step.pauseReason)}`,
-    };
   }
 
   if (applicationHealthStatus === HealthStatusCodes.Unknown) {
