@@ -6,10 +6,12 @@ import type { Pod } from "src/data/types/podTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
+import type { TimestampFormat } from "src/localState.ts";
 import {
   memoizeFlow,
   memoizeWorkflow,
 } from "src/providers/resourceEventMemo.ts";
+import { transformContainerLogLines } from "src/utils/containerLogUtil.ts";
 import { appendGitSuffix, getRepoOrgName } from "src/utils/gitUtil.ts";
 
 const DELETE_EVENT_ANNOTATION =
@@ -380,22 +382,27 @@ class ResourceEventHandler {
    */
   getUpdatedContainerLogs(
     containerLogs: Map<string, Map<string, Map<string, Set<string>>>> | null,
+    timestampFormat: TimestampFormat,
   ): Map<string, Map<string, Map<string, Set<string>>>> {
     const newContainerLogs = new Map(containerLogs);
     // Map from namespaces to set of pod names to track updates
     const recreatedNamespacePods = new Map();
 
     for (const containerLogEvent of this.#containerLogEvents) {
-      const { namespace, name: podName } = containerLogEvent.metadata;
-      const { containerName, logLines } = containerLogEvent.spec;
-      const namespacePods = newContainerLogs.get(namespace);
-
       if (this.#isDeleteEvent(containerLogEvent)) {
         // Container logs are not typically deleted. The implementation
         // is likely not needed
         console.log("unhandled container log delete event");
         console.log(containerLogEvent);
       } else {
+        const { namespace, name: podName } = containerLogEvent.metadata;
+        const { containerName, logLines: rawLogLines } = containerLogEvent.spec;
+        const logLines = transformContainerLogLines(
+          rawLogLines,
+          timestampFormat,
+        );
+        const namespacePods = newContainerLogs.get(namespace);
+
         // Get the updated namespace map. Ensures it is recreated if needed
         let newNamespacePods;
         let recreatedPodNames;
