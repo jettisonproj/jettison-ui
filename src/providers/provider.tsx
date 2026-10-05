@@ -14,7 +14,8 @@ import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 
 const FlowWebSocketContext = createContext(flowWebSocket);
 
-const TimestampFormatContext = createContext(localState.getTimestampFormat());
+const initialTimestampFormat = localState.getTimestampFormat();
+const TimestampFormatContext = createContext(initialTimestampFormat);
 const SetTimestampFormatContext = createContext((() => {
   // Use no-op as the default, which is not expected to actually be called
 }) as Dispatch<SetStateAction<TimestampFormat>>);
@@ -65,7 +66,7 @@ function Provider({ children }: ProviderProps): JSX.Element {
   );
 
   const [timestampFormat, setTimestampFormat] = useState(
-    localState.getTimestampFormat(),
+    initialTimestampFormat,
   );
 
   /* Update localStorage whenever the value changes */
@@ -113,7 +114,10 @@ function Provider({ children }: ProviderProps): JSX.Element {
         }
         if (resourceEventHandler.hasContainerLogEvents()) {
           setContainerLogs((containerLogs) =>
-            resourceEventHandler.getUpdatedContainerLogs(containerLogs),
+            resourceEventHandler.getUpdatedContainerLogs(
+              containerLogs,
+              initialTimestampFormat,
+            ),
           );
         }
       } catch (err) {
