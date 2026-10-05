@@ -295,12 +295,8 @@ function isNodeExecution(node: WorkflowMemoStatusNode): boolean {
   );
 }
 
-// todo improve check (e.g. standardize the output name)
 function isDeployStepSkipped(nodeOutputMap: Record<string, string>): boolean {
-  return (
-    nodeOutputMap["docker-build-pr-status"] === "Skipped" ||
-    nodeOutputMap["docker-build-commit-status"] === "Skipped"
-  );
+  return nodeOutputMap["jettison-deploy-step-status"] === "Skipped";
 }
 
 function doesWorkflowExecuteNode(

@@ -410,7 +410,7 @@ describe("getLastWorkflowNodeForStep", () => {
     assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
   });
 
-  it("returns null when docker-build-pr-status output is Skipped", () => {
+  it("returns null when jettison-deploy-step-status output is Skipped", () => {
     const step: Step = {
       stepSource: StepSources.DockerBuildTest,
     };
@@ -422,7 +422,7 @@ describe("getLastWorkflowNodeForStep", () => {
           outputs: {
             parameters: [
               {
-                name: "docker-build-pr-status",
+                name: "jettison-deploy-step-status",
                 value: "Skipped",
               },
             ],
@@ -433,7 +433,7 @@ describe("getLastWorkflowNodeForStep", () => {
     assert.isNull(getLastWorkflowNodeForStep(step, [testWorkflow]));
   });
 
-  it("returns null when docker-build-commit-status output is Skipped", () => {
+  it("returns null when jettison-deploy-step-status output is Skipped", () => {
     const step: Step = {
       stepSource: StepSources.DockerBuildTest,
     };
@@ -445,7 +445,7 @@ describe("getLastWorkflowNodeForStep", () => {
           outputs: {
             parameters: [
               {
-                name: "docker-build-commit-status",
+                name: "jettison-deploy-step-status",
                 value: "Skipped",
               },
             ],
