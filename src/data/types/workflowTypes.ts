@@ -164,6 +164,7 @@ const TemplateNames = {
   DockerBuildTestPublish: "docker-build-test-publish",
   DockerBuildTest: "docker-build-test",
   ArgoCD: "deploy-step-argocd",
+  GitHubCreatePR: "deploy-step-create-pr",
 } as const;
 type TemplateName = (typeof TemplateNames)[keyof typeof TemplateNames];
 const TemplateNameValues: TemplateName[] = Object.values(TemplateNames);
