@@ -1,7 +1,11 @@
 import type { JSX } from "react";
 
 import styles from "src/components/commitmessage/CommitMessage.module.css";
-import { getTitleParts } from "src/components/commitmessage/getTitleParts.ts";
+import type { TitlePart } from "src/components/commitmessage/getTitleParts.ts";
+import {
+  getTitleParts,
+  TitlePartTypes,
+} from "src/components/commitmessage/getTitleParts.ts";
 import { getRepoPrLink } from "src/utils/gitUtil.ts";
 
 interface CommitMessageProps {
@@ -31,53 +35,79 @@ function CommitMessage({
   }
 
   // For non-pr commit messages, parse the pr number and link to it
-  return getTitleParts(title).map(({ titlePart, isPrNumber }, i) => (
+  return getTitleParts(title).map((titlePart, i) => (
     <CommitMessagePart
       key={i}
       repoUrl={repoUrl}
       titlePart={titlePart}
       commitLink={commitLink}
-      isPrNumber={isPrNumber}
     />
   ));
 }
 
 interface CommitMessagePartProps {
   repoUrl: string;
-  titlePart: string;
+  titlePart: TitlePart;
   commitLink: string;
-  isPrNumber: boolean;
 }
 function CommitMessagePart({
   repoUrl,
   titlePart,
   commitLink,
-  isPrNumber,
 }: CommitMessagePartProps): JSX.Element {
-  if (isPrNumber) {
-    const prNumber = titlePart.substring(1);
-    const prLink = getRepoPrLink(repoUrl, prNumber);
-    return (
-      <a
-        href={prLink}
-        target="_blank"
-        rel="noreferrer"
-        className={styles.prMessageText}
-      >
-        {titlePart}
-      </a>
-    );
+  const { titlePartText, titlePartType } = titlePart;
+  switch (titlePartType) {
+    case TitlePartTypes.prText: {
+      const prNumber = titlePartText.substring(1);
+      const prLink = getRepoPrLink(repoUrl, prNumber);
+      return (
+        <a
+          href={prLink}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.prMessageText}
+        >
+          {titlePartText}
+        </a>
+      );
+    }
+    case TitlePartTypes.regularText: {
+      return (
+        <a
+          href={commitLink}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.commitMessageText}
+        >
+          {titlePartText}
+        </a>
+      );
+    }
+    case TitlePartTypes.backtickText: {
+      return (
+        <a
+          href={commitLink}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.backtickMessageText}
+        >
+          {titlePartText}
+        </a>
+      );
+    }
+    default:
+      titlePartType satisfies never;
+      console.log("unknown title part type");
+      console.log(titlePartType);
+      throw new CommitMessageError("unexpected tab selected");
   }
-  return (
-    <a
-      href={commitLink}
-      target="_blank"
-      rel="noreferrer"
-      className={styles.commitMessageText}
-    >
-      {titlePart}
-    </a>
-  );
+}
+
+class CommitMessageError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 export { CommitMessage };
