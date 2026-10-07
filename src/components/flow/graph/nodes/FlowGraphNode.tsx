@@ -86,7 +86,6 @@ function FlowGraphNodeInfo({
     <>
       <div className={styles.nodeRowBlock}>
         <CommitMessage
-          isPrFlow={isPrFlow}
           commitLink={commitLink}
           title={commitText}
           repoUrl={repoUrl}
