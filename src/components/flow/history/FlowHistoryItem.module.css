@@ -38,6 +38,11 @@
 .historyTitleHeading {
   display: flex;
   align-items: center;
+
+  max-width: var(--content-width);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: preserve nowrap;
 }
 
 .historyItemBadge {

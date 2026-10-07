@@ -125,7 +125,7 @@ function RepoMessage({ workflow }: RepoMessageProps): JSX.Element | null {
   }
   return (
     <div className={styles.repoMessage}>
-      <FlowHistoryMessage workflow={workflow} isPrFlow={false} />
+      <FlowHistoryMessage workflow={workflow} />
     </div>
   );
 }
