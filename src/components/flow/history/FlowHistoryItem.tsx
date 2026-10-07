@@ -100,7 +100,7 @@ function FlowHistoryTitle({
           workflow={workflow}
           className={styles.historyItemBadge}
         />
-        <FlowHistoryMessage isPrFlow={isPrFlow} workflow={workflow} />
+        <FlowHistoryMessage workflow={workflow} />
       </div>
       <FlowHistoryMenu
         workflow={workflow}
@@ -112,11 +112,9 @@ function FlowHistoryTitle({
 }
 
 interface FlowHistoryMessageProps {
-  isPrFlow: boolean;
   workflow: Workflow;
 }
 function FlowHistoryMessage({
-  isPrFlow,
   workflow,
 }: FlowHistoryMessageProps): JSX.Element {
   const { parameterMap } = workflow.memo;
@@ -126,12 +124,7 @@ function FlowHistoryMessage({
   const title = getWorkflowRevisionTitle(parameterMap);
 
   return (
-    <CommitMessage
-      isPrFlow={isPrFlow}
-      commitLink={commitLink}
-      title={title}
-      repoUrl={repoUrl}
-    />
+    <CommitMessage commitLink={commitLink} title={title} repoUrl={repoUrl} />
   );
 }
 
