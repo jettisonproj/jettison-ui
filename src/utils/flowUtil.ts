@@ -11,6 +11,7 @@ import { getTriggerRoute, routes } from "src/routes.ts";
 
 const BUILD_DISPLAY_NAME = "BUILD";
 const PUBLISH_DISPLAY_NAME = "PUBLISH";
+const CREATE_PR_DISPLAY_NAME = "CREATE PR";
 const PR_DISPLAY_NAME = "PR";
 const PUSH_DISPLAY_NAME = "PUSH";
 
@@ -152,6 +153,7 @@ class FlowUtilError extends Error {
 
 export {
   BUILD_DISPLAY_NAME,
+  CREATE_PR_DISPLAY_NAME,
   FlowUtilError,
   getFlowTrigger,
   getPushPrFlows,

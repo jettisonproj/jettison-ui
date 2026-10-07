@@ -100,6 +100,14 @@ function getRepoPrLink(repoUrl: string, prNumber: string): string {
 }
 
 /**
+ * Get the link url to the PRs in the repo
+ */
+function getRepoPrsLink(repoUrl: string): string {
+  repoUrl = trimGitSuffix(repoUrl);
+  return `${repoUrl}/pulls`;
+}
+
+/**
  * Get the repo org and repo name in format `${repoOrg}/${repoName}`
  */
 function getRepoOrgName(repoUrl: string): string {
@@ -178,6 +186,7 @@ export {
   getRepoOrgName,
   getRepoPathLink,
   getRepoPrLink,
+  getRepoPrsLink,
   getRepoTreeLink,
   GitUtilError,
   sortByRepoName,

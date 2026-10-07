@@ -6,6 +6,7 @@ import type { WorkflowGraphNodeProps } from "src/components/flow/history/selecte
 import { TemplateNames } from "src/data/types/workflowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
+  CREATE_PR_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
@@ -74,6 +75,16 @@ function WorkflowGraphNode({
         />
       );
     }
+    case TemplateNames.GitHubCreatePR: {
+      return (
+        <FlowGraphNode
+          headerClass={className}
+          headerLink={`${workflowBaseUrl}?node=${node.displayName}`}
+          titleIcon={`nf nf-md-source_pull ${styles.createPrIcon}`}
+          titleText={CREATE_PR_DISPLAY_NAME}
+        />
+      );
+    }
     case TemplateNames.GitHubCheckComplete: {
       throw new WorkflowGraphNodeError(
         `invalid template to render: ${TemplateNames.GitHubCheckComplete}`,
@@ -81,9 +92,11 @@ function WorkflowGraphNode({
     }
     default: {
       template satisfies never;
-      console.log("invalid template name");
+      console.log("invalid template name in workflow graph");
       console.log(template);
-      throw new WorkflowGraphNodeError("invalid template name");
+      throw new WorkflowGraphNodeError(
+        "invalid template name in workflow graph",
+      );
     }
   }
 }

@@ -25,6 +25,7 @@ const StepSources = {
   DockerBuildTest: "DockerBuildTest",
   DockerBuildTestPublish: "DockerBuildTestPublish",
   ArgoCD: "ArgoCD",
+  GitHubCreatePR: "GitHubCreatePR",
 } as const;
 type StepSource = (typeof StepSources)[keyof typeof StepSources];
 
@@ -54,7 +55,18 @@ interface ArgoCDStep extends BaseStep {
   pauseReason?: string;
 }
 
-type Step = DockerBuildTestStep | DockerBuildTestPublishStep | ArgoCDStep;
+interface GitHubCreatePRStep extends BaseStep {
+  stepSource: typeof StepSources.GitHubCreatePR;
+  repoUrl: string;
+  baseRef?: string;
+  filePaths: string[];
+}
+
+type Step =
+  | DockerBuildTestStep
+  | DockerBuildTestPublishStep
+  | ArgoCDStep
+  | GitHubCreatePRStep;
 
 const TriggerSources = {
   GitHubPullRequest: "GitHubPullRequest",
@@ -92,6 +104,7 @@ export type {
   DockerBuildTestPublishStep,
   DockerBuildTestStep,
   Flow,
+  GitHubCreatePRStep,
   GitHubPullRequestTrigger,
   GitHubPushTrigger,
   PushPrFlows,

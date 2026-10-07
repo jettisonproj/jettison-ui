@@ -7,6 +7,7 @@ import { flowDefaultStepName } from "src/data/data.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
+  CREATE_PR_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
@@ -48,6 +49,16 @@ function WorkflowPendingGraphNode({
           headerLink={`${workflowBaseUrl}?node=${flowDefaultStepName(nodePendingCreation)}`}
           titleIcon={`nf nf-md-kubernetes ${styles.k8sIcon}`}
           titleText={getDisplayRepoPath(repoPath, repoPath)}
+        />
+      );
+    }
+    case StepSources.GitHubCreatePR: {
+      return (
+        <FlowGraphNode
+          headerClass={className}
+          headerLink={`${workflowBaseUrl}?node=${flowDefaultStepName(nodePendingCreation)}`}
+          titleIcon={`nf nf-md-source_pull ${styles.createPrIcon}`}
+          titleText={CREATE_PR_DISPLAY_NAME}
         />
       );
     }

@@ -22,6 +22,10 @@ const EXIT_NODE_SUFFIX = ".onExit";
 
 const NODE_PARAM_EVENT_TYPE = "event-type";
 const NODE_PARAM_RESOURCE_PATH = "resource-path";
+const NODE_PARAM_TARGET_REPO = "target-repo";
+const NODE_PARAM_TARGET_REPO_SHORT_NAME = "target-repo-short-name";
+const NODE_OUTPUT_CREATED_PR_NUMBER = "jettison-created-pr-number";
+const NODE_OUTPUT_DEPLOY_STEP_SKIPPED = "jettison-deploy-step-status";
 
 const WORKFLOW_UI_URL = "https://argo.osoriano.com";
 const ARTIFACT_UI_URL =
@@ -169,6 +173,35 @@ function getMemoTriggerDisplayName(
   return getTriggerDisplayNameFromEventType(eventType);
 }
 
+function getMemoTargetRepo(
+  parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
+): string {
+  return getFromParameterMapWithFallback(
+    parameterMap,
+    templateParameterMap,
+    NODE_PARAM_TARGET_REPO,
+  );
+}
+
+function getMemoTargetRepoShortName(
+  parameterMap: Record<string, string>,
+  templateParameterMap: Record<string, string>,
+): string {
+  return getFromParameterMapWithFallback(
+    parameterMap,
+    templateParameterMap,
+    NODE_PARAM_TARGET_REPO_SHORT_NAME,
+  );
+}
+
+// Workflow memo node outputs
+function getMemoCreatedPrNumber(
+  outputMap: Record<string, string>,
+): string | undefined {
+  return outputMap[NODE_OUTPUT_CREATED_PR_NUMBER];
+}
+
 // Workflow node parameters
 function getNodeResourcePath(
   parameters: WorkflowParameter[] | undefined,
@@ -296,7 +329,7 @@ function isNodeExecution(node: WorkflowMemoStatusNode): boolean {
 }
 
 function isDeployStepSkipped(nodeOutputMap: Record<string, string>): boolean {
-  return nodeOutputMap["jettison-deploy-step-status"] === "Skipped";
+  return nodeOutputMap[NODE_OUTPUT_DEPLOY_STEP_SKIPPED] === "Skipped";
 }
 
 function doesWorkflowExecuteNode(
@@ -439,7 +472,10 @@ export {
   getArtifactUiUrl,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
+  getMemoCreatedPrNumber,
   getMemoResourcePath,
+  getMemoTargetRepo,
+  getMemoTargetRepoShortName,
   getMemoTriggerDisplayName,
   getNodeArtifactDisplayKeyName,
   getNodeDockerfilePath,
