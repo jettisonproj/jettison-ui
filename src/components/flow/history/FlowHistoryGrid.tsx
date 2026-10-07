@@ -15,6 +15,7 @@ import type {
 import { NodePhases, TemplateNames } from "src/data/types/workflowTypes.ts";
 import {
   BUILD_DISPLAY_NAME,
+  CREATE_PR_DISPLAY_NAME,
   PUBLISH_DISPLAY_NAME,
 } from "src/utils/flowUtil.ts";
 import { getDisplayRepoPath } from "src/utils/gitUtil.ts";
@@ -107,14 +108,17 @@ function getNodeTitleName(node: WorkflowMemoStatusNode): string {
       );
       return getDisplayRepoPath(resourcePath, resourcePath);
     }
+    case TemplateNames.GitHubCreatePR: {
+      return CREATE_PR_DISPLAY_NAME;
+    }
     case TemplateNames.GitHubCheckComplete: {
       return EXIT_NODE_NAME;
     }
     default: {
       template satisfies never;
-      console.log("invalid template name");
+      console.log("invalid template name in history grid");
       console.log(template);
-      throw new FlowHistoryGridError("invalid template name");
+      throw new FlowHistoryGridError("invalid template name in history grid");
     }
   }
 }
@@ -126,6 +130,9 @@ function getNodePendingCreationTitleName(nodePendingCreation: Step): string {
     }
     case StepSources.DockerBuildTestPublish: {
       return PUBLISH_DISPLAY_NAME;
+    }
+    case StepSources.GitHubCreatePR: {
+      return CREATE_PR_DISPLAY_NAME;
     }
     case StepSources.ArgoCD: {
       const { repoPath } = nodePendingCreation;
