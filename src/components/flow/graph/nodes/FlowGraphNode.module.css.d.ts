@@ -5,6 +5,7 @@ declare const styles: {
   readonly dockerIcon: string;
   readonly dockerfileIcon: string;
   readonly githubIcon: string;
+  readonly createPrIcon: string;
   readonly infraIcon: string;
   readonly k8sIcon: string;
   readonly loadIcon: string;

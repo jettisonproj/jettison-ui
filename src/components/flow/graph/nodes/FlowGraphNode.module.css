@@ -118,6 +118,12 @@
   margin-right: 7px;
 }
 
+.createPrIcon {
+  color: #1c5edf;
+  font-size: 19px;
+  margin-right: 7px;
+}
+
 .dockerIcon {
   color: #1d63ed;
   font-size: 21px;

@@ -2,6 +2,7 @@ import type { JSX } from "react";
 
 import { FlowGraphArgoCDStep } from "src/components/flow/graph/nodes/steps/FlowGraphArgoCDStep.tsx";
 import { FlowGraphDockerStep } from "src/components/flow/graph/nodes/steps/FlowGraphDockerStep.tsx";
+import { FlowGraphGitHubCreatePRStep } from "src/components/flow/graph/nodes/steps/FlowGraphGitHubCreatePRStep.tsx";
 import type { Step } from "src/data/types/flowTypes.ts";
 import { StepSources } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
@@ -35,6 +36,16 @@ function FlowGraphStep({
     case StepSources.ArgoCD:
       return (
         <FlowGraphArgoCDStep
+          repoOrg={repoOrg}
+          repoName={repoName}
+          step={step}
+          isPrFlow={isPrFlow}
+          workflows={workflows}
+        />
+      );
+    case StepSources.GitHubCreatePR:
+      return (
+        <FlowGraphGitHubCreatePRStep
           repoOrg={repoOrg}
           repoName={repoName}
           step={step}
