@@ -6,8 +6,8 @@
 
   /* History grid item width.
    * The sum of widths and gaps should divide history content width
-   * Example with 8 items: (8 items) * (103 px) + (7 gaps) * (8 px) = 880 px */
-  --history-grid-item-width: 103px;
+   * Example with 6 items: (6 items) * (140 px) + (5 gaps) * (8 px) = 880 px */
+  --history-grid-item-width: 140px;
   --history-grid-item-gap: 8px;
 
   --panel-color: #f6f8fa;
