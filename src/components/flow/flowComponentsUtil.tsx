@@ -39,6 +39,7 @@ function getStepHeight(stepSource: StepSource): number {
   switch (stepSource) {
     case StepSources.DockerBuildTest:
     case StepSources.DockerBuildTestPublish:
+    case StepSources.GitHubCreatePR:
       return DOCKER_NODE_HEIGHT;
     case StepSources.ArgoCD:
       return ARGO_NODE_HEIGHT;
