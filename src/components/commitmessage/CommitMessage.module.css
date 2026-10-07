@@ -14,3 +14,14 @@
 
   color: var(--gh-link-color);
 }
+
+.backtickMessageText {
+  font-family: var(--gh-mono-family);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--gh-text-color);
+}
+
+.backtickMessageText:hover {
+  text-decoration: underline;
+}
