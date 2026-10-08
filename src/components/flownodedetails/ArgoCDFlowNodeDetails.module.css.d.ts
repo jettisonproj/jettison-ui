@@ -1,5 +1,6 @@
 declare const styles: {
-  readonly sectionTitle: string;
+  readonly deployHistorySectionTitle: string;
+  readonly podResourcesSectionTitle: string;
 };
 
 export = styles;
