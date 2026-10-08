@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import styles from "src/components/header/FlowNavMenu.module.css";
+import styles from "src/components/header/NavMenu.module.css";
 
 const FLOW_NAV_HEADER_POPOVER_ID = "flowNavHeaderPopoverId";
 
@@ -17,47 +17,33 @@ function FlowNavMenu({
   if (flowName == null) {
     return <strong>{repoName}</strong>;
   }
-  const navMenuItems = [
-    {
-      navMenuItemName: "View Flow YAML",
-      // The repoOrg and namespace are expected to match
-      navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
-      navMenuItemIcon: "nf-fa-file_text_o",
-    },
-  ];
+
   return (
     <>
       <button
         popoverTarget={FLOW_NAV_HEADER_POPOVER_ID}
-        className={styles.flowNavMenuTitle}
+        className={styles.navMenuTitle}
       >
         <strong>
           {repoName} &nbsp;
-          <i className={`nf nf-cod-chevron_down ${styles.flowNavMenuIcon}`} />
+          <i className={`nf nf-cod-chevron_down ${styles.navMenuIcon}`} />
         </strong>
       </button>
       <div
         id={FLOW_NAV_HEADER_POPOVER_ID}
-        className={styles.flowNavMenu}
+        className={styles.navMenu}
         popover="auto"
       >
-        <div className={styles.flowNavMenuItems}>
-          {navMenuItems.map(
-            ({ navMenuItemName, navMenuItemLink, navMenuItemIcon }) => (
-              <a
-                key={navMenuItemName}
-                className={styles.flowNavMenuItem}
-                href={navMenuItemLink}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i
-                  className={`nf ${navMenuItemIcon} ${styles.flowNavMenuItemIcon}`}
-                />{" "}
-                {navMenuItemName}
-              </a>
-            ),
-          )}
+        <div className={styles.navMenuItems}>
+          <a
+            className={styles.navMenuItem}
+            href={`/api/v1/namespaces/${repoOrg}/flows/${flowName}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className={`nf nf-fa-file_text_o ${styles.navMenuItemIcon}`} />{" "}
+            View Flow YAML
+          </a>
         </div>
       </div>
     </>

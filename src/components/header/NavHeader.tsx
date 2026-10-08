@@ -4,7 +4,13 @@ import { Link } from "react-router";
 
 import { FlowNavFilter } from "src/components/header/FlowNavFilter.tsx";
 import { FlowNavMenu } from "src/components/header/FlowNavMenu.tsx";
+import { FlowNodeDetailsNavMenu } from "src/components/header/FlowNodeDetailsNavMenu.tsx";
 import styles from "src/components/header/NavHeader.module.css";
+import type {
+  Application,
+  ApplicationStatusResource,
+} from "src/data/types/applicationTypes.ts";
+import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { getTriggerRoute, routes } from "src/routes.ts";
 import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
@@ -84,14 +90,23 @@ function FlowNavHeader({
   );
 }
 
-interface FlowNodeDetailsNavHeaderProps extends FlowNavHeaderProps {
+interface FlowNodeDetailsNavHeaderProps {
+  repoOrg: string;
+  repoName: string;
+  isPrFlow: boolean;
   nodeName: string;
+  argoCdStep?: ArgoCDStep;
+  application?: Application | undefined;
+  rolloutResource?: ApplicationStatusResource | null;
 }
 function FlowNodeDetailsNavHeader({
   repoOrg,
   repoName,
   isPrFlow,
   nodeName,
+  argoCdStep,
+  application,
+  rolloutResource,
 }: FlowNodeDetailsNavHeaderProps): JSX.Element {
   const triggerRoute = getTriggerRoute(isPrFlow);
   return (
@@ -112,7 +127,12 @@ function FlowNodeDetailsNavHeader({
           {repoName}
         </Link>
         <span className={styles.componentSeparator}>⧸</span>
-        <strong>{nodeName}</strong>
+        <FlowNodeDetailsNavMenu
+          nodeName={nodeName}
+          argoCdStep={argoCdStep}
+          application={application}
+          rolloutResource={rolloutResource}
+        />
       </h2>
     </div>
   );
