@@ -2,7 +2,7 @@
  * This menu is based on the code below and could possibly be refactored.
  * See: src/components/flow/history/FlowHistoryItem.module.css
  */
-.flowNavMenuTitle {
+.navMenuTitle {
   color: var(--text-color);
   font: inherit;
   cursor: pointer;
@@ -13,15 +13,15 @@
   padding: 0;
 }
 
-.flowNavMenuTitle:hover {
+.navMenuTitle:hover {
   text-decoration: underline;
 }
 
-.flowNavMenuIcon {
+.navMenuIcon {
   font-size: 18px;
 }
 
-.flowNavMenu {
+.navMenu {
   margin: 0;
   padding: 0;
   inset: auto;
@@ -31,7 +31,7 @@
   box-shadow: var(--menu-shadow);
 }
 
-.flowNavMenuItems {
+.navMenuItems {
   display: flex;
   flex-direction: column;
 
@@ -39,16 +39,16 @@
   font-weight: bolder;
 }
 
-.flowNavMenuItem {
+.navMenuItem {
   color: var(--menu-text-color);
   padding: 10px 14px;
 }
 
-.flowNavMenuItem:hover {
+.navMenuItem:hover {
   background-color: var(--panel-hover-color);
   opacity: 0.8;
 }
 
-.flowNavMenuItemIcon {
+.navMenuItemIcon {
   margin-right: 8px;
 }
