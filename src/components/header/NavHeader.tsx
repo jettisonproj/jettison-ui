@@ -221,7 +221,7 @@ function FlowNavHeader({
       ? undefined
       : [
           {
-            navMenuItemName: "View YAML",
+            navMenuItemName: "View Flow YAML",
             // The repoOrg and namespace are expected to match
             navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
             navMenuItemIcon: "nf-fa-file_text_o",

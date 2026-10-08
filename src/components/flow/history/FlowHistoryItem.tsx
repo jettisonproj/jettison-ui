@@ -161,7 +161,7 @@ function FlowHistoryMenu({
             <i
               className={`nf nf-fa-file_text_o ${styles.historyMenuItemIcon}`}
             />{" "}
-            View YAML
+            View Workflow YAML
           </a>
           <a
             className={styles.historyMenuItem}
