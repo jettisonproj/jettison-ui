@@ -6,7 +6,9 @@ import { FlowGraph } from "src/components/flow/graph/FlowGraph.tsx";
 import styles from "src/components/flownodedetails/ArgoCDFlowNodeDetails.module.css";
 import { ArgoCDDeploySteps } from "src/components/flownodedetails/deploysteps/ArgoCDDeploySteps.tsx";
 import { FlowNodeHistory } from "src/components/flownodedetails/history/FlowNodeHistory.tsx";
-import { ArgoCDPodResources } from "src/components/flownodedetails/podresources/ArgoCDPodResources.tsx";
+import { ArgoCDPodGrid } from "src/components/flownodedetails/podresources/ArgoCDPodGrid.tsx";
+import { FlowNodeDetailsNavHeader } from "src/components/header/NavHeader.tsx";
+import type { ApplicationStatusResource } from "src/data/types/applicationTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import { ApplicationsContext } from "src/providers/provider.tsx";
@@ -15,6 +17,7 @@ import { getWorkflowRevision } from "src/utils/workflowUtil.ts";
 
 interface ArgoCDFlowNodeDetailsProps {
   repoOrg: string;
+  repoName: string;
   nodeName: string;
   isPrFlow: boolean;
   flowNodeBaseUrl: string;
@@ -25,6 +28,7 @@ interface ArgoCDFlowNodeDetailsProps {
 }
 function ArgoCDFlowNodeDetails({
   repoOrg,
+  repoName,
   nodeName,
   isPrFlow,
   flowNodeBaseUrl,
@@ -33,17 +37,32 @@ function ArgoCDFlowNodeDetails({
   sortedWorkflows,
   step,
 }: ArgoCDFlowNodeDetailsProps): JSX.Element {
+  const applications = useContext(ApplicationsContext);
+
+  const { repoUrl, repoPath } = step;
+  const application = applications?.get(repoUrl)?.get(repoPath);
+  const rolloutResource = getRolloutResource(application);
+
   const lastWorkflow = sortedWorkflows[0];
   const lastWorkflowRevision =
     lastWorkflow && getWorkflowRevision(lastWorkflow.memo.parameterMap);
   return (
     <>
+      <FlowNodeDetailsNavHeader
+        repoOrg={repoOrg}
+        repoName={repoName}
+        isPrFlow={isPrFlow}
+        nodeName={nodeName}
+        step={step}
+        application={application}
+        rolloutResource={rolloutResource}
+      />
       <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
       <ArgoCDRolloutDetails
-        step={step}
+        rolloutResource={rolloutResource}
         lastWorkflowRevision={lastWorkflowRevision}
       />
-      <h2 className={styles.sectionTitle}>Deployment History</h2>
+      <h2 className={styles.deployHistorySectionTitle}>Deployment History</h2>
       <FlowNodeHistory
         isPrFlow={isPrFlow}
         flowNodeBaseUrl={flowNodeBaseUrl}
@@ -57,25 +76,17 @@ function ArgoCDFlowNodeDetails({
 }
 
 interface ArgoCDRolloutDetailsProps {
-  step: ArgoCDStep;
   lastWorkflowRevision: string | undefined;
+  rolloutResource: ApplicationStatusResource | null;
 }
 function ArgoCDRolloutDetails({
-  step,
   lastWorkflowRevision,
+  rolloutResource,
 }: ArgoCDRolloutDetailsProps): JSX.Element {
-  const applications = useContext(ApplicationsContext);
-
-  const { repoUrl, repoPath } = step;
-  const application = applications?.get(repoUrl)?.get(repoPath);
-  const rolloutResource = getRolloutResource(application);
-
   return (
     <>
       <ArgoCDDeploySteps rolloutResource={rolloutResource} />
       <ArgoCDPodResources
-        step={step}
-        application={application}
         rolloutResource={rolloutResource}
         lastWorkflowRevision={lastWorkflowRevision}
       />
@@ -83,4 +94,24 @@ function ArgoCDRolloutDetails({
   );
 }
 
+interface ArgoCDPodResourcesProps {
+  rolloutResource: ApplicationStatusResource | null;
+  lastWorkflowRevision: string | undefined;
+}
+function ArgoCDPodResources({
+  rolloutResource,
+  lastWorkflowRevision,
+}: ArgoCDPodResourcesProps): JSX.Element {
+  return (
+    <>
+      <h2 className={styles.podResourcesSectionTitle}>
+        <span>Pod Resources</span>
+      </h2>
+      <ArgoCDPodGrid
+        rolloutResource={rolloutResource}
+        lastWorkflowRevision={lastWorkflowRevision}
+      />
+    </>
+  );
+}
 export { ArgoCDFlowNodeDetails };

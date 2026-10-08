@@ -1,6 +1,5 @@
 import type { JSX } from "react";
 
-import styles from "src/components/flownodedetails/podresources/ArgoCDResourceLinks.module.css";
 import type {
   Application,
   ApplicationStatusResource,
@@ -9,18 +8,43 @@ import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
 import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
 
 const ARGOCD_UI_URL = "https://argocd.osoriano.com";
-const RESOURCE_LINKS_POPOVER_ID = "resourceLinksPopoverId";
 
-interface ArgoCDResourceLinksProps {
-  step: ArgoCDStep;
-  application: Application | undefined;
-  rolloutResource: ApplicationStatusResource | null;
+import styles from "src/components/header/NavMenu.module.css";
+
+const FLOW_NODE_DETAILS_NAV_HEADER_POPOVER_ID =
+  "flowNodeDetailsNavHeaderPopoverId";
+
+interface FlowNodeDetailsNavMenuProps {
+  // repoOrg: string;
+  // repoName: string;
+  // flowName?: string;
+  nodeName: string;
+  step?: ArgoCDStep;
+  application?: Application | undefined;
+  rolloutResource?: ApplicationStatusResource | null;
 }
-function ArgoCDResourceLinks({
+function FlowNodeDetailsNavMenu({
+  // repoOrg,
+  // repoName,
+  // flowName,
+  nodeName,
   step,
   application,
   rolloutResource,
-}: ArgoCDResourceLinksProps): JSX.Element | null {
+}: FlowNodeDetailsNavMenuProps): JSX.Element {
+  if (step == null || rolloutResource === undefined) {
+    return <strong>{nodeName}</strong>;
+  }
+  //         <a
+  //           className={styles.navMenuItem}
+  //           href={`/api/v1/namespaces/${repoOrg}/flows/${flowName}`}
+  //           target="_blank"
+  //           rel="noreferrer"
+  //         >
+  //           <i className={`nf nf-fa-file_text_o ${styles.navMenuItemIcon}`} />{" "}
+  //           View Flow YAML
+  //         </a>
+
   const { repoUrl, baseRef, repoPath } = step;
 
   const repoLink = getRepoPathLink(repoUrl, baseRef, repoPath);
@@ -33,86 +57,81 @@ function ArgoCDResourceLinks({
   return (
     <>
       <button
-        popoverTarget={RESOURCE_LINKS_POPOVER_ID}
-        className={`nf nf-fa-ellipsis ${styles.linksMenuIcon}`}
-      />
+        popoverTarget={FLOW_NODE_DETAILS_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenuTitle}
+      >
+        <strong>
+          {nodeName} &nbsp;
+          <i className={`nf nf-cod-chevron_down ${styles.navMenuIcon}`} />
+        </strong>
+      </button>
       <div
-        id={RESOURCE_LINKS_POPOVER_ID}
-        className={styles.linksMenu}
+        id={FLOW_NODE_DETAILS_NAV_HEADER_POPOVER_ID}
+        className={styles.navMenu}
         popover="auto"
       >
-        <div className={styles.linksMenuItems}>
+        <div className={styles.navMenuItems}>
           <a
-            className={styles.linksMenuItem}
+            className={styles.navMenuItem}
             href={repoLink}
             target="_blank"
             rel="noreferrer"
           >
-            <i className={`nf nf-fa-layer_group ${styles.linksMenuItemIcon}`} />{" "}
+            <i className={`nf nf-fa-layer_group ${styles.navMenuItemIcon}`} />{" "}
             Resource Definitions
           </a>
           {commitLink && (
             <a
-              className={styles.linksMenuItem}
+              className={styles.navMenuItem}
               href={commitLink}
               target="_blank"
               rel="noreferrer"
             >
-              <i
-                className={`nf nf-fa-code_commit ${styles.linksMenuItemIcon}`}
-              />{" "}
+              <i className={`nf nf-fa-code_commit ${styles.navMenuItemIcon}`} />{" "}
               Resources Commit
             </a>
           )}
           {applicationLink && (
             <a
-              className={styles.linksMenuItem}
+              className={styles.navMenuItem}
               href={applicationLink}
               target="_blank"
               rel="noreferrer"
             >
-              <i
-                className={`nf nf-md-kubernetes ${styles.linksMenuItemIcon}`}
-              />{" "}
+              <i className={`nf nf-md-kubernetes ${styles.navMenuItemIcon}`} />{" "}
               Argo CD UI
             </a>
           )}
           {rolloutLink && (
             <a
-              className={styles.linksMenuItem}
+              className={styles.navMenuItem}
               href={rolloutLink}
               target="_blank"
               rel="noreferrer"
             >
-              <i
-                className={`nf nf-md-kubernetes ${styles.linksMenuItemIcon}`}
-              />{" "}
+              <i className={`nf nf-md-kubernetes ${styles.navMenuItemIcon}`} />{" "}
               Argo Rollouts UI
             </a>
           )}
           {kubernetesApplicationLink && (
             <a
-              className={styles.linksMenuItem}
+              className={styles.navMenuItem}
               href={kubernetesApplicationLink}
               target="_blank"
               rel="noreferrer"
             >
-              <i
-                className={`nf nf-fa-file_text_o ${styles.linksMenuItemIcon}`}
-              />{" "}
+              <i className={`nf nf-fa-file_text_o ${styles.navMenuItemIcon}`} />{" "}
               Application YAML
             </a>
           )}
           {kubernetesRolloutLink && (
             <a
-              className={styles.linksMenuItem}
+              className={styles.navMenuItem}
               href={kubernetesRolloutLink}
               target="_blank"
               rel="noreferrer"
             >
-              <i
-                className={`nf nf-fa-file_text_o ${styles.linksMenuItemIcon}`}
-              />{" "}
+              <i className={`nf nf-fa-file_text_o ${styles.navMenuItemIcon}`} />{" "}
               Rollout YAML
             </a>
           )}
@@ -171,4 +190,4 @@ function getKubernetesApplicationLink(
   return `/api/v1/namespaces/${namespace}/applications/${name}`;
 }
 
-export { ArgoCDResourceLinks };
+export { FlowNodeDetailsNavMenu };

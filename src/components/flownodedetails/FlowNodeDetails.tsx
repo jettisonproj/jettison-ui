@@ -45,12 +45,6 @@ function FlowNodeDetails(): JSX.Element {
   return (
     <>
       <Header />
-      <FlowNodeDetailsNavHeader
-        repoOrg={repoOrg}
-        repoName={repoName}
-        isPrFlow={isPrFlow}
-        nodeName={nodeName}
-      />
       <FlowNodeDetailsItem
         repoOrg={repoOrg}
         repoName={repoName}
@@ -82,19 +76,37 @@ function FlowNodeDetailsItem({
   const flows = useContext(FlowsContext);
   const allWorkflows = useContext(WorkflowsContext);
   if (flows == null || allWorkflows == null) {
-    return <LoadIcon />;
+    return (
+      <>
+        <FlowNodeDetailsNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+          nodeName={nodeName}
+        />
+        <LoadIcon />
+      </>
+    );
   }
   const pushPrFlows = flows.get(`${repoOrg}/${repoName}`);
   if (pushPrFlows == null) {
     localState.deleteRecentRepo(repoOrg, repoName);
     return (
-      <p>
-        There are no flows in repo{" "}
-        <strong>
-          {repoOrg}/{repoName}
-        </strong>
-        . Would you like to create one?
-      </p>
+      <>
+        <FlowNodeDetailsNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+          nodeName={nodeName}
+        />
+        <p>
+          There are no flows in repo{" "}
+          <strong>
+            {repoOrg}/{repoName}
+          </strong>
+          . Would you like to create one?
+        </p>
+      </>
     );
   }
   let flow;
@@ -107,13 +119,21 @@ function FlowNodeDetailsItem({
     localState.deleteRecentRepo(repoOrg, repoName);
     const triggerDisplayName = getTriggerDisplayName(isPrFlow);
     return (
-      <p>
-        There is no <strong>{triggerDisplayName}</strong> flow in repo{" "}
-        <strong>
-          {repoOrg}/{repoName}
-        </strong>
-        . Would you like to create one?
-      </p>
+      <>
+        <FlowNodeDetailsNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+          nodeName={nodeName}
+        />
+        <p>
+          There is no <strong>{triggerDisplayName}</strong> flow in repo{" "}
+          <strong>
+            {repoOrg}/{repoName}
+          </strong>
+          . Would you like to create one?
+        </p>
+      </>
     );
   }
   localState.addRecentRepo(repoOrg, repoName);
@@ -180,6 +200,12 @@ function FlowNodeWorkflowDetails({
     );
     return (
       <>
+        <FlowNodeDetailsNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+          nodeName={nodeName}
+        />
         <FlowGraph flowNodes={[triggerNode]} flowEdges={[]} />
         <FlowNodeHistory
           isPrFlow={isPrFlow}
@@ -208,6 +234,7 @@ function FlowNodeWorkflowDetails({
       return (
         <ArgoCDFlowNodeDetails
           repoOrg={repoOrg}
+          repoName={repoName}
           nodeName={nodeName}
           isPrFlow={isPrFlow}
           flowNodeBaseUrl={flowNodeBaseUrl}
@@ -220,6 +247,12 @@ function FlowNodeWorkflowDetails({
     }
     return (
       <>
+        <FlowNodeDetailsNavHeader
+          repoOrg={repoOrg}
+          repoName={repoName}
+          isPrFlow={isPrFlow}
+          nodeName={nodeName}
+        />
         <FlowGraph flowNodes={[stepNode]} flowEdges={[]} />
         <FlowNodeHistory
           isPrFlow={isPrFlow}
@@ -234,13 +267,21 @@ function FlowNodeWorkflowDetails({
   }
   const triggerDisplayName = getTriggerDisplayName(isPrFlow);
   return (
-    <p>
-      Did not find <strong>{nodeName}</strong> in{" "}
-      <strong>{triggerDisplayName}</strong> flow in repo{" "}
-      <strong>
-        {repoOrg}/{repoName}
-      </strong>
-    </p>
+    <>
+      <FlowNodeDetailsNavHeader
+        repoOrg={repoOrg}
+        repoName={repoName}
+        isPrFlow={isPrFlow}
+        nodeName={nodeName}
+      />
+      <p>
+        Did not find <strong>{nodeName}</strong> in{" "}
+        <strong>{triggerDisplayName}</strong> flow in repo{" "}
+        <strong>
+          {repoOrg}/{repoName}
+        </strong>
+      </p>
+    </>
   );
 }
 
