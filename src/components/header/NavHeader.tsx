@@ -1,202 +1,43 @@
 import type { JSX } from "react";
-import { Fragment, useMemo } from "react";
-import { Link, NavLink } from "react-router";
+import { useMemo } from "react";
+import { Link } from "react-router";
 
+import { FlowNavFilter } from "src/components/header/FlowNavFilter.tsx";
+import { FlowNavMenu } from "src/components/header/FlowNavMenu.tsx";
 import styles from "src/components/header/NavHeader.module.css";
-import { NavHeaderNotificationBadge } from "src/components/header/NavHeaderNotificationBadge.tsx";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
-import {
-  getTriggerRoute,
-  prTriggerRoute,
-  pushTriggerRoute,
-  routes,
-} from "src/routes.ts";
+import { getTriggerRoute, routes } from "src/routes.ts";
 import { getNumActiveWorkflows } from "src/utils/workflowUtil.ts";
 
-const FLOW_NAV_HEADER_POPOVER_ID = "flowNavHeaderPopoverId";
+/* Create NavHeaders for the various pages */
 
-/* NavHeader is under the Header and provides the navigation path */
-interface NavHeaderComponentMenuItem {
-  navMenuItemName: string;
-  navMenuItemLink: string;
-  navMenuItemIcon: string;
-}
-
-interface NavHeaderComponent {
-  displayName: string;
-  navLink: string;
-  navMenuItems?: NavHeaderComponentMenuItem[];
-}
-
-interface NavHeaderFilter extends NavHeaderComponent {
-  iconClassName: string;
-  numNotifications: number;
-}
-
-interface NavHeaderProps {
-  /* Breadcrumb components */
-  components: NavHeaderComponent[];
-
-  /**
-   * Whether to show the bottom border of the nav header.
-   * In some cases (e.g. table with top border rendered below), it is not needed
-   */
-  showBorder: boolean;
-
-  /* Filters to the right of the breadcrumbs */
-  filters?: NavHeaderFilter[];
-}
-
-function NavHeader({
-  components,
-  showBorder,
-  filters,
-}: NavHeaderProps): JSX.Element | null {
-  if (components.length === 0) {
-    return null;
-  }
-
-  const lastComponent = components.at(-1);
-  if (lastComponent == null) {
-    // This should be unreachable due to the length check above
-    throw new NavHeaderError("unexpected NavHeaderProps components");
-  }
-
-  const navHeaderClass = showBorder
-    ? styles.navHeaderBordered
-    : styles.navHeader;
+/* Home Nav Header */
+function HomeNavHeader(): JSX.Element {
   return (
-    <div className={navHeaderClass}>
+    <div className={styles.navHeaderBordered}>
       <h2>
-        {/* The prefix components contain links */}
-        {components.slice(0, -1).map(({ displayName, navLink }) => (
-          <Fragment key={navLink}>
-            <Link to={navLink} className={styles.component}>
-              {displayName}
-            </Link>
-            <span className={styles.componentSeparator}>⧸</span>
-          </Fragment>
-        ))}
-
-        {/* The last component has no link but optional navMenuItems */}
-        <NavHeaderLastComponent
-          displayName={lastComponent.displayName}
-          navMenuItems={lastComponent.navMenuItems}
-        />
+        <strong>Home</strong>
       </h2>
-      {filters && (
-        <div className={styles.navFilter}>
-          {filters.map(
-            ({ displayName, navLink, iconClassName, numNotifications }) => (
-              <NavLink
-                key={displayName}
-                to={navLink}
-                className={({ isActive }) =>
-                  isActive ? styles.navFilterSelected : styles.navFilterItem
-                }
-              >
-                <i className={iconClassName} />
-                {displayName}
-                <NavHeaderNotificationBadge
-                  numNotifications={numNotifications}
-                />
-              </NavLink>
-            ),
-          )}
-        </div>
-      )}
     </div>
   );
 }
 
-interface NavHeaderLastComponentProps {
-  displayName: string;
-  navMenuItems?: NavHeaderComponentMenuItem[];
-}
-
-/**
- * For the last NavHeaderComponent, no navLink is shown, since it
- * should already match the current page.
- *
- * Optionally, a navMenuItems can be shown instead to display other links
- * or actions for the component
- */
-function NavHeaderLastComponent({
-  displayName,
-  navMenuItems,
-}: NavHeaderLastComponentProps): JSX.Element {
-  if (navMenuItems == null) {
-    return <strong>{displayName}</strong>;
-  }
-
+/* Repos Nav Header */
+function ReposNavHeader(): JSX.Element {
   return (
-    <>
-      <button
-        popoverTarget={FLOW_NAV_HEADER_POPOVER_ID}
-        className={styles.navMenuTitle}
-      >
-        <strong>
-          {displayName} &nbsp;
-          <i className={`nf nf-cod-chevron_down ${styles.navMenuIcon}`} />
-        </strong>
-      </button>
-      <div
-        id={FLOW_NAV_HEADER_POPOVER_ID}
-        className={styles.navMenu}
-        popover="auto"
-      >
-        <div className={styles.navMenuItems}>
-          {navMenuItems.map(
-            ({ navMenuItemName, navMenuItemLink, navMenuItemIcon }) => (
-              <a
-                key={navMenuItemName}
-                className={styles.navMenuItem}
-                href={navMenuItemLink}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i
-                  className={`nf ${navMenuItemIcon} ${styles.navMenuItemIcon}`}
-                />{" "}
-                {navMenuItemName}
-              </a>
-            ),
-          )}
-        </div>
-      </div>
-    </>
+    <div className={styles.navHeader}>
+      <h2>
+        <Link to={routes.home} className={styles.component}>
+          Home
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <strong>Repos</strong>
+      </h2>
+    </div>
   );
 }
 
-/* Create individual NavHeaders for the various pages */
-
-/* Home Nav Header */
-const homeNavComponent = { displayName: "Home", navLink: routes.home };
-function HomeNavHeader(): JSX.Element {
-  return <NavHeader components={[homeNavComponent]} showBorder={true} />;
-}
-
-/* Namespaces Nav Header */
-const reposNavComponent = { displayName: "Repos", navLink: routes.flows };
-function ReposNavHeader(): JSX.Element {
-  const components = [homeNavComponent, reposNavComponent];
-  return <NavHeader components={components} showBorder={false} />;
-}
-
 /* Flow Nav Header */
-function flowNavComponent(
-  repoOrg: string,
-  repoName: string,
-  isPrFlow: boolean,
-  navMenuItems?: NavHeaderComponentMenuItem[],
-): NavHeaderComponent {
-  const triggerRoute = getTriggerRoute(isPrFlow);
-  return {
-    displayName: repoName,
-    navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`,
-    navMenuItems,
-  };
-}
 interface FlowNavHeaderProps {
   repoOrg: string;
   repoName: string;
@@ -216,55 +57,33 @@ function FlowNavHeader({
     [additionalWorkflows],
   );
 
-  const navMenuItems =
-    flowName == null
-      ? undefined
-      : [
-          {
-            navMenuItemName: "View Flow YAML",
-            // The repoOrg and namespace are expected to match
-            navMenuItemLink: `/api/v1/namespaces/${repoOrg}/flows/${flowName}`,
-            navMenuItemIcon: "nf-fa-file_text_o",
-          },
-        ];
-
-  const components = [
-    homeNavComponent,
-    reposNavComponent,
-    flowNavComponent(repoOrg, repoName, isPrFlow, navMenuItems),
-  ];
-  const filters = [
-    {
-      displayName: "Push Flow",
-      navLink: `${routes.flows}/${repoOrg}/${repoName}/${pushTriggerRoute}`,
-      iconClassName: `nf nf-fa-code ${styles.navFilterPushIcon}`,
-      numNotifications: isPrFlow ? numNotifications : 0,
-    },
-    {
-      displayName: "PR Flow",
-      navLink: `${routes.flows}/${repoOrg}/${repoName}/${prTriggerRoute}`,
-      iconClassName: `nf nf-md-source_pull ${styles.navFilterPrIcon}`,
-      numNotifications: isPrFlow ? 0 : numNotifications,
-    },
-  ];
   return (
-    <NavHeader components={components} showBorder={true} filters={filters} />
+    <div className={styles.navHeaderBordered}>
+      <h2>
+        <Link to={routes.home} className={styles.component}>
+          Home
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <Link to={routes.flows} className={styles.component}>
+          Repos
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <FlowNavMenu
+          repoOrg={repoOrg}
+          repoName={repoName}
+          flowName={flowName}
+        />
+      </h2>
+      <FlowNavFilter
+        repoOrg={repoOrg}
+        repoName={repoName}
+        isPrFlow={isPrFlow}
+        numNotifications={numNotifications}
+      />
+    </div>
   );
 }
 
-/* FlowNodeDetails Nav Header */
-function nodeDetailsNavComponent(
-  repoOrg: string,
-  repoName: string,
-  isPrFlow: boolean,
-  nodeName: string,
-): NavHeaderComponent {
-  const triggerRoute = getTriggerRoute(isPrFlow);
-  return {
-    displayName: nodeName,
-    navLink: `${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}/${nodeName}`,
-  };
-}
 interface FlowNodeDetailsNavHeaderProps extends FlowNavHeaderProps {
   nodeName: string;
 }
@@ -274,20 +93,29 @@ function FlowNodeDetailsNavHeader({
   isPrFlow,
   nodeName,
 }: FlowNodeDetailsNavHeaderProps): JSX.Element {
-  const components = [
-    homeNavComponent,
-    reposNavComponent,
-    flowNavComponent(repoOrg, repoName, isPrFlow),
-    nodeDetailsNavComponent(repoOrg, repoName, isPrFlow, nodeName),
-  ];
-  return <NavHeader components={components} showBorder={true} />;
-}
-
-class NavHeaderError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
+  const triggerRoute = getTriggerRoute(isPrFlow);
+  return (
+    <div className={styles.navHeaderBordered}>
+      <h2>
+        <Link to={routes.home} className={styles.component}>
+          Home
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <Link to={routes.flows} className={styles.component}>
+          Repos
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <Link
+          to={`${routes.flows}/${repoOrg}/${repoName}/${triggerRoute}`}
+          className={styles.component}
+        >
+          {repoName}
+        </Link>
+        <span className={styles.componentSeparator}>⧸</span>
+        <strong>{nodeName}</strong>
+      </h2>
+    </div>
+  );
 }
 
 export {

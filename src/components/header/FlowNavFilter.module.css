@@ -1,0 +1,49 @@
+.flowNavFilter {
+  background: var(--secondary-color);
+  padding: 11px 4px;
+  border-radius: 15px;
+}
+
+.flowNavFilterItem {
+  color: var(--text-color);
+  padding: 9px 13px;
+  font-weight: bolder;
+}
+
+.flowNavFilterItem:hover {
+  opacity: 0.8;
+}
+
+.flowNavFilterSelected {
+  composes: flowNavFilterItem;
+
+  background: #fff;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.flowNavFilterSelected:hover {
+  opacity: 1;
+  cursor: default;
+}
+
+.flowNavFilterPushIcon {
+  margin-right: 5px;
+}
+
+.flowNavFilterPrIcon {
+  margin-right: 5px;
+  font-size: 12px;
+  position: relative;
+  top: -2px;
+}
+
+.navHeaderNotificationBadge {
+  background-color: var(--nav-header-notification-color);
+  padding: 3px 8px 1px;
+  border-radius: 5px;
+  color: #fff;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: bold;
+}
