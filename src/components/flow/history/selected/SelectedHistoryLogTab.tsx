@@ -37,30 +37,36 @@ function SelectedHistoryLogTab({
   // todo support container log sse
   return (
     <>
-      <div className={styles.containerNameSelectorContainer}>
-        <span className={styles.containerNameLabel}>Container</span>
+      <div className={styles.containerLogHeader}>
+        <div className={styles.containerLogHeaderLeft} />
         <SelectedHistoryContainerSelector
           workflowNamespace={workflowNamespace}
           podName={podName}
           containerName={containerName}
           onContainerNameChange={onContainerNameChange}
         />
-        <a
-          href={`/api/v1/namespaces/${workflowNamespace}/pods/${podName}`}
-          target="_blank"
-          rel="noreferrer"
-          className={styles.actionIcon}
-        >
-          <i className="nf nf-fa-file_text_o" />
-        </a>
-        <a
-          href={"https://google.com"}
-          target="_blank"
-          rel="noreferrer"
-          className={styles.actionIcon}
-        >
-          <i className="nf nf-fa-external_link" />
-        </a>
+        <div className={styles.containerLogHeaderRight}>
+          <a
+            href={`/api/v1/namespaces/${workflowNamespace}/pods/${podName}`}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.containerLogLink}
+          >
+            <i className={`nf nf-fa-file_text_o ${styles.containerLogLinkIcon}`} />{" "}
+            <span className={styles.containerLogLinkText}>View Pod YAML</span>
+          </a>
+          <a
+            href={"https://google.com"}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.containerLogLink}
+          >
+            <i
+              className={`nf nf-fa-external_link ${styles.containerLogLinkIcon}`}
+            />{" "}
+            <span className={styles.containerLogLinkText}>View in New Tab</span>
+          </a>
+        </div>
       </div>
       <SelectedHistoryLog
         workflowNamespace={workflowNamespace}
@@ -106,21 +112,24 @@ function SelectedHistoryContainerSelector({
   }, [podContainerNames, podInitContainerNames]);
 
   return (
-    <select
-      value={containerName}
-      onChange={onContainerNameChange}
-      className={styles.containerNameSelector}
-    >
-      {containerNames.map((containerNameOption) => (
-        <option
-          key={containerNameOption}
-          value={containerNameOption}
-          className={styles.containerNameOption}
-        >
-          {containerNameOption}
-        </option>
-      ))}
-    </select>
+    <div className={styles.containerLogHeaderCenter}>
+      <span className={styles.containerNameLabel}>Container</span>
+      <select
+        value={containerName}
+        onChange={onContainerNameChange}
+        className={styles.containerNameSelector}
+      >
+        {containerNames.map((containerNameOption) => (
+          <option
+            key={containerNameOption}
+            value={containerNameOption}
+            className={styles.containerNameOption}
+          >
+            {containerNameOption}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
 
