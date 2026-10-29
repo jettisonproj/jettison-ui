@@ -34,7 +34,6 @@ function SelectedHistoryLogTab({
     setContainerName(ev.target.value);
   };
 
-  // todo support container log sse
   return (
     <>
       <div className={styles.containerLogHeader}>
@@ -58,7 +57,7 @@ function SelectedHistoryLogTab({
             <span className={styles.containerLogLinkText}>View Pod YAML</span>
           </a>
           <a
-            href={"https://google.com"}
+            href={`/container-log.html?namespace=${workflowNamespace}&pod=${podName}&container=${containerName}`}
             target="_blank"
             rel="noreferrer"
             className={styles.containerLogLink}
