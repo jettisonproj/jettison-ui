@@ -52,7 +52,12 @@ class ResourceEventHandler {
           this.#podEvents.push(resourceEvent);
           continue;
         case ResourceKinds.ContainerLog:
-          this.#containerLogEvents.push(resourceEvent);
+          if (resourceEvent.spec.logLines.length > 0) {
+            // Empty log lines signify the end of a log stream.
+            // Skip these events as an optimization since no action
+            // is needed and the connection remains open
+            this.#containerLogEvents.push(resourceEvent);
+          }
           continue;
         default:
           resourceEvent satisfies never;

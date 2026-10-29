@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/jettison.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Container Log</title>
+    <style>
+      body {
+        color: #333;
+        font-family:
+          "Monaspace Neon",
+          ui-monospace,
+          SFMono-Regular,
+          SF Mono,
+          Menlo,
+          Consolas,
+          Liberation Mono,
+          monospace;
+      }
+
+      #log-window {
+        white-space: pre-wrap;
+      }
+
+      .status-msg {
+        color: #ff9800;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <h5 id="log-header">Container Log</h5>
+    <div id="log-window"></div>
+
+    <script>
+      const websocket = new WebSocket("/ws?aux=true");
+      const logWindowElement = document.getElementById("log-window");
+      const logHeaderElement = document.getElementById("log-header");
+
+      const queryParams = new URLSearchParams(window.location.search);
+      const namespace = queryParams.get("namespace");
+      const podName = queryParams.get("pod");
+      const containerName = queryParams.get("container");
+
+      const wsTimeoutMs = 60_000;
+      const wsSuccessCode = 1_000;
+      let podPhase;
+      let wsTimeoutId;
+
+      streamLogs();
+
+      function streamLogs() {
+        if (!namespace) {
+          logHeaderElement.textContent = `Error: namespace missing in query parameters`;
+          closeWebSocket();
+          return;
+        }
+
+        if (!podName) {
+          logHeaderElement.textContent = `Error: pod missing in query parameters`;
+          closeWebSocket();
+          return;
+        }
+
+        if (!containerName) {
+          logHeaderElement.textContent = `Error: container missing in query parameters`;
+          closeWebSocket();
+          return;
+        }
+
+        document.title = `${containerName} log`;
+        logHeaderElement.textContent = `pod=${podName} container=${containerName} namespace=${namespace}`;
+
+        const containerLogMessage = {
+          messageType: "containerLog",
+          messageData: {
+            namespace,
+            podName,
+            containerName,
+          },
+        };
+
+        websocket.onopen = () => {
+          appendStatus("--- Connected to log stream ---");
+          websocket.send(JSON.stringify(containerLogMessage));
+          resetWebSocketTimeout();
+        };
+
+        websocket.onmessage = (event) => {
+          try {
+            const resourceList = JSON.parse(event.data);
+            for (const resourceEvent of resourceList.items) {
+              switch (resourceEvent.kind) {
+                case "Pod":
+                  podPhase = resourceEvent.status.phase;
+                  continue;
+                case "ContainerLog":
+                  const { logLines } = resourceEvent.spec;
+                  if (logLines.length === 0) {
+                    closeWebSocket();
+                    return;
+                  }
+                  appendMessage(logLines.join("\n"));
+                  continue;
+                default:
+                  appendStatus(
+                    `--- Error unknown message kind: ${resourceEvent.kind} ---`,
+                  );
+                  closeWebSocket();
+                  return;
+              }
+            }
+            resetWebSocketTimeout();
+          } catch (err) {
+            appendStatus(`--- Error handling message: ${err} ---`);
+            closeWebSocket();
+          }
+        };
+
+        websocket.onclose = (event) => {
+          const { code, reason, wasClean } = event;
+          let closeStatus = `--- Connection closed (pod=${podPhase} code=${code}`;
+
+          if (reason) {
+            closeStatus += ` reason=${reason}`;
+          }
+
+          if (!wasClean) {
+            closeStatus += ` clean=${wasClean}`;
+          }
+
+          closeStatus += `) ---`;
+          appendStatus(closeStatus);
+        };
+
+        websocket.onerror = (error) => {
+          appendStatus("--- WebSocket Error ---");
+          console.error("websocket error");
+          console.error(error);
+          closeWebSocket();
+        };
+      }
+
+      function appendMessage(logMessage) {
+        appendLog(logMessage, false);
+      }
+
+      function appendStatus(statusMessage) {
+        appendLog(statusMessage, true);
+      }
+
+      // Helper to append text and auto-scroll
+      function appendLog(message, isStatus) {
+        const line = document.createElement("div");
+        line.textContent = message;
+
+        if (isStatus) {
+          line.className = "status-msg";
+        }
+
+        logWindowElement.appendChild(line);
+
+        // Keep scrolled to the bottom to see new logs
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+
+      function resetWebSocketTimeout() {
+        clearTimeout(wsTimeoutId);
+        wsTimeoutId = setTimeout(closeWebSocket, wsTimeoutMs);
+      }
+
+      function closeWebSocket() {
+        clearTimeout(wsTimeoutId);
+        websocket.close(wsSuccessCode, "close log stream");
+      }
+    </script>
+  </body>
+</html>
