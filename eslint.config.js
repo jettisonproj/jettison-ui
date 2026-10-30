@@ -57,6 +57,7 @@ export default defineConfig([
       "@typescript-eslint/explicit-function-return-type": "error",
       "import/no-unresolved": ["error", { ignore: ["\\.svg$"] }],
       "import/exports-last": "error",
+      "object-shorthand": "error",
     },
   },
   eslintConfigPrettier,
