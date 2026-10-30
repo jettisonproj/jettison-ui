@@ -202,8 +202,8 @@ function SelectedHistoryLog({
       messageType: FlowMessageTypes.containerLog,
       messageData: {
         namespace: workflowNamespace,
-        podName: podName,
-        containerName: containerName,
+        podName,
+        containerName,
       },
     });
   }, [nodePhase, flowWebSocket, workflowNamespace, podName, containerName]);
