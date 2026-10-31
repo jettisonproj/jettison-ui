@@ -1,3 +1,5 @@
+const WS_SUCCESS_CODE = 1_000;
+
 /**
  * Provides an abstraction over WebSocket with typing
  */
@@ -12,13 +14,9 @@ class FlowWebSocket {
       console.log("Websocket opened");
     };
 
-    websocket.onclose = (ev): void => {
-      console.log("Websocket closed");
-      console.log(`Code: ${ev.code.toString()}`);
-      console.log(`Reason: ${ev.reason}`);
-    };
-
     websocket.onerror = (err): void => {
+      this.close("WebSocket Error");
+
       if (!(err instanceof Error)) {
         console.log("unknown error from websocket");
         console.log(err);
@@ -33,10 +31,19 @@ class FlowWebSocket {
     this.#websocket.onmessage = onMessage;
   }
 
+  setOnClose(onClose: (ev: CloseEvent) => void): void {
+    this.#websocket.onclose = onClose;
+  }
+
   send(flowMessage: FlowMessage): void {
     console.log("--> send flowWebSocket message");
     console.log(flowMessage);
     this.#websocket.send(JSON.stringify(flowMessage));
+  }
+
+  close(reason: string): void {
+    console.log(`closing websocket with reason: ${reason}`);
+    this.#websocket.close(WS_SUCCESS_CODE, reason);
   }
 }
 

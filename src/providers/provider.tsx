@@ -13,6 +13,7 @@ import { flowWebSocket } from "src/providers/flowWebSocket.ts";
 import { ResourceEventHandler } from "src/providers/resourceEventHandler.ts";
 
 const FlowWebSocketContext = createContext(flowWebSocket);
+const WebSocketCloseEventContext = createContext(null as CloseEvent | null);
 
 const initialTimestampFormat = localState.getTimestampFormat();
 const TimestampFormatContext = createContext(initialTimestampFormat);
@@ -63,6 +64,10 @@ function Provider({ children }: ProviderProps): JSX.Element {
 
   const [containerLogs, setContainerLogs] = useState(
     null as Map<string, Map<string, Map<string, Set<string>>>> | null,
+  );
+
+  const [webSocketCloseEvent, setWebSocketCloseEvent] = useState(
+    null as CloseEvent | null,
   );
 
   const [timestampFormat, setTimestampFormat] = useState(
@@ -121,6 +126,8 @@ function Provider({ children }: ProviderProps): JSX.Element {
           );
         }
       } catch (err) {
+        flowWebSocket.close("Error processing message");
+
         if (!(err instanceof Error)) {
           console.log("unknown error while processing message");
           console.log(err);
@@ -134,27 +141,37 @@ function Provider({ children }: ProviderProps): JSX.Element {
         console.log(ev.data);
       }
     });
+
+    flowWebSocket.setOnClose((ev: CloseEvent) => {
+      console.log("Websocket closed");
+      console.log(`Code: ${ev.code.toString()}`);
+      console.log(`Reason: ${ev.reason}`);
+
+      setWebSocketCloseEvent(ev);
+    });
   }, []);
 
   return (
     <FlowWebSocketContext.Provider value={flowWebSocket}>
-      <TimestampFormatContext.Provider value={timestampFormat}>
-        <SetTimestampFormatContext.Provider value={setTimestampFormat}>
-          <FlowsContext.Provider value={flows}>
-            <ApplicationsContext.Provider value={applications}>
-              <RolloutsContext.Provider value={rollouts}>
-                <WorkflowsContext.Provider value={workflows}>
-                  <PodsContext.Provider value={pods}>
-                    <ContainerLogsContext.Provider value={containerLogs}>
-                      {children}
-                    </ContainerLogsContext.Provider>
-                  </PodsContext.Provider>
-                </WorkflowsContext.Provider>
-              </RolloutsContext.Provider>
-            </ApplicationsContext.Provider>
-          </FlowsContext.Provider>
-        </SetTimestampFormatContext.Provider>
-      </TimestampFormatContext.Provider>
+      <WebSocketCloseEventContext.Provider value={webSocketCloseEvent}>
+        <TimestampFormatContext.Provider value={timestampFormat}>
+          <SetTimestampFormatContext.Provider value={setTimestampFormat}>
+            <FlowsContext.Provider value={flows}>
+              <ApplicationsContext.Provider value={applications}>
+                <RolloutsContext.Provider value={rollouts}>
+                  <WorkflowsContext.Provider value={workflows}>
+                    <PodsContext.Provider value={pods}>
+                      <ContainerLogsContext.Provider value={containerLogs}>
+                        {children}
+                      </ContainerLogsContext.Provider>
+                    </PodsContext.Provider>
+                  </WorkflowsContext.Provider>
+                </RolloutsContext.Provider>
+              </ApplicationsContext.Provider>
+            </FlowsContext.Provider>
+          </SetTimestampFormatContext.Provider>
+        </TimestampFormatContext.Provider>
+      </WebSocketCloseEventContext.Provider>
     </FlowWebSocketContext.Provider>
   );
 }
@@ -169,5 +186,6 @@ export {
   RolloutsContext,
   SetTimestampFormatContext,
   TimestampFormatContext,
+  WebSocketCloseEventContext,
   WorkflowsContext,
 };

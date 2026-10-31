@@ -121,3 +121,23 @@ h6 {
   font-weight: lighter;
   color: var(--text-color);
 }
+
+dialog {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  background: hsl(0 0 0 / 0.5);
+  backdrop-filter: blur(4px);
+  overscroll-behavior: contain;
+}
+
+dialog[open] {
+  padding: 24px 60px;
+  border: 1px solid var(--menu-border-color);
+  border-radius: 12px;
+  box-shadow: var(--menu-shadow);
+  outline: none;
+  margin-top: 100px;
+}
