@@ -14,7 +14,6 @@ import { routes } from "src/routes.ts";
 createRoot(document.getElementById("root") as Element).render(
   <StrictMode>
     <Provider>
-      <WebSocketCloseModal />
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />
@@ -37,6 +36,7 @@ createRoot(document.getElementById("root") as Element).render(
           />
         </Routes>
       </BrowserRouter>
+      <WebSocketCloseModal />
     </Provider>
   </StrictMode>,
 );
