@@ -1,0 +1,26 @@
+.wsCloseModalTitle {
+  font-size: 32px;
+  font-weight: bolder;
+}
+
+.wsCloseModalIcon {
+  font-size: 40px;
+  font-weight: bold;
+  margin-right: 11px;
+}
+
+.wsCloseModalText {
+  font-size: 20px;
+}
+
+.wsCloseModalPreTitle {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.wsCloseModalPre {
+  background-color: var(--panel-color);
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
