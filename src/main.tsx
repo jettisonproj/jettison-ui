@@ -6,6 +6,7 @@ import { Flow } from "src/components/flow/Flow.tsx";
 import { FlowNodeDetails } from "src/components/flownodedetails/FlowNodeDetails.tsx";
 import { Home } from "src/components/home/Home.tsx";
 import { Repos } from "src/components/repos/Repos.tsx";
+import { WebSocketCloseModal } from "src/components/websocketclosemodal/WebSocketCloseModal.tsx";
 import "src/main.css";
 import { Provider } from "src/providers/provider.tsx";
 import { routes } from "src/routes.ts";
@@ -13,6 +14,7 @@ import { routes } from "src/routes.ts";
 createRoot(document.getElementById("root") as Element).render(
   <StrictMode>
     <Provider>
+      <WebSocketCloseModal />
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />
