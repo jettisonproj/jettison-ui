@@ -3,12 +3,20 @@ import type { ContainerLog } from "src/data/types/containerLogTypes.ts";
 import type { Flow } from "src/data/types/flowTypes.ts";
 import type { Pod } from "src/data/types/podTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { WebError } from "src/data/types/webErrorTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 
 interface ResourceList {
   items: Resource[];
 }
 
-type Resource = Flow | Application | Rollout | Workflow | Pod | ContainerLog;
+type Resource =
+  | Flow
+  | Application
+  | Rollout
+  | Workflow
+  | Pod
+  | ContainerLog
+  | WebError;
 
 export type { Resource, ResourceList };

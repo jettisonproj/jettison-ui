@@ -5,6 +5,7 @@ import type { Flow, PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Pod } from "src/data/types/podTypes.ts";
 import type { Resource, ResourceList } from "src/data/types/resourceTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { WebError } from "src/data/types/webErrorTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { TimestampFormat } from "src/localState.ts";
 import {
@@ -25,6 +26,7 @@ class ResourceEventHandler {
   #workflowEvents: Workflow[];
   #podEvents: Pod[];
   #containerLogEvents: ContainerLog[];
+  #webErrorEvents: WebError[];
 
   constructor(resourceList: ResourceList) {
     this.#flowEvents = [];
@@ -33,6 +35,7 @@ class ResourceEventHandler {
     this.#workflowEvents = [];
     this.#podEvents = [];
     this.#containerLogEvents = [];
+    this.#webErrorEvents = [];
 
     for (const resourceEvent of resourceList.items) {
       switch (resourceEvent.kind) {
@@ -58,6 +61,9 @@ class ResourceEventHandler {
             // is needed and the connection remains open
             this.#containerLogEvents.push(resourceEvent);
           }
+          continue;
+        case ResourceKinds.WebError:
+          this.#webErrorEvents.push(resourceEvent);
           continue;
         default:
           resourceEvent satisfies never;
@@ -90,6 +96,10 @@ class ResourceEventHandler {
 
   hasContainerLogEvents(): boolean {
     return this.#containerLogEvents.length > 0;
+  }
+
+  hasWebErrorEvents(): boolean {
+    return this.#webErrorEvents.length > 0;
   }
 
   /**
@@ -454,6 +464,13 @@ class ResourceEventHandler {
       }
     }
     return newContainerLogs;
+  }
+
+  getUpdatedWebErrors(webErrors: WebError[] | null): WebError[] {
+    if (webErrors == null) {
+      return this.#webErrorEvents;
+    }
+    return webErrors.concat(this.#webErrorEvents);
   }
 
   #isDeleteEvent(resourceEvent: Resource): boolean {

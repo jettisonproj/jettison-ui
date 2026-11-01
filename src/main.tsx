@@ -6,6 +6,7 @@ import { Flow } from "src/components/flow/Flow.tsx";
 import { FlowNodeDetails } from "src/components/flownodedetails/FlowNodeDetails.tsx";
 import { Home } from "src/components/home/Home.tsx";
 import { Repos } from "src/components/repos/Repos.tsx";
+import { WebErrorToasts } from "src/components/weberrortoasts/WebErrorToasts.tsx";
 import { WebSocketCloseModal } from "src/components/websocketclosemodal/WebSocketCloseModal.tsx";
 import "src/main.css";
 import { Provider } from "src/providers/provider.tsx";
@@ -36,6 +37,7 @@ createRoot(document.getElementById("root") as Element).render(
           />
         </Routes>
       </BrowserRouter>
+      <WebErrorToasts />
       <WebSocketCloseModal />
     </Provider>
   </StrictMode>,

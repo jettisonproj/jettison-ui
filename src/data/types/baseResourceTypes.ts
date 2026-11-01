@@ -5,6 +5,7 @@ const ResourceKinds = {
   Workflow: "Workflow",
   Pod: "Pod",
   ContainerLog: "ContainerLog",
+  WebError: "WebError",
 } as const;
 type ResourceKind = (typeof ResourceKinds)[keyof typeof ResourceKinds];
 
