@@ -1,13 +1,42 @@
 import type { JSX } from "react";
-import { useContext } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 
 import styles from "src/components/weberrortoasts/WebErrorToasts.module.css";
 import type { WebError } from "src/data/types/webErrorTypes.ts";
 import { WebErrorsContext } from "src/providers/provider.tsx";
 
-// todo make toasts dismissible
 function WebErrorToasts(): JSX.Element | null {
-  const webErrors = useContext(WebErrorsContext);
+  const allWebErrors = useContext(WebErrorsContext);
+  const [dismissedToastIds, setDismissedToastIds] = useState(
+    null as Set<number> | null,
+  );
+
+  const webErrors = useMemo(() => {
+    if (allWebErrors == null) {
+      return null;
+    }
+    if (dismissedToastIds == null) {
+      return allWebErrors;
+    }
+    return allWebErrors.filter(
+      (webError) => !dismissedToastIds.has(webError.spec.toastId),
+    );
+  }, [allWebErrors, dismissedToastIds]);
+
+  const onDismiss = useCallback(() => {
+    if (webErrors == null) {
+      console.log("error dismissing toast: web errors unexpectedly empty");
+      return;
+    }
+    const lastWebError = webErrors.at(-1);
+    if (lastWebError == null) {
+      throw new WebErrorToastsError("web error was unexpectedly empty");
+    }
+
+    setDismissedToastIds((toastIds) =>
+      new Set(toastIds).add(lastWebError.spec.toastId),
+    );
+  }, [webErrors]);
 
   if (webErrors == null || webErrors.length === 0) {
     return null;
@@ -23,7 +52,7 @@ function WebErrorToasts(): JSX.Element | null {
       <>
         <div className={styles.webErrorTertiary} />
         <div className={styles.webErrorSecondary} />
-        <WebErrorToast webError={lastWebError} />
+        <WebErrorToast webError={lastWebError} onDismiss={onDismiss} />
       </>
     );
   }
@@ -31,32 +60,37 @@ function WebErrorToasts(): JSX.Element | null {
     return (
       <>
         <div className={styles.webErrorSecondary} />
-        <WebErrorToast webError={lastWebError} />
+        <WebErrorToast webError={lastWebError} onDismiss={onDismiss} />
       </>
     );
   }
-  return <WebErrorToast webError={lastWebError} />;
+  return <WebErrorToast webError={lastWebError} onDismiss={onDismiss} />;
 }
 
 interface WebErrorToastProps {
   webError: WebError;
+  onDismiss: () => void;
 }
-function WebErrorToast({ webError }: WebErrorToastProps): JSX.Element {
+function WebErrorToast({
+  webError,
+  onDismiss,
+}: WebErrorToastProps): JSX.Element {
   const message = webError.spec.message;
   return (
     <div className={styles.webErrorMain}>
-      <WebErrorHeader />
+      <div className={styles.webErrorHeader}>
+        <div>
+          <i className={`nf nf-fa-circle_xmark ${styles.dangerIcon}`} />
+          Error
+        </div>
+        <i
+          className={`nf nf-fa-close ${styles.closeIcon}`}
+          onClick={onDismiss}
+        />
+      </div>
       <div className={styles.webErrorMessage} title={message}>
         {message}
       </div>
-    </div>
-  );
-}
-function WebErrorHeader(): JSX.Element {
-  return (
-    <div className={styles.webErrorHeader}>
-      <i className={`nf nf-fa-circle_xmark ${styles.dangerIcon}`} />
-      Error
     </div>
   );
 }

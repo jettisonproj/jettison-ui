@@ -4,6 +4,7 @@ declare const styles: {
   readonly webErrorMain: string;
   readonly webErrorHeader: string;
   readonly dangerIcon: string;
+  readonly closeIcon: string;
   readonly webErrorMessage: string;
 };
 
