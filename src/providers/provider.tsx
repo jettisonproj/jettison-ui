@@ -6,6 +6,7 @@ import type { PushPrFlows } from "src/data/types/flowTypes.ts";
 import type { Pod } from "src/data/types/podTypes.ts";
 import type { ResourceList } from "src/data/types/resourceTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
+import type { WebError } from "src/data/types/webErrorTypes.ts";
 import type { Workflow } from "src/data/types/workflowTypes.ts";
 import type { TimestampFormat } from "src/localState.ts";
 import { localState } from "src/localState.ts";
@@ -41,6 +42,8 @@ const ContainerLogsContext = createContext(
   null as Map<string, Map<string, Map<string, Set<string>>>> | null,
 );
 
+const WebErrorsContext = createContext(null as WebError[] | null);
+
 interface ProviderProps {
   children: ReactNode;
 }
@@ -73,6 +76,8 @@ function Provider({ children }: ProviderProps): JSX.Element {
   const [timestampFormat, setTimestampFormat] = useState(
     initialTimestampFormat,
   );
+
+  const [webErrors, setWebErrors] = useState(null as WebError[] | null);
 
   /* Update localStorage whenever the value changes */
   const previousTimestampFormat = useRef(timestampFormat);
@@ -114,15 +119,23 @@ function Provider({ children }: ProviderProps): JSX.Element {
             resourceEventHandler.getUpdatedWorkflows(workflows),
           );
         }
+
         if (resourceEventHandler.hasPodEvents()) {
           setPods((pods) => resourceEventHandler.getUpdatedPods(pods));
         }
+
         if (resourceEventHandler.hasContainerLogEvents()) {
           setContainerLogs((containerLogs) =>
             resourceEventHandler.getUpdatedContainerLogs(
               containerLogs,
               initialTimestampFormat,
             ),
+          );
+        }
+
+        if (resourceEventHandler.hasWebErrorEvents()) {
+          setWebErrors((webErrors) =>
+            resourceEventHandler.getUpdatedWebErrors(webErrors),
           );
         }
       } catch (err) {
@@ -154,23 +167,25 @@ function Provider({ children }: ProviderProps): JSX.Element {
   return (
     <FlowWebSocketContext.Provider value={flowWebSocket}>
       <WebSocketCloseEventContext.Provider value={webSocketCloseEvent}>
-        <TimestampFormatContext.Provider value={timestampFormat}>
-          <SetTimestampFormatContext.Provider value={setTimestampFormat}>
-            <FlowsContext.Provider value={flows}>
-              <ApplicationsContext.Provider value={applications}>
-                <RolloutsContext.Provider value={rollouts}>
-                  <WorkflowsContext.Provider value={workflows}>
-                    <PodsContext.Provider value={pods}>
-                      <ContainerLogsContext.Provider value={containerLogs}>
-                        {children}
-                      </ContainerLogsContext.Provider>
-                    </PodsContext.Provider>
-                  </WorkflowsContext.Provider>
-                </RolloutsContext.Provider>
-              </ApplicationsContext.Provider>
-            </FlowsContext.Provider>
-          </SetTimestampFormatContext.Provider>
-        </TimestampFormatContext.Provider>
+        <WebErrorsContext.Provider value={webErrors}>
+          <TimestampFormatContext.Provider value={timestampFormat}>
+            <SetTimestampFormatContext.Provider value={setTimestampFormat}>
+              <FlowsContext.Provider value={flows}>
+                <ApplicationsContext.Provider value={applications}>
+                  <RolloutsContext.Provider value={rollouts}>
+                    <WorkflowsContext.Provider value={workflows}>
+                      <PodsContext.Provider value={pods}>
+                        <ContainerLogsContext.Provider value={containerLogs}>
+                          {children}
+                        </ContainerLogsContext.Provider>
+                      </PodsContext.Provider>
+                    </WorkflowsContext.Provider>
+                  </RolloutsContext.Provider>
+                </ApplicationsContext.Provider>
+              </FlowsContext.Provider>
+            </SetTimestampFormatContext.Provider>
+          </TimestampFormatContext.Provider>
+        </WebErrorsContext.Provider>
       </WebSocketCloseEventContext.Provider>
     </FlowWebSocketContext.Provider>
   );
@@ -186,6 +201,7 @@ export {
   RolloutsContext,
   SetTimestampFormatContext,
   TimestampFormatContext,
+  WebErrorsContext,
   WebSocketCloseEventContext,
   WorkflowsContext,
 };

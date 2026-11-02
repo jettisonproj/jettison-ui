@@ -1,0 +1,51 @@
+.webErrorToast {
+  position: fixed;
+
+  border: 1px solid var(--menu-border-color);
+  border-radius: 12px;
+  box-shadow: var(--menu-shadow);
+  height: 64px;
+  background-color: #fff;
+}
+
+.webErrorTertiary {
+  composes: webErrorToast;
+
+  right: 44px;
+  bottom: 44px;
+  width: 210px;
+}
+
+.webErrorSecondary {
+  composes: webErrorToast;
+
+  right: 34px;
+  bottom: 34px;
+  width: 230px;
+}
+
+.webErrorMain {
+  composes: webErrorToast;
+
+  right: 24px;
+  bottom: 24px;
+  width: 250px;
+
+  padding: 10px;
+}
+
+.webErrorHeader {
+  font-weight: bold;
+}
+
+.dangerIcon {
+  color: var(--status-badge-danger-color);
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.webErrorMessage {
+  white-space: preserve nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
