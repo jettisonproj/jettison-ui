@@ -35,6 +35,8 @@
 }
 
 .webErrorHeader {
+  display: flex;
+  justify-content: space-between;
   font-weight: bold;
 }
 
@@ -42,6 +44,19 @@
   color: var(--status-badge-danger-color);
   margin-right: 5px;
   font-size: 16px;
+}
+
+.closeIcon {
+  font-size: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: -5px;
+  margin-top: -2px;
+}
+
+.closeIcon:hover {
+  background-color: var(--panel-hover-color);
 }
 
 .webErrorMessage {

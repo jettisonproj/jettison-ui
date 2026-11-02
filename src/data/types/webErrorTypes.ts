@@ -7,6 +7,9 @@ interface WebError extends NamespacedResource {
 }
 
 interface WebErrorSpec {
+  // toastId is NOT returned by the api
+  // It is a field used by the UI to help track dismissed toasts
+  toastId: number;
   message: string;
 }
 

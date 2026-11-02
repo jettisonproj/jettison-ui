@@ -19,6 +19,8 @@ const DELETE_EVENT_ANNOTATION =
   "workflows.jettisonproj.io/v1alpha1/watcher-event-type";
 const SENSOR_NAME_LABEL = "events.argoproj.io/sensor";
 
+let toastId = 1;
+
 class ResourceEventHandler {
   #flowEvents: Flow[];
   #applicationEvents: Application[];
@@ -64,6 +66,8 @@ class ResourceEventHandler {
           continue;
         case ResourceKinds.WebError:
           this.#webErrorEvents.push(resourceEvent);
+          resourceEvent.spec.toastId = toastId;
+          toastId += 1;
           continue;
         default:
           resourceEvent satisfies never;
