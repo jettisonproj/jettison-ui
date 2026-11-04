@@ -11,6 +11,8 @@ declare const styles: {
   readonly containerLogLink: string;
   readonly containerLogLinkIcon: string;
   readonly containerLogLinkText: string;
+  readonly logArchiveLink: string;
+  readonly logArchiveLinkIcon: string;
 };
 
 export = styles;

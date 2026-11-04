@@ -6,6 +6,7 @@ import "@xterm/xterm/css/xterm.css";
 
 import styles from "src/components/flow/history/selected/SelectedHistoryLogTab.module.css";
 import type { Container } from "src/data/types/podTypes.ts";
+import { POD_NOT_FOUND_WEB_ERROR } from "src/data/types/webErrorTypes.ts";
 import type { NodePhase } from "src/data/types/workflowTypes.ts";
 import { NodePhases } from "src/data/types/workflowTypes.ts";
 import { FlowMessageTypes } from "src/providers/flowWebSocket.ts";
@@ -13,26 +14,68 @@ import {
   ContainerLogsContext,
   FlowWebSocketContext,
   PodsContext,
+  WebErrorsContext,
 } from "src/providers/provider.tsx";
+import { getLogArchiveUiUrl } from "src/utils/workflowUtil.ts";
 
 const defaultContainerName = "main";
 const defaultContainerNames = [defaultContainerName];
 
 interface SelectedHistoryLogTabProps {
   workflowNamespace: string;
+  workflowName: string;
   podName: string;
   nodePhase: NodePhase;
 }
 function SelectedHistoryLogTab({
   workflowNamespace,
+  workflowName,
   podName,
   nodePhase,
 }: SelectedHistoryLogTabProps): JSX.Element {
+  const webErrors = useContext(WebErrorsContext);
   const [containerName, setContainerName] = useState(defaultContainerName);
 
   const onContainerNameChange = (ev: ChangeEvent<HTMLSelectElement>): void => {
     setContainerName(ev.target.value);
   };
+
+  const isPodNotFound = useMemo(() => {
+    if (webErrors == null) {
+      return false;
+    }
+
+    return webErrors.some((webError) => {
+      const { namespace, name } = webError.metadata;
+      const { reason } = webError.spec;
+      return (
+        namespace === workflowNamespace &&
+        name === podName &&
+        reason === POD_NOT_FOUND_WEB_ERROR
+      );
+    });
+  }, [webErrors, workflowNamespace, podName]);
+
+  if (isPodNotFound) {
+    return (
+      <>
+        <div>No pod found. See the link below for archived logs.</div>
+        <a
+          className={styles.logArchiveLink}
+          href={getLogArchiveUiUrl(
+            `workflow-artifacts/${workflowName}/${podName}/`,
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i
+            className={`nf nf-fa-external_link ${styles.logArchiveLinkIcon}`}
+          />
+          View in Artifact UI
+        </a>
+      </>
+    );
+  }
 
   return (
     <>
@@ -138,7 +181,10 @@ function getContainerNames(containers: Container[]): string[] {
   return containers.map((container) => container.name);
 }
 
-interface SelectedHistoryLogProps extends SelectedHistoryLogTabProps {
+interface SelectedHistoryLogProps {
+  workflowNamespace: string;
+  podName: string;
+  nodePhase: NodePhase;
   containerName: string;
 }
 function SelectedHistoryLog({
