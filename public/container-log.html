@@ -104,6 +104,11 @@
                   }
                   appendMessage(logLines.join("\n"));
                   continue;
+                case "WebError":
+                  const { message } = resourceEvent.spec;
+                  appendStatus(`--- Web Error: ${message} ---`);
+                  closeWebSocket();
+                  return;
                 default:
                   appendStatus(
                     `--- Error unknown message kind: ${resourceEvent.kind} ---`,
