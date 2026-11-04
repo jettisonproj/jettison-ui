@@ -69,3 +69,25 @@
   padding: 13px 13px;
   border-radius: 10px;
 }
+
+/**
+ * The logArchiveLink is based on the downloadLink style.
+ * See: SelectedHistoryArtifactsTab.module.css
+ */
+.logArchiveLink {
+  margin-top: 10px;
+  font-weight: bolder;
+  background-color: var(--panel-hover-color);
+  color: var(--graph-text-color);
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logArchiveLink:hover {
+  opacity: 0.8;
+}
+
+.logArchiveLinkIcon {
+  margin-right: 8px;
+}

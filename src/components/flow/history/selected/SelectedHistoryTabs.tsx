@@ -122,7 +122,8 @@ function SelectedHistoryTab({
     );
   }
 
-  const workflowNamespace = workflow.metadata.namespace;
+  const { namespace: workflowNamespace, name: workflowName } =
+    workflow.metadata;
   switch (selectedTab) {
     case Tabs.summary:
       return <SelectedHistorySummaryTab selectedNode={selectedNode} />;
@@ -131,6 +132,7 @@ function SelectedHistoryTab({
         <Suspense fallback={<LoadIcon />}>
           <SelectedHistoryLogTab
             workflowNamespace={workflowNamespace}
+            workflowName={workflowName}
             podName={getWorkflowPodName(workflow.metadata.name, selectedNode)}
             nodePhase={selectedNode.phase}
           />
