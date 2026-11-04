@@ -2,7 +2,6 @@ declare const styles: {
   readonly podGridSkeleton: string;
 
   readonly podGrid: string;
-  readonly podGridText: string;
   readonly podGridItem: string;
   readonly podGridIcon: string;
   readonly podGridNodeTitle: string;
@@ -10,6 +9,10 @@ declare const styles: {
   readonly podGridDrift: string;
   readonly podGridDanger: string;
   readonly podGridPending: string;
+  readonly podGridMenu: string;
+  readonly podGridMenuItems: string;
+  readonly podGridMenuItem: string;
+  readonly podGridMenuItemIcon: string;
 };
 
 export = styles;

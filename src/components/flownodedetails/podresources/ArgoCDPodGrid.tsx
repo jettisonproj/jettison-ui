@@ -11,6 +11,7 @@ import {
 } from "src/providers/flowWebSocket.ts";
 import { FlowWebSocketContext, PodsContext } from "src/providers/provider.tsx";
 import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
+import { getContainerLogUiUrl } from "src/utils/workflowUtil.ts";
 
 const POD_APP_LABEL = "app";
 
@@ -146,20 +147,43 @@ function ArgoCDPod({ pod, lastWorkflowRevision }: ArgoCDPodProps): JSX.Element {
   }
 
   return (
-    <a
-      href={`/api/v1/namespaces/${namespace}/pods/${podName}`}
-      target="_blank"
-      rel="noreferrer"
-      className={itemClassName}
-    >
-      <div className={styles.podGridText}>
-        {iconComponent}
-        <span className={styles.podGridNodeTitle}>{podName}</span>
-        <span>
-          ({readyContainers}/{numContainers})
-        </span>
+    <>
+      <button popoverTarget={podName} className={itemClassName}>
+        <div>
+          {iconComponent}
+          <span className={styles.podGridNodeTitle}>{podName}</span>
+          <span>
+            ({readyContainers}/{numContainers})
+          </span>
+        </div>
+      </button>
+      <div id={podName} className={styles.podGridMenu} popover="auto">
+        <div className={styles.podGridMenuItems}>
+          <a
+            className={styles.podGridMenuItem}
+            href={`/api/v1/namespaces/${namespace}/pods/${podName}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i
+              className={`nf nf-fa-file_text_o ${styles.podGridMenuItemIcon}`}
+            />
+            View Pod YAML
+          </a>
+          <a
+            className={styles.podGridMenuItem}
+            href={getContainerLogUiUrl(namespace, podName)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i
+              className={`nf nf-fa-external_link ${styles.podGridMenuItemIcon}`}
+            />
+            View Pod Logs
+          </a>
+        </div>
       </div>
-    </a>
+    </>
   );
 }
 

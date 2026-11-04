@@ -41,7 +41,7 @@
       const queryParams = new URLSearchParams(window.location.search);
       const namespace = queryParams.get("namespace");
       const podName = queryParams.get("pod");
-      const containerName = queryParams.get("container");
+      const containerName = queryParams.get("container") ?? "";
 
       const wsTimeoutMs = 60_000;
       const wsSuccessCode = 1_000;
@@ -63,14 +63,11 @@
           return;
         }
 
-        if (!containerName) {
-          logHeaderElement.textContent = `Error: container missing in query parameters`;
-          closeWebSocket();
-          return;
+        document.title = `${podName} log`;
+        logHeaderElement.textContent = `pod=${podName} namespace=${namespace}`;
+        if (containerName) {
+          logHeaderElement.textContent += ` container=${containerName}`;
         }
-
-        document.title = `${containerName} log`;
-        logHeaderElement.textContent = `pod=${podName} container=${containerName} namespace=${namespace}`;
 
         const containerLogMessage = {
           messageType: "containerLog",

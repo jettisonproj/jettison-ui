@@ -16,7 +16,10 @@ import {
   PodsContext,
   WebErrorsContext,
 } from "src/providers/provider.tsx";
-import { getLogArchiveUiUrl } from "src/utils/workflowUtil.ts";
+import {
+  getContainerLogUiUrl,
+  getLogArchiveUiUrl,
+} from "src/utils/workflowUtil.ts";
 
 const defaultContainerName = "main";
 const defaultContainerNames = [defaultContainerName];
@@ -100,7 +103,11 @@ function SelectedHistoryLogTab({
             <span className={styles.containerLogLinkText}>View Pod YAML</span>
           </a>
           <a
-            href={`/container-log.html?namespace=${workflowNamespace}&pod=${podName}&container=${containerName}`}
+            href={getContainerLogUiUrl(
+              workflowNamespace,
+              podName,
+              containerName,
+            )}
             target="_blank"
             rel="noreferrer"
             className={styles.containerLogLink}
