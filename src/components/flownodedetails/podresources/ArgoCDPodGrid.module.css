@@ -20,11 +20,8 @@
   );
 }
 
-.podGridText {
-  margin-top: 1px;
-}
-
 .podGridItem {
+  font: inherit;
   height: 25px;
   line-height: 23px;
   text-align: center;
@@ -66,4 +63,36 @@
 
 .podGridNodeTitle {
   margin-right: 5px;
+}
+
+/* Menu Popover. This is based off of the historyMenu. */
+.podGridMenu {
+  margin: 0;
+  padding: 0;
+  inset: auto;
+  position-area: bottom;
+  border: 1px solid var(--menu-border-color);
+  border-radius: 8px;
+  box-shadow: var(--menu-shadow);
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+.podGridMenuItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.podGridMenuItem {
+  color: var(--menu-text-color);
+  padding: 10px 14px;
+}
+
+.podGridMenuItem:hover {
+  background-color: var(--panel-hover-color);
+  opacity: 0.8;
+}
+
+.podGridMenuItemIcon {
+  margin-right: 10px;
 }

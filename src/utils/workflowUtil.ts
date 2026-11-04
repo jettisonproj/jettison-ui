@@ -426,6 +426,22 @@ function getArtifactUiUrl(artifactKey: string): string {
   return `${ARTIFACT_UI_URL}&prefix=${artifactKey}`;
 }
 
+function getContainerLogUiUrl(
+  namespace: string,
+  podName: string,
+  containerName?: string,
+): string {
+  let containerLogUiUrl = `/container-log.html?namespace=${namespace}&pod=${podName}`;
+
+  if (containerName) {
+    // Defaults to the only container if there is one container in the pod
+    // See: https://pkg.go.dev/k8s.io/api/core/v1#PodLogOptions
+    containerLogUiUrl += `&container=${containerName}`;
+  }
+
+  return containerLogUiUrl;
+}
+
 function getLogArchiveUiUrl(artifactKey: string): string {
   return `${LOG_ARCHIVE_UI_URL}&prefix=${artifactKey}`;
 }
@@ -476,6 +492,7 @@ export {
   EXIT_NODE_SUFFIX,
   getArtifactDownloadUrl,
   getArtifactUiUrl,
+  getContainerLogUiUrl,
   getLastWorkflowNodeForStep,
   getLastWorkflowNodeForTrigger,
   getLogArchiveUiUrl,
