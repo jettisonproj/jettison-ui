@@ -47,6 +47,7 @@ function getStepHeight(stepSource: StepSource): number {
       stepSource satisfies never;
       console.log("unknown stepSource");
       console.log(stepSource);
+      throw new FlowComponentsUtilError("invalid stepSource");
       return ARGO_NODE_HEIGHT;
   }
 }
@@ -76,6 +77,13 @@ function getFlowStepNode(
       />
     ),
   };
+}
+
+class FlowComponentsUtilError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 }
 
 // todo move out when removing FlowNodeDetails
