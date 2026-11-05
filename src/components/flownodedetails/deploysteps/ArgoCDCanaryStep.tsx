@@ -14,12 +14,22 @@ import type {
 } from "src/data/types/rolloutTypes.ts";
 
 interface ArgoCDCanaryStepProps {
+  rolloutNamespace: string;
+  rolloutName: string;
+  rolloutVersion: string | undefined;
+  rolloutAbort: boolean | undefined;
+  lastWorkflowRevision: string | undefined;
   canaryStep: RolloutCanaryStep;
   stepIndex: number;
   currentStepIndex: number;
   isLastStep: boolean;
 }
 function ArgoCDCanaryStep({
+  rolloutNamespace,
+  rolloutName,
+  rolloutVersion,
+  rolloutAbort,
+  lastWorkflowRevision,
   canaryStep,
   stepIndex,
   currentStepIndex,
@@ -28,6 +38,7 @@ function ArgoCDCanaryStep({
   if (canaryStep.pause != null) {
     return (
       <ArgoCDRolloutPauseStep
+        rolloutAbort={rolloutAbort}
         pauseStep={canaryStep.pause}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
@@ -40,6 +51,7 @@ function ArgoCDCanaryStep({
   if (canaryStep.setWeight != null) {
     return (
       <ArgoCDSetWeightStep
+        rolloutAbort={rolloutAbort}
         setWeight={canaryStep.setWeight}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
@@ -52,6 +64,7 @@ function ArgoCDCanaryStep({
   if (canaryStep.setCanaryScale != null) {
     return (
       <ArgoCDSetCanaryScaleStep
+        rolloutAbort={rolloutAbort}
         setCanaryScaleStep={canaryStep.setCanaryScale}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
@@ -64,6 +77,11 @@ function ArgoCDCanaryStep({
   if (canaryStep.analysis != null) {
     return (
       <ArgoCDRolloutAnalysisStep
+        rolloutNamespace={rolloutNamespace}
+        rolloutName={rolloutName}
+        rolloutVersion={rolloutVersion}
+        rolloutAbort={rolloutAbort}
+        lastWorkflowRevision={lastWorkflowRevision}
         rolloutAnalysisStep={canaryStep.analysis}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
@@ -79,6 +97,7 @@ function ArgoCDCanaryStep({
 }
 
 interface ArgoCDRolloutPauseStepProps {
+  rolloutAbort: boolean | undefined;
   pauseStep: RolloutPauseStep;
   stepIndex: number;
   currentStepIndex: number;
@@ -86,6 +105,7 @@ interface ArgoCDRolloutPauseStepProps {
   canaryStepDescription: string;
 }
 function ArgoCDRolloutPauseStep({
+  rolloutAbort,
   pauseStep,
   stepIndex,
   currentStepIndex,
@@ -95,12 +115,14 @@ function ArgoCDRolloutPauseStep({
   return (
     <div className={styles.canaryStep}>
       <CanaryStepStatus
+        rolloutAbort={rolloutAbort}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
         isLastStep={isLastStep}
       />
       <div className={styles.canaryStepContent}>
         <CanaryStepNumber
+          rolloutAbort={rolloutAbort}
           stepIndex={stepIndex}
           currentStepIndex={currentStepIndex}
         />
@@ -114,6 +136,7 @@ function ArgoCDRolloutPauseStep({
 }
 
 interface ArgoCDSetWeightStepProps {
+  rolloutAbort: boolean | undefined;
   setWeight: number;
   stepIndex: number;
   currentStepIndex: number;
@@ -121,6 +144,7 @@ interface ArgoCDSetWeightStepProps {
   canaryStepDescription: string;
 }
 function ArgoCDSetWeightStep({
+  rolloutAbort,
   setWeight,
   stepIndex,
   currentStepIndex,
@@ -130,12 +154,14 @@ function ArgoCDSetWeightStep({
   return (
     <div className={styles.canaryStep}>
       <CanaryStepStatus
+        rolloutAbort={rolloutAbort}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
         isLastStep={isLastStep}
       />
       <div className={styles.canaryStepContent}>
         <CanaryStepNumber
+          rolloutAbort={rolloutAbort}
           stepIndex={stepIndex}
           currentStepIndex={currentStepIndex}
         />
@@ -147,6 +173,7 @@ function ArgoCDSetWeightStep({
 }
 
 interface ArgoCDSetCanaryScaleStepProps {
+  rolloutAbort: boolean | undefined;
   setCanaryScaleStep: SetCanaryScaleStep;
   stepIndex: number;
   currentStepIndex: number;
@@ -154,6 +181,7 @@ interface ArgoCDSetCanaryScaleStepProps {
   canaryStepDescription: string;
 }
 function ArgoCDSetCanaryScaleStep({
+  rolloutAbort,
   setCanaryScaleStep,
   stepIndex,
   currentStepIndex,
@@ -163,12 +191,14 @@ function ArgoCDSetCanaryScaleStep({
   return (
     <div className={styles.canaryStep}>
       <CanaryStepStatus
+        rolloutAbort={rolloutAbort}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
         isLastStep={isLastStep}
       />
       <div className={styles.canaryStepContent}>
         <CanaryStepNumber
+          rolloutAbort={rolloutAbort}
           stepIndex={stepIndex}
           currentStepIndex={currentStepIndex}
         />

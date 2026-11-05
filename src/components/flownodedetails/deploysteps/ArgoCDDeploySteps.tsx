@@ -6,6 +6,7 @@ import styles from "src/components/flownodedetails/deploysteps/ArgoCDDeploySteps
 import type { ApplicationStatusResource } from "src/data/types/applicationTypes.ts";
 import type { Rollout } from "src/data/types/rolloutTypes.ts";
 import { RolloutsContext } from "src/providers/provider.tsx";
+import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
 
 /* This should stay in sync with the CSS constant (--content-width) */
 const CONTENT_WIDTH = 880;
@@ -13,9 +14,11 @@ const CONTENT_WIDTH = 880;
 
 interface ArgoCDDeployStepsProps {
   rolloutResource: ApplicationStatusResource | null;
+  lastWorkflowRevision: string | undefined;
 }
 function ArgoCDDeploySteps({
   rolloutResource,
+  lastWorkflowRevision,
 }: ArgoCDDeployStepsProps): JSX.Element {
   const rollouts = useContext(RolloutsContext);
 
@@ -56,15 +59,22 @@ function ArgoCDDeploySteps({
         </h2>
         <ArgoCDDeployProgress rollout={rollout} />
       </div>
-      {showDeploySteps && <ArgoCDDeployStepList rollout={rollout} />}
+      {showDeploySteps && (
+        <ArgoCDDeployStepList
+          rollout={rollout}
+          lastWorkflowRevision={lastWorkflowRevision}
+        />
+      )}
     </>
   );
 }
 
-interface ArgoCDRolloutProps {
+interface ArgoCDDeployProgressProps {
   rollout: Rollout | null | undefined;
 }
-function ArgoCDDeployProgress({ rollout }: ArgoCDRolloutProps): JSX.Element {
+function ArgoCDDeployProgress({
+  rollout,
+}: ArgoCDDeployProgressProps): JSX.Element {
   if (rollout == null) {
     return <div className={styles.deployProgressBarSkeleton}></div>;
   }
@@ -80,18 +90,24 @@ function ArgoCDDeployProgress({ rollout }: ArgoCDRolloutProps): JSX.Element {
 
   let iconClassName;
   let progressBarClassName;
-  if (currentStepIndex < numSteps) {
+  if (rollout.status.abort === true) {
+    iconClassName = `nf nf-fa-circle_xmark ${styles.deployProgressIconDanger}`;
+    progressBarClassName = styles.deployProgressBarRunning;
+  } else if (currentStepIndex < numSteps) {
     iconClassName = `nf nf-fa-circle_notch ${styles.deployProgressIconRunning}`;
     progressBarClassName = styles.deployProgressBarRunning;
   } else {
     iconClassName = `nf nf-fa-circle_check ${styles.deployProgressIconSuccess}`;
     progressBarClassName = styles.deployProgressBarSuccess;
   }
+  // todo allow retry
+  // See: https://github.com/argoproj/argo-rollouts/blob/1b5bbd5bdd516e60acf3f93aa6c93a695464fdb3/pkg/kubectl-argo-rollouts/cmd/retry/retry.go#L89
   return (
     <>
       <div className={styles.deployProgressText}>
         <i className={iconClassName} />
         {currentPercentage}% ({currentStepIndex}/{numSteps}) completed
+        {rollout.status.abort && " (aborted)"}
       </div>
       <div className={styles.deployProgressBar}>
         <div
@@ -105,9 +121,14 @@ function ArgoCDDeployProgress({ rollout }: ArgoCDRolloutProps): JSX.Element {
   );
 }
 
+interface ArgoCDDeployStepListProps {
+  rollout: Rollout | null | undefined;
+  lastWorkflowRevision: string | undefined;
+}
 function ArgoCDDeployStepList({
   rollout,
-}: ArgoCDRolloutProps): JSX.Element | JSX.Element[] {
+  lastWorkflowRevision,
+}: ArgoCDDeployStepListProps): JSX.Element | JSX.Element[] {
   if (rollout == null) {
     return (
       <>
@@ -119,11 +140,18 @@ function ArgoCDDeployStepList({
     );
   }
 
+  const rolloutVersion = rollout.metadata.labels?.[APP_VERSION_LABEL];
+  const { namespace: rolloutNamespace, name: rolloutName } = rollout.metadata;
   const { steps: canarySteps } = rollout.spec.strategy.canary;
   const { currentStepIndex } = rollout.status;
   return canarySteps.map((canaryStep, i) => (
     <ArgoCDCanaryStep
       key={i}
+      rolloutNamespace={rolloutNamespace}
+      rolloutName={rolloutName}
+      rolloutVersion={rolloutVersion}
+      rolloutAbort={rollout.status.abort}
+      lastWorkflowRevision={lastWorkflowRevision}
       canaryStep={canaryStep}
       stepIndex={i}
       currentStepIndex={currentStepIndex}
