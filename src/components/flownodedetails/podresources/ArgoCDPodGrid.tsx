@@ -10,11 +10,12 @@ import {
   ResourceSubscriptionTypes,
 } from "src/providers/flowWebSocket.ts";
 import { FlowWebSocketContext, PodsContext } from "src/providers/provider.tsx";
-import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
+import {
+  APP_VERSION_LABEL,
+  JETTISON_APP_LABEL,
+  POD_APP_LABEL,
+} from "src/utils/resourceUtil.ts";
 import { getContainerLogUiUrl } from "src/utils/workflowUtil.ts";
-
-const JETTISON_APP_LABEL = "jettison-app";
-const POD_APP_LABEL = "app";
 
 interface ArgoCDPodGridProps {
   rolloutResource: ApplicationStatusResource | null;
@@ -68,15 +69,15 @@ function ArgoCDNamespacePodGrid({
     if (namespacePods == null) {
       return null;
     }
-    return Array.from(namespacePods.values()).filter((pod) => {
-      const { labels } = pod.metadata;
+    return Array.from(namespacePods.values()).filter((namespacePod) => {
+      const { labels } = namespacePod.metadata;
       if (labels == null) {
         return false;
       }
 
       return (
-        labels[POD_APP_LABEL] === rolloutResource.name &&
-        labels[JETTISON_APP_LABEL] === rolloutResource.name
+        labels[JETTISON_APP_LABEL] === rolloutResource.name &&
+        labels[POD_APP_LABEL] === rolloutResource.name
       );
     });
   }, [namespacePods, rolloutResource.name]);
@@ -158,13 +159,11 @@ function ArgoCDPod({ pod, lastWorkflowRevision }: ArgoCDPodProps): JSX.Element {
   return (
     <>
       <button popoverTarget={podName} className={itemClassName}>
-        <div>
-          {iconComponent}
-          <span className={styles.podGridNodeTitle}>{podName}</span>
-          <span>
-            ({readyContainers}/{numContainers})
-          </span>
-        </div>
+        {iconComponent}
+        <span className={styles.podGridNodeTitle}>{podName}</span>
+        <span>
+          ({readyContainers}/{numContainers})
+        </span>
       </button>
       <div id={podName} className={styles.podGridMenu} popover="auto">
         <div className={styles.podGridMenuItems}>
@@ -203,4 +202,4 @@ class ArgoCDPodGridError extends Error {
   }
 }
 
-export { ArgoCDPodGrid };
+export { ArgoCDPod, ArgoCDPodGrid };

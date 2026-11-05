@@ -18,3 +18,22 @@
   color: var(--graph-text-color);
   font-weight: bolder;
 }
+
+/**
+ * This grid was based on the code below and could possibly be refactored.
+ * See: src/components/flownodedetails/podresources/ArgoCDPodGrid.module.css
+ */
+.analysisPodGrid {
+  /**
+   * Subtract the analysis step indendation from the width.
+   * Currently: 25px status + 12px margin
+   */
+  width: calc(var(--content-width) - 37px);
+  display: grid;
+  margin-top: 5px;
+  gap: var(--history-grid-item-gap);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--history-grid-item-width), 1fr)
+  );
+}

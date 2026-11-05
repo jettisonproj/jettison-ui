@@ -3,6 +3,7 @@ declare const styles: {
 
   readonly canaryStepIcon: string;
   readonly canaryStepIconSuccess: string;
+  readonly canaryStepIconDanger: string;
   readonly canaryStepIconPending: string;
   readonly canaryStepIconRunning: string;
 
@@ -10,6 +11,7 @@ declare const styles: {
 
   readonly canaryStepNumber: string;
   readonly canaryStepNumberSuccess: string;
+  readonly canaryStepNumberDanger: string;
   readonly canaryStepNumberRunning: string;
 };
 

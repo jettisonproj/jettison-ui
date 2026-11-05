@@ -4,6 +4,7 @@ declare const styles: {
 
   readonly deployProgressText: string;
   readonly deployProgressIconSuccess: string;
+  readonly deployProgressIconDanger: string;
   readonly deployProgressIconRunning: string;
   readonly deployProgressBar: string;
   readonly deployProgressBarSuccess: string;

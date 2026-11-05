@@ -50,9 +50,12 @@ interface RolloutPauseStep {
   duration: string;
 }
 
+// SOT: https://pkg.go.dev/github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1#RolloutStatus
 interface RolloutStatus {
   phase: RolloutPhase;
   currentStepIndex: number;
+  message?: string;
+  abort?: boolean;
 }
 
 // SOT: https://pkg.go.dev/github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1#RolloutPhase
