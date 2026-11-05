@@ -78,7 +78,7 @@ function isPullRequestTrigger(trigger: Trigger): boolean {
       trigger satisfies never;
       console.log("unknown trigger");
       console.log(trigger);
-      return false;
+      throw new FlowUtilError("invalid trigger");
   }
 }
 
