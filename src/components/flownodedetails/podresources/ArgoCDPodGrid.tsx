@@ -13,6 +13,7 @@ import { FlowWebSocketContext, PodsContext } from "src/providers/provider.tsx";
 import { APP_VERSION_LABEL } from "src/utils/resourceUtil.ts";
 import { getContainerLogUiUrl } from "src/utils/workflowUtil.ts";
 
+const JETTISON_APP_LABEL = "jettison-app";
 const POD_APP_LABEL = "app";
 
 interface ArgoCDPodGridProps {
@@ -67,9 +68,17 @@ function ArgoCDNamespacePodGrid({
     if (namespacePods == null) {
       return null;
     }
-    return Array.from(namespacePods.values()).filter(
-      (pod) => pod.metadata.labels?.[POD_APP_LABEL] === rolloutResource.name,
-    );
+    return Array.from(namespacePods.values()).filter((pod) => {
+      const { labels } = pod.metadata;
+      if (labels == null) {
+        return false;
+      }
+
+      return (
+        labels[POD_APP_LABEL] === rolloutResource.name &&
+        labels[JETTISON_APP_LABEL] === rolloutResource.name
+      );
+    });
   }, [namespacePods, rolloutResource.name]);
 
   if (rolloutPods == null || rolloutPods.length === 0) {
