@@ -1,15 +1,17 @@
 import type { JSX } from "react";
+import { useCallback, useContext } from "react";
 
+import styles from "src/components/header/NavMenu.module.css";
 import type {
   Application,
   ApplicationStatusResource,
 } from "src/data/types/applicationTypes.ts";
 import type { ArgoCDStep } from "src/data/types/flowTypes.ts";
+import { FlowMessageTypes } from "src/providers/flowWebSocket.ts";
+import { FlowWebSocketContext } from "src/providers/provider.tsx";
 import { getRepoCommitLink, getRepoPathLink } from "src/utils/gitUtil.ts";
 
 const ARGOCD_UI_URL = "https://argocd.osoriano.com";
-
-import styles from "src/components/header/NavMenu.module.css";
 
 const FLOW_NODE_DETAILS_NAV_HEADER_POPOVER_ID =
   "flowNodeDetailsNavHeaderPopoverId";
@@ -26,6 +28,21 @@ function FlowNodeDetailsNavMenu({
   application,
   rolloutResource,
 }: FlowNodeDetailsNavMenuProps): JSX.Element {
+  const flowWebSocket = useContext(FlowWebSocketContext);
+  const onApplicationSyncClick = useCallback(() => {
+    if (application == null) {
+      console.log("error: cannot sync null application");
+      return;
+    }
+    flowWebSocket.send({
+      messageType: FlowMessageTypes.syncApplication,
+      messageData: {
+        namespace: application.metadata.namespace,
+        name: application.metadata.name,
+      },
+    });
+  }, [flowWebSocket, application]);
+
   if (argoCdStep == null) {
     return <strong>{nodeName}</strong>;
   }
@@ -87,6 +104,17 @@ function FlowNodeDetailsNavMenu({
               Argo CD UI
             </a>
           )}
+          {hasApplication(application) && (
+            <div
+              className={styles.navMenuItem}
+              onClick={onApplicationSyncClick}
+            >
+              <i
+                className={`nf nf-fa-arrow_right_arrow_left ${styles.navMenuItemIcon}`}
+              />{" "}
+              Sync Application
+            </div>
+          )}
           {rolloutLink && (
             <a
               className={styles.navMenuItem}
@@ -132,6 +160,10 @@ function getApplicationLink(application?: Application): string | null {
   }
   const { namespace, name } = application.metadata;
   return `${ARGOCD_UI_URL}/applications/${namespace}/${name}`;
+}
+
+function hasApplication(application?: Application): application is Application {
+  return application != null;
 }
 
 function getCommitLink(
