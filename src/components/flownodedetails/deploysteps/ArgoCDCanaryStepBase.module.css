@@ -24,6 +24,12 @@
   color: var(--argocd-badge-health-color);
 }
 
+.canaryStepIconDanger {
+  composes: canaryStepIcon;
+
+  color: var(--history-grid-danger-color);
+}
+
 .canaryStepIconPending {
   composes: canaryStepIcon;
 
@@ -53,6 +59,12 @@
   composes: canaryStepNumber;
 
   color: var(--argocd-badge-health-color);
+}
+
+.canaryStepNumberDanger {
+  composes: canaryStepNumber;
+
+  color: var(--history-grid-danger-color);
 }
 
 .canaryStepNumberRunning {

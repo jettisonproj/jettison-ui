@@ -37,6 +37,12 @@
   color: var(--argocd-badge-health-color);
 }
 
+.deployProgressIconDanger {
+  composes: deployProgressIcon;
+
+  color: var(--history-grid-danger-color);
+}
+
 @keyframes deployProgressIconSpin {
   from {
     transform: rotate(0deg);

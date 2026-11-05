@@ -3,11 +3,13 @@ import type { JSX } from "react";
 import styles from "src/components/flownodedetails/deploysteps/ArgoCDCanaryStepBase.module.css";
 
 interface CanaryStepStatusProps {
+  rolloutAbort: boolean | undefined;
   stepIndex: number;
   currentStepIndex: number;
   isLastStep: boolean;
 }
 function CanaryStepStatus({
+  rolloutAbort,
   stepIndex,
   currentStepIndex,
   isLastStep,
@@ -15,6 +17,7 @@ function CanaryStepStatus({
   return (
     <div className={styles.canaryStepStatus}>
       <CanaryStepIcon
+        rolloutAbort={rolloutAbort}
         stepIndex={stepIndex}
         currentStepIndex={currentStepIndex}
       />
@@ -24,14 +27,22 @@ function CanaryStepStatus({
 }
 
 interface CanaryStepIconProps {
+  rolloutAbort: boolean | undefined;
   stepIndex: number;
   currentStepIndex: number;
 }
 function CanaryStepIcon({
+  rolloutAbort,
   stepIndex,
   currentStepIndex,
 }: CanaryStepIconProps): JSX.Element {
   if (stepIndex === currentStepIndex) {
+    if (rolloutAbort === true) {
+      // The step is aborted
+      return (
+        <i className={`nf nf-fa-circle_xmark ${styles.canaryStepIconDanger}`} />
+      );
+    }
     // The step is currently running
     return (
       <i className={`nf nf-fa-circle_notch ${styles.canaryStepIconRunning}`} />
@@ -51,15 +62,23 @@ function CanaryStepIcon({
 }
 
 interface CanaryStepNumberProps {
+  rolloutAbort: boolean | undefined;
   stepIndex: number;
   currentStepIndex: number;
 }
 function CanaryStepNumber({
+  rolloutAbort,
   stepIndex,
   currentStepIndex,
 }: CanaryStepNumberProps): JSX.Element {
   const stepNumber = stepIndex + 1;
   if (currentStepIndex === stepIndex) {
+    if (rolloutAbort === true) {
+      // The step is aborted
+      return (
+        <div className={styles.canaryStepNumberDanger}>Step {stepNumber}</div>
+      );
+    }
     // The step is currently running
     return (
       <div className={styles.canaryStepNumberRunning}>Step {stepNumber}</div>

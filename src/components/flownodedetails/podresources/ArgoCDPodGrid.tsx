@@ -201,4 +201,4 @@ class ArgoCDPodGridError extends Error {
   }
 }
 
-export { ArgoCDPodGrid };
+export { ArgoCDPod, ArgoCDPodGrid };

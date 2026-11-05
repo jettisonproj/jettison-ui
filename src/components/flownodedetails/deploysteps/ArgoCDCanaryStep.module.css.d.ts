@@ -4,6 +4,8 @@ declare const styles: {
   readonly canaryStepContent: string;
   readonly canaryStepTitle: string;
   readonly canaryStepSubText: string;
+
+  readonly analysisPodGrid: string;
 };
 
 export = styles;

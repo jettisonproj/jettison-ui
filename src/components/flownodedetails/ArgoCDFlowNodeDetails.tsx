@@ -85,7 +85,10 @@ function ArgoCDRolloutDetails({
 }: ArgoCDRolloutDetailsProps): JSX.Element {
   return (
     <>
-      <ArgoCDDeploySteps rolloutResource={rolloutResource} />
+      <ArgoCDDeploySteps
+        rolloutResource={rolloutResource}
+        lastWorkflowRevision={lastWorkflowRevision}
+      />
       <ArgoCDPodResources
         rolloutResource={rolloutResource}
         lastWorkflowRevision={lastWorkflowRevision}
