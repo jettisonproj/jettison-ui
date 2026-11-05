@@ -29,6 +29,7 @@ function FlowNodeDetailsNavMenu({
   rolloutResource,
 }: FlowNodeDetailsNavMenuProps): JSX.Element {
   const flowWebSocket = useContext(FlowWebSocketContext);
+
   const onApplicationSyncClick = useCallback(() => {
     if (application == null) {
       console.log("error: cannot sync null application");
@@ -42,6 +43,20 @@ function FlowNodeDetailsNavMenu({
       },
     });
   }, [flowWebSocket, application]);
+
+  const onRetryRolloutClick = useCallback(() => {
+    if (rolloutResource == null) {
+      console.log("error: cannot retry null rollout");
+      return;
+    }
+    flowWebSocket.send({
+      messageType: FlowMessageTypes.retryRollout,
+      messageData: {
+        namespace: rolloutResource.namespace,
+        name: rolloutResource.name,
+      },
+    });
+  }, [flowWebSocket, rolloutResource]);
 
   if (argoCdStep == null) {
     return <strong>{nodeName}</strong>;
@@ -104,7 +119,7 @@ function FlowNodeDetailsNavMenu({
               Argo CD UI
             </a>
           )}
-          {hasApplication(application) && (
+          {application != null && (
             <div
               className={styles.navMenuItem}
               onClick={onApplicationSyncClick}
@@ -125,6 +140,12 @@ function FlowNodeDetailsNavMenu({
               <i className={`nf nf-md-kubernetes ${styles.navMenuItemIcon}`} />{" "}
               Argo Rollouts UI
             </a>
+          )}
+          {rolloutResource != null && (
+            <div className={styles.navMenuItem} onClick={onRetryRolloutClick}>
+              <i className={`nf nf-fa-repeat ${styles.navMenuItemIcon}`} />{" "}
+              Retry Resource
+            </div>
           )}
           {kubernetesApplicationLink && (
             <a
@@ -160,10 +181,6 @@ function getApplicationLink(application?: Application): string | null {
   }
   const { namespace, name } = application.metadata;
   return `${ARGOCD_UI_URL}/applications/${namespace}/${name}`;
-}
-
-function hasApplication(application?: Application): application is Application {
-  return application != null;
 }
 
 function getCommitLink(

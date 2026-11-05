@@ -52,6 +52,7 @@ const FlowMessageTypes = {
   containerLog: "containerLog",
   resourceSubscription: "resourceSubscription",
   syncApplication: "syncApplication",
+  retryRollout: "retryRollout",
 } as const;
 
 // SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
@@ -89,10 +90,21 @@ interface SyncApplicationMessage {
     name: string;
   };
 }
+
+// SOT: https://github.com/jettisonproj/jettison-controller/blob/main/internal/webserver/webmessage.go
+interface RetryRolloutMessage {
+  messageType: typeof FlowMessageTypes.retryRollout;
+  messageData: {
+    namespace: string;
+    name: string;
+  };
+}
+
 type FlowMessage =
   | ContainerLogMessage
   | ResourceSubscriptionMessage
-  | SyncApplicationMessage;
+  | SyncApplicationMessage
+  | RetryRolloutMessage;
 
 const flowWebSocket = new FlowWebSocket();
 
