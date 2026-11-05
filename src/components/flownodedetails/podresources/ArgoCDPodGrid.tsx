@@ -158,13 +158,11 @@ function ArgoCDPod({ pod, lastWorkflowRevision }: ArgoCDPodProps): JSX.Element {
   return (
     <>
       <button popoverTarget={podName} className={itemClassName}>
-        <div>
-          {iconComponent}
-          <span className={styles.podGridNodeTitle}>{podName}</span>
-          <span>
-            ({readyContainers}/{numContainers})
-          </span>
-        </div>
+        {iconComponent}
+        <span className={styles.podGridNodeTitle}>{podName}</span>
+        <span>
+          ({readyContainers}/{numContainers})
+        </span>
       </button>
       <div id={podName} className={styles.podGridMenu} popover="auto">
         <div className={styles.podGridMenuItems}>
