@@ -13,6 +13,7 @@ import { PodsContext } from "src/providers/provider.tsx";
 import {
   APP_VERSION_LABEL,
   JETTISON_APP_LABEL,
+  POD_APP_LABEL,
   POD_APP_UNDER_TEST_LABEL,
 } from "src/utils/resourceUtil.ts";
 
@@ -110,12 +111,13 @@ function ArgoCDRolloutAnalysisPods({
       }
 
       return (
+        labels[POD_APP_LABEL] === templateName &&
         labels[JETTISON_APP_LABEL] === rolloutName &&
         labels[POD_APP_UNDER_TEST_LABEL] === rolloutName &&
         labels[APP_VERSION_LABEL] === rolloutVersion
       );
     });
-  }, [namespacePods, rolloutName, rolloutVersion]);
+  }, [namespacePods, templateName, rolloutName, rolloutVersion]);
 
   if (analysisPods === null) {
     return (
