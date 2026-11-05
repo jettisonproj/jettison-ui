@@ -73,7 +73,7 @@ class ResourceEventHandler {
           resourceEvent satisfies never;
           console.log("unknown resource event");
           console.log(resourceEvent);
-          continue;
+          throw new ResourceEventHandlerError("invalid resource event");
       }
     }
   }
@@ -485,6 +485,13 @@ class ResourceEventHandler {
   #getFlowName(workflow: Workflow): string | undefined {
     const { labels } = workflow.metadata;
     return labels?.[SENSOR_NAME_LABEL];
+  }
+}
+
+class ResourceEventHandlerError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
   }
 }
 
