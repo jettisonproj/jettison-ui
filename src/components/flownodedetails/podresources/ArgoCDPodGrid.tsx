@@ -75,8 +75,8 @@ function ArgoCDNamespacePodGrid({
       }
 
       return (
-        labels[POD_APP_LABEL] === rolloutResource.name &&
-        labels[JETTISON_APP_LABEL] === rolloutResource.name
+        labels[JETTISON_APP_LABEL] === rolloutResource.name &&
+        labels[POD_APP_LABEL] === rolloutResource.name
       );
     });
   }, [namespacePods, rolloutResource.name]);
