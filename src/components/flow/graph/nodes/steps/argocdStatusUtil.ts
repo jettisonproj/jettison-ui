@@ -113,9 +113,14 @@ function getArgoCDStatusResult(
 
   const rolloutPhase = rollout.status.phase;
   if (rolloutPhase === RolloutPhases.Degraded) {
+    let argocdTitle = `Rollout is ${RolloutPhases.Degraded}`;
+    if (rollout.status.message) {
+      argocdTitle += `: ${rollout.status.message}`;
+    }
+
     return {
       argocdStatus: ArgoCDStatuses.RolloutStatusDegraded,
-      argocdTitle: `Rollout is ${RolloutPhases.Degraded}`,
+      argocdTitle,
     };
   }
 
