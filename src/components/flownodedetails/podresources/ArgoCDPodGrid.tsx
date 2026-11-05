@@ -68,8 +68,8 @@ function ArgoCDNamespacePodGrid({
     if (namespacePods == null) {
       return null;
     }
-    return Array.from(namespacePods.values()).filter((pod) => {
-      const { labels } = pod.metadata;
+    return Array.from(namespacePods.values()).filter((namespacePod) => {
+      const { labels } = namespacePod.metadata;
       if (labels == null) {
         return false;
       }
