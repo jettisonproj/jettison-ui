@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { Link } from "react-router";
 
 import { Header } from "src/components/header/Header.tsx";
@@ -87,7 +87,20 @@ interface RecentRepoProps {
   workflows: Map<string, Map<string, Map<string, Workflow>>> | null;
 }
 function RecentRepos({ flows, workflows }: RecentRepoProps): JSX.Element {
-  const recentRepos = localState.getRecentRepos();
+  const recentRepos = useMemo(() => {
+    const currentRecentRepos = localState.getRecentRepos();
+    if (flows == null) {
+      return currentRecentRepos;
+    }
+    const newRecentRepos = currentRecentRepos.filter((currentRecentRepo) =>
+      flows.has(currentRecentRepo),
+    );
+    if (newRecentRepos.length === currentRecentRepos.length) {
+      return currentRecentRepos;
+    }
+    localState.setRecentRepos(newRecentRepos);
+    return newRecentRepos;
+  }, [flows]);
   if (recentRepos.length === 0) {
     return (
       <>

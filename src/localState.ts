@@ -77,6 +77,11 @@ class LocalState {
     }
   }
 
+  setRecentRepos(recentRepos: string[]): void {
+    this.#localState.recentRepos = recentRepos;
+    this.#saveToLocalStorage();
+  }
+
   #saveToLocalStorage(): void {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(this.#localState));
   }
