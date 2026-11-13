@@ -1,17 +1,20 @@
 import type { JSX } from "react";
 
 import styles from "src/components/header/NavMenu.module.css";
+import { getTriggerRoute } from "src/routes.ts";
 
 const FLOW_NAV_HEADER_POPOVER_ID = "flowNavHeaderPopoverId";
 
 interface FlowNavMenuProps {
   repoOrg: string;
   repoName: string;
+  isPrFlow: boolean;
   flowName?: string;
 }
 function FlowNavMenu({
   repoOrg,
   repoName,
+  isPrFlow,
   flowName,
 }: FlowNavMenuProps): JSX.Element {
   if (flowName == null) {
@@ -34,6 +37,17 @@ function FlowNavMenu({
         className={styles.navMenu}
         popover="auto"
       >
+        <div className={styles.navMenuItems}>
+          <a
+            className={styles.navMenuItem}
+            href={`https://github.com/osoriano/devcluster/blob/main/flows/${repoOrg}/${flowName}-github-${getTriggerRoute(isPrFlow)}.yaml`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className={`nf nf-fa-layer_group ${styles.navMenuItemIcon}`} />{" "}
+            View Flow Definition
+          </a>
+        </div>
         <div className={styles.navMenuItems}>
           <a
             className={styles.navMenuItem}

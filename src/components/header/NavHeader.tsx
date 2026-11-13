@@ -77,6 +77,7 @@ function FlowNavHeader({
         <FlowNavMenu
           repoOrg={repoOrg}
           repoName={repoName}
+          isPrFlow={isPrFlow}
           flowName={flowName}
         />
       </h2>
