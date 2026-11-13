@@ -92,13 +92,19 @@ function RecentRepos({ flows, workflows }: RecentRepoProps): JSX.Element {
     if (flows == null) {
       return currentRecentRepos;
     }
+
     const newRecentRepos = currentRecentRepos.filter((currentRecentRepo) =>
       flows.has(currentRecentRepo),
     );
     if (newRecentRepos.length === currentRecentRepos.length) {
       return currentRecentRepos;
     }
+
+    console.log("Detected outdated recent repos. Removing them");
+    console.log(currentRecentRepos);
+
     localState.setRecentRepos(newRecentRepos);
+
     return newRecentRepos;
   }, [flows]);
   if (recentRepos.length === 0) {
