@@ -37,6 +37,17 @@ function FlowNavMenu({
         <div className={styles.navMenuItems}>
           <a
             className={styles.navMenuItem}
+            href={`https://github.com/osoriano/devcluster/blob/-/flows/${repoOrg}/${flowName}.yaml`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className={`nf nf-fa-layer_group ${styles.navMenuItemIcon}`} />{" "}
+            View Flow Definition
+          </a>
+        </div>
+        <div className={styles.navMenuItems}>
+          <a
+            className={styles.navMenuItem}
             href={`/api/v1/namespaces/${repoOrg}/flows/${flowName}`}
             target="_blank"
             rel="noreferrer"
