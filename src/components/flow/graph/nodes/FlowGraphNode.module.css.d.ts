@@ -8,7 +8,6 @@ declare const styles: {
   readonly createPrIcon: string;
   readonly infraIcon: string;
   readonly k8sIcon: string;
-  readonly loadIcon: string;
   readonly loadingIcon: string;
   readonly nodeDivider: string;
   readonly nodeLinkSub: string;
