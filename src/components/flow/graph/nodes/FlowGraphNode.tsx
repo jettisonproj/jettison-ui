@@ -187,7 +187,7 @@ class FlowGraphNodeError extends Error {
 function FlowGraphLoading(): JSX.Element {
   return (
     <div className={styles.nodeRowSub}>
-      <LoadIcon className={styles.loadIcon} />
+      <LoadIcon className={styles.loadingIcon} />
       <span className={styles.nodeTextSub}>Waiting for workflow run</span>
     </div>
   );

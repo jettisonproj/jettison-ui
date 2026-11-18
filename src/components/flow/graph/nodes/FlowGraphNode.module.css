@@ -150,11 +150,6 @@
   font-size: 12px;
 }
 
-.loadIcon {
-  margin-right: 5px;
-  --load-color: var(--graph-link-color);
-}
-
 .dockerfileIcon {
   font-size: 13px;
   vertical-align: text-top;
@@ -171,7 +166,7 @@
 
 .loadingIcon {
   --load-color: var(--graph-link-color);
-  --load-icon-height: 14px;
+  vertical-align: middle;
 }
 
 .pendingIcon {

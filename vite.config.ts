@@ -21,6 +21,12 @@ export default defineConfig({
       "/api": "http://osoriano.com:2847",
       "/ws": "ws://osoriano.com:2847",
     },
+    // To route from dev to the prod backend from outside the cluster,
+    // use this config instead:
+    // proxy: {
+    //   "/api": "https://jettison.osoriano.com",
+    //   "/ws": "wss://jettison.osoriano.com",
+    // },
   },
   // Configure the preview server (used in CI)
   // For options, see: https://vite.dev/config/preview-options
