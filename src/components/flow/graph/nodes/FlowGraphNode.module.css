@@ -59,6 +59,14 @@
   color: var(--graph-text-color);
 }
 
+.nodeRowLoading {
+  composes: nodeRowSub;
+
+  /* Increase line height to match load-icon line height. Otherwise, the
+   * load animation could cause line height changes and text movement */
+  line-height: 24px;
+}
+
 .nodeRowLink {
   composes: nodeRowBlock;
 

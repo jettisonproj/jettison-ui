@@ -18,6 +18,7 @@ declare const styles: {
   readonly nodeRowHeaderSelected: string;
   readonly nodeRowLink: string;
   readonly nodeRowSub: string;
+  readonly nodeRowLoading: string;
   readonly nodeTextSub: string;
   readonly nodeTimeText: string;
   readonly nodeTitle: string;
