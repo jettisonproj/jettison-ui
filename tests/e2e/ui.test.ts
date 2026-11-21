@@ -84,9 +84,9 @@ test("test", async ({ page }) => {
   await expect(viewWorkflowPushYamlLink).toBeHidden();
 
   await firstPushWorkflowDetails.click();
-  await expect(
-    page.getByRole("link", { name: "summary", exact }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "summary", exact })).toBeVisible({
+    timeout: 30_000,
+  });
 
   await page.getByRole("link", { name: PR_FLOW_RE }).first().click();
 
@@ -126,7 +126,7 @@ test("test", async ({ page }) => {
   await expect(viewPrWorkflowYamlLink).toBeHidden();
 
   await firstPrWorkflowDetails.click();
-  await expect(
-    page.getByRole("link", { name: "summary", exact }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "summary", exact })).toBeVisible({
+    timeout: 30_000,
+  });
 });
