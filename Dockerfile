@@ -8,10 +8,30 @@ ENV CI=true
 COPY package.json package-lock.json ./
 COPY tests/e2e/package.json tests/e2e/package-lock.json ./tests/e2e/
 RUN --mount=type=cache,target=/root/.npm \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
   npm ci && cd tests/e2e && npm ci && npm run playwright-deps
 
 # Build the production assets
-COPY . .
+COPY \
+  .gitignore \
+  eslint.config.js \
+  index.html \
+  tsconfig.app.json \
+  tsconfig.json \
+  tsconfig.node.json \
+  vite.config.ts \
+  ./
+
+COPY \
+  tests/e2e/playwright.config.ts \
+  tests/e2e/ui.test.ts \
+  ./tests/e2e/
+
+COPY public ./public
+COPY rootfs ./rootfs
+COPY src ./src
+
 RUN npm run build
 
 # Run unit and integration tests
