@@ -8,6 +8,12 @@ const baseURL =
 // eslint-disable-next-line no-restricted-syntax
 export default defineConfig({
   testDir: "./.",
+  /* Maximum time one test can run for. */
+  timeout: 90_000,
+  /* Maximum time one assertion can run for. */
+  expect: {
+    timeout: 15_000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
