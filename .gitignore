@@ -29,3 +29,5 @@ dist-ssr
 # Playwright E2E testing
 /tests/e2e/test-results
 /tests/e2e/playwright-report
+
+# CI Test (can remove)
