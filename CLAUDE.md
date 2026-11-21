@@ -80,4 +80,4 @@ React Router v7. Key routes defined in `src/routes.ts`:
 
 ### Deployment
 
-Multi-stage Docker build: Node 26 (build + integration test) → Nginx 1.25.5 (serve). Nginx config in `rootfs/etc/nginx/` handles SPA routing (404 → index.html) and proxies `/ws` and `/api` to `jettison-api-service:2846`.
+Multi-stage Docker build: Node 26 (build + integration test) → Nginx 1.30.7 (serve). Nginx config in `rootfs/etc/nginx/` handles SPA routing (404 → index.html) and proxies `/ws` and `/api` to `jettison-api-service:2846`.
