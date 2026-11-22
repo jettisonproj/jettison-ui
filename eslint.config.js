@@ -58,6 +58,19 @@ export default defineConfig([
       "import/no-unresolved": ["error", { ignore: ["\\.svg$"] }],
       "import/exports-last": "error",
       "object-shorthand": "error",
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["./*", "../*"],
+              message:
+                "Relative imports (including type imports) are not allowed. Use path aliases instead.",
+              allowTypeImports: false, // Explicitly catches `import type`
+            },
+          ],
+        },
+      ],
     },
   },
   eslintConfigPrettier,
